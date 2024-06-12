@@ -122,20 +122,21 @@ Set-Alias -Name edp -Value Edit-Profile
 function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $True){
     if($EditChezmoi){
         if($Template){
-            chezmoi edit-config-template # && chezmoi init
+            chezmoi edit-config-template && chezmoi init
         }
         else{
-            chezmoi edit-config # && chezmoi init
+            chezmoi edit-config
         }
     }
     else{
         if($Template){
             $chezmoi_template_path = "$HOME/.local/share/chezmoi/.chezmoi.toml.tmpl"
+            $chezmoi_init = "&& chezmoi init"
         }
         else {
             $chezmoi_template_path = "$HOME/.config/chezmoi/chezmoi.toml" 
         }
-        iex ($ENV:EDITOR + " " + $chezmoi_template_path)# && chezmoi init # invoke vscode on template
+        iex ($ENV:EDITOR + " " + $chezmoi_template_path + " " + $chezmoi_init)
     }
 }
 
