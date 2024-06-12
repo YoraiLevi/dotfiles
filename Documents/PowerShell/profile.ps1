@@ -106,15 +106,14 @@ function Edit-Profile([switch]$Reload, [switch]$EditChezmoi = $True, [string]$Po
     if($EditChezmoi){
         $_profile_chezmoi = Resolve-Path -Relative -Path $PowerShellProfile -RelativeBasePath $HOME
         if ($Reload){
-            $applyFlag = " -a"
+            $applyFlag = " -a " # --apply
         }
-        iex "chezmoi edit $applyFlag $_profile_chezmoi"
+        iex "chezmoi edit $applyFlag $_profile_chezmoi" # invoke editing with chezmoi and apply changes immidietly
     }
     else {
-        iex ([string]($ENV:EDITOR.split() + $PowerShellProfile)) # invoke vscode on profile
+        iex ($ENV:EDITOR + " " + $PROFILE) # invoke vscode on profile
     }
     if ($Reload){
-        echo "1"
         Invoke-Profile
     }
 }
