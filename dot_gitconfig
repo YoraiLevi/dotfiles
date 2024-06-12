@@ -1,0 +1,10 @@
+[user]
+	email = yorai.email@gmail.com
+	name = Yorai
+[core]
+	editor = code-insiders --wait
+	autocrlf = false
+[diff]
+    tool = default-difftool
+[difftool "default-difftool"]
+    cmd = code --wait --diff $LOCAL $REMOTE
