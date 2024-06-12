@@ -3,7 +3,6 @@ Set-Alias -Name code -Value $ENV:EDITOR
 Set-Alias -Name vscode -Value $ENV:EDITOR
 $ENV:EDITOR = "$ENV:EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
 
-
 # if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
 # }
 try {
@@ -89,6 +88,7 @@ Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1 # refreshenv
 # https://github.com/ChrisTitusTech/powershell-profile/blob/main/Microsoft.PowerShell_profile.ps1
 function Invoke-Profile {
     # "bug", doesn't update function defenitions aka doesn't reload functions 
+    # https://stackoverflow.com/a/27721496/12603110 - maybe make these utility function into modules
     @(
         $Profile.AllUsersAllHosts,
         $Profile.AllUsersCurrentHost,
