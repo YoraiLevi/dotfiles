@@ -115,6 +115,7 @@ function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [st
     }
     if ($Reload){
         Invoke-Profile
+        echo "reloaded!"
     }
 }
 Set-Alias -Name edp -Value Edit-Profile
