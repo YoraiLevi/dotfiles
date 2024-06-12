@@ -1,0 +1,12 @@
+{{ if eq .chezmoi.os "windows" }}
+[cd]
+    command = "pwsh.exe"
+{{ end }}
+
+[git]
+    autoCommit = true
+    autoPush = true
+
+[edit]
+    command = "code-insders"
+    args = ["--wait]
