@@ -106,11 +106,10 @@ function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [st
     # todo add check one of available profiles
     # todo if it doesn't exist, create it? throw error?
     if($EditChezmoi){
-        $_profile_chezmoi = Resolve-Path -Relative -Path $PowerShellProfile -RelativeBasePath $HOME
         if ($Reload){
             $applyFlag = " -a " # --apply
         }
-        iex "chezmoi edit $applyFlag $_profile_chezmoi" # invoke editing with chezmoi and apply changes immidietly
+        iex "chezmoi edit $applyFlag $PowerShellProfile" # invoke editing with chezmoi and apply changes immidietly
     }
     else {
         iex ($ENV:EDITOR + " " + $PROFILE) # invoke vscode on profile
