@@ -1,4 +1,3 @@
-echo "it's working"
 $ENV:EDITOR = if ($null -ne (Get-Command code-insiders -ErrorAction SilentlyContinue)) { 'code-insiders' } else { 'code' }
 Set-Alias -Name code -Value $ENV:EDITOR
 Set-Alias -Name vscode -Value $ENV:EDITOR
