@@ -4,14 +4,14 @@ Set-Alias -Name vscode -Value $ENV:EDITOR
 $ENV:EDITOR = "$ENV:EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
 
 # conda and git posh have conflict, this works tho
-Import-Module posh-git -ErrorAction Stop
-if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit
-    try {
-    }
-    catch {
-        Write-Error "posh-git isn't available on the system, execute:"
-        Write-Error "PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force"
-    }
+# if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit
+# }
+try {
+    Import-Module posh-git -ErrorAction Stop
+}
+catch {
+    Write-Error "posh-git isn't available on the system, execute:"
+    Write-Error "PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force"
 }
 
 function Update-PowerShell {
@@ -106,9 +106,7 @@ function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [st
     # todo add check one of available profiles
     # todo if it doesn't exist, create it? throw error?
     if($EditChezmoi){
-        if ($Reload){
-            $applyFlag = " -a " # --apply
-        }
+        $applyFlag = " -a " # --apply
         iex "chezmoi edit $applyFlag $PowerShellProfile" # invoke editing with chezmoi and apply changes immidietly
     }
     else {
