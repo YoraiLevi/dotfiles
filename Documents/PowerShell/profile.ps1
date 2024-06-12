@@ -110,12 +110,12 @@ function Edit-Profile([switch]$Reload, [switch]$EditChezmoi = $True, [string]$Po
             $applyFlag = " --apply "
         }
         chezmoi edit $_profile_chezmoi $applyFlag
-
     }
     else {
         & $ENV:EDITOR $PowerShellProfile
     }
     if ($Reload){
+        echo "1"
         Invoke-Profile
     }
 }
