@@ -1,10 +1,22 @@
 [user]
 	email = yorai.email@gmail.com
 	name = Yorai
+[push]
+	default = simple
+[pull]
+	rebase = true
+[grep]
+	lineNumber = true
 [core]
 	editor = code-insiders --wait
-	autocrlf = false
+	autocrlf = input
+	eol = lf
 [diff]
-    tool = default-difftool
+	tool = default-difftool
+	prompt = false
 [difftool "default-difftool"]
-    cmd = code --wait --diff $LOCAL $REMOTE
+	cmd = code-insiders --wait --diff $LOCAL $REMOTE
+; https://gist.github.com/mauve/1939169fe6ee1b500d70 - gitconfig for windows
+[alias]
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	dag = log --graph --format='format:%C(yellow)%h%C(reset) %C(blue)\"%an\" <%ae>%C(reset) %C(magenta)%ar%C(reset)%C(auto)%d%C(reset)%n%s' --date-order
