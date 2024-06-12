@@ -3,10 +3,11 @@ Set-Alias -Name code -Value $ENV:EDITOR
 Set-Alias -Name vscode -Value $ENV:EDITOR
 $ENV:EDITOR = "$ENV:EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
 
-# conda and git posh have conflict, this works tho
-# if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit
+
+# if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!!
 # }
 try {
+    # conda and git posh have conflict, this works tho
     Import-Module posh-git -ErrorAction Stop
 }
 catch {
