@@ -87,6 +87,7 @@ Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1 # refreshenv
 
 # https://github.com/ChrisTitusTech/powershell-profile/blob/main/Microsoft.PowerShell_profile.ps1
 function Invoke-Profile {
+    # "bug", doesn't update function defenitions aka doesn't reload functions 
     @(
         $Profile.AllUsersAllHosts,
         $Profile.AllUsersCurrentHost,
@@ -101,8 +102,9 @@ function Invoke-Profile {
 }
 Set-Alias -Name "Reload-Profile" -Value Invoke-Profile
 # Quick Access to Editing the Profile
-function Edit-Profile([switch]$Reload, [switch]$EditChezmoi = $True, [string]$PowerShellProfile = $Profile.CurrentUserAllHosts){
-    # todo maybe add variable "profile type"
+function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [string]$PowerShellProfile = $Profile.CurrentUserAllHosts){
+    # todo add check one of available profiles
+    # todo if it doesn't exist, create it? throw error?
     if($EditChezmoi){
         $_profile_chezmoi = Resolve-Path -Relative -Path $PowerShellProfile -RelativeBasePath $HOME
         if ($Reload){
