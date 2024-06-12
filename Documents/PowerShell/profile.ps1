@@ -97,7 +97,7 @@ function Invoke-Profile {
     ) | % {
         if(Test-Path $_){
             Write-Verbose "Running $_"
-            & $_
+            Import-Module $_ -Force
         }
     }
 }
