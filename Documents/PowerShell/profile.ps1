@@ -122,7 +122,7 @@ Set-Alias -Name edp -Value Edit-Profile
 function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $True){
     if($EditChezmoi){
         if($Template){
-            chezmoi edit-config-template && chezmoi init
+            chezmoi edit-config-template # && chezmoi init
         }
         else{
             chezmoi edit-config # && chezmoi init
