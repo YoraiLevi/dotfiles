@@ -102,14 +102,18 @@ function Invoke-Profile {
 }
 Set-Alias -Name "Reload-Profile" -Value Invoke-Profile
 # Quick Access to Editing the Profile
-function Edit-Profile([switch]$Reload, [switch]$EditChezmoi = $True, [string]$_profile = $Profile.CurrentUserAllHosts){
+function Edit-Profile([switch]$Reload, [switch]$EditChezmoi = $True, [string]$PowerShellProfile = $Profile.CurrentUserAllHosts){
     # todo maybe add variable "profile type"
     if($EditChezmoi){
-        $_profile_chezmoi = Resolve-Path -Relative -Path $_profile -RelativeBasePath $HOME
+        $_profile_chezmoi = Resolve-Path -Relative -Path $PowerShellProfile -RelativeBasePath $HOME
         chezmoi edit $_profile_chezmoi
+        if ($Reload){
+            chezmoi apply $_profile_chezmoi
+        }
+
     }
     else {
-        & $ENV:EDITOR $_profile
+        & $ENV:EDITOR $PowerShellProfile
     }
     if ($Reload){
         Invoke-Profile
