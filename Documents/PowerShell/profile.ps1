@@ -106,10 +106,10 @@ function Edit-Profile([switch]$Reload, [switch]$EditChezmoi = $True, [string]$Po
     # todo maybe add variable "profile type"
     if($EditChezmoi){
         $_profile_chezmoi = Resolve-Path -Relative -Path $PowerShellProfile -RelativeBasePath $HOME
-        chezmoi edit $_profile_chezmoi
         if ($Reload){
-            chezmoi apply $_profile_chezmoi
+            $applyFlag = " --apply "
         }
+        chezmoi edit $_profile_chezmoi $applyFlag
 
     }
     else {
