@@ -119,6 +119,26 @@ function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [st
 }
 Set-Alias -Name edp -Value Edit-Profile
 
+function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $True){
+    if(EditChezmoi){
+        if($Template){
+            chezmoi edit-config-template && chezmoi init
+        }
+        else{
+            chezmoi edit-config && chezmoi init
+        }
+    }
+    else{
+        if($Template){
+            $chezmoi_template_path = "$HOME/.local/share/chezmoi/.chezmoi.toml.tmpl"
+        }
+        else {
+            $chezmoi_template_path = "$HOME/.config/chezmoi/chezmoi.toml" 
+        }
+        iex ($ENV:EDITOR + " " + $chezmoi_template_path) && chezmoi init # invoke vscode on template
+    }
+}
+
 function which($name) {
     # will print location or source code
     $cmd = Get-Command $name -ErrorAction SilentlyContinue
