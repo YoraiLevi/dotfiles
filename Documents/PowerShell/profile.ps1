@@ -125,7 +125,7 @@ function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $Tr
             chezmoi edit-config-template && chezmoi init
         }
         else{
-            chezmoi edit-config && chezmoi init
+            chezmoi edit-config # && chezmoi init
         }
     }
     else{
@@ -135,7 +135,7 @@ function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $Tr
         else {
             $chezmoi_template_path = "$HOME/.config/chezmoi/chezmoi.toml" 
         }
-        iex ($ENV:EDITOR + " " + $chezmoi_template_path) && chezmoi init # invoke vscode on template
+        iex ($ENV:EDITOR + " " + $chezmoi_template_path)# && chezmoi init # invoke vscode on template
     }
 }
 
