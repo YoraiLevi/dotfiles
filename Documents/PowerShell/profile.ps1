@@ -120,7 +120,7 @@ function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [st
 Set-Alias -Name edp -Value Edit-Profile
 
 function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $True){
-    if(EditChezmoi){
+    if($EditChezmoi){
         if($Template){
             chezmoi edit-config-template && chezmoi init
         }
