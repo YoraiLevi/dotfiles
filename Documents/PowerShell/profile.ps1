@@ -97,7 +97,7 @@ function Invoke-Profile {
     ) | % {
         if(Test-Path $_){
             Write-Verbose "Running $_"
-            . $_
+            & $_
         }
     }
 }
@@ -111,7 +111,7 @@ function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [st
         iex "chezmoi edit $applyFlag $PowerShellProfile" # invoke editing with chezmoi and apply changes immidietly
     }
     else {
-        iex ($ENV:EDITOR + " " + $PROFILE) # invoke vscode on profile
+        iex ($ENV:EDITOR + " " + $PowerShellProfile) # invoke vscode on profile
     }
     if ($Reload){
         Invoke-Profile
