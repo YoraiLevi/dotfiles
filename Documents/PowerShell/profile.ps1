@@ -102,7 +102,19 @@ function Invoke-Profile {
 }
 Set-Alias -Name "Reload-Profile" -Value Invoke-Profile
 # Quick Access to Editing the Profile
-function Edit-Profile([switch]$Reload){ code --wait -n $Profile.CurrentUserAllHosts; Invoke-Profile} # todo maybe add variable "profile type"
+function Edit-Profile([switch]$Reload, [switch]$EditChezmoi = $True, [string]$_profile = $Profile.CurrentUserAllHosts){
+    # todo maybe add variable "profile type"
+    if($EditChezmoi){
+        $_profile_chezmoi = Resolve-Path -Relative -Path $_profile -RelativeBasePath $HOME
+        chezmoi edit $_profile_chezmoi
+    }
+    else {
+        & $ENV:EDITOR $_profile
+    }
+    if ($Reload){
+        Invoke-Profile
+    }
+}
 Set-Alias -Name edp -Value Edit-Profile
 
 function which($name) {
