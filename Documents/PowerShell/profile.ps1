@@ -1,10 +1,18 @@
+
+$ENV:EDITOR = if ($null -ne (Get-Command code-insiders -ErrorAction SilentlyContinue)) { 'code-insiders' } else { 'code' }
+Set-Alias -Name code -Value $ENV:EDITOR
+Set-Alias -Name vscode -Value $ENV:EDITOR
+$ENV:EDITOR = "$ENV:EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
+
 # conda and git posh have conflict, this works tho
-try {
-    Import-Module posh-git
-}
-catch {
-    Write-Error "posh-git isn't available on the system, execute:"
-    Write-Error "PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force"
+Import-Module posh-git -ErrorAction Stop
+if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit
+    try {
+    }
+    catch {
+        Write-Error "posh-git isn't available on the system, execute:"
+        Write-Error "PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force"
+    }
 }
 
 function Update-PowerShell {
@@ -94,7 +102,8 @@ function Invoke-Profile {
 }
 Set-Alias -Name "Reload-Profile" -Value Invoke-Profile
 # Quick Access to Editing the Profile
-function ep { code --wait $Profile.CurrentUserAllHosts } # todo maybe add variable "profile type"
+function Edit-Profile([switch]$Reload){ code --wait -n $Profile.CurrentUserAllHosts; Invoke-Profile} # todo maybe add variable "profile type"
+Set-Alias -Name edp -Value Edit-Profile
 
 function which($name) {
     # will print location or source code
@@ -166,18 +175,14 @@ Set-Alias -Name touch -Value Touch-File
 
 
 # https://stackoverflow.com/a/51956864/12603110 - powershell - Remove all variables
-$existingVariables = Get-Variable
-try {
-    # your script here
-    $vscode = if ($null -ne (Get-Command code-insiders -ErrorAction SilentlyContinue)) { 'code-insiders' } else { 'code' }
-    Set-Alias -Name code -Value $vscode
-    Set-Alias -Name vscode -Value $vscode
-    # Set-Alias -Name code-insiders -Value $vscode
-} finally {
-    Get-Variable |
-        Where-Object Name -notin $existingVariables.Name |
-        Remove-Variable
-}
+# $existingVariables = Get-Variable
+# try {
+#     # your script here
+# } finally {
+#     Get-Variable |
+#         Where-Object Name -notin $existingVariables.Name |
+#         Remove-Variable
+# }
 
 # https://github.com/giggio/posh-alias
 # Add-Alias ls 'ls -force'
@@ -186,7 +191,7 @@ try {
 # Set-ExecutionPolicy Bypass -Scope Process
 # Update-FormatData -PrependPath "$PSScriptRoot\Format.ps1xml"
 
-if ("C:\ProgramData\chocolatey\bin\fnm.exe"){
+if (which "fnm.exe"){
     fnm env --use-on-cd | Out-String | Invoke-Expression
 }
 else {
@@ -197,9 +202,9 @@ else {
 # I don't like the public oh my posh themes
 # use oh my posh here
 
-#region conda initialize
-# !! Contents within this block are managed by 'conda init' !!
-If (Test-Path "C:\tools\miniforge3\Scripts\conda.exe") {
-    (& "C:\tools\miniforge3\Scripts\conda.exe" "shell.powershell" "hook") | Out-String | ?{$_} | Invoke-Expression
-}
-#endregion
+# #region conda initialize
+# # !! Contents within this block are managed by 'conda init' !!
+# If (Test-Path "C:\tools\miniforge3\Scripts\conda.exe") {
+#     (& "C:\tools\miniforge3\Scripts\conda.exe" "shell.powershell" "hook") | Out-String | ?{$_} | Invoke-Expression
+# }
+# #endregion
