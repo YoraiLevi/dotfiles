@@ -58,7 +58,7 @@ if($ENV:CHEZMOI -ne 1){
         }
         Until ($Answer -eq 'y' -or $Answer -eq 'n')
         if($Answer -eq 'y'){
-            chezmoi update && chezmoi init && chezmoi apply
+            chezmoi update && chezmoi init && chezmoi apply | Out-null
         }
     }
 }
