@@ -1,3 +1,4 @@
 {{ if eq .chezmoi.os "windows" -}}
-echo "CHEZMOI POWERSHELL OK!" | Out-File .CHEZMOI_ASSERT -Encoding ASCII -Append
+# https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#the-universal-sortable-u-format-specifier
+"$(Date -Format ""yyyy'-'MM'-'dd HH':'mm':'ss'Z'"") : CHEZMOI POWERSHELL OK!" | Out-File .CHEZMOI_ASSERT -Encoding ASCII -Append
 {{ end -}}
