@@ -41,25 +41,25 @@ function Update-PowerShell {
 # daily update check
 if ($(try{Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue)}catch{}) -lt $(Get-Date)){
     (Get-Date).Date.AddDays(1).DateTime > "$PSScriptRoot/date.tmp"
-    Update-PowerShell
-}
-if($ENV:CHEZMOI -ne 1){
-    $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase && chezmoi diff | Out-String)
-    $NoChanges = "Current branch master is up to date.", "Already up to date."
-    if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)){
-        # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
-        chezmoi diff
-        # https://stackoverflow.com/a/60101530/12603110 - Prompt for yes or no - without repeating on new line if wrong input
-        $Cursor = [System.Console]::CursorTop
-        Do {
-            [System.Console]::CursorTop = $Cursor
-            $Answer = Read-Host -Prompt 'Chezmoi changes detecter! Install them now? (y/n)'
-        }
-        Until ($Answer -eq 'y' -or $Answer -eq 'n')
-        if($Answer -eq 'y'){
-            chezmoi update && chezmoi init && chezmoi apply | Out-null
+    if($ENV:CHEZMOI -ne 1){
+        $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase && chezmoi diff | Out-String)
+        $NoChanges = "Current branch master is up to date.", "Already up to date."
+        if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)){
+            # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
+            chezmoi diff
+            # https://stackoverflow.com/a/60101530/12603110 - Prompt for yes or no - without repeating on new line if wrong input
+            $Cursor = [System.Console]::CursorTop
+            Do {
+                [System.Console]::CursorTop = $Cursor
+                $Answer = Read-Host -Prompt 'Chezmoi changes detecter! Install them now? (y/n)'
+            }
+            Until ($Answer -eq 'y' -or $Answer -eq 'n')
+            if($Answer -eq 'y'){
+                chezmoi update && chezmoi init && chezmoi apply | Out-null
+            }
         }
     }
+    Update-PowerShell
 }
 
 # # PSReadLine option to add a matching closing bracket for (, [ and { - cannot copy paste it adds brackets in terminal
@@ -137,13 +137,15 @@ function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [st
 }
 Set-Alias -Name edp -Value Edit-Profile
 
-function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $True){
+function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $True, [switch]$Push = $True){
     if($EditChezmoi){
         if($Template){
             chezmoi edit-config-template && chezmoi init
+            chezmoi git push
         }
         else{
             chezmoi edit-config
+            chezmoi git push
         }
     }
     else{
@@ -156,6 +158,7 @@ function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $Tr
         }
         iex ($ENV:EDITOR + " " + $chezmoi_template_path + " " + $chezmoi_init)
     }
+    Clear-Host
 }
 
 function which($name) {
