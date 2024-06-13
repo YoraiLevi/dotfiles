@@ -1,0 +1,3 @@
+{{ if eq .chezmoi.os "windows" -}}
+echo "CHEZMOI POWERSHELL OK!" | Out-File .CHEZMOI_ASSERT -Encoding ASCII -Append
+{{ end -}}
