@@ -1,0 +1,5 @@
+{{ if eq .chezmoi.os "windows" -}}
+#Requires -PSEdition Core
+#Requires -RunAsAdministrator
+echo "choco install $name"
+{{ end -}}

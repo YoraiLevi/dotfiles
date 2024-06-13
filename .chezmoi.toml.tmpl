@@ -1,5 +1,7 @@
+{{ if eq .chezmoi.os "windows" -}}
 [cd]
     command = "pwsh.exe"
+{{ end -}}
 
 [git]
     autoCommit = true
@@ -9,8 +11,10 @@
 #    command = "code-insders" # doesn't work with `chezmoi edit`, $ENV:EDITOR does work
 #    flags = ["--wait"]
 
+{{ if eq .chezmoi.os "windows" -}}
 [interpreters]
-    py = { command = 'python3' }
-    js = { command = 'node' }
-    ts = { command = 'ts-node' }
-    ps1 = { command = "pwsh", args = ["-NoLogo"] }
+    py = { command = 'C:/Windows/py.exe', args = ["-3"]}
+    ps1 = { command = "C:/Program Files/PowerShell/7/pwsh.exe", args = ["-NoLogo"] }
+{{ end -}}
+#    js = { command = 'node' }
+#    ts = { command = 'ts-node' }
