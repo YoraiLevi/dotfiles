@@ -3,7 +3,7 @@
 To setup a system:
 ```
 $GITHUB_USERNAME = "YoraiLevi"
-iex "&{$(irm 'https://get.chezmoi.io/ps1')} init --apply '$GITHUB_USERNAME'"
+cd $HOME; iex "&{$(irm 'https://get.chezmoi.io/ps1')} init --apply '$GITHUB_USERNAME'"
 ```
 
 [Debugging all `run_` scripts](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/#clear-the-state-of-all-run_onchange_-and-run_once_-scripts)
