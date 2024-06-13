@@ -145,7 +145,7 @@ function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $Tr
         }
         else{
             chezmoi edit-config
-            chezmoi git push
+            chezmoi git push 
         }
     }
     else{
