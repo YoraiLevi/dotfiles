@@ -42,21 +42,21 @@ function Update-PowerShell {
 if ($(try{Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue)}catch{}) -lt $(Get-Date)){
     (Get-Date).Date.AddDays(1).DateTime > "$PSScriptRoot/date.tmp"
     Update-PowerShell
-    if($ENV:CHEZMOI -ne 1){
-        if ($(chezmoi git pull -- --autostash --rebase && chezmoi diff | Out-String) -ne $null){
-            # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
-            
-            # https://stackoverflow.com/a/60101530/12603110 - Prompt for yes or no - without repeating on new line if wrong input
-            $Cursor = [System.Console]::CursorTop
-            Do {
-                [System.Console]::CursorTop = $Cursor
-                Clear-Host
-                $Answer = Read-Host -Prompt 'Chezmoi changes detecter! Install them now? (y/n)'
-            }
-            Until ($Answer -eq 'y' -or $Answer -eq 'n')
-            if($Answer -eq 'y'){
-                chezmoi update && chezmoi init && chezmoi apply
-            }
+}
+if($ENV:CHEZMOI -ne 1){
+    if ($(chezmoi git pull -- --autostash --rebase && chezmoi diff | Out-String) -ne $null){
+        # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
+        
+        # https://stackoverflow.com/a/60101530/12603110 - Prompt for yes or no - without repeating on new line if wrong input
+        $Cursor = [System.Console]::CursorTop
+        Do {
+            [System.Console]::CursorTop = $Cursor
+            Clear-Host
+            $Answer = Read-Host -Prompt 'Chezmoi changes detecter! Install them now? (y/n)'
+        }
+        Until ($Answer -eq 'y' -or $Answer -eq 'n')
+        if($Answer -eq 'y'){
+            chezmoi update && chezmoi init && chezmoi apply
         }
     }
 }
