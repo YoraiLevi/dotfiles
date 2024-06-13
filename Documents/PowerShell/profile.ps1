@@ -158,7 +158,6 @@ function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $Tr
         }
         iex ($ENV:EDITOR + " " + $chezmoi_template_path + " " + $chezmoi_init)
     }
-    Clear-Host
 }
 
 function which($name) {
