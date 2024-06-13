@@ -46,7 +46,7 @@ if ($(try{Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Sile
 if($ENV:CHEZMOI -ne 1){
     $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase && chezmoi diff | Out-String)
     $NoChanges = "Current branch master is up to date.", "Already up to date."
-    if (-not ($Chezmoi_diff.trim() -in $NoChanges)){
+    if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)){
         # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
         Write-Host $Chezmoi_diff
         # https://stackoverflow.com/a/60101530/12603110 - Prompt for yes or no - without repeating on new line if wrong input
