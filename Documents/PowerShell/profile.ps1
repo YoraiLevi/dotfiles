@@ -48,12 +48,11 @@ if($ENV:CHEZMOI -ne 1){
     $NoChanges = "Current branch master is up to date.", "Already up to date."
     if (-not ($Chezmoi_diff.trim() -in $NoChanges)){
         # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
-        Write-Host Chezmoi_diff
+        Write-Host $Chezmoi_diff
         # https://stackoverflow.com/a/60101530/12603110 - Prompt for yes or no - without repeating on new line if wrong input
         $Cursor = [System.Console]::CursorTop
         Do {
             [System.Console]::CursorTop = $Cursor
-            Clear-Host
             $Answer = Read-Host -Prompt 'Chezmoi changes detecter! Install them now? (y/n)'
         }
         Until ($Answer -eq 'y' -or $Answer -eq 'n')
