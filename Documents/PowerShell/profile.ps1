@@ -44,6 +44,7 @@ if ($(try{Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Sile
     Update-PowerShell
 }
 if($ENV:CHEZMOI -ne 1){
+    write-host "change 2"
     $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase && chezmoi diff | Out-String)
     $NoChanges = "Current branch master is up to date.", "Already up to date."
     if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)){
