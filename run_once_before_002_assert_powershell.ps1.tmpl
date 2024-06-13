@@ -1,0 +1,8 @@
+#Requires -PSEdition Core
+{{ if eq .chezmoi.os "windows" -}}
+# PowerShell -noprofile -command { Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned}
+# https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#the-universal-sortable-u-format-specifier
+"$(Date -Format ""yyyy'-'MM'-'dd HH':'mm':'ss'Z'"") : CHEZMOI PWSH OK!" | Out-File .CHEZMOI_ASSERT -Encoding ASCII -Append
+$PSVersionTable
+{{ end -}}
+# Requires -RunAsAdministrator

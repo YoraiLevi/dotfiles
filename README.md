@@ -8,7 +8,7 @@ iex "&{$(irm 'https://get.chezmoi.io/ps1')} init --apply '$GITHUB_USERNAME'"
 
 [Debugging all `run_` scripts](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/#clear-the-state-of-all-run_onchange_-and-run_once_-scripts)
 ```
-chezmoi state delete-bucket --bucket=entryState; chezmoi state delete-bucket --bucket=scriptState; chezmoi apply
+chezmoi state delete-bucket --bucket=entryState; chezmoi state delete-bucket --bucket=scriptState; chezmoi init; chezmoi apply
 ```
 
 TODO read about [Special files and directories](https://www.chezmoi.io/reference/special-files-and-directories/)  
@@ -20,3 +20,13 @@ test again and report bug related to vscode typing issue when editor is specifie
 reference examples:  
 https://github.com/mimikun/dotfiles/tree/master  
 https://github.com/SeeminglyScience/dotfiles/tree/main  
+
+Avoiding admin: What registry objects could be (over)written using `HKEY_CURRENT_USER` https://stackoverflow.com/a/19149700/12603110
+How to install chocolatey software without admin?
+
+Character order:
+```
+PS> [string](33..126 | %{$([string][char]$_)} | sort)
+
+_ - , ; : ! ? . ' " ( ) [ ] { } @ * / \ & # % ` ^ + < = > | ~ $ 0 1 2 3 4 5 6 7 8 9 A a B b C c d D e E f F g G h H I i j J K k L l m M n N o O P p Q q R r s S T t U u v V w W x X y Y Z z
+```

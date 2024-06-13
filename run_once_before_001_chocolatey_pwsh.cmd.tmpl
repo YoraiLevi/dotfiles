@@ -1,0 +1,15 @@
+{{ if eq .chezmoi.os "windows" -}}
+@echo off
+REM https://stackoverflow.com/a/38856823/12603110 - How to detect if CMD is running as Administrator
+net.exe session 1>NUL 2>NUL || (Echo This script requires elevated rights. & Exit /b 1)
+
+REM https://stackoverflow.com/a/25696405/12603110 - How to test if an executable exists in the %PATH%
+where /q choco
+IF ERRORLEVEL 1 (
+    @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+)
+where /q pwsh
+IF ERRORLEVEL 1 (
+    choco install pwsh
+)
+{{ end -}}

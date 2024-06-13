@@ -8,3 +8,9 @@
 #[edit]
 #    command = "code-insders" # doesn't work with `chezmoi edit`, $ENV:EDITOR does work
 #    flags = ["--wait"]
+
+[interpreters]
+    py = { command = 'python3' }
+    js = { command = 'node' }
+    ts = { command = 'ts-node' }
+    ps1 = { command = "pwsh", args = ["-NoLogo"] }
