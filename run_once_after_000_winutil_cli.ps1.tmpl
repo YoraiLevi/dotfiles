@@ -5,5 +5,5 @@
 echo '$ENV:ChocolateyInstall', $ENV:ChocolateyInstall
 Import-Module $ENV:ChocolateyInstall/helpers/chocolateyProfile.psm1; refreshenv
 
-./bin/winutil_cli.ps1 -TweakNames WPFEssTweaksRemoveOnedrive
+./bin/winutil_cli.ps1 -TweakNames WPFEssTweaksRemoveOnedrive -ExtraTweaks @() -ExtraDNSProviders @() -ExtraWindowsFeaturesBundles @()
 {{- end -}}
