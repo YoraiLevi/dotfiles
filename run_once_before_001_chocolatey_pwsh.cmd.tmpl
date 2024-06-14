@@ -10,6 +10,6 @@ IF ERRORLEVEL 1 (
 )
 where /q pwsh
 IF ERRORLEVEL 1 (
-    REM choco install pwsh -y
+    powershell.exe -NoProfile -Command "choco install pwsh -y"
 )
 {{ end -}}

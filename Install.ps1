@@ -9,5 +9,5 @@ function Throw-NotAdministrator {
 }
 Throw-NotAdministrator -ErrorAction Stop
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-choco install pwsh
+# choco install pwsh
 powershell.exe -NoProfile -Command {$GITHUB_USERNAME = "YoraiLevi"; cd $HOME; iex "&{$(irm 'https://get.chezmoi.io/ps1')} init --apply 'YoraiLevi'"}
