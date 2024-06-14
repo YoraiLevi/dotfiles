@@ -3,7 +3,7 @@
     command = "pwsh.exe"
 
 [env]
-    BaseBoard = "{{ output "powershell.exe" "-NoProfile" "try{(Get-WmiObject -class Win32_BaseBoard).product}catch{"TP412FAC"}" | trim}}"
+    BaseBoard = "{{ output "powershell.exe" "-NoProfile" "try{(Get-WmiObject -class Win32_BaseBoard).product}catch{'TP412FAC'}" | trim}}"
     ChocolateyInstall = "C:/ProgramData/chocolatey"
 {{ end -}}
 
