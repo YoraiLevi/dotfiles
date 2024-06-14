@@ -1,6 +1,9 @@
 {{ if eq .chezmoi.os "windows" -}}
 [cd]
     command = "pwsh.exe"
+
+[scriptEnv]
+    ChocolateyInstall = "C:/ProgramData/chocolatey"
 {{ end -}}
 
 [git]
