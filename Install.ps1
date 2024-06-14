@@ -14,4 +14,4 @@ if ($GITHUB_USERNAME -eq $null){
     $GITHUB_USERNAME = "YoraiLevi"
 }
 (Get-WmiObject -class Win32_BaseBoard).product # init value?
-powershell.exe -NoProfile -c "cd `$HOME; iex &{`$(irm 'https://get.chezmoi.io/ps1')} init --apply '$GITHUB_USERNAME'"
+powershell.exe -NoProfile -Command {cd $HOME; iex "&{$(irm 'https://get.chezmoi.io/ps1')} init --apply '$GITHUB_USERNAME'"}
