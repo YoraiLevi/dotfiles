@@ -1,0 +1,24 @@
+{{ if eq .chezmoi.os "windows" -}}
+["./bin/TTS.exe"]
+    type = "file"
+    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/main.exe"
+    refreshPeriod = "168h"
+    executable = true
+["./bin/REMAP.exe"]
+    type = "file"
+{{- if contains .BaseBoard "TP412FAC" }}
+    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/Vivobook_ASUSLaptop.TP412FAC_TP412FA.exe"
+{{- else }}
+    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/BaseRemap.exe"
+{{- end }}
+    refreshPeriod = "168h"
+    executable = true
+{{- if contains .BaseBoard "TP412FAC" }}
+["./Downloads/interception_driver.exe"]
+    type = "archive-file"
+    url = "https://github.com/YoraiLevi/ahk-autohotkeys/raw/master/KeyboardRemap/Lib/Interception.zip"
+    path = "Interception/command line installer/install-interception.exe"
+    executable = true
+{{- end }}
+{{- end -}}
+

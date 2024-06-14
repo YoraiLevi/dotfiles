@@ -1,5 +1,5 @@
 {{ if eq .chezmoi.os "windows" -}}
-{{- if contains .chezmoi.config.scriptEnv.BaseBoard "TP412FAC" }}
+{{- if contains .BaseBoard "TP412FAC" }}
 @echo off
 REM https://stackoverflow.com/a/38856823/12603110 - How to detect if CMD is running as Administrator
 net.exe session 1>NUL 2>NUL || (Echo This script requires elevated rights. & Exit /b 1)
