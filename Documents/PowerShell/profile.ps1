@@ -2,7 +2,6 @@ $ENV:EDITOR = if ($null -ne (Get-Command code-insiders -ErrorAction SilentlyCont
 Set-Alias -Name code -Value $ENV:EDITOR
 Set-Alias -Name vscode -Value $ENV:EDITOR
 $ENV:EDITOR = "$ENV:EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
-
 # if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
 # }
 try {
@@ -42,7 +41,7 @@ function Update-PowerShell {
 if ($(try{Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue)}catch{}) -lt $(Get-Date)){
     (Get-Date).Date.AddDays(1).DateTime > "$PSScriptRoot/date.tmp"
     if($ENV:CHEZMOI -ne 1){
-        $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase && chezmoi diff | Out-String)
+        $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase ; chezmoi diff) | Out-String
         $NoChanges = "Current branch master is up to date.", "Already up to date."
         if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)){
             # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
@@ -55,7 +54,7 @@ if ($(try{Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Sile
             }
             Until ($Answer -eq 'y' -or $Answer -eq 'n')
             if($Answer -eq 'y'){
-                chezmoi update && chezmoi init && chezmoi apply | Out-null
+                (chezmoi update) -and (chezmoi init) -and (chezmoi apply)
             }
         }
     }
@@ -140,7 +139,7 @@ Set-Alias -Name edp -Value Edit-Profile
 function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $True, [switch]$Push = $True){
     if($EditChezmoi){
         if($Template){
-            chezmoi edit-config-template && chezmoi init
+            (chezmoi edit-config-template) -and (chezmoi init)
             chezmoi git push
         }
         else{
@@ -151,7 +150,7 @@ function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $Tr
     else{
         if($Template){
             $chezmoi_template_path = "$HOME/.local/share/chezmoi/.chezmoi.toml.tmpl"
-            $chezmoi_init = "&& chezmoi init"
+            $chezmoi_init = "; chezmoi init"
         }
         else {
             $chezmoi_template_path = "$HOME/.config/chezmoi/chezmoi.toml" 
