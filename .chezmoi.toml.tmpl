@@ -4,7 +4,6 @@
 
 [scriptEnv]
     BaseBoard = "{{ output "powershell.exe" "-NoProfile" "(Get-WmiObject -class Win32_BaseBoard).product" | trim}}"
-    ChocolateyInstall = "C:/ProgramData/chocolatey"
 {{ end -}}
 
 [git]
