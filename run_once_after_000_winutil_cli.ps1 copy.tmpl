@@ -1,0 +1,9 @@
+{{ if eq .chezmoi.os "windows" -}}
+#Requires -PSEdition Core
+#Requires -RunAsAdministrator
+
+echo '$ENV:ChocolateyInstall', $ENV:ChocolateyInstall
+Import-Module $ENV:ChocolateyInstall/helpers/chocolateyProfile.psm1; refreshenv
+
+./bin/winutil_cli.ps1 -TweakNames WPFEssTweaksRemoveOnedrive -WhatIf
+{{- end -}}

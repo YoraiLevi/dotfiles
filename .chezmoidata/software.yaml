@@ -5,10 +5,19 @@ software:
     - name: miniforge3
       params: /AddToPath:1 /RegisterPython:0
     - name: fnm
-    - name: office365business
-      params: /productid:O365HomePremRetail /exclude:Access Groove Lync OneDrive OneNote Outlook Publisher /updates:TRUE /eula:TRUE
-# force?
-# upgrade?
+    # - name: office365business
+    # params: /productid:O365HomePremRetail /exclude:Access Groove Lync OneDrive OneNote Outlook Publisher /updates:TRUE /eula:TRUE
+  # force?
+  # upgrade?
   winget:
-    - name: 9nblggh1zbkw
+    - name: 9nblggh1zbkw # dynamic theme
       source: msstore
+python:
+  pip:
+    - name: virtualenv
+fnm:
+  - node_version: "lts-latest"
+    global_modules:
+      - name: npm@latest
+      - name: typescript
+      - name: ts-node

@@ -228,6 +228,138 @@ Function Touch-File {
 }
 Set-Alias -Name touch -Value Touch-File
 
+# https://gist.github.com/jaw/4d1d858b87a5c208fbe42fd4d4aa97a4 - EnvPaths.psm1
+function Add-EnvPathLast {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Path,
+
+        [ValidateSet('Machine', 'User', 'Session')]
+        [string] $Container = 'Session'
+    )
+
+    if ($Container -ne 'Session') {
+        $containerMapping = @{
+            Machine = [EnvironmentVariableTarget]::Machine
+            User = [EnvironmentVariableTarget]::User
+        }
+        $containerType = $containerMapping[$Container]
+
+        $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
+        if ($persistedPaths -notcontains $Path) {
+            $persistedPaths = $persistedPaths + $Path | where { $_ }
+            [Environment]::SetEnvironmentVariable('Path', $persistedPaths -join ';', $containerType)
+        }
+    }
+
+    $envPaths = $env:Path -split ';'
+    if ($envPaths -notcontains $Path) {
+        $envPaths = $envPaths + $Path | where { $_ }
+        $env:Path = $envPaths -join ';'
+    }
+}
+
+function Add-EnvPathFirst {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Path,
+
+        [ValidateSet('Machine', 'User', 'Session')]
+        [string] $Container = 'Session'
+    )
+
+    if ($Container -ne 'Session') {
+        $containerMapping = @{
+            Machine = [EnvironmentVariableTarget]::Machine
+            User = [EnvironmentVariableTarget]::User
+        }
+        $containerType = $containerMapping[$Container]
+
+        $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
+        if ($persistedPaths -notcontains $Path) {
+            $persistedPaths = ,$Path + $persistedPaths | where { $_ }
+            [Environment]::SetEnvironmentVariable('Path', $persistedPaths -join ';', $containerType)
+        }
+    }
+
+    $envPaths = $env:Path -split ';'
+    if ($envPaths -notcontains $Path) {
+        $envPaths = ,$Path + $envPaths | where { $_ }
+        $env:Path = $envPaths -join ';'
+    }
+}
+
+function Remove-EnvPath {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Path,
+
+        [ValidateSet('Machine', 'User', 'Session')]
+        [string] $Container = 'Session'
+    )
+
+    if ($Container -ne 'Session') {
+        $containerMapping = @{
+            Machine = [EnvironmentVariableTarget]::Machine
+            User = [EnvironmentVariableTarget]::User
+        }
+        $containerType = $containerMapping[$Container]
+
+        $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
+        $persistedPaths = $persistedPaths | where { $_ -and $_ -notlike $Path }
+        [Environment]::SetEnvironmentVariable('Path', $persistedPaths -join ';', $containerType)
+    }
+
+    $envPaths = $env:Path -split ';'
+    # filter out the possible wildcard path
+    $envPaths = $envPaths | where { $_ -and $_ -notlike $Path }
+    $env:Path = $envPaths -join ';'
+}
+
+function Get-EnvPath {
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateSet('Machine', 'User')]
+        [string] $Container
+    )
+
+    $containerMapping = @{
+        Machine = [EnvironmentVariableTarget]::Machine
+        User = [EnvironmentVariableTarget]::User
+    }
+    $containerType = $containerMapping[$Container]
+
+    [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';' |
+        where { $_ }
+}
+
+function Find-EnvPath {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Path,
+
+        [ValidateSet('Machine', 'User', 'Session')]
+        [string] $Container = 'Session'
+    )
+
+    if ($Container -ne 'Session') {
+        $containerMapping = @{
+            Machine = [EnvironmentVariableTarget]::Machine
+            User = [EnvironmentVariableTarget]::User
+        }
+        $containerType = $containerMapping[$Container]
+
+        $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
+        $persistedPaths = $persistedPaths | where { $_ -and $_ -like $Path }
+
+        return $persistedPaths -ne $null
+    }
+
+    $envPaths = $env:Path -split ';'
+    # filter out the possible wildcard path
+    $envPaths = $envPaths | where { $_ -and $_ -like $Path }
+    return $envPaths -ne $null
+}
 
 # https://stackoverflow.com/a/51956864/12603110 - powershell - Remove all variables
 # $existingVariables = Get-Variable
