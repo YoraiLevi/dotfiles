@@ -1,7 +1,9 @@
 {{ if eq .chezmoi.os "windows" -}}
 #Requires -PSEdition Core
 #Requires -RunAsAdministrator
-$env:ChocolateyInstall\helpers\chocolateyProfile.psm1; refreshenv
+
+echo '$ENV:envChocolateyInstall', $ENV:envChocolateyInstall
+Import-Module C:/ProgramData/chocolatey/helpers/chocolateyProfile.psm1; refreshenv
 # C:\ProgramData\chocolatey\bin\choco.exe
 
 {{ range .software.choco -}}
