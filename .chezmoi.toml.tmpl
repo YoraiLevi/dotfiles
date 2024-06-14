@@ -3,7 +3,7 @@
     command = "pwsh.exe"
 
 [env]
-    BaseBoard = "{{ output "powershell.exe" "-NoProfile" "try{(Get-WmiObject -class Win32_BaseBoard).product}catch{'TP412FAC'}" | trim}}"
+    BaseBoard = "{{ output "powershell.exe" "-NoProfile" "(Get-WmiObject -class Win32_BaseBoard).product" | trim}}"
     ChocolateyInstall = "C:/ProgramData/chocolatey"
 {{ end -}}
 
@@ -18,7 +18,7 @@
 {{ if eq .chezmoi.os "windows" -}}
 [interpreters]
     py = { command = 'C:/Windows/py.exe', args = ["-3"]}
-    ps1 = { command = "C:/Program Files/PowerShell/7/pwsh.exe", args = ["-NoLogo"] }
+    ps1 = { command = "C:/Program Files/PowerShell/7/pwsh.exe", args = ["-NoLogo", "-NoProfile"] }
 {{ end -}}
 #    js = { command = 'node' }
 #    ts = { command = 'ts-node' }
