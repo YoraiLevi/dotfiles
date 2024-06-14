@@ -1,5 +1,4 @@
 {{ if eq .chezmoi.os "windows" -}}
-#Requires -PSEdition Core
 
 echo '$ENV:ChocolateyInstall', $ENV:ChocolateyInstall
 Import-Module $ENV:ChocolateyInstall/helpers/chocolateyProfile.psm1; refreshenv
