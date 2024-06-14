@@ -1,0 +1,60 @@
+
+regedit:
+  - name: admin_uac_password.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/uknown_source/admin_uac_password.reg
+  - name: eva.reg
+    url : https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/uknown_source/eva.reg
+  - name: Win32_long_paths_-_Enable.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/majorgeeks/Enable%20or%20Disable%20Win32%20Long%20Paths/Win32%20long%20paths%20-%20Enable.reg
+  - name: Disable_Web_Search_in_Windows_10_Version_2004.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/winaero/disable_web_search_2004/Disable%20Web%20Search%20in%20Windows%2010%20Version%202004.reg
+  - name: Show_open_windows_only.reg
+    url : https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/winaero/edge_tabs_in_alt_tab/Show%20open%20windows%20only.reg
+  - name: Enable_classic_context_menus_in_Windows_11.reg
+    url : https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/winaero/classic_full_context_menus/Enable%20classic%20context%20menus%20in%20Windows%2011.reg
+  - name: Use_Dark_colors_for_default_app_mode_for_current_user.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Choose%20Dark%20or%20Light%20Mode%20for%20Colors%20in%20Windows%2011/Use_Dark_colors_for_default_app_mode_for_current_user.reg
+  - name: Use_Dark_colors_for_default_Windows_mode_for_current_user.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Choose%20Dark%20or%20Light%20Mode%20for%20Colors%20in%20Windows%2011/Use_Dark_colors_for_default_Windows_mode_for_current_user.reg
+  - name: Remove_Edit_with_Clipchamp_context_menu_for_current_user.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Add%20or%20Remove%20Edit%20with%20Clipchamp%20Context%20Menu%20in%20Windows%2011/Remove_Edit_with_Clipchamp_context_menu_for_current_user.reg
+  - name: TURN_ON_Automatically_select_accent_color.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Change%20Accent%20Color%20in%20Windows%2011/TURN_ON_Automatically_select_accent_color.reg
+  - name: Turn_ON_Clipboard_History_for_current_user.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Enable%20or%20Disable%20Clipboard%20History%20in%20Windows%2011/Turn_ON_Clipboard_History_for_current_user.reg
+  - name: Turn_ON_Clipboard_sync_across_your_devices_and_automatically_sync.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Enable%20or%20Disable%20Clipboard%20Sync%20Across%20Devices%20in%20Windows%2011/Turn_ON_Clipboard_sync_across_your_devices_and_automatically_sync.reg
+  - name: Turn_OFF_Cloud_content_search_for_Work_or_School_account.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Enable%20or%20Disable%20Cloud%20Content%20Search%20in%20Windows%2011/Turn_OFF_Cloud_content_search_for_Work_or_School_account.reg
+  - name: Disable_Cloud_Search_for_all_users.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Enable%20or%20Disable%20Cloud%20Content%20Search%20in%20Windows%2011/Disable_Cloud_Search_for_all_users.reg
+  - name: Turn_OFF_Cloud_content_search_for_Microsoft_account.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Enable%20or%20Disable%20Cloud%20Content%20Search%20in%20Windows%2011/Turn_OFF_Cloud_content_search_for_Microsoft_account.reg
+  - name: Turn_on_Developer_Mode.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Enable%20or%20Disable%20Developer%20Mode%20in%20Windows%2011/Turn_on_Developer_Mode.reg
+  - name: Enable_Hibernate.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Enable%20or%20Disable%20Hibernate%20in%20Windows%2011/Enable_Hibernate.reg
+  - name: Disable_OneDrive_for_all_users.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Enable%20or%20Disable%20OneDrive%20in%20Windows%2011/Disable_OneDrive_for_all_users.reg
+  - name: Turn_OFF_Show_recommendations_for_tips_shortcuts_new-apps_amd_more_on_Start.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Show%20or%20Hide%20File%20Name%20Extensions%20for%20Known%20File%20Types%20in%20Windows%2011/Show_extensions_for_known_file_types.reg
+  - name: Turn_off_AutoPlay_for_current_user.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Turn%20On%20or%20Off%20AutoPlay%20in%20Windows%2011/Turn_off_AutoPlay_for_current_user.reg
+  - name: Add_Hibernate_to_power_menu.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Add%20or%20Remove%20Hibernate%20on%20Power%20menu%20in%20Windows%2011/Add_Hibernate_to_power_menu.reg
+  - name: Turn_On_show_accent_color_on_Start_menu_and_taskbar_for_current_user.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Turn%20On%20or%20Off%20Show%20Accent%20Color%20on%20Start%20menu%20and%20Taskbar%20in%20Windows%2011/Turn_On_show_accent_color_on_Start_menu_and_taskbar_for_current_user.reg
+  - name: Turn_ON_Restart_apps_after_sign_in_for_current_user.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/tenforums/How%20to%20Turn%20On%20or%20Off%20Automatically%20Restart%20Apps%20after%20Sign%20In%20in%20Windows%2010/Turn_ON_Restart_apps_after_sign_in_for_current_user.reg
+  - name: Disable_Caps_Lock.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/tenforums/How%20to%20Enable%20or%20Disable%20the%20Caps%20Lock%20Key%20in%20Windows%2010/Disable_Caps_Lock.reg
+  - name: Enable_always_use_LastActiveClick_for_taskbar.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Enable%20or%20Disable%20Always%20Use%20Last%20Active%20Click%20on%20Taskbar%20in%20Windows%2011/Enable_always_use_LastActiveClick_for_taskbar.reg
+  - name: Turn_ON_automatically_restart_apps_when_sign_back_in_for_current_user.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Turn%20On%20or%20Off%20Automatically%20Restart%20Apps%20when%20Sign%20back%20in%20Windows%2011/Turn_ON_automatically_restart_apps_when_sign_back_in_for_current_user.reg
+  - name: Dont_show_tabs_from_apps_when_snapping_or_Alt%2BTab.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Change%20what%20Alt%2BTab%20Shows%20in%20Windows%2011/Dont_show_tabs_from_apps_when_snapping_or_Alt%2BTab.reg
+  - name: Turn_Off_Use_check_boxes_to_select_items.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Turn%20On%20or%20Off%20Use%20Check%20Boxes%20to%20Select%20Items%20in%20Windows%2011/Turn_Off_Use_check_boxes_to_select_items.reg
+  - name: Show_extensions_for_known_file_types.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Show%20or%20Hide%20File%20Name%20Extensions%20for%20Known%20File%20Types%20in%20Windows%2011/Show_extensions_for_known_file_types.reg

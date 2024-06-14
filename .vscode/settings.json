@@ -1,0 +1,11 @@
+{
+"files.associations": {
+    "*.ps1.tmpl": "powershell",
+    "*.sh.tmpl": "shellscript",
+    "*.js.tmpl": "javascript",
+    "*.ts.tmpl": "typescript",
+    "*.toml.tmpl": "toml",
+    "*.yaml.tmpl": "yaml",
+    "*.json.tmpl": "json",
+    }
+}

@@ -1,0 +1,7 @@
+{{ if eq .chezmoi.os "windows" -}}
+{{ range .regedit}}
+['./Downloads/regedits/{{ .name }}']
+    type = "file"
+    url = {{.url | quote}}
+{{end -}}
+{{- end -}}

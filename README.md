@@ -2,8 +2,14 @@
 
 To setup a system:
 ```
+$ENV:SYSTEM_NAME = ""
 $GITHUB_USERNAME = "YoraiLevi"
 irm https://raw.githubusercontent.com/YoraiLevi/dotfiles/master/Install.ps1 | iex
+```
+
+```
+$ENV:SYSTEM_NAME = "TP412FAC"
+$ENV:SYSTEM_NAME = "VirtualMachine"
 ```
 
 [Debugging all `run_` scripts](https://www.chezmoi.io/user-guide/use-scripts-to-perform-actions/#clear-the-state-of-all-run_onchange_-and-run_once_-scripts)
@@ -21,6 +27,10 @@ test again and report bug related to vscode typing issue when editor is specifie
 1) don't use editor variable in env  
 2) dont use conda/posh  
 3) pwsh.exe vs cmd.exe vs default  
+4) getting system info:
+   1) https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem
+   2) https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-systemenclosure
+   3) https://techuisitive.com/enclosure-chassis-types-value-description-configmgr-sccm/?expand_article=1
 
 reference examples:  
 https://github.com/mimikun/dotfiles/tree/master  
@@ -35,3 +45,4 @@ PS> [string](33..126 | %{$([string][char]$_)} | sort)
 
 _ - , ; : ! ? . ' " ( ) [ ] { } @ * / \ & # % ` ^ + < = > | ~ $ 0 1 2 3 4 5 6 7 8 9 A a B b C c d D e E f F g G h H I i j J K k L l m M n N o O P p Q q R r s S T t U u v V w W x X y Y Z z
 ```
+
