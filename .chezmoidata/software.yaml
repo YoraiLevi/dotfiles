@@ -1,6 +1,7 @@
 software:
   choco:
     - name: gsudo
+    - name: git
     - name: vscode-insiders
     - name: python
     - name: miniforge3
