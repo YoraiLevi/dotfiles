@@ -16,12 +16,16 @@ Import-Module $ENV:ChocolateyInstall/helpers/chocolateyProfile.psm1; refreshenv
 {{ end -}}
 {{ end }}
 
-# Python modules
 Import-Module $ENV:ChocolateyInstall/helpers/chocolateyProfile.psm1; refreshenv
-{{ range .python.pip -}}
-{{ if get . "name" | empty | not -}} pip install {{ .name }} {{- end}}
-{{ end }}
+# Python modules
+if ((Get-Command pip).Source){
+    {{ range .python.pip -}}
+    {{ if get . "name" | empty | not -}} pip install {{ .name }} {{- end}}
+    {{ end }}
+}
+
 # Nodejs
+if ((Get-Command fnm).Source){
 fnm env --use-on-cd | Out-String | Invoke-Expression
 {{- range .fnm}}
     {{- if get . "node_version" | empty | not}}
@@ -30,7 +34,8 @@ fnm env --use-on-cd | Out-String | Invoke-Expression
             {{ if get . "global_modules" | empty | not}}
             {{- range .global_modules}}
                 {{- if get . "name" | empty | not -}} npm install -g {{ .name }}{{end}}
-            {{ end -}}
-        {{- end -}}
+        {{ end -}}
     {{- end -}}
+{{- end -}}
+}
 {{- end -}}
