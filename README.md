@@ -11,6 +11,11 @@ cd $HOME; iex "&{$(irm 'https://get.chezmoi.io/ps1')} init --apply '$GITHUB_USER
 chezmoi state delete-bucket --bucket=entryState; chezmoi state delete-bucket --bucket=scriptState; chezmoi init; chezmoi apply
 ```
 
+Debugging templates
+```
+cat template.tmpl | chezmoi execute-template $_
+```
+
 TODO read about [Special files and directories](https://www.chezmoi.io/reference/special-files-and-directories/)  
 test again and report bug related to vscode typing issue when editor is specified on toml  
 1) don't use editor variable in env  

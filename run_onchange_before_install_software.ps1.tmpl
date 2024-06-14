@@ -1,5 +1,11 @@
 {{ if eq .chezmoi.os "windows" -}}
 #Requires -PSEdition Core
 #Requires -RunAsAdministrator
-echo "choco install $name"
+{{ range .software.choco -}}
+{{ if get . "name" | empty | not -}} choco install {{ .name }} {{- if get . "params" | empty | not }} --params {{ .params | squote | quote }} {{- end }} -y {{- end}}
 {{ end -}}
+
+{{ range .software.winget -}}
+{{ if get . "name" | empty | not -}} winget install {{ .name }} {{- if get . "source" | empty | not }} --source {{ .source }} {{- end}} --accept-source-agreements --accept-package-agreements {{- end}}
+{{ end -}}
+{{- end -}}
