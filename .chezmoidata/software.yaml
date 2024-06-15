@@ -1,14 +1,52 @@
 software:
   choco:
+    # Minimal
     - name: gsudo
     - name: git
+    - name: poshgit
     - name: vscode-insiders
     - name: python
+    - name: graphviz
     - name: miniforge3
       params: /AddToPath:1 /RegisterPython:0
     - name: fnm
-    # - name: office365business
-    # params: /productid:O365HomePremRetail /exclude:Access Groove Lync OneDrive OneNote Outlook Publisher /updates:TRUE /eula:TRUE
+    - name: jre8
+    # Essentials
+    - name: 7zip
+    - name: Everything
+    - name: vlc
+
+    - name: autohotkey
+    - name: ffmpeg
+    - name: microsoft-openjdk17
+
+    - name: bitwarden
+    - name: google-drive-file-stream
+    - name: jdownloader
+    - name: qbittorrent
+    - name: wget
+    - name: czkawka
+    - name: mousewithoutborders
+    - name: Recuva
+    - name: winmerge
+    - name: wiztree
+    
+    - name: cmake
+    - name: Cygwin
+    - name: make
+    - name: rust
+
+    - name: act-cli
+    - name: docker-desktop
+    - name: vagrant
+
+    - name: discord
+    - name: zoom
+    - name: audacity
+    - name: audacity-ffmpeg
+
+    - name: office365business
+      params: /productid:O365HomePremRetail /exclude:Access Groove Lync OneDrive OneNote Outlook Publisher /updates:TRUE /eula:TRUE
   # force?
   # upgrade?
   winget:
@@ -23,3 +61,7 @@ fnm:
       - name: npm@latest
       - name: typescript
       - name: ts-node
+powershell:
+  - name: newtonsoft.json
+  - name: PsDownload
+  - name: powershell-yaml

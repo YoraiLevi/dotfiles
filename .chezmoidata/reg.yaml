@@ -1,4 +1,7 @@
 
+# https://github.com/twonth/winning-at-windows
+# https://www.elevenforum.com/t/add-custom-shortcuts-to-win-x-quick-link-menu-in-windows-11.1024/
+# https://www.elevenforum.com/t/add-or-remove-d-drive-in-navigation-pane-of-file-explorer-in-windows-11.7636/
 regedit:
   - name: admin_uac_password.reg
     url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/uknown_source/admin_uac_password.reg
@@ -42,19 +45,26 @@ regedit:
     url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Turn%20On%20or%20Off%20AutoPlay%20in%20Windows%2011/Turn_off_AutoPlay_for_current_user.reg
   - name: Add_Hibernate_to_power_menu.reg
     url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Add%20or%20Remove%20Hibernate%20on%20Power%20menu%20in%20Windows%2011/Add_Hibernate_to_power_menu.reg
-  - name: Turn_On_show_accent_color_on_Start_menu_and_taskbar_for_current_user.reg
-    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Turn%20On%20or%20Off%20Show%20Accent%20Color%20on%20Start%20menu%20and%20Taskbar%20in%20Windows%2011/Turn_On_show_accent_color_on_Start_menu_and_taskbar_for_current_user.reg
   - name: Turn_ON_Restart_apps_after_sign_in_for_current_user.reg
     url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/tenforums/How%20to%20Turn%20On%20or%20Off%20Automatically%20Restart%20Apps%20after%20Sign%20In%20in%20Windows%2010/Turn_ON_Restart_apps_after_sign_in_for_current_user.reg
   - name: Disable_Caps_Lock.reg
     url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/tenforums/How%20to%20Enable%20or%20Disable%20the%20Caps%20Lock%20Key%20in%20Windows%2010/Disable_Caps_Lock.reg
   - name: Enable_always_use_LastActiveClick_for_taskbar.reg
-    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Enable%20or%20Disable%20Always%20Use%20Last%20Active%20Click%20on%20Taskbar%20in%20Windows%2011/Enable_always_use_LastActiveClick_for_taskbar.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Enable%20or%20Disable%20Always%20Use%20Last%20Active%20Click%20on%20Taskbar%20in%20Windows%2011/Enable_always_use_LastActiveClick_for_taskbar.reg
   - name: Turn_ON_automatically_restart_apps_when_sign_back_in_for_current_user.reg
-    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Turn%20On%20or%20Off%20Automatically%20Restart%20Apps%20when%20Sign%20back%20in%20Windows%2011/Turn_ON_automatically_restart_apps_when_sign_back_in_for_current_user.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Turn%20On%20or%20Off%20Automatically%20Restart%20Apps%20when%20Sign%20back%20in%20Windows%2011/Turn_ON_automatically_restart_apps_when_sign_back_in_for_current_user.reg
   - name: Dont_show_tabs_from_apps_when_snapping_or_Alt%2BTab.reg
-    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Change%20what%20Alt%2BTab%20Shows%20in%20Windows%2011/Dont_show_tabs_from_apps_when_snapping_or_Alt%2BTab.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Change%20what%20Alt%2BTab%20Shows%20in%20Windows%2011/Dont_show_tabs_from_apps_when_snapping_or_Alt%2BTab.reg
   - name: Turn_Off_Use_check_boxes_to_select_items.reg
-    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Turn%20On%20or%20Off%20Use%20Check%20Boxes%20to%20Select%20Items%20in%20Windows%2011/Turn_Off_Use_check_boxes_to_select_items.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Turn%20On%20or%20Off%20Use%20Check%20Boxes%20to%20Select%20Items%20in%20Windows%2011/Turn_Off_Use_check_boxes_to_select_items.reg
   - name: Show_extensions_for_known_file_types.reg
-    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Show%20or%20Hide%20File%20Name%20Extensions%20for%20Known%20File%20Types%20in%20Windows%2011/Show_extensions_for_known_file_types.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Show%20or%20Hide%20File%20Name%20Extensions%20for%20Known%20File%20Types%20in%20Windows%2011/Show_extensions_for_known_file_types.reg
+  - name: Start_Layout_show_more_recommendations.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Change%20Start%20Layout%20to%20Show%20More%20Pins%20or%20More%20Recommendations%20in%20Windows%2011/Start_Layout_show_more_recommendations.reg
+  - name: Add_Users_Files_Desktop_Icon.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/elevenforum/Add%20or%20Remove%20Desktop%20Icons%20in%20Windows%2011/Add_Users_Files_Desktop_Icon.reg
+  - name: Enable_Num_Lock_on_Sign-in_screen.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/tenforums/How%20to%20Enable%20or%20Disable%20Num%20Lock%20on%20Sign-in%20Screen%20in%20Windows%2010/Enable_Num_Lock_on_Sign-in_screen.reg
+  # Desktop only?
+  - name: Enable_lock_screen_Ctrl_Alt_Del_Secure_sign-in_for_all_users.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Enable%20or%20Disable%20Ctrl%2BAlt%2BDelete%20Secure%20Sign-in%20on%20Lock%20Screen%20in%20Windows%2011/Enable_lock_screen_Ctrl%2BAlt%2BDel_Secure_sign-in_for_all_users.reg
