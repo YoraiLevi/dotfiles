@@ -1,0 +1,10 @@
+{{ if eq .chezmoi.os "windows" -}}
+["./bin/ProcessExplorer.exe"]
+    # https://learn.microsoft.com/en-us/sysinternals/downloads/process-explorer
+    type = "archive-file"
+    url = "https://download.sysinternals.com/files/ProcessExplorer.zip"
+    path = "procexp.exe"
+    refreshPeriod = "168h"
+    executable = true
+{{- end -}}
+
