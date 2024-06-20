@@ -33,8 +33,14 @@ fnm env --use-on-cd | Out-String | Invoke-Expression
             {{ if get . "global_modules" | empty | not}}
             {{- range .global_modules}}
                 {{- if get . "name" | empty | not -}} npm install -g {{ .name }}{{end}}
-        {{ end -}}
+            {{ end -}}
+        {{- end -}}
     {{- end -}}
 {{- end -}}
 }
+{{ range .powershell}}
+{{- if get . "name" | empty | not }}
+PowerShellGet\Install-Module {{ .name }} -Scope CurrentUser -Force
+{{- end}}
+
 {{- end -}}

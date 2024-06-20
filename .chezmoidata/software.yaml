@@ -3,7 +3,6 @@ software:
     # Minimal
     - name: gsudo
     - name: git
-    - name: poshgit
     - name: vscode-insiders
     - name: python
     - name: graphviz
@@ -61,7 +60,9 @@ fnm:
       - name: npm@latest
       - name: typescript
       - name: ts-node
+
 powershell:
   - name: newtonsoft.json
   - name: PsDownload
   - name: powershell-yaml
+  - name: posh-git

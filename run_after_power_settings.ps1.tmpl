@@ -1,9 +1,11 @@
+{{ if eq .chezmoi.os "windows" -}}
+#Requires -RunAsAdministrator
+powercfg /h /size 100
+{{- end -}}
 # 'https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/'
 
 # tenforums/How%20to%20Turn%20On%20or%20Off%20Automatically%20Restart%20Apps%20after%20Sign%20In%20in%20Windows%2010/Turn_ON_Restart_apps_after_sign_in_for_current_user.reg
 # tenforums/How%20to%20Add%20or%20Remove%20Hibernate%20after%20from%20Power%20Options%20in%20Windows/Add_Hibernate_after_to_Power_Options.reg
-
-# powercfg /h /size 100
 
 # #if desktop
 # powercfg -change monitor-timeout-ac 15

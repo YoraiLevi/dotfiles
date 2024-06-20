@@ -138,4 +138,5 @@ function Find-EnvPath {
 
 {{ range .environment.User.Path}} Add-EnvPathFirst -Container User {{. | quote}}
 {{end -}}
+{{ range $name, $value:= .environment.User}} {{ if and ($name | empty | not) ((eq $name "Path") | not) -}} [Environment]::SetEnvironmentVariable({{$name | squote}}, {{$value | squote}}, [EnvironmentVariableTarget]::User){{end -}}{{end -}}
 {{- end -}}
