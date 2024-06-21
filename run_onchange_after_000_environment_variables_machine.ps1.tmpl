@@ -137,6 +137,7 @@ function Find-EnvPath {
     return $envPaths -ne $null
 }
 
-{{ range .environment.Machine.Path}} Add-EnvPathFirst -Container Machine {{. | quote}}{{end -}}
-
+{{ range .environment.Machine.Path}} Add-EnvPathFirst -Container User {{. | quote}}
+{{end -}}
+{{ range $name, $value:= .environment.Machine}} {{ if and ($name | empty | not) ((eq $name "Path") | not) -}} [Environment]::SetEnvironmentVariable({{$name | squote}}, {{$value | squote}}, [EnvironmentVariableTarget]::Machine){{end -}}{{end -}}
 {{- end -}}

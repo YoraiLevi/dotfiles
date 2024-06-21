@@ -1,5 +1,5 @@
 {{ if eq .chezmoi.os "windows" -}}
 #Requires -RunAsAdministrator
-{{ range .regedit}} reg.exe import ./Downloads/regedits/{{.name | quote}}
+{{ range .regedit}}Write-Host {{ .name | squote }} -NoNewline; reg.exe import ./Downloads/regedits/{{.name | squote }}
 {{end -}}
 {{- end -}}
