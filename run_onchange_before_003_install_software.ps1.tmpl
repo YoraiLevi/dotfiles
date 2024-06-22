@@ -32,7 +32,7 @@ fnm env --use-on-cd | Out-String | Invoke-Expression
         fnm use {{ .node_version }}
             {{ if get . "global_modules" | empty | not}}
             {{- range .global_modules}}
-                {{- if get . "name" | empty | not -}} Write-Host {{ .name | squote }} -NoNewline; npm install -g {{ .name }}{{end}}
+                {{- if get . "name" | empty | not -}} Write-Host {{ .name | squote }}; npm install -g {{ .name }}{{end}}
             {{ end -}}
         {{- end -}}
     {{- end -}}
