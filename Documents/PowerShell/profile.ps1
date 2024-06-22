@@ -227,6 +227,10 @@ Function Touch-File {
 }
 Set-Alias -Name touch -Value Touch-File
 
+function Get-Env {
+    Get-ChildItem env:
+}
+
 # https://gist.github.com/jaw/4d1d858b87a5c208fbe42fd4d4aa97a4 - EnvPaths.psm1
 function Add-EnvPathLast {
     param(
