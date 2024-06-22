@@ -31,6 +31,8 @@ test again and report bug related to vscode typing issue when editor is specifie
    1) https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem
    2) https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-systemenclosure
    3) https://techuisitive.com/enclosure-chassis-types-value-description-configmgr-sccm/?expand_article=1
+5) windows update pausing
+   1) https://stackoverflow.com/questions/62424065/pause-windows-update-for-up-to-35-days-and-find-out-until-which-date-updates-are
 
 reference examples:  
 https://github.com/mimikun/dotfiles/tree/master  
