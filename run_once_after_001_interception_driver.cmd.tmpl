@@ -3,7 +3,8 @@
 @echo off
 REM https://stackoverflow.com/a/38856823/12603110 - How to detect if CMD is running as Administrator
 net.exe session 1>NUL 2>NUL || (Echo This script requires elevated rights. & Exit /b 1)
-
+REM mouse        Mouse Upper Filter Dri Mouse Upper Filter Dri Kernel        Manual     Stopped    OK         FALSE       FALSE        4,096             8,192       0          16/02/2012 01:40:56    C:\Windows\system32\drivers\mouse.sys            4,096      
+REN keyboard     Keyboard Upper Filter  Keyboard Upper Filter  Kernel        Manual     Stopped    OK         FALSE       FALSE        4,096             8,192       0          16/02/2012 01:40:16    C:\Windows\system32\drivers\keyboard.sys         4,096      
 {{ .chezmoi.homeDir }}/Downloads/interception_driver.exe /install
 {{ end -}}
 {{ end -}}
