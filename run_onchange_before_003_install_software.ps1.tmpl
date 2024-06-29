@@ -40,7 +40,7 @@ fnm env --use-on-cd | Out-String | Invoke-Expression
 }
 {{ range .powershell}}
 {{- if get . "name" | empty | not }}
-PowerShellGet\Install-Module {{ .name }} -Scope CurrentUser -Force
+PowerShellGet\Install-Module {{ .name }} -Scope CurrentUser -Force {{- if get . "AllowClobber" }} -AllowClobber {{- end}}
 {{- end}}
 
 {{- end -}}

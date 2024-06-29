@@ -69,3 +69,4 @@ powershell:
   - name: powershell-yaml
   - name: posh-git
   - name: Pscx
+    AllowClobber: true
