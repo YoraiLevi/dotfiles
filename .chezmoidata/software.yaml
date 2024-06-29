@@ -68,3 +68,4 @@ powershell:
   - name: PsDownload
   - name: powershell-yaml
   - name: posh-git
+  - name: Pscx
