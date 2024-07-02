@@ -159,13 +159,26 @@ function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $Tr
     }
 }
 
+function Edit-Setup(){
+    code $(chezmoi source-path)
+}
+
 function which($name) {
     # will print location or source code
     $cmd = Get-Command $name -ErrorAction SilentlyContinue
     if ($cmd.CommandType -eq "Alias"){
         return which($cmd.Definition)
     }
-    return $cmd.Definition
+    if ($cmd.CommandType -eq "ApplicationInfo"){
+        return $cmd.Definition
+    }
+    if ($cmd.CommandType -eq "Cmdlet"){
+        return $cmd
+    }
+    if ($cmd.CommandType -eq "Function"){
+        Write-Output $cmd
+        return $cmd.Definition
+    }
 }
 
 function export($name, $value) {
@@ -201,7 +214,7 @@ Set-Alias -Name desktop -Value dtop
 
 # Enhanced Listing
 $PSDefaultParameterValues = @{"Format-Table:Autosize"=$true}
-function ll { ls -Force }
+function ll {param($Path='') ls -Path $Path -Force }
 
 # https://www.reddit.com/r/PowerShell/comments/fsv3kt/comment/fm4va8o/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 Function Touch-File {

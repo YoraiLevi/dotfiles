@@ -1,6 +1,8 @@
 {{ if eq .chezmoi.os "windows" -}}
 #Requires -RunAsAdministrator
-powercfg /h /size 100
+if (((Get-Item -Force /hiberfil.sys).Length - (get-wmiobject -class "Win32_ComputerSystem").TotalPhysicalMemory) -ne 0){
+    powercfg /h /size 100
+}
 {{- end -}}
 # 'https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/'
 

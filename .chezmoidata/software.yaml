@@ -20,7 +20,10 @@ software:
     - name: microsoft-openjdk17
 
     - name: bitwarden
-    - name: google-drive-file-stream
+    
+    - name: googledrive
+      params: /NoStart
+
     - name: jdownloader
     - name: qbittorrent
     - name: wget
@@ -29,6 +32,7 @@ software:
     - name: Recuva
     - name: winmerge
     - name: wiztree
+    - name: sysinternals
     
     - name: cmake
     - name: Cygwin
