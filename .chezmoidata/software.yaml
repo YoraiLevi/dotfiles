@@ -72,5 +72,8 @@ powershell:
   - name: PsDownload
   - name: powershell-yaml
   - name: posh-git
+  # - name: PesterMatchHashtable
+  # - name: Pester
+  # - name: PSScriptAnalyzer
   - name: Pscx
     AllowClobber: true
