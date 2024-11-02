@@ -55,6 +55,7 @@ powershell modules
 wsl stuff
 rust? compiled languages toolchains...
 registry -> learn how to merge without admin permission
+disable rotation https://superuser.com/a/1833703/1220772
 
 1) Validate templates compile
 2) Validate code could work in theory - linter etc
