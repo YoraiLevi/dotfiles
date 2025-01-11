@@ -49,6 +49,7 @@ _ - , ; : ! ? . ' " ( ) [ ] { } @ * / \ & # % ` ^ + < = > | ~ $ 0 1 2 3 4 5 6 7 
 ```
 
 # TODOS:
+https://app.sparkmailapp.com/web-share/ZYcTULhKr4caHTKFzmK3TeTTV2eMz0ILf9CBNZPl
 powercfg and power configurations, hibernation file
 explorer and taskbar pins
 powershell modules
