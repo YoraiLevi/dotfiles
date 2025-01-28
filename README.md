@@ -1,4 +1,13 @@
+# [Docs & Features](DOCS_FEATURES.md)
 # [Chezmoi Dotfile repository](https://www.chezmoi.io/user-guide/daily-operations/)
+
+## Daily use
+```
+chezmoi edit
+chezmoi cd
+
+```
+
 
 To setup a system:
 ```

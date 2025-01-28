@@ -22,7 +22,6 @@ function Update-PowerShell {
     }
     try {
         Write-Host "Checking for PowerShell updates..." -ForegroundColor Cyan
-        $updateNeeded = $false
         $currentVersion = $PSVersionTable.PSVersion.ToString()
         $gitHubApiUrl = "https://api.github.com/repos/PowerShell/PowerShell/releases/latest"
         $latestReleaseInfo = Invoke-RestMethod -Uri $gitHubApiUrl
@@ -37,9 +36,9 @@ function Update-PowerShell {
     }
 }
 
-# daily update check
+# weekly update check
 if ($(try{Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue)}catch{}) -lt $(Get-Date)){
-    (Get-Date).Date.AddDays(1).DateTime > "$PSScriptRoot/date.tmp"
+    (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
     if($ENV:CHEZMOI -ne 1){
         $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase ; chezmoi diff) | Out-String
         $NoChanges = "Current branch master is up to date.", "Already up to date."
