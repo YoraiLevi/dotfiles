@@ -175,7 +175,7 @@ function which($name) {
         return $cmd
     }
     if ($cmd.CommandType -eq "Function"){
-        Write-Output $cmd
+        Write-Host $cmd
         return $cmd.Definition
     }
     return $cmd.Definition
