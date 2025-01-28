@@ -5,7 +5,9 @@
 ```
 chezmoi edit
 chezmoi cd
-
+chezmoi git push
+Edit-Profile
+edp
 ```
 
 
