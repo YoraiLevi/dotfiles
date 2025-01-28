@@ -10,39 +10,40 @@ try {
 }
 catch {
     Write-Error "posh-git isn't available on the system, execute:"
-    Write-Error "PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force"
+    Write-Error 'PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force'
 }
 
 function Update-PowerShell {
-    Write-Host "Checking for internet connection... " -ForegroundColor Cyan  -NoNewline
+    Write-Host 'Checking for internet connection... ' -ForegroundColor Cyan -NoNewline
     $canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
     if (-not $canConnectToGitHub) {
-        Write-Host "Skipping profile update check due to GitHub.com not responding within 1 second." -ForegroundColor Yellow
+        Write-Host 'Skipping profile update check due to GitHub.com not responding within 1 second.' -ForegroundColor Yellow
         return
     }
     try {
-        Write-Host "Checking for PowerShell updates..." -ForegroundColor Cyan
+        Write-Host 'Checking for PowerShell updates...' -ForegroundColor Cyan
         $currentVersion = $PSVersionTable.PSVersion.ToString()
-        $gitHubApiUrl = "https://api.github.com/repos/PowerShell/PowerShell/releases/latest"
+        $gitHubApiUrl = 'https://api.github.com/repos/PowerShell/PowerShell/releases/latest'
         $latestReleaseInfo = Invoke-RestMethod -Uri $gitHubApiUrl
         $latestVersion = $latestReleaseInfo.tag_name.Trim('v')
         if ($currentVersion -lt $latestVersion) {
-            Write-Host "Updating PowerShell..." -ForegroundColor Yellow
-            winget upgrade "Microsoft.PowerShell" --accept-source-agreements --accept-package-agreements
-            Write-Host "PowerShell has been updated. Please restart your shell to reflect changes" -ForegroundColor Magenta
+            Write-Host 'Updating PowerShell...' -ForegroundColor Yellow
+            winget upgrade 'Microsoft.PowerShell' --accept-source-agreements --accept-package-agreements
+            Write-Host 'PowerShell has been updated. Please restart your shell to reflect changes' -ForegroundColor Magenta
         }
-    } catch {
+    }
+    catch {
         Write-Error "Failed to update PowerShell. Error: $_"
     }
 }
 
 # weekly update check
-if ($(try{Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue)}catch{}) -lt $(Get-Date)){
+if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
-    if($ENV:CHEZMOI -ne 1){
+    if ($ENV:CHEZMOI -ne 1) {
         $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase ; chezmoi diff) | Out-String
-        $NoChanges = "Current branch master is up to date.", "Already up to date."
-        if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)){
+        $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
+        if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) {
             # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
             chezmoi diff
             # https://stackoverflow.com/a/60101530/12603110 - Prompt for yes or no - without repeating on new line if wrong input
@@ -52,7 +53,7 @@ if ($(try{Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Sile
                 $Answer = Read-Host -Prompt 'Chezmoi changes detecter! Install them now? (y/n)'
             }
             Until ($Answer -eq 'y' -or $Answer -eq 'n')
-            if($Answer -eq 'y'){
+            if ($Answer -eq 'y') {
                 (chezmoi update) -and (chezmoi init) -and (chezmoi apply)
             }
         }
@@ -110,79 +111,87 @@ function Invoke-Profile {
         $Profile.AllUsersCurrentHost,
         $Profile.CurrentUserAllHosts,
         $Profile.CurrentUserCurrentHost
-    ) | % {
-        if(Test-Path $_){
+    ) | ForEach-Object {
+        if (Test-Path $_) {
             Write-Verbose "Running $_"
             Import-Module $_ -Force
         }
     }
 }
-Set-Alias -Name "Reload-Profile" -Value Invoke-Profile
+Set-Alias -Name 'Reload-Profile' -Value Invoke-Profile
 # Quick Access to Editing the Profile
-function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [string]$PowerShellProfile = $Profile.CurrentUserAllHosts){
+function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [string]$PowerShellProfile = $Profile.CurrentUserAllHosts) {
     # todo add check one of available profiles
     # todo if it doesn't exist, create it? throw error?
-    if($EditChezmoi){
-        $applyFlag = " -a " # --apply
-        iex "chezmoi edit $applyFlag $PowerShellProfile" # invoke editing with chezmoi and apply changes immidietly
+    if ($EditChezmoi) {
+        $applyFlag = ' -a ' # --apply
+        Invoke-Expression "chezmoi edit $applyFlag $PowerShellProfile" # invoke editing with chezmoi and apply changes immidietly
     }
     else {
-        iex ($ENV:EDITOR + " " + $PowerShellProfile) # invoke vscode on profile
+        Invoke-Expression ($ENV:EDITOR + ' ' + $PowerShellProfile) # invoke vscode on profile
     }
-    if ($Reload){
+    if ($Reload) {
         Invoke-Profile
     }
 }
 Set-Alias -Name edp -Value Edit-Profile
 
-function Edit-ChezmoiConfig([switch]$EditChezmoi = $True,[switch]$Template = $True, [switch]$Push = $True){
-    if($EditChezmoi){
-        if($Template){
+function Edit-ChezmoiConfig([switch]$EditChezmoi = $True, [switch]$Template = $True, [switch]$Push = $True) {
+    if ($EditChezmoi) {
+        if ($Template) {
             (chezmoi edit-config-template) -and (chezmoi init)
             chezmoi git push
         }
-        else{
+        else {
             chezmoi edit-config
             chezmoi git push 
         }
     }
-    else{
-        if($Template){
+    else {
+        if ($Template) {
             $chezmoi_template_path = "$HOME/.local/share/chezmoi/.chezmoi.toml.tmpl"
-            $chezmoi_init = "; chezmoi init"
+            $chezmoi_init = '; chezmoi init'
         }
         else {
             $chezmoi_template_path = "$HOME/.config/chezmoi/chezmoi.toml" 
         }
-        iex ($ENV:EDITOR + " " + $chezmoi_template_path + " " + $chezmoi_init)
+        Invoke-Expression ($ENV:EDITOR + ' ' + $chezmoi_template_path + ' ' + $chezmoi_init)
     }
 }
 
-function Edit-Setup(){
+function Edit-Setup() {
     code $(chezmoi source-path)
 }
 
-function which($name) {
+function which([string]$name = $null) {
+    if ([string]::IsNullOrWhiteSpace($name)) {
+        Write-Host 'Usage: which <command>'
+        return
+    }
     # will print location or source code
     $cmd = Get-Command $name -ErrorAction SilentlyContinue
-    if ($cmd.CommandType -eq "Alias"){
+    if ($cmd.CommandType -eq 'Alias') {
+        Write-Host "Alias: $($cmd.Name) -> $($cmd.Definition)" -ForegroundColor Yellow
         return which($cmd.Definition)
     }
-    if ($cmd.CommandType -eq "ApplicationInfo"){
+    if ($cmd.CommandType -eq 'ApplicationInfo') {
         return $cmd.Definition
     }
-    if ($cmd.CommandType -eq "Cmdlet"){
+    if ($cmd.CommandType -eq 'Application') {
+        return $cmd.Path
+    }
+    if ($cmd.CommandType -eq 'Cmdlet') {
         return $cmd
     }
-    if ($cmd.CommandType -eq "Function"){
-        Write-Host $cmd
-        return $cmd.Definition
+    if ($cmd.CommandType -eq 'Function') {
+        Write-Host "function $($cmd | Select-Object -ExpandProperty Name) {`n    $($cmd | Select-Object -ExpandProperty Definition)`n}" -ForegroundColor Yellow
+        return $cmd
     }
-    return $cmd.Definition
+    return $cmd
 }
 
 function export($name, $value) {
-    set-item -force -path "env:$name" -value $value;
+    Set-Item -Force -Path "env:$name" -Value $value
 }
 
 function pkill($name) {
@@ -190,13 +199,13 @@ function pkill($name) {
 }
 
 function head {
-  param($Path, $n = 10)
-  Get-Content $Path -Head $n
+    param($Path, $n = 10)
+    Get-Content $Path -Head $n
 }
 
 function tail {
-  param($Path, $n = 10)
-  Get-Content $Path -Tail $n
+    param($Path, $n = 10)
+    Get-Content $Path -Tail $n
 }
 
 # Navigation Shortcuts
@@ -213,8 +222,8 @@ function dtop { Set-Location -Path $HOME\Desktop }
 Set-Alias -Name desktop -Value dtop
 
 # Enhanced Listing
-$PSDefaultParameterValues = @{"Format-Table:Autosize"=$true}
-function ll {param($Path='') ls -Path $Path -Force }
+$PSDefaultParameterValues = @{'Format-Table:Autosize' = $true }
+function ll { param($Path = '') Get-ChildItem -Path $Path -Force }
 
 # https://www.reddit.com/r/PowerShell/comments/fsv3kt/comment/fm4va8o/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 Function Touch-File {
@@ -229,12 +238,13 @@ Function Touch-File {
       Touch "C:\down\test.txt"
     #>
     $file = $args[0]
-    If ($file -eq $null){
+    If ($file -eq $null) {
         Throw 'No filename supplied'
     }
-    If (Test-Path -Path $file){
+    If (Test-Path -Path $file) {
         (Get-ChildItem -Path $file).LastWriteTime = Get-Date
-    } else {
+    }
+    else {
         Write-Output -InputObject $null > $file
     }
 }
@@ -247,7 +257,7 @@ function Get-Env {
 # https://gist.github.com/jaw/4d1d858b87a5c208fbe42fd4d4aa97a4 - EnvPaths.psm1
 function Add-EnvPathLast {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $Path,
 
         [ValidateSet('Machine', 'User', 'Session')]
@@ -257,27 +267,27 @@ function Add-EnvPathLast {
     if ($Container -ne 'Session') {
         $containerMapping = @{
             Machine = [EnvironmentVariableTarget]::Machine
-            User = [EnvironmentVariableTarget]::User
+            User    = [EnvironmentVariableTarget]::User
         }
         $containerType = $containerMapping[$Container]
 
         $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
         if ($persistedPaths -notcontains $Path) {
-            $persistedPaths = $persistedPaths + $Path | where { $_ }
+            $persistedPaths = $persistedPaths + $Path | Where-Object { $_ }
             [Environment]::SetEnvironmentVariable('Path', $persistedPaths -join ';', $containerType)
         }
     }
 
     $envPaths = $env:Path -split ';'
     if ($envPaths -notcontains $Path) {
-        $envPaths = $envPaths + $Path | where { $_ }
+        $envPaths = $envPaths + $Path | Where-Object { $_ }
         $env:Path = $envPaths -join ';'
     }
 }
 
 function Add-EnvPathFirst {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $Path,
 
         [ValidateSet('Machine', 'User', 'Session')]
@@ -287,27 +297,27 @@ function Add-EnvPathFirst {
     if ($Container -ne 'Session') {
         $containerMapping = @{
             Machine = [EnvironmentVariableTarget]::Machine
-            User = [EnvironmentVariableTarget]::User
+            User    = [EnvironmentVariableTarget]::User
         }
         $containerType = $containerMapping[$Container]
 
         $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
         if ($persistedPaths -notcontains $Path) {
-            $persistedPaths = ,$Path + $persistedPaths | where { $_ }
+            $persistedPaths = , $Path + $persistedPaths | Where-Object { $_ }
             [Environment]::SetEnvironmentVariable('Path', $persistedPaths -join ';', $containerType)
         }
     }
 
     $envPaths = $env:Path -split ';'
     if ($envPaths -notcontains $Path) {
-        $envPaths = ,$Path + $envPaths | where { $_ }
+        $envPaths = , $Path + $envPaths | Where-Object { $_ }
         $env:Path = $envPaths -join ';'
     }
 }
 
 function Remove-EnvPath {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $Path,
 
         [ValidateSet('Machine', 'User', 'Session')]
@@ -317,41 +327,41 @@ function Remove-EnvPath {
     if ($Container -ne 'Session') {
         $containerMapping = @{
             Machine = [EnvironmentVariableTarget]::Machine
-            User = [EnvironmentVariableTarget]::User
+            User    = [EnvironmentVariableTarget]::User
         }
         $containerType = $containerMapping[$Container]
 
         $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
-        $persistedPaths = $persistedPaths | where { $_ -and $_ -notlike $Path }
+        $persistedPaths = $persistedPaths | Where-Object { $_ -and $_ -notlike $Path }
         [Environment]::SetEnvironmentVariable('Path', $persistedPaths -join ';', $containerType)
     }
 
     $envPaths = $env:Path -split ';'
     # filter out the possible wildcard path
-    $envPaths = $envPaths | where { $_ -and $_ -notlike $Path }
+    $envPaths = $envPaths | Where-Object { $_ -and $_ -notlike $Path }
     $env:Path = $envPaths -join ';'
 }
 
 function Get-EnvPath {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [ValidateSet('Machine', 'User')]
         [string] $Container
     )
 
     $containerMapping = @{
         Machine = [EnvironmentVariableTarget]::Machine
-        User = [EnvironmentVariableTarget]::User
+        User    = [EnvironmentVariableTarget]::User
     }
     $containerType = $containerMapping[$Container]
 
     [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';' |
-        where { $_ }
+        Where-Object { $_ }
 }
 
 function Find-EnvPath {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string] $Path,
 
         [ValidateSet('Machine', 'User', 'Session')]
@@ -361,19 +371,19 @@ function Find-EnvPath {
     if ($Container -ne 'Session') {
         $containerMapping = @{
             Machine = [EnvironmentVariableTarget]::Machine
-            User = [EnvironmentVariableTarget]::User
+            User    = [EnvironmentVariableTarget]::User
         }
         $containerType = $containerMapping[$Container]
 
         $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
-        $persistedPaths = $persistedPaths | where { $_ -and $_ -like $Path }
+        $persistedPaths = $persistedPaths | Where-Object { $_ -and $_ -like $Path }
 
         return $persistedPaths -ne $null
     }
 
     $envPaths = $env:Path -split ';'
     # filter out the possible wildcard path
-    $envPaths = $envPaths | where { $_ -and $_ -like $Path }
+    $envPaths = $envPaths | Where-Object { $_ -and $_ -like $Path }
     return $envPaths -ne $null
 }
 
@@ -394,12 +404,12 @@ function Find-EnvPath {
 # Set-ExecutionPolicy Bypass -Scope Process
 # Update-FormatData -PrependPath "$PSScriptRoot\Format.ps1xml"
 
-if (which "fnm.exe"){
+if (which 'fnm.exe') {
     fnm env --use-on-cd | Out-String | Invoke-Expression
 }
 else {
     Write-Error "fnm isn't available on the system, execute:"
-    Write-Error "choco install fnm"
+    Write-Error 'choco install fnm'
 }
 
 # I don't like the public oh my posh themes
@@ -407,7 +417,7 @@ else {
 
 #region conda initialize
 # !! Contents within this block are managed by 'conda init' !!
-If (Test-Path "C:\tools\miniforge3\Scripts\conda.exe") {
-    (& "C:\tools\miniforge3\Scripts\conda.exe" "shell.powershell" "hook") | Out-String | ?{$_} | Invoke-Expression
+If (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
+    (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
 }
 #endregion
