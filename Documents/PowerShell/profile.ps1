@@ -171,7 +171,7 @@ function which([string]$name = $null) {
     # will print location or source code
     $cmd = Get-Command $name -ErrorAction SilentlyContinue
     if ($cmd.CommandType -eq 'Alias') {
-        Write-Host "Alias: $($cmd.Name) -> $($cmd.Definition)" -ForegroundColor Yellow
+        Write-Information "Alias: $($cmd.Name) -> $($cmd.Definition)" -ForegroundColor Cyan
         return which($cmd.Definition)
     }
     if ($cmd.CommandType -eq 'ApplicationInfo') {
@@ -184,7 +184,7 @@ function which([string]$name = $null) {
         return $cmd
     }
     if ($cmd.CommandType -eq 'Function') {
-        Write-Host "function $($cmd | Select-Object -ExpandProperty Name) {`n    $($cmd | Select-Object -ExpandProperty Definition)`n}" -ForegroundColor Yellow
+        Write-Information "function $($cmd | Select-Object -ExpandProperty Name) {`n    $($cmd | Select-Object -ExpandProperty Definition)`n}" -ForegroundColor Cyan
         return $cmd
     }
     return $cmd
