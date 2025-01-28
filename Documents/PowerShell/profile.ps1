@@ -178,6 +178,7 @@ function which($name) {
         Write-Output $cmd
         return $cmd.Definition
     }
+    return $cmd.Definition
 }
 
 function export($name, $value) {
