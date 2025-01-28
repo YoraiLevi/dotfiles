@@ -1,6 +1,7 @@
-$ENV:EDITOR = if ($null -ne (Get-Command code-insiders -ErrorAction SilentlyContinue)) { 'code-insiders' } else { 'code' }
+$ENV:EDITOR =  @('cursor','code-insiders','code') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
 Set-Alias -Name code -Value $ENV:EDITOR
 Set-Alias -Name vscode -Value $ENV:EDITOR
+Set-Alias -Name cursor -Value $ENV:EDITOR
 $ENV:EDITOR = "$ENV:EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
 # if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
 # }
@@ -163,11 +164,7 @@ function Edit-Setup() {
     code $(chezmoi source-path)
 }
 
-function which([string]$name = $null) {
-    if ([string]::IsNullOrWhiteSpace($name)) {
-        Write-Host 'Usage: which <command>'
-        return
-    }
+function which([Parameter(Mandatory = $true)][string]$name) {
     # will print location or source code
     $cmd = Get-Command $name -ErrorAction SilentlyContinue
     if ($cmd.CommandType -eq 'Alias') {
