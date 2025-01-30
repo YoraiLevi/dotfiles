@@ -60,6 +60,7 @@ _ - , ; : ! ? . ' " ( ) [ ] { } @ * / \ & # % ` ^ + < = > | ~ $ 0 1 2 3 4 5 6 7 
 ```
 
 # TODOS:
+bash unlimited history https://stackoverflow.com/a/19533853/12603110
 https://app.sparkmailapp.com/web-share/ZYcTULhKr4caHTKFzmK3TeTTV2eMz0ILf9CBNZPl
 powercfg and power configurations, hibernation file
 explorer and taskbar pins
