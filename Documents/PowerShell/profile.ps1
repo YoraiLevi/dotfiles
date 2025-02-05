@@ -168,8 +168,9 @@ function Edit-ChezmoiConfig([switch]$EditChezmoi = $True, [switch]$Template = $T
 Set-Alias -Name edc -Value Edit-ChezmoiConfig
 
 function Edit-Setup() {
-    code $(chezmoi source-path)
+    chezmoi edit --watch
 }
+Set-Alias -Name eds -Value Edit-Setup
 
 function which([Parameter(Mandatory = $true)][string]$name) {
     # will print location or source code
