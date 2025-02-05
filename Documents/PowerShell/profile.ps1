@@ -1,4 +1,4 @@
-$ENV:EDITOR =  @('cursor','code-insiders','code') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+$ENV:EDITOR = @('cursor', 'code-insiders', 'code') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
 Set-Alias -Name code -Value $ENV:EDITOR
 Set-Alias -Name vscode -Value $ENV:EDITOR
 $ENV:EDITOR = "$ENV:EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
@@ -29,7 +29,9 @@ function Update-PowerShell {
         if ($currentVersion -lt $latestVersion) {
             Write-Host 'Updating PowerShell...' -ForegroundColor Yellow
             winget upgrade 'Microsoft.PowerShell' --accept-source-agreements --accept-package-agreements
-            Write-Host 'PowerShell has been updated. Please restart your shell to reflect changes' -ForegroundColor Magenta
+            if($?) {
+                Write-Host 'PowerShell has been updated. Please restart your shell to reflect changes' -ForegroundColor Magenta
+            }
         }
     }
     catch {
@@ -352,7 +354,7 @@ function Get-EnvPath {
     $containerType = $containerMapping[$Container]
 
     [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';' |
-        Where-Object { $_ }
+    Where-Object { $_ }
 }
 
 function Find-EnvPath {
@@ -404,16 +406,17 @@ if (which 'fnm.exe') {
     fnm env --use-on-cd | Out-String | Invoke-Expression
 }
 else {
-    Write-Error "fnm isn't available on the system, execute:"
-    Write-Error 'choco install fnm'
+    Write-Error "fnm isn't available on the system, execute:`nchoco install fnm"
 }
 
 # I don't like the public oh my posh themes
 # use oh my posh here
 
-#region conda initialize
-# !! Contents within this block are managed by 'conda init' !!
-If (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
+function Invoke-Conda {
+    Remove-Alias -Name conda -Scope Global
+    If (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
     (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
+    }
+    conda @args
 }
-#endregion
+Set-Alias -Name conda -Value Invoke-Conda -Scope Global
