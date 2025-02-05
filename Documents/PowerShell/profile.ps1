@@ -44,6 +44,25 @@ function Update-PowerShell {
     }
 }
 
+function Invoke-YesNoPrompt {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Prompt,
+        [Parameter(Mandatory)]
+        [scriptblock]$Action
+    )
+    # https://stackoverflow.com/a/60101530/12603110 - Prompt for yes or no - without repeating on new line if wrong input
+    $Cursor = [System.Console]::CursorTop
+    Do {
+        [System.Console]::CursorTop = $Cursor
+        $Answer = Read-Host -Prompt "$Prompt (y/n)"
+    }
+    Until ($Answer -eq 'y' -or $Answer -eq 'n')
+    if ($Answer -eq 'y') {
+        & $Action
+    }
+}
+
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
@@ -53,14 +72,7 @@ if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Si
         if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) {
             # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
             chezmoi diff
-            # https://stackoverflow.com/a/60101530/12603110 - Prompt for yes or no - without repeating on new line if wrong input
-            $Cursor = [System.Console]::CursorTop
-            Do {
-                [System.Console]::CursorTop = $Cursor
-                $Answer = Read-Host -Prompt 'Chezmoi changes detecter! Install them now? (y/n)'
-            }
-            Until ($Answer -eq 'y' -or $Answer -eq 'n')
-            if ($Answer -eq 'y') {
+            Invoke-YesNoPrompt -Prompt 'Chezmoi changes detected! Install them now?' -Action { 
                 (chezmoi update) -and (chezmoi init) -and (chezmoi apply)
             }
         }
@@ -127,48 +139,56 @@ function Invoke-Profile {
 }
 Set-Alias -Name 'Reload-Profile' -Value Invoke-Profile
 # Quick Access to Editing the Profile
-function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [string]$PowerShellProfile = $Profile.CurrentUserAllHosts) {
-    # todo add check one of available profiles
-    # todo if it doesn't exist, create it? throw error?
-    if ($EditChezmoi) {
-        $applyFlag = ' -a ' # --apply
-        Invoke-Expression "chezmoi edit $applyFlag $PowerShellProfile" # invoke editing with chezmoi and apply changes immidietly
-    }
-    else {
-        Invoke-Expression ($ENV:EDITOR + ' ' + $PowerShellProfile) # invoke vscode on profile
-    }
-    if ($Reload) {
-        Invoke-Profile
-    }
-}
-Set-Alias -Name edp -Value Edit-Profile
 
-function Edit-ChezmoiConfig([switch]$EditChezmoi = $True, [switch]$Template = $True, [switch]$Push = $True) {
-    if ($EditChezmoi) {
-        if ($Template) {
-            (chezmoi edit-config-template) -and (chezmoi init)
-            chezmoi git push
-        }
-        else {
-            chezmoi edit-config
-            chezmoi git push 
-        }
-    }
-    else {
-        if ($Template) {
-            $chezmoi_template_path = "$HOME/.local/share/chezmoi/.chezmoi.toml.tmpl"
-            $chezmoi_init = '; chezmoi init'
-        }
-        else {
-            $chezmoi_template_path = "$HOME/.config/chezmoi/chezmoi.toml" 
-        }
-        Invoke-Expression ($ENV:EDITOR + ' ' + $chezmoi_template_path + ' ' + $chezmoi_init)
-    }
-}
-Set-Alias -Name edc -Value Edit-ChezmoiConfig
+# function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [string]$PowerShellProfile = $Profile.CurrentUserAllHosts) {
+#     # todo add check one of available profiles
+#     # todo if it doesn't exist, create it? throw error?
+#     if ($EditChezmoi) {
+#         $applyFlag = ' -a ' # --apply
+#         Invoke-Expression "chezmoi edit $applyFlag $PowerShellProfile" # invoke editing with chezmoi and apply changes immidietly
+#     }
+#     else {
+#         Invoke-Expression ($ENV:EDITOR + ' ' + $PowerShellProfile) # invoke vscode on profile
+#     }
+#     if ($Reload) {
+#         Invoke-Profile
+#     }
+# }
+# Set-Alias -Name edp -Value Edit-Profile
 
-function Edit-Setup() {
+# function Edit-ChezmoiConfig([switch]$EditChezmoi = $True, [switch]$Template = $True, [switch]$Push = $True) {
+#     if ($EditChezmoi) {
+#         if ($Template) {
+#             (chezmoi edit-config-template) -and (chezmoi init)
+#             chezmoi git push
+#         }
+#         else {
+#             chezmoi edit-config
+#             chezmoi git push 
+#         }
+#     }
+#     else {
+#         if ($Template) {
+#             $chezmoi_template_path = "$HOME/.local/share/chezmoi/.chezmoi.toml.tmpl"
+#             $chezmoi_init = '; chezmoi init'
+#         }
+#         else {
+#             $chezmoi_template_path = "$HOME/.config/chezmoi/chezmoi.toml" 
+#         }
+#         Invoke-Expression ($ENV:EDITOR + ' ' + $chezmoi_template_path + ' ' + $chezmoi_init)
+#     }
+# }
+# Set-Alias -Name edc -Value Edit-ChezmoiConfig
+
+function Edit-Setup([switch]$ApplyChanges = $False) {
     chezmoi edit --watch
+    chezmoi git push
+    Invoke-Profile
+    if ($ApplyChanges) {
+        Invoke-YesNoPrompt -Prompt 'Apply changes?' -Action { 
+        (chezmoi update) -and (chezmoi init) -and (chezmoi apply)
+        }
+    }
 }
 Set-Alias -Name eds -Value Edit-Setup
 
