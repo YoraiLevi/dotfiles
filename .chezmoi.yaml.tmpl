@@ -58,8 +58,8 @@ data:
 {{ if eq .chezmoi.os "windows" -}}
 interpreters:
   py :
-    command : 'C:/Windows/py.exe'
-    args : ["-3"]
+    command : 'uv.exe'
+    args : ["run", "python"]
   ps1 : 
     command : "C:/Program Files/PowerShell/7/pwsh.exe"
     args : ["-NoLogo", "-NoProfile"]
