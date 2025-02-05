@@ -180,11 +180,14 @@ Set-Alias -Name 'Reload-Profile' -Value Invoke-Profile
 # }
 # Set-Alias -Name edc -Value Edit-ChezmoiConfig
 
-function Edit-Setup([switch]$ApplyChanges = $True) {
+function Edit-Setup([switch]$ApplyChanges = $false) {
     chezmoi edit --watch
     chezmoi git push
     Invoke-Profile
     if ($ApplyChanges) {
+        (chezmoi update) -and (chezmoi init) -and (chezmoi apply)
+    }
+    else {
         Invoke-YesNoPrompt -Prompt 'Apply changes?' -Action { 
         (chezmoi update) -and (chezmoi init) -and (chezmoi apply)
         }
