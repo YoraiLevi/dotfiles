@@ -28,8 +28,13 @@ function Update-PowerShell {
         $latestVersion = $latestReleaseInfo.tag_name.Trim('v')
         if ($currentVersion -lt $latestVersion) {
             Write-Host 'Updating PowerShell...' -ForegroundColor Yellow
-            winget upgrade 'Microsoft.PowerShell' --accept-source-agreements --accept-package-agreements
-            if($?) {
+            if (choco list --lo --limit-output pwsh) {
+                sudo choco upgrade pwsh -y
+            }
+            else {
+                winget upgrade 'Microsoft.PowerShell' --accept-source-agreements --accept-package-agreements
+            }
+            if ($?) {
                 Write-Host 'PowerShell has been updated. Please restart your shell to reflect changes' -ForegroundColor Magenta
             }
         }
@@ -160,6 +165,7 @@ function Edit-ChezmoiConfig([switch]$EditChezmoi = $True, [switch]$Template = $T
         Invoke-Expression ($ENV:EDITOR + ' ' + $chezmoi_template_path + ' ' + $chezmoi_init)
     }
 }
+Set-Alias -Name edc -Value Edit-ChezmoiConfig
 
 function Edit-Setup() {
     code $(chezmoi source-path)
@@ -407,6 +413,15 @@ if (which 'fnm.exe') {
 }
 else {
     Write-Error "fnm isn't available on the system, execute:`nchoco install fnm"
+}
+
+if (which 'uv.exe') {
+    Add-Content -Path $PROFILE -Value '(& uv generate-shell-completion powershell) | Out-String | Invoke-Expression'
+    Add-Content -Path $PROFILE -Value '(& uvx --generate-shell-completion powershell) | Out-String | Invoke-Expression'
+}
+else {
+    # powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+    Write-Error "uv isn't available on the system, execute:`npowershell -ExecutionPolicy ByPass -c `"irm https://astral.sh/uv/install.ps1 | iex`""
 }
 
 # I don't like the public oh my posh themes
