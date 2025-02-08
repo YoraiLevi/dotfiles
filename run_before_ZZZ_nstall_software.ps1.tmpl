@@ -30,15 +30,15 @@ if(Get-Command OneDrive.exe -ErrorAction SilentlyContinue) {
 
 # Registry
 # .Reg files
-if(Test-Administrator) {
-    $chezmoidata.regedit | ForEach-Object {
-        Write-Host "Importing registry file $($_.name)"
-        echo reg.exe import "./Downloads/regedits/$(`'$($_.path)`')"
-    }
-}
-else{
-    $shouldReranAsAdmin = $true
-}
+# if(Test-Administrator) {
+#     $chezmoidata.regedit | ForEach-Object {
+#         Write-Host "Importing registry file $($_.name)"
+#         echo reg.exe import "./Downloads/regedits/$(`'$($_.path)`')"
+#     }
+# }
+# else{
+#     $shouldReranAsAdmin = $true
+# }
 
 # Power options
 if (((Get-Item -Force /hiberfil.sys).Length - (get-wmiobject -class "Win32_ComputerSystem").TotalPhysicalMemory) -ne 0){
@@ -125,8 +125,10 @@ if (get-command choco.exe -ErrorAction SilentlyContinue) {
     $toInstallChocoPackages = $chezmoidata.software.choco | Where-Object {-not ($installedChocoPackages -contains $_.name)}
     $shouldReranAsAdmin = $shouldReranAsAdmin -or $toInstallChocoPackages.Length -gt 0
     if(Test-Administrator) {
-        Write-Host "Installing Chocolatey packages"
-        $toInstallChocoPackages | ForEach-Object { Install-ChocoPackage -PackageName $_.name -Params $_.params }
+        if($toInstallChocoPackages.Length -gt 0) {
+            Write-Host "Installing Chocolatey packages"
+            $toInstallChocoPackages | ForEach-Object { Install-ChocoPackage -PackageName $_.name -Params $_.params }
+        }
     }
 }
 # Winget
@@ -178,8 +180,10 @@ function Install-WingetPackage {
 $toInstallWingetPackages = $chezmoidata.software.winget | Where-Object {-not (Get-WingetPackage $_.name $_.source)}
 $shouldReranAsAdmin = $shouldReranAsAdmin -or $toInstallWingetPackages.Length -gt 0
 if(Test-Administrator) {
-    Write-Host "Installing Winget packages"
-    $toInstallWingetPackages | ForEach-Object { Install-WingetPackage -PackageName $_.name -Source $_.source }
+    if($toInstallWingetPackages.Length -gt 0) {
+        Write-Host "Installing Winget packages"
+        $toInstallWingetPackages | ForEach-Object { Install-WingetPackage -PackageName $_.name -Source $_.source }
+    }
 }
 
 # Python
@@ -187,8 +191,10 @@ if (get-command python.exe -ErrorAction SilentlyContinue) {
     $ENV:PIP_REQUIRE_VIRTUALENV = 'false'
     $installedPipPackages = pip list --format=json 2>$NULL | ConvertFrom-Json -AsHashTable | Select-Object -ExpandProperty Name
     $toInstallPipPackages = $chezmoidata.python.pip | Where-Object {-not ($installedPipPackages -contains $_.name)}
-    Write-Host "Installing Pip packages"
-    $toInstallPipPackages | ForEach-Object { pip install $_.name }
+    if($toInstallPipPackages.Length -gt 0) {
+        Write-Host "Installing Pip packages"
+        $toInstallPipPackages | ForEach-Object { pip install $_.name }
+    }
 }
 
 # Nodejs
@@ -197,7 +203,10 @@ if (get-command fnm.exe -ErrorAction SilentlyContinue) {
         if((fnm install $_.node_version 2>&1 | Out-String -OutVariable fnm_install_output) -and (fnm use $_.node_version 2>&1 | Out-String -OutVariable fnm_use_output)) {
             $installedGlobalNPMModules = npm list -g --json | ConvertFrom-Json -AsHashTable | Select-Object -ExpandProperty 'dependencies' | Select-Object -ExpandProperty Keys
             $toInstallGlobalNPMModules = $chezmoidata.fnm.global_modules | Where-Object {-not ($installedGlobalNPMModules -contains $_.name)}
-            $toInstallGlobalNPMModules | ForEach-Object { npm install -g $_.name }
+            if($toInstallGlobalNPMModules.Length -gt 0) {
+                Write-Host "Installing Global NPM modules"
+                $toInstallGlobalNPMModules | ForEach-Object { npm install -g $_.name }
+            }
         }
         else {
             Write-Host "Failed to install node version $($_.node_version)"
