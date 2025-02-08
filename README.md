@@ -57,9 +57,10 @@ _ - , ; : ! ? . ' " ( ) [ ] { } @ * / \ & # % ` ^ + < = > | ~ $ 0 1 2 3 4 5 6 7 
 ```
 
 # TODOS:
+Refresh start menu after start.bin update - How can I restart start menu? https://superuser.com/a/1617476/1220772
 bash unlimited history https://stackoverflow.com/a/19533853/12603110
 https://app.sparkmailapp.com/web-share/ZYcTULhKr4caHTKFzmK3TeTTV2eMz0ILf9CBNZPl
-powercfg and power configurations, hibernation file
+powercfg and power configurations
 explorer and taskbar pins
 powershell modules
 wsl stuff
@@ -67,7 +68,7 @@ rust? compiled languages toolchains...
 registry -> learn how to merge without admin permission
 disable rotation https://superuser.com/a/1833703/1220772
 
-1) Validate templates compile
+1) ~~Validate templates compile~~ Reduce template use
 2) Validate code could work in theory - linter etc
 3) setup powershell pester5 tests
 4) automated tests with vm?
