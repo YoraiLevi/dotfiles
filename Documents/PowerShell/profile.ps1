@@ -117,7 +117,7 @@ function Invoke-YesNoPrompt {
     }
 }
 # Update local changes to chezmoi repo
-chezmoi re-add &
+$null = chezmoi re-add &
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
@@ -128,12 +128,11 @@ if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Si
             # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
             chezmoi diff
             Invoke-YesNoPrompt -Prompt 'Chezmoi changes detected! Install them now?' -Action { 
-                (chezmoi update) -and (chezmoi init) -and (chezmoi apply)
+                chezmoi update --init --apply &
             }
         }
     }
     # fetch latest changes from chezmoi repo
-    chezmoi update --init --apply &
     Update-PowerShell
 }
 
