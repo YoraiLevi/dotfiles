@@ -65,13 +65,13 @@ data:
 #    flags : ["--wait"]
 {{ if eq .chezmoi.os "windows" -}}
 hooks:
-  init:
+  read-source-state:
     pre:
       command : "pwsh"
-      args : ["-NoProfile","-Command","echo","pre-apply-hook;","pause"]
+      args : ["-NoProfile","-Command","echo","pre-read-source-state $ENV:CHEZMOI"]
     post:
       command : "pwsh"
-      args : ["-NoProfile","-Command","echo","post-apply-hook;","pause"]
+      args : ["-NoProfile","-Command","echo","post-read-source-state $ENV:CHEZMOI"]
 {{ end -}}
 
 {{ if eq .chezmoi.os "windows" -}}
