@@ -233,7 +233,7 @@ Set-Alias -Name 'Reload-Profile' -Value Invoke-Profile
 #     }
 # }
 # Set-Alias -Name edc -Value Edit-ChezmoiConfig
-
+# comment
 function Edit-Setup([switch]$PromptApplyChanges = $false) {
     chezmoi edit
     Invoke-Profile
