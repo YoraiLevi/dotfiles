@@ -65,11 +65,11 @@ data:
 #    flags : ["--wait"]
 {{ if eq .chezmoi.os "windows" -}}
 hooks.apply.pre:
-  command = "echo"
-  args = ["pre-apply-hook"]
+  command = "pwsh"
+  args = ["pre-apply-hook","pause"]
 hooks.apply.post:
-  command = "echo"
-  args = ["post-apply-hook"]
+  command = "pwsh"
+  args = ["post-apply-hook","pause"]
 {{ end -}}
 
 {{ if eq .chezmoi.os "windows" -}}
