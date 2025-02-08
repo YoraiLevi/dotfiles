@@ -64,12 +64,14 @@ data:
 #    command : "code-insders" # doesn't work with `chezmoi edit`, $ENV:EDITOR does work
 #    flags : ["--wait"]
 {{ if eq .chezmoi.os "windows" -}}
-hooks.apply.pre:
-  command = "pwsh"
-  args = ["pre-apply-hook","pause"]
-hooks.apply.post:
-  command = "pwsh"
-  args = ["post-apply-hook","pause"]
+hooks:
+  init:
+    pre:
+      command : "pwsh"
+      args : ["-Command","echo","pre-apply-hook","pause"]
+    post:
+      command : "pwsh"
+      args : ["-Command","echo","post-apply-hook","pause"]
 {{ end -}}
 
 {{ if eq .chezmoi.os "windows" -}}
