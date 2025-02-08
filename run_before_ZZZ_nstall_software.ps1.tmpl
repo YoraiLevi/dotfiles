@@ -43,6 +43,7 @@ else{
 # Power options
 if (((Get-Item -Force /hiberfil.sys).Length - (get-wmiobject -class "Win32_ComputerSystem").TotalPhysicalMemory) -ne 0){
     if(Test-Administrator) {
+        Write-Host "Setting hibernate size to 100%"
         powercfg /h /size 100
     }
     else{
