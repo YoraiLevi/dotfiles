@@ -1,0 +1,373 @@
+# https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#the-universal-sortable-u-format-specifier
+"$(Date -Format ""yyyy'-'MM'-'dd HH':'mm':'ss'Z'"") : CHEZMOI SOFTWARE INSTALLATION" | Out-File .CHEZMOI_ASSERT -Encoding ASCII -Append
+{{with $chezmoidata := .}}
+{{- if eq .chezmoi.os "windows" -}}
+$chezmoidata = {{ $chezmoidata | toJson | squote }} | ConvertFrom-Json -AsHashTable
+
+$shouldReranAsAdmin = $false;
+function Test-Administrator {  
+    $user = [Security.Principal.WindowsIdentity]::GetCurrent();
+    (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)  
+}
+if(Test-Administrator) {
+    echo "Running as administrator"
+} else {
+    echo "Running as user"
+}
+
+
+# Delete OneDrive
+if(Get-Command OneDrive.exe -ErrorAction SilentlyContinue) {
+    Write-Host "Deleting OneDrive"
+    if(Test-Administrator) {
+        Import-Module $ENV:ChocolateyInstall/helpers/chocolateyProfile.psm1; refreshenv
+        ./bin/winutil_cli.ps1 -Force -TweakNames WPFEssTweaksRemoveOnedrive -ExtraTweaks @() -ExtraDNSProviders @() -ExtraWindowsFeaturesBundles @()
+    }
+    else{
+        $shouldReranAsAdmin = $true
+    }
+}
+
+# Registry
+# .Reg files
+if(Test-Administrator) {
+    $chezmoidata.regedit | ForEach-Object {
+        Write-Host "Importing registry file $($_.name)"
+        echo reg.exe import "./Downloads/regedits/$(`'$($_.path)`')"
+    }
+}
+else{
+    $shouldReranAsAdmin = $true
+}
+
+# Power options
+if (((Get-Item -Force /hiberfil.sys).Length - (get-wmiobject -class "Win32_ComputerSystem").TotalPhysicalMemory) -ne 0){
+    if(Test-Administrator) {
+        powercfg /h /size 100
+    }
+    else{
+        $shouldReranAsAdmin = $true
+    }
+}
+
+# 'https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/master/'
+
+# tenforums/How%20to%20Turn%20On%20or%20Off%20Automatically%20Restart%20Apps%20after%20Sign%20In%20in%20Windows%2010/Turn_ON_Restart_apps_after_sign_in_for_current_user.reg
+# tenforums/How%20to%20Add%20or%20Remove%20Hibernate%20after%20from%20Power%20Options%20in%20Windows/Add_Hibernate_after_to_Power_Options.reg
+
+# #if desktop
+# powercfg -change monitor-timeout-ac 15
+# powercfg -change monitor-timeout-dc 15
+# powercfg -change standby-timeout-ac 0
+# powercfg -change standby-timeout-dc 0
+# powercfg -change hibernate-timeout-ac 120
+# powercfg -change hibernate-timeout-dc 120
+
+# #if laptop
+# powercfg -change monitor-timeout-ac 15
+# powercfg -change monitor-timeout-dc 15
+# powercfg -change standby-timeout-ac 0
+# powercfg -change standby-timeout-dc 0
+# powercfg -change hibernate-timeout-ac 30
+# powercfg -change hibernate-timeout-dc 120
+
+
+# #if laptop
+# # https://learn.microsoft.com/en-us/windows/win32/power/power-policy-settings
+# # https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/power-button-and-lid-settings-lid-switch-close-action
+# #power saving
+# powercfg -setacvalueindex a1841308-3541-4fab-bc81-f71556f20b4a 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 2
+# powercfg -setdcvalueindex a1841308-3541-4fab-bc81-f71556f20b4a 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 2
+# #balanced
+# powercfg -setacvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 2
+# powercfg -setdcvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 2
+# #high performance
+# powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 2
+# powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 2
+
+# #always
+# # https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/power-button-and-lid-settings
+# # https://learn.microsoft.com/en-us/windows-hardware/customize/power-settings/power-button-and-lid-settings-power-button-action
+# #power saving
+# powercfg -setacvalueindex a1841308-3541-4fab-bc81-f71556f20b4a 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 0
+# powercfg -setdcvalueindex a1841308-3541-4fab-bc81-f71556f20b4a 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 0
+# #balanced
+# powercfg -setacvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 0
+# powercfg -setdcvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 0
+# #high performance
+# powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 0
+# powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 7648efa3-dd9c-4e3e-b566-50f929386280 0
+
+
+# Taskbar and Start menu
+
+# explorer
+# https://stackoverflow.com/a/45633941/12603110
+# $o = new-object -com shell.application
+# $o.Namespace($ENV:USERPROFILE).Self.InvokeVerb("pintohome")
+# $o.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}").Items()
+
+
+
+# Chocolatey
+if (get-command choco.exe -ErrorAction SilentlyContinue) {
+    function Install-ChocoPackage {
+        param(
+            [Parameter(Mandatory)]
+            [string]$PackageName,
+            [string]$Params
+        )
+        $cmd = @("choco install",$PackageName) + $(if(![string]::IsNullOrEmpty($Params)){@('--params',"`"'$Params'`"")}else{@()}) + @('-y',';') -join ' '
+        Write-Host $cmd
+        Invoke-Expression $cmd
+    }
+    $installedChocoPackages = choco list --idonly | Select -SkipLast 1 -Skip 1
+    $toInstallChocoPackages = $chezmoidata.software.choco | Where-Object {-not ($installedChocoPackages -contains $_.name)}
+    $shouldReranAsAdmin = $shouldReranAsAdmin -or $toInstallChocoPackages.Length -gt 0
+    if(Test-Administrator) {
+        Write-Host "Installing Chocolatey packages"
+        $toInstallChocoPackages | ForEach-Object { Install-ChocoPackage -PackageName $_.name -Params $_.params }
+    }
+}
+# Winget
+function Get-WingetPackage {
+    param(
+        [Parameter(Mandatory)]
+        [string]$PackageName,
+        [string]$Source
+    )
+    if ($Source) {
+        $winget_list = winget list --exact $PackageName --source $Source | Select -Last 3
+    }
+    else {
+        $winget_list = winget list --exact $PackageName | Select -Last 3
+    }
+    if($winget_list[1] -notmatch '^-+$') {
+        # The list has returned too many rows, the header is not present, this is a bug in the intent of the function.
+        Write-Error "The list has returned too many rows, the header is not present, this is a bug in the intent of the function."
+        return
+    }
+    $m = $winget_list[0] | Select-String '(\w+(?:\s+?|$))' -AllMatches | Select -ExpandProperty Matches
+    $columns = $m | Select-Object -ExpandProperty Value
+    
+    $indexes = $winget_list[0] | Select-String '(\w+(?:\s+?|$))' -AllMatches | Select -ExpandProperty Matches | Select -ExpandProperty Index 
+    $indexes += @($winget_list[0].length + 1)         
+    $text = $indexes | ForEach-Object -Begin { $i = 0 } -Process {
+        if ($i -lt ($indexes.Length - 1)) {
+            $i++
+            return @{ Index = $_; Length = $indexes[$i] - $_ }
+        }
+    } | % { $winget_list[2].substring($_.Index, $_.Length) }  
+    $winget_out = @{}
+    for ($i = 0; $i -lt $columns.Length; $i++) {
+        $winget_out[$columns[$i].Trim()] = $text[$i].Trim()
+    }
+    return $winget_out
+}
+
+function Install-WingetPackage {
+    param(
+        [Parameter(Mandatory)]
+        [string]$PackageName,
+        [string]$Source
+    )
+    $cmd = @("winget install", $PackageName) + $(if(![string]::IsNullOrEmpty($Source)){@('--source',$Source)}else{@()}) + @('--accept-source-agreements --accept-package-agreements',';') -join ' '
+    Write-Host $cmd
+    Invoke-Expression $cmd
+}
+$toInstallWingetPackages = $chezmoidata.software.winget | Where-Object {-not (Get-WingetPackage $_.name $_.source)}
+$shouldReranAsAdmin = $shouldReranAsAdmin -or $toInstallWingetPackages.Length -gt 0
+if(Test-Administrator) {
+    Write-Host "Installing Winget packages"
+    $toInstallWingetPackages | ForEach-Object { Install-WingetPackage -PackageName $_.name -Source $_.source }
+}
+
+# Python
+if (get-command python.exe -ErrorAction SilentlyContinue) {
+    $ENV:PIP_REQUIRE_VIRTUALENV = 'false'
+    $installedPipPackages = pip list --format=json 2>$NULL | ConvertFrom-Json -AsHashTable | Select-Object -ExpandProperty Name
+    $toInstallPipPackages = $chezmoidata.python.pip | Where-Object {-not ($installedPipPackages -contains $_.name)}
+    Write-Host "Installing Pip packages"
+    $toInstallPipPackages | ForEach-Object { pip install $_.name }
+}
+
+# Nodejs
+if (get-command fnm.exe -ErrorAction SilentlyContinue) {
+    $chezmoidata.fnm | ForEach-Object { 
+        if((fnm install $_.node_version 2>&1 | Out-String -OutVariable fnm_install_output) -and (fnm use $_.node_version 2>&1 | Out-String -OutVariable fnm_use_output)) {
+            $installedGlobalNPMModules = npm list -g --json | ConvertFrom-Json -AsHashTable | Select-Object -ExpandProperty 'dependencies' | Select-Object -ExpandProperty Keys
+            $toInstallGlobalNPMModules = $chezmoidata.fnm.global_modules | Where-Object {-not ($installedGlobalNPMModules -contains $_.name)}
+            $toInstallGlobalNPMModules | ForEach-Object { npm install -g $_.name }
+        }
+        else {
+            Write-Host "Failed to install node version $($_.node_version)"
+            Write-Warning $fnm_install_output
+            Write-Warning $fnm_use_output
+        }
+    }
+}
+
+# Powershell
+if (get-command pwsh.exe -ErrorAction SilentlyContinue) {
+    $chezmoidata.powershell | ForEach-Object {
+        PowerShellGet\Install-Module @_ -Scope CurrentUser
+    }
+}
+
+# Environment variables
+
+# https://gist.github.com/jaw/4d1d858b87a5c208fbe42fd4d4aa97a4 - EnvPaths.psm1
+function Add-EnvPathLast {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Path,
+
+        [ValidateSet('Machine', 'User', 'Session')]
+        [string] $Container = 'Session'
+    )
+
+    if ($Container -ne 'Session') {
+        $containerMapping = @{
+            Machine = [EnvironmentVariableTarget]::Machine
+            User = [EnvironmentVariableTarget]::User
+        }
+        $containerType = $containerMapping[$Container]
+
+        $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
+        if ($persistedPaths -notcontains $Path) {
+            $persistedPaths = $persistedPaths + $Path | where { $_ }
+            [Environment]::SetEnvironmentVariable('Path', $persistedPaths -join ';', $containerType)
+        }
+    }
+
+    $envPaths = $env:Path -split ';'
+    if ($envPaths -notcontains $Path) {
+        $envPaths = $envPaths + $Path | where { $_ }
+        $env:Path = $envPaths -join ';'
+    }
+}
+
+function Add-EnvPathFirst {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Path,
+
+        [ValidateSet('Machine', 'User', 'Session')]
+        [string] $Container = 'Session'
+    )
+
+    if ($Container -ne 'Session') {
+        $containerMapping = @{
+            Machine = [EnvironmentVariableTarget]::Machine
+            User = [EnvironmentVariableTarget]::User
+        }
+        $containerType = $containerMapping[$Container]
+
+        $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
+        if ($persistedPaths -notcontains $Path) {
+            $persistedPaths = ,$Path + $persistedPaths | where { $_ }
+            [Environment]::SetEnvironmentVariable('Path', $persistedPaths -join ';', $containerType)
+        }
+    }
+
+    $envPaths = $env:Path -split ';'
+    if ($envPaths -notcontains $Path) {
+        $envPaths = ,$Path + $envPaths | where { $_ }
+        $env:Path = $envPaths -join ';'
+    }
+}
+
+function Remove-EnvPath {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Path,
+
+        [ValidateSet('Machine', 'User', 'Session')]
+        [string] $Container = 'Session'
+    )
+
+    if ($Container -ne 'Session') {
+        $containerMapping = @{
+            Machine = [EnvironmentVariableTarget]::Machine
+            User = [EnvironmentVariableTarget]::User
+        }
+        $containerType = $containerMapping[$Container]
+
+        $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
+        $persistedPaths = $persistedPaths | where { $_ -and $_ -notlike $Path }
+        [Environment]::SetEnvironmentVariable('Path', $persistedPaths -join ';', $containerType)
+    }
+
+    $envPaths = $env:Path -split ';'
+    # filter out the possible wildcard path
+    $envPaths = $envPaths | where { $_ -and $_ -notlike $Path }
+    $env:Path = $envPaths -join ';'
+}
+
+function Get-EnvPath {
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateSet('Machine', 'User')]
+        [string] $Container
+    )
+
+    $containerMapping = @{
+        Machine = [EnvironmentVariableTarget]::Machine
+        User = [EnvironmentVariableTarget]::User
+    }
+    $containerType = $containerMapping[$Container]
+
+    [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';' |
+        where { $_ }
+}
+
+function Find-EnvPath {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string] $Path,
+
+        [ValidateSet('Machine', 'User', 'Session')]
+        [string] $Container = 'Session'
+    )
+
+    if ($Container -ne 'Session') {
+        $containerMapping = @{
+            Machine = [EnvironmentVariableTarget]::Machine
+            User = [EnvironmentVariableTarget]::User
+        }
+        $containerType = $containerMapping[$Container]
+
+        $persistedPaths = [Environment]::GetEnvironmentVariable('Path', $containerType) -split ';'
+        $persistedPaths = $persistedPaths | where { $_ -and $_ -like $Path }
+
+        return $persistedPaths -ne $null
+    }
+
+    $envPaths = $env:Path -split ';'
+    # filter out the possible wildcard path
+    $envPaths = $envPaths | where { $_ -and $_ -like $Path }
+    return $envPaths -ne $null
+}
+
+$chezmoidata.environment.User.Path | Where-Object { $_ } | ForEach-Object { Add-EnvPathFirst -Container User $_ }
+$chezmoidata.environment.User | % getEnumerator | Where-Object { $_.Key -ne 'Path'} | % { [Environment]::SetEnvironmentVariable($_.Key, $_.Value, [EnvironmentVariableTarget]::User) }
+
+try {
+    $chezmoidata.environment.Machine.Path | Where-Object { $_ } | ForEach-Object { Add-EnvPathFirst -Container Machine $_ }
+    $chezmoidata.environment.Machine | % getEnumerator | Where-Object { $_.Key -ne 'Path'} | % { [Environment]::SetEnvironmentVariable($_.Key, $_.Value, [EnvironmentVariableTarget]::Machine) }
+}
+catch [MethodInvocationException]{
+    Write-Host "Error setting environment variables"
+    Write-Host $_.Exception.Message
+    $shouldReranAsAdmin = $true
+}
+
+
+if(!(Test-Administrator) -and $shouldReranAsAdmin) {
+    Write-Host "Re-running as administrator"
+    Start-Process pwsh.exe -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File $PSCommandPath" -Wait
+}
+
+
+{{- end -}}
+{{- end -}}

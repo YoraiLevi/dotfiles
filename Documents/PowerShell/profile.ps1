@@ -13,6 +13,60 @@ catch {
     Write-Error 'PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force'
 }
 
+function Get-ChocoPackage {
+    # https://stackoverflow.com/a/76556486/12603110
+    param(
+        [Parameter(Mandatory)]
+        [string]$PackageName
+    )
+    $choco_list = choco list --lo --limit-output --exact $PackageName | ConvertFrom-Csv -delimiter "|" -Header Id, Version
+    return $choco_list
+}
+function Select-Zip {
+    # https://stackoverflow.com/a/44055098/12603110
+    [CmdletBinding()]
+    Param(
+        $First,
+        $Second,
+        $ResultSelector = { , $args }
+    )
+    return [System.Linq.Enumerable]::Zip($First, $Second, [Func[Object, Object, Object[]]]$ResultSelector)
+}
+
+function Get-WingetPackage {
+    param(
+        [Parameter(Mandatory)]
+        [string]$PackageName,
+        [string]$Source
+    )
+    if ($Source) {
+        $winget_list = winget list --exact $PackageName --source $Source | Select -Last 3
+    }
+    else {
+        $winget_list = winget list --exact $PackageName | Select -Last 3
+    }
+    if($winget_list[1] -notmatch '^-+$') {
+        # The list has returned too many rows, the header is not present, this is a bug in the intent of the function.
+        Write-Error "The list has returned too many rows, the header is not present, this is a bug in the intent of the function."
+        return
+    }
+    $m = $winget_list[0] | Select-String '(\w+(?:\s+?|$))' -AllMatches | Select -ExpandProperty Matches
+    $columns = $m | Select-Object -ExpandProperty Value
+    
+    $indexes = $winget_list[0] | Select-String '(\w+(?:\s+?|$))' -AllMatches | Select -ExpandProperty Matches | Select -ExpandProperty Index 
+    $indexes += @($winget_list[0].length + 1)         
+    $text = $indexes | ForEach-Object -Begin { $i = 0 } -Process {
+        if ($i -lt ($indexes.Length - 1)) {
+            $i++
+            return @{ Index = $_; Length = $indexes[$i] - $_ }
+        }
+    } | % { $winget_list[2].substring($_.Index, $_.Length) }  
+    $winget_out = @{}
+    for ($i = 0; $i -lt $columns.Length; $i++) {
+        $winget_out[$columns[$i].Trim()] = $text[$i].Trim()
+    }
+    return $winget_out
+}
 function Update-PowerShell {
     Write-Host 'Checking for internet connection... ' -ForegroundColor Cyan -NoNewline
     $canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
@@ -28,7 +82,7 @@ function Update-PowerShell {
         $latestVersion = $latestReleaseInfo.tag_name.Trim('v')
         if ($currentVersion -lt $latestVersion) {
             Write-Host 'Updating PowerShell...' -ForegroundColor Yellow
-            if (choco list --lo --limit-output pwsh) {
+            if (Get-ChocoPackage 'pwsh') {
                 sudo choco upgrade pwsh -y
             }
             else {

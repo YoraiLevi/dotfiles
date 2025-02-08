@@ -1,6 +1,9 @@
 git:
   autoCommit : true
 #    autoPush : true
+merge:
+    command : "pwsh"
+    args : ["-Command", "cp {{ `{{ .Target }}` }} {{ `{{ .Target }}` }}.base && code --wait --new-window --merge {{ `{{ .Destination }}` }} {{ `{{ .Target  }}` }} {{ `{{ .Target }}` }}.base {{ `{{ .Source }}` }}"]
 
 {{ if eq .chezmoi.os "windows" -}}
 cd: 

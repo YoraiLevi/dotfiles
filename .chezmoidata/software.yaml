@@ -63,7 +63,6 @@ python:
 fnm:
   - node_version: "lts-latest"
     global_modules:
-      - name: npm@latest
       - name: typescript
       - name: ts-node
 
