@@ -67,6 +67,7 @@ wsl stuff
 rust? compiled languages toolchains...
 registry -> learn how to merge without admin permission
 disable rotation https://superuser.com/a/1833703/1220772
+powershell on exit execute code https://stackoverflow.com/a/31119208/12603110
 
 1) ~~Validate templates compile~~ Reduce template use
 2) Validate code could work in theory - linter etc
