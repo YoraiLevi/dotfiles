@@ -101,7 +101,6 @@ if (((Get-Item -Force /hiberfil.sys).Length - (get-wmiobject -class "Win32_Compu
 
 
 # Taskbar and Start menu
-chezmoi apply AppData/Local/Packages/Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy/LocalState/my_start.bin --force &&  Stop-Process -Name "explorer" && $(if(-not (Get-Process -Name "explorer")) {Start-Process "explorer"})
 # explorer
 # https://stackoverflow.com/a/45633941/12603110
 # $o = new-object -com shell.application

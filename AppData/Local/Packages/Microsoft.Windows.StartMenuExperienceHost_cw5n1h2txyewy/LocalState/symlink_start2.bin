@@ -1,1 +1,1 @@
-.\my_start.bin
+{{ .chezmoi.sourceDir }}/AppData/Local/Packages/Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy/LocalState/my_start.bin
