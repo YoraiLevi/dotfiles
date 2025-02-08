@@ -68,10 +68,10 @@ hooks:
   read-source-state:
     pre:
       command : "pwsh"
-      args : ["-NoProfile","-Command","echo","pre-read-source-state $ENV:CHEZMOI"]
+      args : ["-NoProfile","-Command",";"]
     post:
       command : "pwsh"
-      args : ["-NoProfile","-Command","echo","post-read-source-state $ENV:CHEZMOI"]
+      args : ["-NoProfile","-Command",";"]
 {{ end -}}
 
 {{ if eq .chezmoi.os "windows" -}}
