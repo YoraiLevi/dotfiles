@@ -363,7 +363,7 @@ catch [MethodInvocationException]{
     $shouldReranAsAdmin = $true
 }
 
-
+Stop-Process -Name "explorer" && $(if(-not (Get-Process -Name "explorer")) {Start-Process "explorer"})
 if(!(Test-Administrator) -and $shouldReranAsAdmin) {
     Write-Host "Re-running as administrator"
     Start-Process pwsh.exe -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File $PSCommandPath" -Wait

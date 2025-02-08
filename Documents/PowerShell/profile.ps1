@@ -45,7 +45,7 @@ function Get-WingetPackage {
     else {
         $winget_list = winget list --exact $PackageName | Select -Last 3
     }
-    if($winget_list[1] -notmatch '^-+$') {
+    if ($winget_list[1] -notmatch '^-+$') {
         # The list has returned too many rows, the header is not present, this is a bug in the intent of the function.
         Write-Error "The list has returned too many rows, the header is not present, this is a bug in the intent of the function."
         return
@@ -116,7 +116,8 @@ function Invoke-YesNoPrompt {
         & $Action
     }
 }
-
+# Update local changes to chezmoi repo
+chezmoi re-add &
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
@@ -131,6 +132,8 @@ if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Si
             }
         }
     }
+    # fetch latest changes from chezmoi repo
+    chezmoi update --init --apply &
     Update-PowerShell
 }
 
@@ -239,11 +242,11 @@ function Edit-Setup([switch]$PromptApplyChanges = $false) {
     Invoke-Profile
     if ($PromptApplyChanges) {
         Invoke-YesNoPrompt -Prompt 'Apply changes?' -Action { 
-            (chezmoi update) -and (chezmoi init -a)
+            chezmoi update --init --apply &
         }
     }
     else {
-        (chezmoi update) -and (chezmoi init -a)
+        chezmoi update --init --apply &
     }
 }
 Set-Alias -Name eds -Value Edit-Setup
