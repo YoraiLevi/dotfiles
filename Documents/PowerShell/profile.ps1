@@ -7,8 +7,8 @@ $ENV:EDITOR = "$ENV:EDITOR -w -n" # chezmoi compatibility... exec: "code" execut
 try {
     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
     # oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json"
-    (@(& 'C:/Program Files (x86)/oh-my-posh/bin/oh-my-posh.exe' init pwsh --config='C:\Program Files (x86)\oh-my-posh\themes\jandedobbeleer.omp.json' --print) -join "`n") | Invoke-Expression
-    # Import-Module posh-git -ErrorAction Stop
+    # (@(& 'C:/Program Files (x86)/oh-my-posh/bin/oh-my-posh.exe' init pwsh --config='C:\Program Files (x86)\oh-my-posh\themes\jandedobbeleer.omp.json' --print) -join "`n") | Invoke-Expression
+    Import-Module posh-git -ErrorAction Stop
 }
 catch {
     Write-Error "posh-git isn't available on the system, execute:"
