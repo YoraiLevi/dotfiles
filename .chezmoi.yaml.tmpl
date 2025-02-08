@@ -68,10 +68,10 @@ hooks:
   init:
     pre:
       command : "pwsh"
-      args : ["-Command","-NoProfile","echo","pre-apply-hook;","pause"]
+      args : ["-NoProfile","-Command","echo","pre-apply-hook;","pause"]
     post:
       command : "pwsh"
-      args : ["-Command","-NoProfile","echo","post-apply-hook;","pause"]
+      args : ["-NoProfile","-Command","echo","post-apply-hook;","pause"]
 {{ end -}}
 
 {{ if eq .chezmoi.os "windows" -}}
