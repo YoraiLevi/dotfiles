@@ -234,19 +234,16 @@ Set-Alias -Name 'Reload-Profile' -Value Invoke-Profile
 # }
 # Set-Alias -Name edc -Value Edit-ChezmoiConfig
 
-function Edit-Setup([switch]$PromptApplyChanges = $false, [switch]$Push = $true) {
+function Edit-Setup([switch]$PromptApplyChanges = $false) {
     chezmoi edit
-    if ($Push) {
-        chezmoi git push
-    }
     Invoke-Profile
     if ($PromptApplyChanges) {
         Invoke-YesNoPrompt -Prompt 'Apply changes?' -Action { 
-            (chezmoi update) -and (chezmoi init) -and (chezmoi apply)
+            (chezmoi update) -and (chezmoi init -a)
         }
     }
     else {
-        (chezmoi update) -and (chezmoi init) -and (chezmoi apply)
+        (chezmoi update) -and (chezmoi init -a)
     }
 }
 Set-Alias -Name eds -Value Edit-Setup
