@@ -63,6 +63,14 @@ data:
 #[edit]
 #    command : "code-insders" # doesn't work with `chezmoi edit`, $ENV:EDITOR does work
 #    flags : ["--wait"]
+{{ if eq .chezmoi.os "windows" -}}
+hooks.apply.pre:
+  command = "echo"
+  args = ["pre-apply-hook"]
+hooks.apply.post:
+  command = "echo"
+  args = ["post-apply-hook"]
+{{ end -}}
 
 {{ if eq .chezmoi.os "windows" -}}
 interpreters:
