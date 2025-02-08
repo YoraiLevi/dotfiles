@@ -3,11 +3,8 @@
 
 ## Daily use
 ```
-chezmoi edit
-chezmoi cd
-chezmoi git push
-Edit-Profile
-edp
+eds # only edit template files
+chezmoi re-add # updates everything but templates
 ```
 
 
