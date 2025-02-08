@@ -7,6 +7,10 @@ merge:
     command : "pwsh"
     args : ["-Command", "cp {{ `{{ .Target }}` }} {{ `{{ .Target }}` }}.base && code --wait --new-window --merge {{ `{{ .Destination }}` }} {{ `{{ .Target  }}` }} {{ `{{ .Target }}` }}.base {{ `{{ .Source }}` }}"]
 
+diff:
+  exclude:
+    - scripts
+
 {{ if eq .chezmoi.os "windows" -}}
 cd: 
   command : "pwsh.exe"
