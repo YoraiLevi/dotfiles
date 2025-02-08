@@ -488,15 +488,15 @@ function Find-EnvPath {
 # Update-FormatData -PrependPath "$PSScriptRoot\Format.ps1xml"
 
 if (which 'fnm.exe') {
-    # fnm env --use-on-cd | Out-String | Invoke-Expression
+    fnm env --use-on-cd | Out-String | Invoke-Expression
 }
 else {
     Write-Error "fnm isn't available on the system, execute:`nchoco install fnm"
 }
 
 if (which 'uv.exe') {
-    # (& uv generate-shell-completion powershell) | Out-String | Invoke-Expression
-    # (& uvx --generate-shell-completion powershell) | Out-String | Invoke-Expression
+    (& uv generate-shell-completion powershell) | Out-String | Invoke-Expression
+    (& uvx --generate-shell-completion powershell) | Out-String | Invoke-Expression
 }
 else {
     # powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
