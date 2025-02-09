@@ -13,6 +13,8 @@ catch {
     Write-Error 'PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force'
 }
 
+Set-Alias -Name sudo -Value gsudo
+
 function Get-ChocoPackage {
     # https://stackoverflow.com/a/76556486/12603110
     param(
@@ -177,58 +179,8 @@ if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Si
 
 Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1 # refreshenv
 
-# https://github.com/ChrisTitusTech/powershell-profile/blob/main/Microsoft.PowerShell_profile.ps1
-function Invoke-Profile {
-    # "bug", doesn't update function defenitions aka doesn't reload functions 
-    # https://stackoverflow.com/a/27721496/12603110 - maybe make these utility function into modules
-    & $Profile.CurrentUserAllHosts
-}
-Set-Alias -Name 'Reload-Profile' -Value Invoke-Profile
-# Quick Access to Editing the Profile
-
-# function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [string]$PowerShellProfile = $Profile.CurrentUserAllHosts) {
-#     # todo add check one of available profiles
-#     # todo if it doesn't exist, create it? throw error?
-#     if ($EditChezmoi) {
-#         $applyFlag = ' -a ' # --apply
-#         Invoke-Expression "chezmoi edit $applyFlag $PowerShellProfile" # invoke editing with chezmoi and apply changes immidietly
-#     }
-#     else {
-#         Invoke-Expression ($ENV:EDITOR + ' ' + $PowerShellProfile) # invoke vscode on profile
-#     }
-#     if ($Reload) {
-#         Invoke-Profile
-#     }
-# }
-# Set-Alias -Name edp -Value Edit-Profile
-
-# function Edit-ChezmoiConfig([switch]$EditChezmoi = $True, [switch]$Template = $True, [switch]$Push = $True) {
-#     if ($EditChezmoi) {
-#         if ($Template) {
-#             (chezmoi edit-config-template) -and (chezmoi init)
-#             chezmoi git push
-#         }
-#         else {
-#             chezmoi edit-config
-#             chezmoi git push 
-#         }
-#     }
-#     else {
-#         if ($Template) {
-#             $chezmoi_template_path = "$HOME/.local/share/chezmoi/.chezmoi.toml.tmpl"
-#             $chezmoi_init = '; chezmoi init'
-#         }
-#         else {
-#             $chezmoi_template_path = "$HOME/.config/chezmoi/chezmoi.toml" 
-#         }
-#         Invoke-Expression ($ENV:EDITOR + ' ' + $chezmoi_template_path + ' ' + $chezmoi_init)
-#     }
-# }
-# Set-Alias -Name edc -Value Edit-ChezmoiConfig
-# comment
 function Edit-Setup([switch]$PromptApplyChanges = $false) {
     chezmoi edit
-    Invoke-Profile
     if ($PromptApplyChanges) {
         Invoke-YesNoPrompt -Prompt 'Apply changes?' -Action { 
             chezmoi update --init --apply &
@@ -505,5 +457,9 @@ function Invoke-Conda {
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 
-Set-Alias -Name sudo -Value gsudo
-$A = 1
+if(which 'chezmoi.exe') {
+    chezmoi completion powershell | Out-String | Invoke-Expression
+}
+else{
+    Write-Error "chezmoi isn't available on the system, How??"
+}
