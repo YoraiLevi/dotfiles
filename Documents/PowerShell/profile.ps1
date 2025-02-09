@@ -15,6 +15,21 @@ catch {
 
 Set-Alias -Name sudo -Value gsudo
 
+# https://github.com/ChrisTitusTech/powershell-profile/blob/e89e9b0f968fa2224c8a9400d2023770362fb278/Microsoft.PowerShell_profile.ps1#L446
+# Enhanced PSReadLine Configuration
+# $PSReadLineOptions = @{
+#     EditMode = 'Windows'
+#     HistoryNoDuplicates = $true
+#     HistorySearchCursorMovesToEnd = $true
+#     PredictionSource = 'History'
+#     PredictionViewStyle = 'ListView'
+#     BellStyle = 'None'
+# }
+# Set-PSReadLineOption @PSReadLineOptions
+
+Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+
 function Get-ChocoPackage {
     # https://stackoverflow.com/a/76556486/12603110
     param(
