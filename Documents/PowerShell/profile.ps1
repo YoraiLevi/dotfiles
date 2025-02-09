@@ -514,3 +514,5 @@ function Invoke-Conda {
     conda @args
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
+
+Set-Alias -Name sudo -Value gsudo
