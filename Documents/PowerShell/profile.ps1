@@ -189,13 +189,12 @@ function Invoke-Profile {
     ) | ForEach-Object {
         if (Test-Path $_) {
             Write-Verbose "Running $_"
-            cat $_ | iex
+            . $_ 
         }
     }
 }
 Set-Alias -Name 'Reload-Profile' -Value Invoke-Profile
 # Quick Access to Editing the Profile
-
 
 # function Edit-Profile([switch]$Reload = $True, [switch]$EditChezmoi = $True, [string]$PowerShellProfile = $Profile.CurrentUserAllHosts) {
 #     # todo add check one of available profiles
@@ -515,3 +514,6 @@ function Invoke-Conda {
     conda @args
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
+
+Set-Alias -Name sudo -Value gsudo
+$A = 1
