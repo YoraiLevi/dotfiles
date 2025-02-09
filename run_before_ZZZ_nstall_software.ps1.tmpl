@@ -128,6 +128,7 @@ if (get-command choco.exe -ErrorAction SilentlyContinue) {
         if($toInstallChocoPackages.Length -gt 0) {
             Write-Host "Installing Chocolatey packages"
             $toInstallChocoPackages | ForEach-Object { Install-ChocoPackage -PackageName $_.name -Params $_.params }
+            Import-Module $ENV:ChocolateyInstall/helpers/chocolateyProfile.psm1; refreshenv
         }
     }
 }
