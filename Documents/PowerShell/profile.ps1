@@ -189,7 +189,7 @@ function Invoke-Profile {
     ) | ForEach-Object {
         if (Test-Path $_) {
             Write-Verbose "Running $_"
-            . $_
+            cat $_ | iex
         }
     }
 }
@@ -515,4 +515,3 @@ function Invoke-Conda {
     conda @args
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
-Set-Alias -Name sudo -Value gsudo
