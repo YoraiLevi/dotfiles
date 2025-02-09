@@ -219,7 +219,7 @@ if (get-command fnm.exe -ErrorAction SilentlyContinue) {
 # Powershell
 if (get-command pwsh.exe -ErrorAction SilentlyContinue) {
     $chezmoidata.powershell | ForEach-Object {
-        PowerShellGet\Install-Module @_ -Scope CurrentUser
+        PowerShellGet\Install-Module @_ -Scope CurrentUser -Confirm:$false
     }
 }
 
