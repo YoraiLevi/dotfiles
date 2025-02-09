@@ -181,17 +181,7 @@ Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1 # refreshenv
 function Invoke-Profile {
     # "bug", doesn't update function defenitions aka doesn't reload functions 
     # https://stackoverflow.com/a/27721496/12603110 - maybe make these utility function into modules
-    @(
-        $Profile.AllUsersAllHosts,
-        $Profile.AllUsersCurrentHost,
-        $Profile.CurrentUserAllHosts,
-        $Profile.CurrentUserCurrentHost
-    ) | ForEach-Object {
-        if (Test-Path $_) {
-            Write-Verbose "Running $_"
-            . $_ 
-        }
-    }
+    & $Profile.CurrentUserAllHosts
 }
 Set-Alias -Name 'Reload-Profile' -Value Invoke-Profile
 # Quick Access to Editing the Profile
