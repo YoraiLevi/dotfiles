@@ -3,7 +3,7 @@ software:
     # Minimal
     - name: gsudo
     - name: git
-    - name: vscode-insiders
+    # - name: vscode-insiders
     - name: python
     - name: graphviz
     - name: miniforge3
@@ -28,16 +28,16 @@ software:
     - name: qbittorrent
     - name: wget
     - name: czkawka
-    - name: mousewithoutborders
+    # - name: mousewithoutborders
     - name: Recuva
     - name: winmerge
     - name: wiztree
     - name: sysinternals
     
-    - name: cmake
-    - name: Cygwin
-    - name: make
-    - name: rust
+    # - name: cmake
+    # - name: Cygwin
+    # - name: make
+    # - name: rust
 
     - name: act-cli
     - name: docker-desktop
@@ -50,8 +50,8 @@ software:
     - name: audacity
     - name: audacity-ffmpeg
 
-    - name: office365business
-      params: /productid:O365HomePremRetail /exclude:Access Groove Lync OneDrive OneNote Outlook Publisher /updates:TRUE /eula:TRUE
+    # - name: office365business
+    #   params: /productid:O365HomePremRetail /exclude:Access Groove Lync OneDrive OneNote Outlook Publisher /updates:TRUE /eula:TRUE
   # force?
   # upgrade?
   winget:
