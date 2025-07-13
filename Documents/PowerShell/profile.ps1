@@ -476,3 +476,19 @@ if(which 'chezmoi.exe') {
 else{
     Write-Error "chezmoi isn't available on the system, How??"
 }
+
+
+$LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
+$LazyLoadProfile = [PowerShell]::Create()
+$LazyLoadProfile.Runspace = $LazyLoadProfileRunspace
+$LazyLoadProfileRunspace.Open()
+[void]$LazyLoadProfile.AddScript({Import-Module posh-git}) # (1)
+[void]$LazyLoadProfile.BeginInvoke()
+$null = Register-ObjectEvent -InputObject $LazyLoadProfile -EventName InvocationStateChanged -Action {
+    Import-Module -Name posh-git # (2)
+    $global:GitPromptSettings.DefaultPromptPrefix.Text = 'PS '
+    $global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
+    $LazyLoadProfile.Dispose()
+    $LazyLoadProfileRunspace.Close()
+    $LazyLoadProfileRunspace.Dispose()
+}
