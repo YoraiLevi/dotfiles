@@ -6,7 +6,7 @@ $ENV:EDITOR = "$ENV:EDITOR -w -n" # chezmoi compatibility... exec: "code" execut
 # }
 try {
     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
-    # Import-Module posh-git -ErrorAction Stop
+    Import-Module posh-git -ErrorAction Stop
 }
 catch {
     Write-Error "posh-git isn't available on the system, execute:"
@@ -478,17 +478,17 @@ else{
 }
 
 
-$LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
-$LazyLoadProfile = [PowerShell]::Create()
-$LazyLoadProfile.Runspace = $LazyLoadProfileRunspace
-$LazyLoadProfileRunspace.Open()
-[void]$LazyLoadProfile.AddScript({Import-Module posh-git}) # (1)
-[void]$LazyLoadProfile.BeginInvoke()
-$null = Register-ObjectEvent -InputObject $LazyLoadProfile -EventName InvocationStateChanged -Action {
-    Import-Module -Name posh-git # (2)
-    $global:GitPromptSettings.DefaultPromptPrefix.Text = 'PS '
-    $global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
-    $LazyLoadProfile.Dispose()
-    $LazyLoadProfileRunspace.Close()
-    $LazyLoadProfileRunspace.Dispose()
-}
+# $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
+# $LazyLoadProfile = [PowerShell]::Create()
+# $LazyLoadProfile.Runspace = $LazyLoadProfileRunspace
+# $LazyLoadProfileRunspace.Open()
+# [void]$LazyLoadProfile.AddScript({Import-Module posh-git}) # (1)
+# [void]$LazyLoadProfile.BeginInvoke()
+# $null = Register-ObjectEvent -InputObject $LazyLoadProfile -EventName InvocationStateChanged -Action {
+#     Import-Module -Name posh-git # (2)
+#     $global:GitPromptSettings.DefaultPromptPrefix.Text = 'PS '
+#     $global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
+#     $LazyLoadProfile.Dispose()
+#     $LazyLoadProfileRunspace.Close()
+#     $LazyLoadProfileRunspace.Dispose()
+# }
