@@ -59,6 +59,11 @@ Editing general tracked dotfiles? - TODO
 ```
 ```
 
+Listing variables
+```
+chezmoi data
+```
+
 #### To setup a system:
 ```
 $ENV:SYSTEM_NAME = ""
