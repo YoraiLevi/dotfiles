@@ -18,6 +18,9 @@
 
 #### pwsh specific
 
+`"config.terminal.integrated.suggest.enabled" : true`
+`"config.terminal.integrated.shellIntegration.suggestEnabled": true`
+
 ```json
 {"command":"workbench.action.terminal.sendSequence","key":"alt+space","when":"terminalFocus && terminalShellIntegrationEnabled && !accessibilityModeEnabled && terminalShellType == 'pwsh'","args":{"text":"\u001b[24~b"}},
 {"command":"workbench.action.terminal.sendSequence","key":"ctrl+space","when":"config.terminal.integrated.shellIntegration.suggestEnabled && terminalFocus && terminalShellIntegrationEnabled && !accessibilityModeEnabled && terminalShellType == 'pwsh'","args":{"text":"\u001b[24~e"}},
@@ -40,6 +43,7 @@ TODO: No idea?
 ```
 
 jupytyer up down between cells
+`"config.notebook.navigation.allowNavigateToSurroundingCells": true`
 
 ```json
 {"command":"notebook.focusNextEditor","key":"down","when":"config.notebook.navigation.allowNavigateToSurroundingCells && editorTextFocus && inputFocus && notebookEditorFocused && !accessibilityModeEnabled && !isEmbeddedDiffEditor && notebookEditorCursorAtBoundary != 'none' && notebookEditorCursorAtBoundary != 'top'"},
