@@ -19,7 +19,7 @@
 #### pwsh specific
 
 `"config.terminal.integrated.suggest.enabled" : true`
-`"config.terminal.integrated.shellIntegration.suggestEnabled": true`
+`"config.terminal.integrated.shellIntegration.suggestEnabled": true` - Deprecated?
 
 ```json
 {"command":"workbench.action.terminal.sendSequence","key":"alt+space","when":"terminalFocus && terminalShellIntegrationEnabled && !accessibilityModeEnabled && terminalShellType == 'pwsh'","args":{"text":"\u001b[24~b"}},
@@ -56,4 +56,32 @@ jupytyer up down between cells
 {"command":"notebook.focusPreviousEditor","key":"up","when":"config.notebook.navigation.allowNavigateToSurroundingCells && notebookCursorNavigationMode && notebookEditorFocused && !accessibilityModeEnabled && !notebookCellMarkdownEditMode && notebookCellType == 'markup'"},
 {"command":"workbench.action.terminal.runRecentCommand","key":"ctrl+alt+r","when":"terminalFocus && terminalHasBeenCreated && !accessibilityModeEnabled || terminalFocus && terminalProcessSupported && !accessibilityModeEnabled || terminalFocus && terminalHasBeenCreated && terminalProcessSupported && !accessibilityModeEnabled"},
 {"command":"workbench.action.terminal.runRecentCommand","key":"ctrl+alt+r","when":"terminalFocus && terminalHasBeenCreated && !accessibilityModeEnabled || terminalFocus && terminalProcessSupported && !accessibilityModeEnabled"},
+```
+
+## accessibilityModeEnabled
+
+TODO?
+
+```json
+{"command":"cursorWordAccessibilityLeft","key":"ctrl+left","when":"accessibilityModeEnabled && isWindows && textInputFocus && focusedView == 'workbench.panel.output'"},
+{"command":"cursorWordAccessibilityLeftSelect","key":"ctrl+shift+left","when":"accessibilityModeEnabled && isWindows && textInputFocus && focusedView == 'workbench.panel.output'"},
+{"command":"cursorWordAccessibilityRight","key":"ctrl+right","when":"accessibilityModeEnabled && isWindows && textInputFocus && focusedView == 'workbench.panel.output'"},
+{"command":"cursorWordAccessibilityRightSelect","key":"ctrl+shift+right","when":"accessibilityModeEnabled && isWindows && textInputFocus && focusedView == 'workbench.panel.output'"},
+{"command":"editor.action.nextCommentingRange","key":"ctrl+m ctrl+alt+down","when":"accessibilityModeEnabled && commentFocused || accessibilityModeEnabled && editorFocus || accessibilityHelpIsShown && accessibilityModeEnabled && accessibleViewCurrentProviderId == 'comments'"},
+```
+
+```json
+{"command":"editor.action.previousCommentingRange","key":"ctrl+m ctrl+alt+up","when":"accessibilityModeEnabled && commentFocused || accessibilityModeEnabled && editorFocus || accessibilityHelpIsShown && accessibilityModeEnabled && accessibleViewCurrentProviderId == 'comments'"},
+{"command":"notebook.focusNextEditor","key":"ctrl+pagedown","when":"accessibilityModeEnabled && notebookCellEditorFocused"},
+{"command":"notebook.focusPreviousEditor","key":"ctrl+pageup","when":"accessibilityModeEnabled && notebookCellEditorFocused"},
+
+{"command":"search.action.focusSearchFromResults","key":"ctrl+up","when":"accessibilityModeEnabled && searchViewletVisible || firstMatchFocus && searchViewletVisible"},
+
+{"command":"workbench.action.terminal.focus","key":"ctrl+down","when":"accessibilityModeEnabled && accessibleViewOnLastLine && terminalHasBeenCreated && accessibleViewCurrentProviderId == 'terminal' || accessibilityModeEnabled && accessibleViewOnLastLine && terminalProcessSupported && accessibleViewCurrentProviderId == 'terminal'"},
+{"command":"workbench.action.terminal.focusAccessibleBuffer","key":"alt+f2","when":"accessibilityModeEnabled && terminalFocus && terminalHasBeenCreated || accessibilityModeEnabled && terminalFocus && terminalProcessSupported"},
+{"command":"workbench.action.terminal.focusAccessibleBuffer","key":"ctrl+up","when":"accessibilityModeEnabled && terminalFocus && terminalHasBeenCreated || accessibilityModeEnabled && terminalFocus && terminalProcessSupported"},
+{"command":"workbench.action.terminal.focusAccessibleBuffer","key":"shift+tab","when":"accessibilityModeEnabled && terminalHasBeenCreated && terminalTabFocusMode && !terminalAccessibleBufferFocus || accessibilityModeEnabled && terminalProcessSupported && terminalTabFocusMode && !terminalAccessibleBufferFocus"},
+{"command":"workbench.action.terminal.runRecentCommand","key":"ctrl+r","when":"accessibilityModeEnabled && terminalFocus && terminalHasBeenCreated || accessibilityModeEnabled && terminalFocus && terminalProcessSupported || accessibilityModeEnabled && accessibleViewIsShown && terminalHasBeenCreated && accessibleViewCurrentProviderId == 'terminal' || accessibilityModeEnabled && accessibleViewIsShown && terminalProcessSupported && accessibleViewCurrentProviderId == 'terminal'"},
+{"command":"workbench.action.terminal.runRecentCommand","key":"ctrl+r","when":"accessibilityModeEnabled && terminalFocus && terminalHasBeenCreated || accessibilityModeEnabled && terminalFocus && terminalProcessSupported || accessibilityModeEnabled && terminalFocus && terminalHasBeenCreated && terminalProcessSupported"},
+{"command":"workbench.action.terminal.sendSequence","key":"ctrl+alt+r","when":"accessibilityModeEnabled && terminalFocus","args":{"text":"\u0012"}},
 ```
