@@ -85,3 +85,13 @@ TODO?
 {"command":"workbench.action.terminal.runRecentCommand","key":"ctrl+r","when":"accessibilityModeEnabled && terminalFocus && terminalHasBeenCreated || accessibilityModeEnabled && terminalFocus && terminalProcessSupported || accessibilityModeEnabled && terminalFocus && terminalHasBeenCreated && terminalProcessSupported"},
 {"command":"workbench.action.terminal.sendSequence","key":"ctrl+alt+r","when":"accessibilityModeEnabled && terminalFocus","args":{"text":"\u0012"}},
 ```
+
+## Commands explained
+
+### `editor.action.clipboardCopyWithSyntaxHighlightingAction` - <https://code.visualstudio.com/updates/v1_10#_copy-with-syntax-highlighting>
+
+Copying plain text to the Clipboard is easy and straight-forward but copying text with syntax highlighting has to pay the price of rendering based on the Theme you are using, so in order to make sure this feature doesn't slow down VS Code noticeably, we turn it off if you are copying a selection which contains more than 65536 characters.
+
+If Copy and Paste with correct format and colors is your top priority, so you can always manually run the new command editor.action.clipboardCopyWithSyntaxHighlightingAction or even bind it to ctrl/cmd+c so you don't need to worry if the selection length reaches the limit
+
+### `workbench.action.focusPanel` - focuses into the terminal/bottom panel
