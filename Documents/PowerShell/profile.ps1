@@ -133,7 +133,7 @@ function Invoke-YesNoPrompt {
 }
 # Update local changes to chezmoi repo
 $null = chezmoi re-add &
-echo 2
+echo 3
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
