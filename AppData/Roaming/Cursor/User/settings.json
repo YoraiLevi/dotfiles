@@ -99,7 +99,8 @@
     "terminal.integrated.suggest.enabled": true,
     "terminal.integrated.shellIntegration.suggestEnabled": true,
     "vscode-default-keybindings.removeOSKeybindings": true,
-    "vscode-default-keybindings.windowsKeybindings": true
+    "vscode-default-keybindings.windowsKeybindings": true,
+    "cursor.cpp.enablePartialAccepts": true
     // "color-blocks.wrapText.enabled": true,
     // "editor.inlayHints.enabled": "off",
     // "workbench.colorCustomizations": {
