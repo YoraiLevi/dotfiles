@@ -100,7 +100,11 @@
     "terminal.integrated.shellIntegration.suggestEnabled": true,
     "vscode-default-keybindings.removeOSKeybindings": true,
     "vscode-default-keybindings.windowsKeybindings": true,
-    "cursor.cpp.enablePartialAccepts": true
+    "cursor.cpp.enablePartialAccepts": true,
+    "cursor.diffs.useCharacterLevelDiffs": true,
+    "cursor.terminal.usePreviewBox": true,
+    "git.blame.editorDecoration.enabled": false,
+    "git.blame.statusBarItem.enabled": false
     // "color-blocks.wrapText.enabled": true,
     // "editor.inlayHints.enabled": "off",
     // "workbench.colorCustomizations": {
