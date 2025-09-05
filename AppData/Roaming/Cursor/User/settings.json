@@ -72,11 +72,6 @@
     "files.autoSave": "onFocusChange",
     "git.autofetch": true,
     "python.testing.pytestEnabled": true,
-    "python.testing.pytestArgs": [
-        " -v",
-        "-o log_cli=true",
-        "-o log_cli_level=info"
-    ],
     "pythonTestExplorer.testFramework": "pytest",
     "workbench.editorLargeFileConfirmation": 30,
     "notebook.lineNumbers": "on",
