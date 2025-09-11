@@ -1,7 +1,7 @@
-$ENV:EDITOR = @('cursor', 'code-insiders', 'code') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
-Set-Alias -Name code -Value $ENV:EDITOR
-Set-Alias -Name vscode -Value $ENV:EDITOR
-$ENV:EDITOR = "$ENV:EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
+$ENV:_EDITOR = @('cursor', 'code-insiders', 'code') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+Set-Alias -Name code -Value $ENV:_EDITOR
+Set-Alias -Name vscode -Value $ENV:_EDITOR
+$ENV:EDITOR = "$ENV:_EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
 # if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
 # }
 try {
