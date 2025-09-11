@@ -1,1 +1,1 @@
-./my_start.bin
+{{ .chezmoi.homeDir }}/.vscode/settings.json
