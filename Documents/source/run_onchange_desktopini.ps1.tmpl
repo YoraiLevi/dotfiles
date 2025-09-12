@@ -1,3 +1,4 @@
-# {{ include "./desktop.ini" | sha256sum }}
+# {{ joinPath .chezmoi.sourceDir "desktop.ini" | sha256sum }}
+
 attrib +h +s desktop.ini
 attrib +r .
