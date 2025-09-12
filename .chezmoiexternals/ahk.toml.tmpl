@@ -1,15 +1,18 @@
 {{ if eq .chezmoi.os "windows" -}}
-["./bin/TTS.exe"]
+["./bin/ahk_TTS.exe"]
     type = "file"
-    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/TTS_all_ahk.exe"
+    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/ahk_TTS_all.exe"
     refreshPeriod = "168h"
     executable = true
-["./bin/REMAP.exe"]
+["./bin/ahk_REMAP.exe"]
     type = "file"
 {{- if contains .BaseBoard  "TP412FAC" }}
-    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/Vivobook_ASUSLaptop.TP412FAC_TP412FA_ahk.exe"
+    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/ahk_keyboard_remap_TP412FAC.exe"
+{{- else if contains .BaseBoard "0J8T5G"}}
+    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/ahk_keyboard_remap_0J8T5G.exe"
 {{- else }}
-    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/desktop_key_remap_ahk.exe"
+    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/ahk_keyboard_remap_all.exe"
+
 {{- end }}
     refreshPeriod = "168h"
     executable = true
