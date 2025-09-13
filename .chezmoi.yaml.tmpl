@@ -84,5 +84,5 @@ interpreters:
     args : ["-NoLogo", "-NoProfile", "-NonInteractive"]
   sh :
     command : "C:/Program Files/PowerShell/7/pwsh.exe"
-    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-CommandWithArgs', "wsl env -i bash --norc --noprofile $(wsl wslpath $args.replace('\\','/'))"]
+    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-CommandWithArgs', "wsl bash --noprofile --norc $(wsl wslpath $args.replace('\\','/'))"]
 {{ end -}}
