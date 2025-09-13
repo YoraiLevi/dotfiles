@@ -1,5 +1,0 @@
-$wsl_user = $(wsl echo '$USER')
-$ENV:USERPROFILE
-
-
-echo New-Item -ItemType SymbolicLink -Path "$ENV:USERPROFILE/.bashrc" -Target "\\wsl.localhost\Ubuntu-24.04\home\$wsl_user\.bashrc" 
