@@ -1,6 +1,5 @@
 [wsl2]
 memory=16GB
 processors=4
-swapFile=C:\\Users\\Yorai\\wsl-swap.vhdx
 swap=100GB
 vmIdleTimeout=180
