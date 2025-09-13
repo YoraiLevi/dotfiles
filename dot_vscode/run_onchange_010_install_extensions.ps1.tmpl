@@ -1,0 +1,4 @@
+# {{ joinPath .chezmoi.sourceDir "extensions.txt" | sha256sum }}
+echo "== {{ .chezmoi.sourceFile | trim }} =="
+$_EDITOR = @('cursor', 'code-insiders', 'code') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+cat C:\Users\Yorai\.vscode\extensions.txt | foreach {&$_EDITOR --install-extension $_}
