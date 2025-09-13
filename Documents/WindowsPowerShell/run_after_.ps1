@@ -1,1 +1,0 @@
-echo after symlink Microsoft.PowerShell_profile.ps1
