@@ -1,0 +1,3 @@
+# {{ joinPath .chezmoi.sourceDir "my_start.bin" | sha256sum }}
+echo "== {{ .chezmoi.sourceFile | trim }} =="
+Stop-Process -Name "StartMenuExperienceHost"

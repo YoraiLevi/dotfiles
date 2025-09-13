@@ -1,18 +1,5 @@
 ## [Project Requirements Documents](https://docs.google.com/document/d/1YMBDaniOEwUiMpM2-22DQS6xsGwZ5SLFlhoZ_u54h9Q/edit?tab=t.0) - Google Docs reference
 
-More TODOS:
-Refresh start menu after start.bin update - How can I restart start menu? <https://superuser.com/a/1617476/1220772>  
-bash unlimited history <https://stackoverflow.com/a/19533853/12603110>  
-<https://app.sparkmailapp.com/web-share/ZYcTULhKr4caHTKFzmK3TeTTV2eMz0ILf9CBNZPl>  
-powercfg and power configurations  
-explorer and taskbar pins  
-powershell modules  
-wsl stuff  
-rust? compiled languages toolchains...  
-registry -> learn how to merge without admin permission  
-disable rotation <https://superuser.com/a/1833703/1220772>  
-powershell on exit execute code <https://stackoverflow.com/a/31119208/12603110>  
-
 Development references
 
 1) ~~Validate templates compile~~ Reduce template use
@@ -21,25 +8,19 @@ Development references
 4) automated tests with vm?
 5) better vagrant setup?
 
-TODO read about [Special files and directories](https://www.chezmoi.io/reference/special-files-and-directories/)  
+TODO read about chezmoi [Special files and directories](https://www.chezmoi.io/reference/special-files-and-directories/)  
 test again and report bug related to vscode typing issue when editor is specified on toml  
 
 1) don't use editor variable in env  
-2) dont use conda/posh  
-3) pwsh.exe vs cmd.exe vs default  
-4) getting system info:
+2) pwsh.exe vs cmd.exe vs default for scripts? 
+3) getting system info:
    1) <https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem>
    2) <https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-systemenclosure>
    3) <https://techuisitive.com/enclosure-chassis-types-value-description-configmgr-sccm/?expand_article=1>
-5) windows update pausing
-   1) <https://stackoverflow.com/questions/62424065/pause-windows-update-for-up-to-35-days-and-find-out-until-which-date-updates-are>
 
 reference examples:  
 <https://github.com/mimikun/dotfiles/tree/master>  
 <https://github.com/SeeminglyScience/dotfiles/tree/main>  
-
-Avoiding admin: What registry objects could be (over)written using `HKEY_CURRENT_USER` <https://stackoverflow.com/a/19149700/12603110>
-How to install chocolatey software without admin?
 
 ------------------
 
@@ -54,6 +35,12 @@ How to install chocolatey software without admin?
 Opening terminal, fetching updates?
 
 ```
+```
+
+Applying updates from local
+
+```
+chezmoi init --apply
 ```
 
 Editing profile
@@ -112,6 +99,7 @@ cat template.tmpl | chezmoi execute-template $_
 ```
 
 Character order:
+Note: Upper case is before numbers for chezmoi??
 
 ```
 PS> [string](33..126 | %{$([string][char]$_)} | sort)
@@ -122,6 +110,8 @@ _ - , ; : ! ? . ' " ( ) [ ] { } @ * / \ & # % ` ^ + < = > | ~ $ 0 1 2 3 4 5 6 7 
 #### Debugging
 
 Profiling pwsh profile performance
+
+This doesn't work well:
 
 ```
 pwsh.exe -NoProfile -command 'Measure-Script -Top 10 $profile.CurrentUserAllHosts'
