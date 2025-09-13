@@ -1,0 +1,3 @@
+echo "== {{ .chezmoi.sourceFile | trim }} =="
+$startup_dir = (New-Object -ComObject WScript.Shell).SpecialFolders.Item("Startup")
+Get-Childitem $startup_dir -Filter 'ahk_*' -File | % { Start-Process -NoNewWindow -FilePath $_ }
