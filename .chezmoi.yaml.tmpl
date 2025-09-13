@@ -82,4 +82,6 @@ interpreters:
   ps1 : 
     command : "C:/Program Files/PowerShell/7/pwsh.exe"
     args : ["-NoLogo", "-NoProfile", "-NonInteractive"]
+  sh :
+    command : '{{ .chezmoi.sourceDir }}/sh'
 {{ end -}}
