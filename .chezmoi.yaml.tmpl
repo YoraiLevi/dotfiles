@@ -83,5 +83,6 @@ interpreters:
     command : "C:/Program Files/PowerShell/7/pwsh.exe"
     args : ["-NoLogo", "-NoProfile", "-NonInteractive"]
   sh :
-    command : '{{ .chezmoi.sourceDir }}/sh'
+    command : "C:/Program Files/PowerShell/7/pwsh.exe"
+    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-CommandWithArgs', "wsl env -i bash --norc --noprofile $(wsl wslpath $args.replace('\\','/'))"]
 {{ end -}}
