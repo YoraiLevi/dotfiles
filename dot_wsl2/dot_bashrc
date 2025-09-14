@@ -118,7 +118,7 @@ if ! shopt -oq posix; then
 fi
 
 . "$HOME/.local/bin/env"
-
+``
 # https://stackoverflow.com/a/40158199/12603110
 function rescue_history {
     history -a
@@ -142,6 +142,12 @@ PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
 # https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c
 stty -ixon
 
+
+# Ignore case on auto-completion
+bind "set completion-ignore-case on"
+# Show auto-completion list automatically, without double tab
+bind "set show-all-if-ambiguous On"
+
 # Load pyenv automatically by appending
 # the following to
 # ~/.bash_profile if it exists, otherwise ~/.profile (for login shells)
@@ -160,3 +166,48 @@ export PATH="$HOME/.local/bin:$PATH"
 alias mv="mv -iv"
 alias cp="cp -riv"
 alias mkdir='mkdir -vp'
+
+# Directory navigation improvements
+alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias bd='cd "$OLDPWD"'  # cd into the old directory
+
+up () {
+    local d=""
+    limit=$1
+    for ((i=1 ; i <= limit ; i++))
+        do
+            d=$d/..
+        done
+    d=$(echo $d | sed 's/^\///')
+    if [ -z "$d" ]; then
+        d=..
+    fi
+    cd $d
+}
+
+extract () {
+    for archive in $*; do
+        if [ -f $archive ] ; then
+            case $archive in
+                *.tar.bz2)   tar xvjf $archive    ;;
+                *.tar.gz)    tar xvzf $archive    ;;
+                *.bz2)       bunzip2 $archive     ;;
+                *.rar)       rar x $archive       ;;
+                *.gz)        gunzip $archive      ;;
+                *.tar)       tar xvf $archive     ;;
+                *.tbz2)      tar xvjf $archive    ;;
+                *.tgz)       tar xvzf $archive    ;;
+                *.zip)       unzip $archive       ;;
+                *.Z)         uncompress $archive  ;;
+                *.7z)        7z x $archive        ;;
+                *)           echo "don't know how to extract '$archive'..." ;;
+            esac
+        else
+            echo "'$archive' is not a valid file!"
+        fi
+    done
+}

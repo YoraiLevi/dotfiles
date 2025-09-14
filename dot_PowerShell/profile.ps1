@@ -289,6 +289,47 @@ Function Touch-File {
 }
 Set-Alias -Name touch -Value Touch-File
 
+# Additional navigation aliases (from your bash setup)
+Set-Alias -Name '..' -Value 'Set-Location ..'
+Set-Alias -Name '...' -Value 'Set-Location ..\..'  
+Set-Alias -Name '....' -Value 'Set-Location ..\..\..'
+
+# Go up multiple directories (like bash 'up' function)
+function Up {
+    param([int]$Levels = 1)
+    $path = Get-Location
+    for ($i = 0; $i -lt $Levels; $i++) {
+        $path = Split-Path $path -Parent
+    }
+    Set-Location $path
+}
+
+function Extract-Archive {
+    param([string]$Path)
+    
+    if (-not (Test-Path $Path)) {
+        Write-Error "'$Path' is not a valid file!"
+        return
+    }
+    
+    $extension = [System.IO.Path]::GetExtension($Path).ToLower()
+    $directory = [System.IO.Path]::GetDirectoryName($Path)
+    
+    switch ($extension) {
+        '.zip' { Expand-Archive -Path $Path -DestinationPath $directory }
+        '.7z' { & 7z x $Path -o"$directory" }
+        '.rar' { & winrar x $Path $directory }
+        '.tar' { tar -xf $Path -C $directory }
+        '.gz' { 
+            if ($Path -like '*.tar.gz') { tar -xzf $Path -C $directory }
+            else { gzip -d $Path }
+        }
+        default { Write-Error "Don't know how to extract '$Path'..." }
+    }
+}
+Set-Alias -Name extract -Value Extract-Archive
+
+
 function Get-Env {
     Get-ChildItem env:
 }
