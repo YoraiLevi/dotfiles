@@ -1,126 +1,54 @@
 {
-    "explorer.openEditors.visible": 15,
-    // "evenbettercomments.highlightTagOnly": true,
-    "sync.gist": "747d75c59bfb9c0bc25fd5888db4607e",
-    "sync.autoUpload": true,
-    "sync.autoDownload": true,
-    "sync.forceDownload": true,
-    "sync.forceUpload": true,
-    "sync.quietSync": true,
-    "sync.removeExtensions": false,
-    "sync.syncExtensions": true,
-    "settingsSync.repositoryUrl": "https://github.com/YoraiLevi/settings-test.git",
-    "settingsSync.branch": "pee18",
-    "settingsSync.autoSync": true,
-    "settingsSync.debounceDelay": 5,
-    "settingsSync.pullBeforePush": false,
-    "settingsSync.extensions.autoRemove": true,
-    "settingsSync.files": [
-        {
-            "baseDir": "${userSettings}",
-            "patterns": [
-                "settings.json",
-                "keybindings.json",
-                "snippets/**/*.code-snippets",
-                "globalStorage/storage.json"
-            ],
-            "remoteDir": "./settings",
-        },
-        // {
-        //     "baseDir": "${globalStorage}",
-        //     "patterns": [
-        //         "extensions.json"
-        //     ],
-        //     "remoteDir": "./settings"
-        // },
-        {
-            "baseDir": "~/Documents/PowerShell",
-            "patterns": [
-                "*.ps*1*"
-            ],
-            "excludePatterns": [
-                "Modules/*"
-            ],
-            "remoteDir": "shell/windows/PowerShell",
-            "conditions": {
-                "OS": "Windows_NT"
-            },
-        }
-    ],
-    "blockman.n04ColorComboPreset": "Small Galaxy (Gradients)",
-    "color-blocks.wrapText.enabled": true,
+    "[python]": {
+        "diffEditor.ignoreTrimWhitespace": true,
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "cursor.cpp.enablePartialAccepts": true,
+    "cursor.diffs.useCharacterLevelDiffs": true,
+    "cursor.terminal.usePreviewBox": true,
+    "diffEditor.hideUnchangedRegions.enabled": true,
     "diffEditor.ignoreTrimWhitespace": false,
     "diffEditor.renderSideBySide": true,
-    "workbench.editor.showTabs": "none",
-    "window.zoomLevel": -1,
-    "gitTreeCompare.diffMode": "full",
-    "gitTreeCompare.showCheckboxes": false,
-    "[sql]": {
-        "editor.defaultFormatter": "adpyke.vscode-sql-formatter"
-    },
-    "powershell.enableProfileLoading": false,
+    "editor.accessibilitySupport": "off",
+    "editor.gotoLocation.multipleDeclarations": "gotoAndPeek",
+    "editor.gotoLocation.multipleDefinitions": "gotoAndPeek",
+    "editor.gotoLocation.multipleImplementations": "gotoAndPeek",
+    "editor.gotoLocation.multipleReferences": "gotoAndPeek",
+    "editor.gotoLocation.multipleTypeDefinitions": "gotoAndPeek",
+    "editor.inlineSuggest.edits.showCollapsed": true,
+    "explorer.openEditors.visible": 15,
+    "files.autoSave": "onFocusChange",
+    "files.hotExit": "onExitAndWindowClose", // No save to close pop up
+    "git.autofetch": true,
+    "git.blame.editorDecoration.enabled": false,
+    "git.blame.statusBarItem.enabled": false,
+    "git.suggestSmartCommit": false, // ctrl+shift+f auto search on typing in search
+    "gitlens.views.commitDetails.files.layout": "tree",
     "jupyter.askForKernelRestart": false,
-    "remote.autoForwardPortsSource": "hybrid",
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter",
-        "diffEditor.ignoreTrimWhitespace": true
-    },
     "jupyter.widgetScriptSources": [
         "jsdelivr.com",
         "unpkg.com"
     ],
-    "files.autoSave": "onFocusChange",
-    "git.autofetch": true,
-    "python.testing.pytestEnabled": true,
-    "pythonTestExplorer.testFramework": "pytest",
-    "python.testing.unittestEnabled": false,
-    "workbench.editorLargeFileConfirmation": 30,
     "notebook.lineNumbers": "on",
-    "search.searchOnType": true,
-    "git.suggestSmartCommit": false, // ctrl+shift+f auto search on typing in search
-    "editor.accessibilitySupport": "off",
-    "window.commandCenter": true,
-    "workbench.sideBar.location": "right",
-    "references.preferredLocation": "view",
-    "notebook.output.scrolling": true,
-    "notebook.output.wordWrap": true,
-    "notebook.output.textLineLimit": 80,
-    "under30.functionLengthLimit": 50,
-    "gitlens.views.commitDetails.files.layout": "tree",
-    "files.hotExit": "onExitAndWindowClose", // No save to close pop up
-    "window.restoreWindows": "all", // Restore windows on start unless manually opened something specific 
-    "diffEditor.hideUnchangedRegions.enabled": true,
     "notebook.navigation.allowNavigateToSurroundingCells": false,
-    // terminal suggestions
-    "terminal.integrated.suggest.enabled": true,
-    "terminal.integrated.shellIntegration.suggestEnabled": true,
+    "notebook.output.scrolling": true,
+    "notebook.output.textLineLimit": 80,
+    "notebook.output.wordWrap": true,
+    "powershell.enableProfileLoading": false,
+    "python.languageServer": "None",
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "pythonTestExplorer.testFramework": "pytest",
+    "references.preferredLocation": "view",
+    "remote.autoForwardPortsSource": "hybrid",
+    "search.searchOnType": true,
+    "terminal.integrated.suggest.enabled": false, // The suggestions are annoying. keep them off
     "vscode-default-keybindings.removeOSKeybindings": true,
     "vscode-default-keybindings.windowsKeybindings": true,
-    "cursor.cpp.enablePartialAccepts": true,
-    "cursor.diffs.useCharacterLevelDiffs": true,
-    "cursor.terminal.usePreviewBox": true,
-    "git.blame.editorDecoration.enabled": false,
-    "git.blame.statusBarItem.enabled": false,
-    "python.languageServer": "None",
-    "editor.gotoLocation.multipleImplementations": "gotoAndPeek",
-    "editor.gotoLocation.multipleReferences": "gotoAndPeek",
-    "editor.gotoLocation.multipleTypeDefinitions": "gotoAndPeek",
-    "editor.gotoLocation.multipleDefinitions": "gotoAndPeek",
-    "editor.gotoLocation.multipleDeclarations": "gotoAndPeek",
-    "editor.inlineSuggest.edits.showCollapsed": true,
-    // "editor.gotoLocation.alternativeDeclarationCommand": "editor.action.goToImplementation",
-    // "editor.gotoLocation.alternativeReferenceCommand": "editor.action.goToImplementation",
-    // "editor.gotoLocation.alternativeTypeDefinitionCommand": "editor.action.goToImplementation",
-
-    // "color-blocks.wrapText.enabled": true,
-    // "editor.inlayHints.enabled": "off",
-    // "workbench.colorCustomizations": {
-    // "editor.lineHighlightBackground": "#1073cf2d",
-    // "editor.lineHighlightBorder": "#9fced11f"
-    // },
-    // "editor.wordWrap": "off",
-    // "diffEditor.wordWrap": "off",
-    // "editor.guides.indentation": false,
-    // "editor.guides.bracketPairs": false,
-    // "blockman.n04ColorComboPreset": "Classic Dark 1 (Solid colors)"
+    "window.commandCenter": true,
+    "window.restoreWindows": "all", // Restore windows on start unless manually opened something specific 
+    "window.zoomLevel": -1,
+    "workbench.editor.showTabs": "none",
+    "workbench.editorLargeFileConfirmation": 30,
+    "workbench.sideBar.location": "right"
 }
