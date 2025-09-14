@@ -1,4 +1,0 @@
-# {{ joinPath .chezmoi.sourceDir "desktop.ini" | sha256sum }}
-echo "== {{ .chezmoi.sourceFile | trim }} =="
-attrib -h -s desktop.ini
-attrib -r .

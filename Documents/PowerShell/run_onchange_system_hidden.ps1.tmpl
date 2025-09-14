@@ -1,2 +1,6 @@
-# {{ output "powershell.exe" "-NoProfile" "attrib ." | trim}}
+{{- $checkAttributes := output "powershell.exe" "-NoProfile" "-Command" "$attributes = (Get-Item -Path '.' -Force).Attributes; ($attributes -band [System.IO.FileAttributes]::Hidden -and $attributes -band [System.IO.FileAttributes]::System)" | trim | lower -}}
+{{- if eq $checkAttributes "false" -}}
+# {{ output "powershell.exe" "-NoProfile" "attrib ." }}
+echo "== {{ .chezmoi.sourceFile | trim }} =="
 attrib +s +h .
+{{- end -}}
