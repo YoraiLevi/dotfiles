@@ -1,3 +1,4 @@
 # windows -> wsl2:
+echo "== {{ .chezmoi.sourceFile | trim }} =="
 rm ~/.bashrc 2> /dev/null
 ln -sf "$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")/.wsl2/.bashrc" ~/.bashrc 
