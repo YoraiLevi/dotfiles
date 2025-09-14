@@ -68,3 +68,5 @@ regedit:
   # Desktop only?
   - name: Enable_lock_screen_Ctrl_Alt_Del_Secure_sign-in_for_all_users.reg
     url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/fc7dc790ca2d8caeedd8d57279838ad13c9cd28d/elevenforum/Enable%20or%20Disable%20Ctrl%2BAlt%2BDelete%20Secure%20Sign-in%20on%20Lock%20Screen%20in%20Windows%2011/Enable_lock_screen_Ctrl%2BAlt%2BDel_Secure_sign-in_for_all_users.reg
+  - name: prevent_Zone.Identifier_wsl2.reg
+    url: https://raw.githubusercontent.com/YoraiLevi/windows_registry_modifications/3ccd44a7c9b2b1475e811042b3908a07e722ab4c/Yorai_Levi/prevent_Zone.Identifier_wsl2.reg
