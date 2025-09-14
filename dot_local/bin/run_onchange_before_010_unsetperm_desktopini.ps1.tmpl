@@ -1,9 +1,0 @@
-{{- $desktopIniPath := joinPath .chezmoi.sourceDir (dir .chezmoi.sourceFile) "desktop.ini" -}}
-{{- if stat $desktopIniPath -}}
-{{- $checkAttributes := output "powershell.exe" "-NoProfile" "-Command" (printf "$filePath = '%s'; $attributes = (Get-Item -Path $filePath -Force).Attributes; ($attributes -band [System.IO.FileAttributes]::System)" $desktopIniPath) | trim | lower -}}
-{{- if eq $checkAttributes "true" -}}
-# {{ include $desktopIniPath | sha256sum }}
-echo "== {{ .chezmoi.sourceFile | trim }} =="
-attrib -s desktop.ini
-{{- end -}}
-{{- end -}}

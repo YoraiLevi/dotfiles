@@ -1,0 +1,17 @@
+{{- $sourceDesktopIniPath := joinPath .chezmoi.sourceDir (dir .chezmoi.sourceFile) "desktop.ini" -}}
+{{- $targetDesktopIniPath := joinPath (dir .chezmoi.targetFile) "desktop.ini" -}}
+{{- if stat $sourceDesktopIniPath -}}
+{{- if stat $targetDesktopIniPath -}}
+{{- $sourceChecksum := include $sourceDesktopIniPath | sha256sum -}}
+{{- $targetChecksum := include $targetDesktopIniPath | sha256sum -}}
+{{- $hasSystemAttrib := output "powershell.exe" "-NoProfile" "-Command" (printf "$filePath = '%s'; $attributes = (Get-Item -Path $filePath -Force).Attributes; [boolean]($attributes -band [System.IO.FileAttributes]::System)" $targetDesktopIniPath) | trim | lower -}}
+{{- if and (ne $sourceChecksum $targetChecksum) (eq $hasSystemAttrib "true") -}}
+echo "== {{ .chezmoi.sourceFile | trim }} =="
+attrib -s -h desktop.ini
+{{- end -}}
+{{- else -}}
+# Target file does not exist - no action needed in before script
+{{- end -}}
+{{- else -}}
+# Source desktop.ini does not exist - script not applicable
+{{- end -}}
