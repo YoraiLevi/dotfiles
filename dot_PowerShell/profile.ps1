@@ -250,6 +250,7 @@ function tail {
 # Navigation Shortcuts
 function home { Set-Location -Path $HOME }
 Set-Alias -Name user -Value home
+Set-Alias -Name ~/ -Value home
 
 function docs { Set-Location -Path $HOME\Documents }
 Set-Alias -Name documents -Value docs
@@ -290,9 +291,17 @@ Function Touch-File {
 Set-Alias -Name touch -Value Touch-File
 
 # Additional navigation aliases (from your bash setup)
-Set-Alias -Name '..' -Value 'Set-Location ..'
-Set-Alias -Name '...' -Value 'Set-Location ..\..'  
-Set-Alias -Name '....' -Value 'Set-Location ..\..\..'
+function Back { Set-Location .. }
+function Back2 { Set-Location ..\.. }
+function Back3 { Set-Location ..\..\.. }
+
+# And aliases pointing to these functions work fine
+Set-Alias -Name '..' -Value Back
+Set-Alias -Name '...' -Value Back2
+Set-Alias -Name '....' -Value Back3
+
+# For the 'bd' equivalent (back directory)
+function bd { Set-Location $env:OLDPWD }
 
 # Go up multiple directories (like bash 'up' function)
 function Up {
