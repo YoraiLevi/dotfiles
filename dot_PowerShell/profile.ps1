@@ -300,9 +300,6 @@ Set-Alias -Name '..' -Value Back
 Set-Alias -Name '...' -Value Back2
 Set-Alias -Name '....' -Value Back3
 
-# For the 'bd' equivalent (back directory)
-function bd { Set-Location $env:OLDPWD }
-
 # Go up multiple directories (like bash 'up' function)
 function Up {
     param([int]$Levels = 1)
