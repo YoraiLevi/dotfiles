@@ -1,0 +1,7 @@
+{{ if eq .chezmoi.os "windows" -}}
+["./Downloads/fonts"]
+    type = "archive"
+    url = "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/CascadiaMono.zip"
+    refreshPeriod = "168h"
+    exact = true
+{{- end -}}
