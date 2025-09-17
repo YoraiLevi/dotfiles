@@ -1,27 +1,18 @@
 {{ if eq .chezmoi.os "windows" -}}
 ["./.local/bin/ahk_TTS.exe"]
     type = "file"
-    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/ahk_TTS_all.exe"
+    url = {{ gitHubLatestReleaseAssetURL "YoraiLevi/ahk-autohotkeys" "ahk_TTS_all.exe" | quote }}
     refreshPeriod = "168h"
     executable = true
 ["./.local/bin/ahk_REMAP.exe"]
     type = "file"
 {{- if contains .BaseBoard  "TP412FAC" }}
-    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/ahk_keyboard_remap_TP412FAC.exe"
+    url = {{ gitHubLatestReleaseAssetURL "YoraiLevi/ahk-autohotkeys" "ahk_keyboard_remap_TP412FAC.exe" | quote }}
 {{- else if contains .BaseBoard "0J8T5G"}}
-    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/ahk_keyboard_remap_all.exe"
+    url = {{ gitHubLatestReleaseAssetURL "YoraiLevi/ahk-autohotkeys" "ahk_keyboard_remap_all.exe" | quote }}
 {{- else }}
-    url = "https://github.com/YoraiLevi/ahk-autohotkeys/releases/latest/download/ahk_keyboard_remap_all.exe"
-
+    url = {{ gitHubLatestReleaseAssetURL "YoraiLevi/ahk-autohotkeys" "ahk_keyboard_remap_all.exe" | quote }}
 {{- end }}
     refreshPeriod = "168h"
     executable = true
-{{- if contains .BaseBoard "TP412FAC" }}
-["./Downloads/interception_driver.exe"]
-    type = "archive-file"
-    url = "https://github.com/YoraiLevi/ahk-autohotkeys/raw/master/KeyboardRemap/Lib/Interception.zip"
-    path = "Interception/command line installer/install-interception.exe"
-    executable = true
-{{- end }}
 {{- end -}}
-
