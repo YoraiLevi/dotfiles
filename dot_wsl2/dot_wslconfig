@@ -3,3 +3,5 @@ memory=16GB
 processors=4
 swap=100GB
 vmIdleTimeout=180
+[experimental]
+sparseVhd=true
