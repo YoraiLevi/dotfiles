@@ -1,54 +1,112 @@
 {
-    "[python]": {
-        "diffEditor.ignoreTrimWhitespace": true,
-        "editor.defaultFormatter": "ms-python.black-formatter"
-    },
-    "cursor.cpp.enablePartialAccepts": true,
-    "cursor.diffs.useCharacterLevelDiffs": true,
-    "cursor.terminal.usePreviewBox": true,
-    "diffEditor.hideUnchangedRegions.enabled": true,
-    "diffEditor.ignoreTrimWhitespace": false,
-    "diffEditor.renderSideBySide": true,
-    "editor.accessibilitySupport": "off",
-    "editor.gotoLocation.multipleDeclarations": "gotoAndPeek",
-    "editor.gotoLocation.multipleDefinitions": "gotoAndPeek",
-    "editor.gotoLocation.multipleImplementations": "gotoAndPeek",
-    "editor.gotoLocation.multipleReferences": "gotoAndPeek",
-    "editor.gotoLocation.multipleTypeDefinitions": "gotoAndPeek",
-    "editor.inlineSuggest.edits.showCollapsed": true,
-    "explorer.openEditors.visible": 15,
-    "files.autoSave": "onFocusChange",
-    "files.hotExit": "onExitAndWindowClose", // No save to close pop up
-    "git.autofetch": true,
-    "git.blame.editorDecoration.enabled": false,
-    "git.blame.statusBarItem.enabled": false,
-    "git.suggestSmartCommit": false, // ctrl+shift+f auto search on typing in search
-    "gitlens.views.commitDetails.files.layout": "tree",
-    "jupyter.askForKernelRestart": false,
-    "jupyter.widgetScriptSources": [
-        "jsdelivr.com",
-        "unpkg.com"
-    ],
-    "notebook.lineNumbers": "on",
-    "notebook.navigation.allowNavigateToSurroundingCells": false,
-    "notebook.output.scrolling": true,
-    "notebook.output.textLineLimit": 80,
-    "notebook.output.wordWrap": true,
-    "powershell.enableProfileLoading": false,
-    "python.languageServer": "None",
-    "python.testing.pytestEnabled": true,
-    "python.testing.unittestEnabled": false,
-    "pythonTestExplorer.testFramework": "pytest",
-    "references.preferredLocation": "view",
-    "remote.autoForwardPortsSource": "hybrid",
-    "search.searchOnType": true,
-    "terminal.integrated.suggest.enabled": false, // The suggestions are annoying. keep them off
-    "vscode-default-keybindings.removeOSKeybindings": true,
-    "vscode-default-keybindings.windowsKeybindings": true,
-    "window.commandCenter": true,
-    "window.restoreWindows": "all", // Restore windows on start unless manually opened something specific 
-    "window.zoomLevel": -1,
-    "workbench.editor.showTabs": "none",
-    "workbench.editorLargeFileConfirmation": 30,
-    "workbench.sideBar.location": "right"
+	"[python]": {
+		"diffEditor.ignoreTrimWhitespace": true,
+		"editor.defaultFormatter": "ms-python.black-formatter",
+		"editor.rulers": [
+			88
+		],
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": true
+		},
+		"editor.formatOnType": true,
+	},
+	"cursor.cpp.enablePartialAccepts": true,
+	"cursor.diffs.useCharacterLevelDiffs": true,
+	"cursor.terminal.usePreviewBox": true,
+	"diffEditor.hideUnchangedRegions.enabled": true,
+	"diffEditor.ignoreTrimWhitespace": false,
+	"diffEditor.renderSideBySide": true,
+	"editor.accessibilitySupport": "off",
+	"editor.gotoLocation.multipleDeclarations": "gotoAndPeek",
+	"editor.gotoLocation.multipleDefinitions": "gotoAndPeek",
+	"editor.gotoLocation.multipleImplementations": "gotoAndPeek",
+	"editor.gotoLocation.multipleReferences": "gotoAndPeek",
+	"editor.gotoLocation.multipleTypeDefinitions": "gotoAndPeek",
+	"editor.inlineSuggest.edits.showCollapsed": true,
+	"explorer.openEditors.visible": 15,
+	"files.autoSave": "onFocusChange",
+	"files.hotExit": "onExitAndWindowClose", // No save to close pop up
+	"git.autofetch": true,
+	"git.blame.editorDecoration.enabled": false,
+	"git.blame.statusBarItem.enabled": false,
+	"git.suggestSmartCommit": false, // ctrl+shift+f auto search on typing in search
+	"gitlens.views.commitDetails.files.layout": "tree",
+	"jupyter.askForKernelRestart": false,
+	"jupyter.widgetScriptSources": [
+		"jsdelivr.com",
+		"unpkg.com"
+	],
+	"notebook.lineNumbers": "on",
+	"notebook.navigation.allowNavigateToSurroundingCells": false,
+	"notebook.output.scrolling": true,
+	"notebook.output.textLineLimit": 80,
+	"notebook.output.wordWrap": true,
+	"powershell.enableProfileLoading": false,
+	"python.testing.pytestEnabled": true,
+	"python.languageServer": "None",
+	"python.testing.unittestEnabled": false,
+	"pythonTestExplorer.testFramework": "pytest",
+	"references.preferredLocation": "view",
+	"remote.autoForwardPortsSource": "hybrid",
+	"search.searchOnType": true,
+	"terminal.integrated.suggest.enabled": false, // The suggestions are annoying. keep them off
+	"vscode-default-keybindings.removeOSKeybindings": true,
+	"vscode-default-keybindings.windowsKeybindings": true,
+	"window.commandCenter": true,
+	"window.restoreWindows": "all", // Restore windows on start unless manually opened something specific 
+	"window.zoomLevel": -1,
+	"workbench.editor.showTabs": "none",
+	"workbench.editorLargeFileConfirmation": 30,
+	"workbench.sideBar.location": "right",
+	// Using the light mode
+	"indentRainbow.indicatorStyle": "light",
+	// we use a simple 1 pixel wide line
+	"indentRainbow.lightIndicatorStyleLineWidth": 3,
+	"indentRainbow.colors": [
+		"rgba(0, 0, 0, 0)",
+		"rgba(0, 0, 0, 0.1)",
+		"rgba(0, 0, 0, 0.2)",
+		"rgba(0, 0, 0, 0.3)",
+		"rgba(0, 0, 0, 0.4)",
+		"rgba(0, 0, 0, 0.5)",
+		"rgba(0, 0, 0, 0.6)",
+		"rgba(0, 0, 0, 0.7)",
+		"rgba(0, 0, 0, 0.8)",
+		"rgba(0, 0, 0, 0.9)"
+	],
+	// the same colors as above but more visible
+	"workbench.iconTheme": "Monokai Pro Icons",
+	"workbench.colorTheme": "Monokai Pro",
+	"workbench.colorCustomizations": {
+		"[Monokai Pro]": {
+			"sideBarSectionHeader.border": "#ffffff7e",
+			"sideBarSectionHeader.foreground": "#ffffffc3",
+			"sideBarStickyScroll.border": "#ffffff7e",
+		}
+	},
+	"editor.tokenColorCustomizations": {
+		"textMateRules": [
+			{
+				"scope": [
+					"comment",
+					"comment.block",
+					"comment.line",
+					"comment.block.documentation",
+					"punctuation.definition.comment",
+					"string.quoted.docstring.multi",
+					"comment.block.documentation source",
+					"string.quoted.docstring.multi.python",
+					"string.quoted.double.block.python punctuation.definition.string.end.python",
+					"string.quoted.double.block.python punctuation.definition.string.begin.python",
+					"string.quoted.double.block.python",
+					"punctuation.definition.string.begin.python",
+					"punctuation.definition.string.end.python"
+				],
+				"settings": {
+					"foreground": "#8ab393"
+				}
+			},
+		],
+	},
 }

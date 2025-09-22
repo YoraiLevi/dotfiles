@@ -5,6 +5,7 @@ anysphere.remote-ssh
 anysphere.remote-wsl
 batisteo.vscode-django
 bierner.markdown-mermaid
+britesnow.vscode-toggle-quotes
 codezombiech.gitignore
 davidanson.vscode-markdownlint
 dbaeumer.vscode-eslint
@@ -13,6 +14,7 @@ eamodio.gitlens
 github.vscode-github-actions
 hbenl.vscode-test-explorer
 humao.rest-client
+ibm.output-colorizer
 jackiotyu.git-worktree-manager
 jbro.vscode-default-keybindings
 jebbs.markdown-extended
@@ -32,9 +34,11 @@ ms-toolsai.vscode-jupyter-slideshow
 ms-vscode.powershell
 ms-vscode.test-adapter-converter
 njpwerner.autodocstring
+randomfractalsinc.snippets-viewer
 redhat.vscode-yaml
 ryuta46.multi-command
 smcpeak.default-keys-windows
 tamasfe.even-better-toml
 vscjava.vscode-gradle
 wholroyd.jinja
+yzhang.markdown-all-in-one

@@ -37,7 +37,8 @@
             "elevate": false,
             "font": 
             {
-                "face": "CaskaydiaMono Nerd Font"
+                "face": "Consolas",
+                "weight": "normal"
             }
         },
         "list": 
@@ -81,7 +82,6 @@
         ]
     },
     "schemes": [],
-    "startOnUserLogin": false,
     "themes": [],
     "windowingBehavior": "useNew"
 }
