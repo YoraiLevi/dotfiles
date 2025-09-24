@@ -8,4 +8,7 @@ echo "== {{ .chezmoi.sourceFile | trim }} =="
 if (Test-Administrator) {
     POWERCFG /H OFF && POWERCFG /HIBERNATE /SIZE 100
 }
+else{
+    Write-Error "Resizing the hibernation requires elevated permission"
+}
 {{- end -}}
