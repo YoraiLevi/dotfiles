@@ -55,27 +55,28 @@ function Get-WingetPackage {
         [string]$Source
     )
     if ($Source) {
-        $winget_list = winget list --exact $PackageName --source $Source | Select -Last 3
+        $winget_list = winget list --exact $PackageName --source $Source | Select-Object -Last 3
     }
     else {
-        $winget_list = winget list --exact $PackageName | Select -Last 3
+        $winget_list = winget list --exact $PackageName | Select-Object -Last 3
     }
     if ($winget_list[1] -notmatch '^-+$') {
         # The list has returned too many rows, the header is not present, this is a bug in the intent of the function.
         Write-Error "The list has returned too many rows, the header is not present, this is a bug in the intent of the function."
         return
     }
-    $m = $winget_list[0] | Select-String '(\w+(?:\s+?|$))' -AllMatches | Select -ExpandProperty Matches
+    $m = $winget_list[0] | Select-String '(\w+(?:\s+?|$))' -AllMatches | Select-Object -ExpandProperty Matches
     $columns = $m | Select-Object -ExpandProperty Value
     
-    $indexes = $winget_list[0] | Select-String '(\w+(?:\s+?|$))' -AllMatches | Select -ExpandProperty Matches | Select -ExpandProperty Index 
+    $indexes = $winget_list[0] | Select-String '(\w+(?:\s+?|$))' -AllMatches | Select-Object -ExpandProperty Matches | Select-Object -ExpandProperty Index 
     $indexes += @($winget_list[0].length + 1)         
-    $text = $indexes | ForEach-Object -Begin { $i = 0 } -Process {
+    
+    $text = $indexes | ForEach-Object -Begin { [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', 'i')]$i = 0 } -Process {
         if ($i -lt ($indexes.Length - 1)) {
             $i++
             return @{ Index = $_; Length = $indexes[$i] - $_ }
         }
-    } | % { $winget_list[2].substring($_.Index, $_.Length) }  
+    } | ForEach-Object { $winget_list[2].substring($_.Index, $_.Length) }  
     $winget_out = @{}
     for ($i = 0; $i -lt $columns.Length; $i++) {
         $winget_out[$columns[$i].Trim()] = $text[$i].Trim()
