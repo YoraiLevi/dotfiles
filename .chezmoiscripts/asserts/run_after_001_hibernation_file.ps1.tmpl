@@ -1,0 +1,11 @@
+{{- $hibfile100 := output "pwsh.exe" "-NoProfile" "-Command" "((((Get-Item -Force /hiberfil.sys).Length ) - (get-wmiobject -class \"Win32_ComputerSystem\").TotalPhysicalMemory) -eq 0)" | trim | lower -}}
+{{- if (eq $hibfile100 "false")}}
+function Test-Administrator {  
+    $user = [Security.Principal.WindowsIdentity]::GetCurrent();
+    (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)  
+}
+echo "== {{ .chezmoi.sourceFile | trim }} =="
+if (Test-Administrator) {
+    POWERCFG /H OFF && POWERCFG /HIBERNATE /SIZE 100
+}
+{{- end -}}
