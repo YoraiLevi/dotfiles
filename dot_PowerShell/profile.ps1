@@ -537,7 +537,7 @@ if (which 'chezmoi.exe') {
 else {
     Write-Error "chezmoi isn't available on the system, How??"
 }
-$chezmoi_process.WaitForExit()
+# $chezmoi_process.WaitForExit()
 Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
