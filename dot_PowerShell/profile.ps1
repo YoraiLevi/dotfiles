@@ -481,21 +481,43 @@ function Find-EnvPath {
 # Set-ExecutionPolicy Bypass -Scope Process
 # Update-FormatData -PrependPath "$PSScriptRoot\Format.ps1xml"
 
-if (which 'fnm.exe') {
-    fnm env --use-on-cd | Out-String | Invoke-Expression
+function Invoke-Fnm {
+    Remove-Alias -Name fnm -Scope Global
+    if (which 'fnm.exe') {
+        fnm env --use-on-cd | Out-String | Invoke-Expression
+    }
+    else {
+        Write-Error "fnm isn't available on the system, execute:`nchoco install fnm"
+    }
+    fnm @args
 }
-else {
-    Write-Error "fnm isn't available on the system, execute:`nchoco install fnm"
-}
+Set-Alias -Name fnm -Value Invoke-Fnm -Scope Global
 
-if (which 'uv.exe') {
-    (& uv generate-shell-completion powershell) | Out-String | Invoke-Expression
-    (& uvx --generate-shell-completion powershell) | Out-String | Invoke-Expression
+function Invoke-Uv {
+    Remove-Alias -Name uv -Scope Global
+    if (which 'uv.exe') {
+        (& uv generate-shell-completion powershell) | Out-String | Invoke-Expression
+    }
+    else {
+        # powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+        Write-Error "uv isn't available on the system, execute:`npowershell -ExecutionPolicy ByPass -c `"irm https://astral.sh/uv/install.ps1 | iex`""
+    }
+    uv @args
 }
-else {
-    # powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-    Write-Error "uv isn't available on the system, execute:`npowershell -ExecutionPolicy ByPass -c `"irm https://astral.sh/uv/install.ps1 | iex`""
+Set-Alias -Name uv -Value Invoke-Uv -Scope Global
+
+function Invoke-Uvx {
+    Remove-Alias -Name uvx -Scope Global
+    if (which 'uv.exe') {
+        (& uvx --generate-shell-completion powershell) | Out-String | Invoke-Expression
+    }
+    else {
+        # powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+        Write-Error "uv isn't available on the system, execute:`npowershell -ExecutionPolicy ByPass -c `"irm https://astral.sh/uv/install.ps1 | iex`""
+    }
+    uvx @args
 }
+Set-Alias -Name uvx -Value Invoke-Uvx -Scope Global
 
 # I don't like the public oh my posh themes
 # use oh my posh here
