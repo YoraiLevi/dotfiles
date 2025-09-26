@@ -32,7 +32,7 @@ function Invoke-Process {
         # [ValidateSet("Full", "StdOut", "StdErr", "ExitCode", "None")]
         # [string]$DisplayLevel
         [Parameter()]
-        [switch]$Wait=$false
+        [switch]$Wait
     )
 
     $ErrorActionPreference = 'Stop'
@@ -59,6 +59,7 @@ function Invoke-Process {
         Process   = $p
     }
     if ($Wait) {
+        write-host 'Waiting for process to exit...'
         $p.WaitForExit()
     }
     return $result
