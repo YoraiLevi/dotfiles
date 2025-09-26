@@ -1,4 +1,4 @@
-$ENV:_EDITOR = @('cursor', 'code-insiders', 'code') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+$ENV:_EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
 Set-Alias -Name code -Value $ENV:_EDITOR
 Set-Alias -Name vscode -Value $ENV:_EDITOR
 $ENV:EDITOR = "$ENV:_EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
@@ -18,9 +18,9 @@ Set-Alias -Name sudo -Value gsudo
 # https://github.com/ChrisTitusTech/powershell-profile/blob/e89e9b0f968fa2224c8a9400d2023770362fb278/Microsoft.PowerShell_profile.ps1#L446
 # Enhanced PSReadLine Configuration
 $PSReadLineOptions = @{
-    EditMode = 'Windows'
-#     HistoryNoDuplicates = $true
-#     HistorySearchCursorMovesToEnd = $true
+    EditMode  = 'Windows'
+    #     HistoryNoDuplicates = $true
+    #     HistorySearchCursorMovesToEnd = $true
     BellStyle = 'None'
 }
 Set-PSReadLineOption @PSReadLineOptions
@@ -194,18 +194,18 @@ if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Si
 
 # Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1 # refreshenv
 
-function Edit-Setup([switch]$PromptApplyChanges = $false) {
-    chezmoi edit
-    if ($PromptApplyChanges) {
-        Invoke-YesNoPrompt -Prompt 'Apply changes?' -Action { 
-            chezmoi update --init --apply &
-        }
-    }
-    else {
-        chezmoi update --init --apply &
-    }
-}
-Set-Alias -Name eds -Value Edit-Setup
+# function Edit-Setup([switch]$PromptApplyChanges = $false) {
+#     chezmoi edit
+#     if ($PromptApplyChanges) {
+#         Invoke-YesNoPrompt -Prompt 'Apply changes?' -Action { 
+#             chezmoi update --init --apply &
+#         }
+#     }
+#     else {
+#         chezmoi update --init --apply &
+#     }
+# }
+# Set-Alias -Name eds -Value Edit-Setup
 
 function which([Parameter(Mandatory = $true)][string]$name) {
     # will print location or source code
@@ -253,14 +253,21 @@ function home { Set-Location -Path $HOME }
 Set-Alias -Name user -Value home
 Set-Alias -Name ~/ -Value home
 
-function docs { Set-Location -Path $HOME\Documents }
-Set-Alias -Name documents -Value docs
+function Up {
+    param([int]$Levels = 1)
+    $path = Get-Location
+    for ($i = 0; $i -lt $Levels; $i++) {
+        $path = Split-Path $path -Parent
+    }
+    Set-Location $path
+}
+function Up1 { Up 1 }
+function Up2 { Up 2 }
+function Up3 { Up 3 }
 
-function source { Set-Location -Path $HOME\Documents\source }
-Set-Alias -Name sources -Value source
-
-function dtop { Set-Location -Path $HOME\Desktop }
-Set-Alias -Name desktop -Value dtop
+Set-Alias -Name '..' -Value Up1
+Set-Alias -Name '...' -Value Up2
+Set-Alias -Name '....' -Value Up3
 
 # Enhanced Listing
 $PSDefaultParameterValues = @{'Format-Table:Autosize' = $true }
@@ -291,25 +298,7 @@ Function Touch-File {
 }
 Set-Alias -Name touch -Value Touch-File
 
-# Additional navigation aliases (from your bash setup)
-function Back { Set-Location .. }
-function Back2 { Set-Location ..\.. }
-function Back3 { Set-Location ..\..\.. }
 
-# And aliases pointing to these functions work fine
-Set-Alias -Name '..' -Value Back
-Set-Alias -Name '...' -Value Back2
-Set-Alias -Name '....' -Value Back3
-
-# Go up multiple directories (like bash 'up' function)
-function Up {
-    param([int]$Levels = 1)
-    $path = Get-Location
-    for ($i = 0; $i -lt $Levels; $i++) {
-        $path = Split-Path $path -Parent
-    }
-    Set-Location $path
-}
 
 function Extract-Archive {
     param([string]$Path)
@@ -513,16 +502,16 @@ else {
 function Invoke-Conda {
     Remove-Alias -Name conda -Scope Global
     If (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
-    (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
+        (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
     }
     conda @args
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 
-if(which 'chezmoi.exe') {
+if (which 'chezmoi.exe') {
     chezmoi completion powershell | Out-String | Invoke-Expression
 }
-else{
+else {
     Write-Error "chezmoi isn't available on the system, How??"
 }
 

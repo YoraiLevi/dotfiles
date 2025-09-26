@@ -12,7 +12,7 @@ esac
 # HISTCONTROL=ignoreboth
 # https://linuxconfig.org/how-to-store-all-shell-commands-immediately-after-execution-into-bash-history-file
 HISTCONTROL=ignoredups:erasedups
-
+HISTIGNORE="clear:history:[bf]g:exit:date:* --help"
 # append to the history file, don't overwrite it
 shopt -s histappend
 
@@ -137,7 +137,7 @@ export HISTTIMEFORMAT="[%F %T] "
 export HISTFILE=~/.bash_eternal_history
 # Force prompt to write history after every command.
 # http://superuser.com/questions/20900/bash-history-loss
-PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
+PROMPT_COMMAND="history -w; $PROMPT_COMMAND"
 
 # https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c
 stty -ixon
