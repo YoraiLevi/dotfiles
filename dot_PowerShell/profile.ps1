@@ -32,7 +32,7 @@ function Invoke-Process {
         # [ValidateSet("Full", "StdOut", "StdErr", "ExitCode", "None")]
         # [string]$DisplayLevel
         [Parameter()]
-        [switch]$Wait
+        [switch]$Wait=$false
     )
 
     $ErrorActionPreference = 'Stop'
