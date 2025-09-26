@@ -133,7 +133,7 @@ function Invoke-YesNoPrompt {
     }
 }
 # Update local changes to chezmoi repo
-&$ENV:_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$ENV:_EDITOR-extensions.txt
+# &$ENV:_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$ENV:_EDITOR-extensions.txt
 $null = (chezmoi re-add)
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
