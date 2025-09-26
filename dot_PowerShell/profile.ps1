@@ -49,20 +49,20 @@ function Invoke-Process {
     $p = New-Object System.Diagnostics.Process
     $p.StartInfo = $pinfo
     $p.Start() | Out-Null
-    $result = [pscustomobject]@{
-        Title     = ($MyInvocation.MyCommand).Name
-        Command   = $FilePath
-        Arguments = $ArgumentList
-        StdOut    = $p.StandardOutput.ReadToEnd()
-        StdErr    = $p.StandardError.ReadToEnd()
-        ExitCode  = $p.ExitCode
-        Process   = $p
-    }
+    # $result = [pscustomobject]@{
+    #     Title     = ($MyInvocation.MyCommand).Name
+    #     Command   = $FilePath
+    #     Arguments = $ArgumentList
+    #     StdOut    = $p.StandardOutput.ReadToEnd()
+    #     StdErr    = $p.StandardError.ReadToEnd()
+    #     ExitCode  = $p.ExitCode
+    #     Process   = $p
+    # }
     if ($Wait) {
         write-host 'Waiting for process to exit...'
         $p.WaitForExit()
     }
-    return $result
+    return $p
 
     # if (-not([string]::IsNullOrEmpty($DisplayLevel))) {
     #     switch($DisplayLevel) {
