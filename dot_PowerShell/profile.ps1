@@ -1,7 +1,7 @@
-$ENV:_EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
-Set-Alias -Name code -Value $ENV:_EDITOR
-Set-Alias -Name vscode -Value $ENV:_EDITOR
-$ENV:EDITOR = "$ENV:_EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
+$_EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+Set-Alias -Name code -Value $_EDITOR
+Set-Alias -Name vscode -Value $_EDITOR
+$ENV:EDITOR = "$_EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
 # if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
 # }
 try {
@@ -133,12 +133,13 @@ function Invoke-YesNoPrompt {
     }
 }
 # Update local changes to chezmoi repo
-&$ENV:_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$ENV:_EDITOR-extensions.txt
+&$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
 $chezmoi_process = Start-Process -FilePath "chezmoi" -ArgumentList "re-add" -NoNewWindow -PassThru
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
     if ($ENV:CHEZMOI -ne 1) {
+        $chezmoi_process.WaitForExit()
         $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase ; chezmoi diff) | Out-String
         $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
         if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) {
@@ -516,6 +517,7 @@ else {
 }
 $chezmoi_process.WaitForExit()
 Remove-Variable -Name chezmoi_process
+Remove-Variable -Name _EDITOR
 
 # $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
 # $LazyLoadProfile = [PowerShell]::Create()
