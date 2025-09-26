@@ -541,7 +541,7 @@ function Invoke-Chezmoi {
     chezmoi @args
 }
 Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
-# $chezmoi_process.WaitForExit()
+$chezmoi_process.WaitForExit()
 Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
