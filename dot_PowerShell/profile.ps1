@@ -134,7 +134,7 @@ function Invoke-YesNoPrompt {
 }
 # Update local changes to chezmoi repo
 &$ENV:_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$ENV:_EDITOR-extensions.txt
-Start-Process -FilePath "chezmoi" -ArgumentList "re-add" -NoNewWindow
+$chezmoi_process = Start-Process -FilePath "chezmoi" -ArgumentList "re-add" -NoNewWindow
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
@@ -514,7 +514,8 @@ if (which 'chezmoi.exe') {
 else {
     Write-Error "chezmoi isn't available on the system, How??"
 }
-
+$chezmoi_process.WaitForExit()
+Remove-Variable -Name chezmoi_process
 
 # $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
 # $LazyLoadProfile = [PowerShell]::Create()
