@@ -134,7 +134,7 @@ function Invoke-YesNoPrompt {
 }
 # Update local changes to chezmoi repo
 &$ENV:_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$ENV:_EDITOR-extensions.txt
-Measure-Command { chezmoi re-add &} | Select-Object -ExpandProperty TotalSeconds | Write-Host
+Start-Process -FilePath "chezmoi" -ArgumentList "re-add" -NoNewWindow
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
