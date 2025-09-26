@@ -15,6 +15,71 @@ catch {
 
 Set-Alias -Name sudo -Value gsudo
 
+
+function Invoke-Process {
+    # https://stackoverflow.com/a/66700583/12603110
+    [CmdletBinding(SupportsShouldProcess)]
+    param
+    (
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]$FilePath,
+
+        [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [string]$ArgumentList,
+
+        # [ValidateSet("Full", "StdOut", "StdErr", "ExitCode", "None")]
+        # [string]$DisplayLevel
+        [Parameter()]
+        [switch]$Wait
+    )
+
+    $ErrorActionPreference = 'Stop'
+
+    # try {
+    $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+    $pinfo.FileName = $FilePath
+    $pinfo.RedirectStandardError = $true
+    $pinfo.RedirectStandardOutput = $true
+    $pinfo.UseShellExecute = $false
+    $pinfo.WindowStyle = 'Hidden'
+    $pinfo.CreateNoWindow = $true
+    $pinfo.Arguments = $ArgumentList
+    $p = New-Object System.Diagnostics.Process
+    $p.StartInfo = $pinfo
+    $p.Start() | Out-Null
+    $result = [pscustomobject]@{
+        Title     = ($MyInvocation.MyCommand).Name
+        Command   = $FilePath
+        Arguments = $ArgumentList
+        StdOut    = $p.StandardOutput.ReadToEnd()
+        StdErr    = $p.StandardError.ReadToEnd()
+        ExitCode  = $p.ExitCode
+        Process   = $p
+    }
+    if ($Wait) {
+        $p.WaitForExit()
+    }
+    return $result
+
+    # if (-not([string]::IsNullOrEmpty($DisplayLevel))) {
+    #     switch($DisplayLevel) {
+    #         "Full" { return $result; break }
+    #         "StdOut" { return $result.StdOut; break }
+    #         "StdErr" { return $result.StdErr; break }
+    #         "ExitCode" { return $result.ExitCode; break }
+    #         }
+    #     }
+    # }
+    # catch {
+    # exit
+    # }
+}
+
+
+
+
 # https://github.com/ChrisTitusTech/powershell-profile/blob/e89e9b0f968fa2224c8a9400d2023770362fb278/Microsoft.PowerShell_profile.ps1#L446
 # Enhanced PSReadLine Configuration
 $PSReadLineOptions = @{
@@ -134,7 +199,7 @@ function Invoke-YesNoPrompt {
 }
 # Update local changes to chezmoi repo
 &$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
-$chezmoi_process = Start-Process -FilePath "chezmoi" -ArgumentList "re-add" -NoNewWindow -PassThru
+$chezmoi_process = Start-Process -FilePath "chezmoi" -ArgumentList "re-add" -NoNewWindow -PassThru -
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
