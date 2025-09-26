@@ -1,22 +1,7 @@
 {
-	"[python]": {
-		"diffEditor.ignoreTrimWhitespace": true,
-		"editor.defaultFormatter": "ms-python.black-formatter",
-		"editor.rulers": [
-			88
-		],
-		"editor.formatOnSave": true,
-		"editor.codeActionsOnSave": {
-			"source.organizeImports": "explicit"
-		},
-		"editor.formatOnType": true,
-	},
 	"cursor.cpp.enablePartialAccepts": true,
 	"cursor.diffs.useCharacterLevelDiffs": true,
 	"cursor.terminal.usePreviewBox": true,
-	"diffEditor.hideUnchangedRegions.enabled": true,
-	"diffEditor.ignoreTrimWhitespace": false,
-	"diffEditor.renderSideBySide": true,
 	"editor.accessibilitySupport": "off",
 	"editor.gotoLocation.multipleDeclarations": "gotoAndPeek",
 	"editor.gotoLocation.multipleDefinitions": "gotoAndPeek",
@@ -24,14 +9,22 @@
 	"editor.gotoLocation.multipleReferences": "gotoAndPeek",
 	"editor.gotoLocation.multipleTypeDefinitions": "gotoAndPeek",
 	"editor.inlineSuggest.edits.showCollapsed": true,
-	"explorer.openEditors.visible": 15,
-	"files.autoSave": "onFocusChange",
-	"files.hotExit": "onExitAndWindowClose", // No save to close pop up
-	"git.autofetch": true,
-	"git.blame.editorDecoration.enabled": false,
-	"git.blame.statusBarItem.enabled": false,
-	"git.suggestSmartCommit": false, // ctrl+shift+f auto search on typing in search
-	"gitlens.views.commitDetails.files.layout": "tree",
+	"editor.formatOnSaveMode": "modificationsIfAvailable",
+	"references.preferredLocation": "view",
+	"[python]": {
+		"diffEditor.ignoreTrimWhitespace": true,
+		"editor.defaultFormatter": "ms-python.black-formatter",
+		
+		"editor.wordWrap": "on",
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit"
+		},
+		"editor.formatOnType": true,
+	},
+	"python.testing.pytestEnabled": true,
+	"python.languageServer": "None",
+	"python.testing.unittestEnabled": false,
 	"jupyter.askForKernelRestart": false,
 	"jupyter.widgetScriptSources": [
 		"jsdelivr.com",
@@ -43,37 +36,64 @@
 	"notebook.output.textLineLimit": 80,
 	"notebook.output.wordWrap": true,
 	"powershell.enableProfileLoading": false,
-	"python.testing.pytestEnabled": true,
-	"python.languageServer": "None",
-	"python.testing.unittestEnabled": false,
-	"pythonTestExplorer.testFramework": "pytest",
-	"references.preferredLocation": "view",
+	"files.autoSave": "onFocusChange",
+	"files.hotExit": "onExitAndWindowClose", // No save to close pop up
+	"files.watcherExclude": {
+		"**/.git/objects/**": true,
+		"**/.git/subtree-cache/**": true,
+		"**/.hg/store/**": true,
+		"**/node_modules/**": true,
+		"**/.pytest_cache/**": true,
+		"**/__pycache__/**": true,
+		"**/.venv/**": true
+	},
+	"git.autofetch": true,
+	"git.pruneOnFetch": true,
+	"git.branchProtection": [
+		"main",
+		"master",
+		"prod",
+		"qa"
+	],
+	"git.mergeEditor": true,
+	"git.blame.editorDecoration.enabled": false,
+	"git.blame.statusBarItem.enabled": false,
+	"git.suggestSmartCommit": false,
+	"gitlens.views.commitDetails.files.layout": "tree",
+	"diffEditor.ignoreTrimWhitespace": true,
+	"diffEditor.codeLens": true,
+	"diffEditor.renderSideBySide": true,
+	"diffEditor.hideUnchangedRegions.enabled": true,
 	"remote.autoForwardPortsSource": "hybrid",
-	"search.searchOnType": true,
+	"search.searchOnType": true, // ctrl+shift+f auto search on typing in search
+	"search.showLineNumbers": true,
+	"search.decorations.badges": false,
 	"terminal.integrated.suggest.enabled": false, // The suggestions are annoying. keep them off
+	"terminal.integrated.scrollback": 90000,
 	"vscode-default-keybindings.removeOSKeybindings": true,
 	"vscode-default-keybindings.windowsKeybindings": true,
 	"window.commandCenter": true,
 	"window.restoreWindows": "all", // Restore windows on start unless manually opened something specific 
 	"window.zoomLevel": -1,
-	"workbench.editor.showTabs": "none",
+	"explorer.openEditors.visible": 15,
+	"workbench.editor.showTabs": "single",
+	"workbench.editor.limit.enabled": true,
+	"workbench.editor.limit.value": 10,
 	"workbench.editorLargeFileConfirmation": 30,
 	"workbench.sideBar.location": "right",
-	// Using the light mode
 	"indentRainbow.indicatorStyle": "light",
-	// we use a simple 1 pixel wide line
 	"indentRainbow.lightIndicatorStyleLineWidth": 3,
 	"indentRainbow.colors": [
-		"rgba(0, 0, 0, 0)",
-		"rgba(0, 0, 0, 0.1)",
-		"rgba(0, 0, 0, 0.2)",
-		"rgba(0, 0, 0, 0.3)",
-		"rgba(0, 0, 0, 0.4)",
-		"rgba(0, 0, 0, 0.5)",
-		"rgba(0, 0, 0, 0.6)",
-		"rgba(0, 0, 0, 0.7)",
-		"rgba(0, 0, 0, 0.8)",
-		"rgba(0, 0, 0, 0.9)"
+		"rgba(255, 255, 255, 0)",
+		"rgba(255, 255, 255, 0.1)",
+		"rgba(255, 255, 255, 0.2)",
+		"rgba(255, 255, 255, 0.3)",
+		"rgba(255, 255, 255, 0.4)",
+		"rgba(255, 255, 255, 0.5)",
+		"rgba(255, 255, 255, 0.6)",
+		"rgba(255, 255, 255, 0.7)",
+		"rgba(255, 255, 255, 0.8)",
+		"rgba(255, 255, 255, 0.9)"
 	],
 	// the same colors as above but more visible
 	"workbench.iconTheme": "Monokai Pro Icons",
@@ -83,6 +103,9 @@
 			"sideBarSectionHeader.border": "#ffffff7e",
 			"sideBarSectionHeader.foreground": "#ffffffc3",
 			"sideBarStickyScroll.border": "#ffffff7e",
+			"list.inactiveSelectionBackground": "#fcfcfa21",
+			"quickInput.foreground": "#a8a6a9",
+			"quickInput.background": "#2a292b",
 			"editorGutter.addedBackground": "#a3be8c",
 			"editorGutter.deletedBackground": "#bf616a",
 			"editorGutter.modifiedBackground": "#ebcb8b",
@@ -99,7 +122,6 @@
 			"minimapGutter.addedBackground": "#a3be8c",
 			"minimapGutter.deletedBackground": "#bf616a",
 			"minimapGutter.modifiedBackground": "#ebcb8b",
-			
 			"editorOverviewRuler.addedForeground": "#a3be8c",
 			"editorOverviewRuler.deletedForeground": "#bf616a",
 			"editorOverviewRuler.modifiedForeground": "#ebcb8b",
@@ -147,4 +169,5 @@
 			},
 		],
 	},
+	"editor.minimap.enabled": true,
 }
