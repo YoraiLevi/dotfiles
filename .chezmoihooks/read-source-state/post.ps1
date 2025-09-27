@@ -1,2 +1,3 @@
 param()
-Write-Host $PSCommandPath
+Write-Host $PSCommandPath -ForegroundColor Green
+
