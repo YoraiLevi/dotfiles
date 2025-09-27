@@ -871,7 +871,7 @@ Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
 $c = $chezmoi_process.StandardOutput.Read()
 if ($null -ne $c -and $c -ne -1 ) {
     write-host "$([char]$c)" -NoNewline
-    write-host $chezmoi_process.StandardOutput.Read()
+    write-host $chezmoi_process.StandardOutput.ReadToEnd()
     $chezmoi_process | Wait-Process
 }
 # Remove-Variable -Name chezmoi_process
