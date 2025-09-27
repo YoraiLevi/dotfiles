@@ -439,7 +439,7 @@ function Update-PowerShell {
         Write-Error "Failed to update PowerShell. Error: $_"
     }
 }
-
+# https://stackoverflow.com/a/34800670/12603110 - PowerShell equivalent of LINQ Any()?
 function Invoke-YesNoPrompt {
     param(
         [Parameter(Mandatory)]

@@ -63,21 +63,24 @@ data:
 #[edit]
 #    command : "code-insders" # doesn't work with `chezmoi edit`, $ENV:EDITOR does work
 #    flags : ["--wait"]
-{{ if eq .chezmoi.os "windows" -}}
-hooks:
-  read-source-state:
-    pre:
-      command : "pwsh"
-      args : ["-NoProfile","-Command",";"]
-    post:
-      command : "pwsh"
-      args : ["-NoProfile","-Command",";"]
-{{ end -}}
 
 {{ if eq .chezmoi.os "windows" -}}
+{{- $uvAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool](&{try {Get-Command uv.exe -ErrorAction Stop } catch {}})" | lower | trim -}}
+{{- $pwshAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool](&{try {Get-Command pwsh.exe -ErrorAction Stop } catch {}})" | lower | trim -}}
+{{- $pwshPathUnquoted := output "powershell.exe" "-NoProfile" "-Command" "(&{try { (Get-Command pwsh.exe, powershell.exe -Type Application -ErrorAction SilentlyContinue | Select-Object -First 1).Source} catch {}})" | trim -}}
+{{- $pwshPath := $pwshPathUnquoted | squote -}}
+
+{{- $wslAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool]((&{try { wsl --list --quiet } catch { }} | Out-String) -join ' ' -replace [char]0, '' -replace '\\s+', ' ')" | lower | trim -}}
+
+{{- output "powershell.exe" "-NoProfile" "-File" (printf "%s/.chezmoilib/generate_hooks.ps1" .chezmoi.sourceDir) (printf "%s/.chezmoihooks" .chezmoi.sourceDir) ($pwshPathUnquoted) | trim | fromJson | toYaml }}
 interpreters:
+  js :
+    command : {{ $pwshPath }}
+    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-File', "{{ .chezmoi.sourceDir }}/.chezmoiinterpreters/powershell_fake.ps1"]
+  ts :
+    command : {{ $pwshPath }}
+    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-File', "{{ .chezmoi.sourceDir }}/.chezmoiinterpreters/powershell_fake.ps1"]
   py :
-    {{- $uvAvailable := output "powershell.exe" "-NoProfile" "-Command" "try { $null = Get-Command uv.exe -ErrorAction Stop; 'true' } catch { 'false' }" | lower | trim -}}
     {{- if eq $uvAvailable "true" }}
     command : 'uv.exe'
     args : ["run", "python", "-B", "-E"]
@@ -86,16 +89,13 @@ interpreters:
     args : ["-B", "-E"]
     {{- end }}
   ps1 : 
-    command : "C:/Program Files/PowerShell/7/pwsh.exe"
+    command : {{ $pwshPath }}
     args : ["-NoLogo", "-NoProfile", "-NonInteractive"]
-  {{- $wslAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool]((&{try { wsl --list --quiet } catch { }} | Out-String) -join ' ' -replace [char]0, '' -replace '\\s+', ' ')" | lower | trim -}}
+  sh :
+    command : {{ $pwshPath }}
   {{- if eq $wslAvailable "true" }}
-  sh :
-    command : "C:/Program Files/PowerShell/7/pwsh.exe"
-    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-CommandWithArgs', "wsl bash --noprofile --norc $(wsl wslpath $args.replace('\\','/'))"]
+    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-File', "{{ .chezmoi.sourceDir }}/.chezmoiinterpreters/wsl2_powershell_interpreter.ps1"]
   {{- else }}
-  sh :
-    command : "C:/Program Files/PowerShell/7/pwsh.exe"
-    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-CommandWithArgs', "Write-Warning \"sh interpreter unavailable - WSL not found Script path: $args\""]
+    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-File', "{{ .chezmoi.sourceDir }}/.chezmoiinterpreters/powershell_fake.ps1"]
   {{- end }}
 {{ end -}}

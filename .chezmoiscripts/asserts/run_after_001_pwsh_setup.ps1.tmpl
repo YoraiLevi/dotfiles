@@ -1,14 +1,12 @@
 {{- $powershell := .powershell | toJson | squote -}}
 {{- $newPackagesToInstall := output "pwsh.exe" "-NoProfile" "-Command" (printf "$pwsh_data = %s | ConvertFrom-Json -AsHashTable; $pwsh_data.modules | Select-Object -ExpandProperty name | Sort-Object -Unique | Where-Object { -not (Get-Module -ListAvailable -Name $_) }" $powershell) | trim | lower -}}
-{{- $executionPolicyMismatch := output "pwsh.exe" "-NoProfile" "-Command" (printf "$pwsh_data = %s | ConvertFrom-Json -AsHashTable; $pwsh_data.ExecutionPolicy | ForEach-Object { $current = Get-ExecutionPolicy -Scope $_.Scope; if ($current -ne $_.ExecutionPolicy) { $true } } | Select-Object -First 1" $powershell) | trim | lower -}}
-
+{{- $executionPolicyMismatch := output "pwsh.exe" "-NoProfile" "-Command" (printf "[bool]((%s | ConvertFrom-Json -AsHashTable).ExecutionPolicy | Where-Object { $_.Scope -ne $null -and $_.ExecutionPolicy -ne $null } | ForEach-Object { (Get-ExecutionPolicy -Scope $_.Scope) -ne $_.ExecutionPolicy } | Measure-Object -Sum | Select-Object -ExpandProperty Sum)" $powershell) | trim | lower -}}
 {{- if or (ne $newPackagesToInstall "") (eq $executionPolicyMismatch "true") -}}
 echo "== {{ .chezmoi.sourceFile | trim }} =="
 
 $pwsh_data = {{ $powershell }} | ConvertFrom-Json -AsHashTable
-
 {{if (eq $executionPolicyMismatch "true") -}}
-$pwsh_data.ExecutionPolicy | Sort-Object { 
+$pwsh_data.ExecutionPolicy | Where-Object { $_.Scope -ne $null -and $_.ExecutionPolicy -ne $null } | Sort-Object { 
     switch ($_.Scope) {
         'MachinePolicy' { 1 }
         'UserPolicy' { 2 }
@@ -18,7 +16,10 @@ $pwsh_data.ExecutionPolicy | Sort-Object {
         default { 6 }
     }
 } | ForEach-Object {
-    Set-ExecutionPolicy @_ -Force -Verbose:$True
+    $current = Get-ExecutionPolicy -Scope $_.Scope
+    if ($current -ne $_.ExecutionPolicy) {
+        Set-ExecutionPolicy @_ -Force -Verbose:$True
+    }
 }
 {{end -}}
 

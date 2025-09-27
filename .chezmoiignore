@@ -1,3 +1,6 @@
 Install.ps1
 *.md
 my_start.bin
+.chezmoiinterpreters
+.chezmoihooks
+.chezmoilib

@@ -2,8 +2,6 @@ powershell:
   ExecutionPolicy:
     - Scope: CurrentUser
       ExecutionPolicy: RemoteSigned
-    - Scope: Process
-      ExecutionPolicy: RemoteSigned
   PSRepository:
     - name: PSGallery
       InstallationPolicy: Trusted
