@@ -20,7 +20,7 @@ software:
     - name: microsoft-openjdk17
 
     - name: bitwarden
-    
+
     - name: googledrive
       params: /NoStart
 
@@ -33,7 +33,7 @@ software:
     - name: winmerge
     - name: wiztree
     - name: sysinternals
-    
+
     # - name: cmake
     # - name: Cygwin
     # - name: make
@@ -65,14 +65,3 @@ fnm:
     global_modules:
       - name: typescript
       - name: ts-node
-
-powershell:
-  - name: newtonsoft.json
-  - name: PsDownload
-  - name: powershell-yaml
-  - name: posh-git
-  # - name: PesterMatchHashtable
-  # - name: Pester
-  # - name: PSScriptAnalyzer
-  - name: Pscx
-    AllowClobber: true

@@ -1,0 +1,33 @@
+{{- $powershell := .powershell | toJson | squote -}}
+{{- $newPackagesToInstall := output "pwsh.exe" "-NoProfile" "-Command" (printf "$pwsh_data = %s | ConvertFrom-Json -AsHashTable; $pwsh_data.modules | Select-Object -ExpandProperty name | Sort-Object -Unique | Where-Object { -not (Get-Module -ListAvailable -Name $_) }" $powershell) | trim | lower -}}
+{{- $executionPolicyMismatch := output "pwsh.exe" "-NoProfile" "-Command" (printf "$pwsh_data = %s | ConvertFrom-Json -AsHashTable; $pwsh_data.ExecutionPolicy | ForEach-Object { $current = Get-ExecutionPolicy -Scope $_.Scope; if ($current -ne $_.ExecutionPolicy) { $true } } | Select-Object -First 1" $powershell) | trim | lower -}}
+
+{{- if or (ne $newPackagesToInstall "") (eq $executionPolicyMismatch "true") -}}
+echo "== {{ .chezmoi.sourceFile | trim }} =="
+
+$pwsh_data = {{ $powershell }} | ConvertFrom-Json -AsHashTable
+
+{{if (eq $executionPolicyMismatch "true") -}}
+$pwsh_data.ExecutionPolicy | Sort-Object { 
+    switch ($_.Scope) {
+        'MachinePolicy' { 1 }
+        'UserPolicy' { 2 }
+        'Process' { 3 }
+        'CurrentUser' { 4 }
+        'LocalMachine' { 5 }
+        default { 6 }
+    }
+} | ForEach-Object {
+    Set-ExecutionPolicy @_ -Force -Verbose:$True
+}
+{{end -}}
+
+{{if (ne $newPackagesToInstall "") -}}
+$pwsh_data.PSRepository | ForEach-Object {
+    Set-PSRepository @_ -Verbose:$True
+}
+$pwsh_data.modules | Where-Object { $_.Scope -eq $null -or $_.Scope -eq "CurrentUser" } | Where-Object { -not (Get-Module -ListAvailable -Name $_.name) } | ForEach-Object {
+    PowerShellGet\Install-Module @_ -Scope CurrentUser -Force:$False -Verbose:$True
+}
+{{end -}}
+{{- end -}}

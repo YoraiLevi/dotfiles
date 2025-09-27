@@ -1,0 +1,22 @@
+powershell:
+  ExecutionPolicy:
+    - Scope: CurrentUser
+      ExecutionPolicy: RemoteSigned
+    - Scope: Process
+      ExecutionPolicy: RemoteSigned
+  PSRepository:
+    - name: PSGallery
+      InstallationPolicy: Trusted
+  modules:
+    # forces scope to be CurrentUser
+    - name: PsDownload
+    - name: powershell-yaml
+    - name: posh-git
+    - name: PSWindowsUpdate
+    - name: PesterMatchHashtable
+    - name: Pester
+      # Force: true
+      # SkipPublisherCheck: true
+    - name: PSScriptAnalyzer
+    - name: Pscx
+      AllowClobber: true

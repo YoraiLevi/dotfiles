@@ -460,8 +460,9 @@ function Invoke-YesNoPrompt {
 }
 # Update local changes to chezmoi repo
 &$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
-$chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 10 -RedirectOutput -TimeoutAction Stop # this is a process object
+# $chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 10 -RedirectOutput -TimeoutAction Stop # this is a process object
 # $chezmoi_process = chezmoi re-add & # this is a job and not a process object
+$chezmoi_process = $null
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
@@ -534,28 +535,38 @@ if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Si
 # }
 # Set-Alias -Name eds -Value Edit-Setup
 
-function which([Parameter(Mandatory = $true)][string]$name) {
+function Find-Command {
+    [CmdletBinding()]
+    param([Parameter(Mandatory = $true)][string]$name)
+    
     # will print location or source code
     $cmd = Get-Command $name -ErrorAction SilentlyContinue
     if ($cmd.CommandType -eq 'Alias') {
+        Write-Debug "Command type is Alias: $($cmd.Name)"
         Write-Host "Alias: $($cmd.Name) -> $($cmd.Definition)" -ForegroundColor Cyan
-        return which($cmd.Definition)
+        return & $MyInvocation.MyCommand.Name $cmd.Definition
     }
     if ($cmd.CommandType -eq 'ApplicationInfo') {
+        Write-Debug "Command type is ApplicationInfo: $($cmd.Name)"
         return $cmd.Definition
     }
     if ($cmd.CommandType -eq 'Application') {
+        Write-Debug "Command type is Application: $($cmd.Name)"
         return $cmd.Path
     }
     if ($cmd.CommandType -eq 'Cmdlet') {
+        Write-Debug "Command type is Cmdlet: $($cmd.Name)"
         return $cmd
     }
     if ($cmd.CommandType -eq 'Function') {
+        Write-Debug "Command type is Function: $($cmd.Name)"
         Write-Host "function $($cmd | Select-Object -ExpandProperty Name) {`n    $($cmd | Select-Object -ExpandProperty Definition)`n}" -ForegroundColor Cyan
         return $cmd
     }
+    Write-Debug "Command type is other or null: $($cmd.CommandType)"
     return $cmd
 }
+Set-Alias -Name which -Value Find-Command
 
 function export($name, $value) {
     Set-Item -Force -Path "env:$name" -Value $value

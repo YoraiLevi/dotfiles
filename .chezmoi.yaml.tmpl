@@ -77,12 +77,25 @@ hooks:
 {{ if eq .chezmoi.os "windows" -}}
 interpreters:
   py :
+    {{- $uvAvailable := output "powershell.exe" "-NoProfile" "-Command" "try { $null = Get-Command uv.exe -ErrorAction Stop; 'true' } catch { 'false' }" | lower | trim -}}
+    {{- if eq $uvAvailable "true" }}
     command : 'uv.exe'
     args : ["run", "python", "-B", "-E"]
+    {{- else }}
+    command : 'python.exe'
+    args : ["-B", "-E"]
+    {{- end }}
   ps1 : 
     command : "C:/Program Files/PowerShell/7/pwsh.exe"
     args : ["-NoLogo", "-NoProfile", "-NonInteractive"]
+  {{- $wslAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool]((&{try { wsl --list --quiet } catch { }} | Out-String) -join ' ' -replace [char]0, '' -replace '\\s+', ' ')" | lower | trim -}}
+  {{- if eq $wslAvailable "true" }}
   sh :
     command : "C:/Program Files/PowerShell/7/pwsh.exe"
     args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-CommandWithArgs', "wsl bash --noprofile --norc $(wsl wslpath $args.replace('\\','/'))"]
+  {{- else }}
+  sh :
+    command : "C:/Program Files/PowerShell/7/pwsh.exe"
+    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-CommandWithArgs', "Write-Warning \"sh interpreter unavailable - WSL not found Script path: $args\""]
+  {{- end }}
 {{ end -}}
