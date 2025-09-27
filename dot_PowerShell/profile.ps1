@@ -447,7 +447,7 @@ function Invoke-YesNoPrompt {
 }
 # Update local changes to chezmoi repo
 &$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
-$chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 3 -RedirectOutput -TimeoutAction Stop
+$chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 10 -RedirectOutput -TimeoutAction Stop
 # $chezmoi_process = Invoke-Process -FilePath "ping" -ArgumentList "google.com", "-n", "10" -PassThru -Timeout 0 -RedirectOutput -TimeoutAction Stop
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
