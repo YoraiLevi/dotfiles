@@ -878,7 +878,7 @@ Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
 #     } while ($null -ne $c -and $c -ne -1)
 #     $chezmoi_process | Wait-Process
 # }
-$chezmoi_process | Wait-Job | Receive-Job
+$chezmoi_process | Receive-Job
 Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
