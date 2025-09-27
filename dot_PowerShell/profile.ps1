@@ -857,7 +857,7 @@ function Invoke-Conda {
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 function Invoke-Chezmoi {
-    Remove-Alias -Name chezmoi -Scope Global
+    # Remove-Alias -Name chezmoi -Scope Global
     if (which 'chezmoi.exe') {
         (& chezmoi completion powershell) | Out-String | Invoke-Expression
         (& chezmoi completion powershell) | Out-String | Invoke-Expression
