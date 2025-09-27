@@ -167,9 +167,11 @@ function Invoke-Process {
             
             switch ($TimeoutAction) {
                 'Continue' {
+                    Write-Debug "Waiting action: Continue"
                     Write-Warning "Process may still be running. Continuing..."
                 }
                 'Inquire' {
+                    Write-Debug "Waiting action: Inquire"
                     $choice = Read-Host "Process is still running. What would you like to do? (K)ill, (W)ait"
                     switch ($choice.ToLower()) {
                         'k' { 
@@ -186,14 +188,17 @@ function Invoke-Process {
                     }
                 }
                 'SilentlyContinue' {
+                    Write-Debug "Waiting action: SilentlyContinue"
                     # No action - let process continue running
                 }
                 'Stop' {
+                    Write-Debug "Waiting action: Stop"
                     if (!$Process.HasExited) {
                         $Process.Kill()
                     }
                 }
                 default {
+                    Write-Debug "Waiting action: Default, should never happen"
                     # Unreachable code
                     Write-Error "Invalid wait action: $WaitAction"
                 }
@@ -284,17 +289,22 @@ function Invoke-Process {
             }
             $p = Start-Process @startProcessParams -Confirm:$false
         }
+        Write-Debug "Process started: $target"
+        Write-Debug "Waiting Mode: $($PSCmdlet.ParameterSetName)"
 
         if ($Wait) {
             switch ($PSCmdlet.ParameterSetName) {
                 'WaitExit' {
+                    Write-Debug "Waiting for process to exit..."
                     $p.WaitForExit() | Out-Null
                 }
                 'WithTimeout' {
+                    Write-Debug "Waiting for process to exit with timeout..."
                     $p.WaitForExit($Timeout * 1000) | Out-Null
                     InvokeTimeoutAction -TimeoutAction $TimeoutAction -Process $p
                 }
                 'WithTimeSpan' {
+                    Write-Debug "Waiting for process to exit with timespan..."
                     $p.WaitForExit($TimeSpan) | Out-Null
                     InvokeTimeoutAction -TimeoutAction $TimeoutAction -Process $p
                 }
@@ -307,11 +317,14 @@ function Invoke-Process {
             switch ($PSCmdlet.ParameterSetName) {
                 'WithTimeout' {
                     Start-Job -ScriptBlock $script_block -ArgumentList $p.Id, $Timeout | Out-Null
+                    Write-Debug "Letting process run in background with timeout..."
                 }
                 'WithTimeSpan' {
                     Start-Job -ScriptBlock $script_block -ArgumentList $p.Id, $TimeSpan.TotalSeconds | Out-Null
+                    Write-Debug "Letting process run in background with timespan..."
                 }
                 'NoWait' {
+                    Write-Debug "Letting process run in background..."
                 }
                 default {
                     Write-Error "Invalid parameter set: $($PSCmdlet.ParameterSetName)"
@@ -320,11 +333,11 @@ function Invoke-Process {
         }
     
         if ($PassThru) {
+            Write-Debug "Returning process object"
             return $p
         }
     }
 }
-
 
 
 
