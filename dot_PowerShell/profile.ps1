@@ -447,7 +447,8 @@ function Invoke-YesNoPrompt {
 }
 # Update local changes to chezmoi repo
 &$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
-$chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 10 -RedirectOutput -TimeoutAction Stop
+$null = & chezmoi re-add
+# $chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 10 -RedirectOutput -TimeoutAction Stop
 # $chezmoi_process = Invoke-Process -FilePath "ping" -ArgumentList "google.com", "-n", "10" -PassThru -Timeout 0 -RedirectOutput -TimeoutAction Stop
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
@@ -855,15 +856,15 @@ function Invoke-Chezmoi {
 }
 Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
 
-$c = $chezmoi_process.StandardOutput.Read()
-if ($null -ne $c -and $c -ne -1 ) {
-    do {
-        write-host "$([char]$c)" -NoNewline
-        $c = $chezmoi_process.StandardOutput.Read()
-    } while ($null -ne $c -and $c -ne -1)
-    $chezmoi_process | Wait-Process
-}
-Remove-Variable -Name chezmoi_process
+# $c = $chezmoi_process.StandardOutput.Read()
+# if ($null -ne $c -and $c -ne -1 ) {
+#     do {
+#         write-host "$([char]$c)" -NoNewline
+#         $c = $chezmoi_process.StandardOutput.Read()
+#     } while ($null -ne $c -and $c -ne -1)
+#     $chezmoi_process | Wait-Process
+# }
+# Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
 # $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
