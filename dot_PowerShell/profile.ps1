@@ -866,7 +866,7 @@ else {
 }
 
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
-the printout is partial compared to the original process because the speed output is in stderr
+# the printout is partial compared to the original process because the speed output is in stderr
 $c = $chezmoi_process.StandardOutput.Read()
 if ($null -ne $c -and $c -ne -1 ) {
     do {
