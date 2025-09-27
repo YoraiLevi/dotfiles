@@ -460,8 +460,7 @@ function Invoke-YesNoPrompt {
 }
 # Update local changes to chezmoi repo
 &$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
-# $chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 10 -RedirectOutput -TimeoutAction Stop
-$null = chezmoi re-add &
+$chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 10 -RedirectOutput -TimeoutAction Stop
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
@@ -870,15 +869,15 @@ Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
 
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
 # the printout is partial compared to the original process because the speed output is in stderr
-# $c = $chezmoi_process.StandardOutput.Read()
-# if ($null -ne $c -and $c -ne -1 ) {
-#     do {
-#         write-host "$([char]$c)" -NoNewline
-#         $c = $chezmoi_process.StandardOutput.Read()
-#     } while ($null -ne $c -and $c -ne -1)
-#     $chezmoi_process | Wait-Process
-# }
-# Remove-Variable -Name chezmoi_process
+$c = $chezmoi_process.StandardOutput.Read()
+if ($null -ne $c -and $c -ne -1 ) {
+    do {
+        write-host "$([char]$c)" -NoNewline
+        $c = $chezmoi_process.StandardOutput.Read()
+    } while ($null -ne $c -and $c -ne -1)
+    $chezmoi_process | Wait-Process
+}
+Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
 # $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
