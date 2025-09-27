@@ -6,7 +6,7 @@ $ENV:EDITOR = "$_EDITOR -w -n" # chezmoi compatibility... exec: "code" executabl
 # }
 try {
     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
-    Import-Module posh-git -ErrorAction Stop
+    # Import-Module posh-git -ErrorAction Stop
 }
 catch {
     Write-Error "posh-git isn't available on the system, execute:"
@@ -856,18 +856,14 @@ function Invoke-Conda {
     conda @args
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
-function Invoke-Chezmoi {
-    # Remove-Alias -Name chezmoi -Scope Global
-    if (which 'chezmoi.exe') {
-        (& chezmoi completion powershell) | Out-String | Invoke-Expression
-        (& chezmoi completion powershell) | Out-String | Invoke-Expression
-    }
-    else {
-        Write-Error "chezmoi isn't available on the system, How??"
-    }
-    chezmoi @args
+
+if (which 'chezmoi.exe') {
+    # this needs to stay in the global scope, probably should report the error to the developer
+    (& chezmoi completion powershell) | Out-String | Invoke-Expression
 }
-Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
+else {
+    Write-Error "chezmoi isn't available on the system, How??"
+}
 
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
 # the printout is partial compared to the original process because the speed output is in stderr
