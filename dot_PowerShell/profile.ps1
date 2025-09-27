@@ -466,9 +466,6 @@ $chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -Pa
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
     if ($ENV:CHEZMOI -ne 1) {
-        if ([char]$chezmoi_process.StandardOutput.Read() -ne '0') {
-            $chezmoi_process | Wait-Process
-        }
         $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase ; chezmoi diff) | Out-String
         $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
         if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) {
@@ -870,7 +867,13 @@ function Invoke-Chezmoi {
     chezmoi @args
 }
 Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
-$chezmoi_process | Wait-Process
+
+$c = $chezmoi_process.StandardOutput.Read()
+if ($c -ne $null -and $c -ne -1 ) {
+    write-host [char]$c -NoNewline
+    write-host $chezmoi_process.StandardOutput.Read()
+    $chezmoi_process | Wait-Process
+}
 # Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
