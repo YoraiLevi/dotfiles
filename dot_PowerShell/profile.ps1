@@ -876,7 +876,7 @@ if ($null -ne $c -and $c -ne -1 ) {
     } while ($null -ne $c -and $c -ne -1)
     $chezmoi_process | Wait-Process
 }
-# Remove-Variable -Name chezmoi_process
+Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
 # $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
