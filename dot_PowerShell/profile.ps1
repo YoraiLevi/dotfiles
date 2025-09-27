@@ -17,65 +17,326 @@ Set-Alias -Name sudo -Value gsudo
 
 
 function Invoke-Process {
-    # https://stackoverflow.com/a/66700583/12603110
-    [CmdletBinding(SupportsShouldProcess)]
+    <#
+    .SYNOPSIS
+    Starts a process with optional redirected stdout and stderr streams for better output handling.
+    Allow to wait for the process to exit or forcefully kill it with timeout.
+    
+    .DESCRIPTION
+    This function creates and starts a new process with optional standard output and error streams 
+    redirected to enable capture and processing. It provides various waiting options
+    including timeout and TimeSpan timeout support.
+    
+    .PARAMETER FilePath
+    The path to the executable file to run.
+    
+    .PARAMETER ArgumentList
+    Arguments to pass to the executable.
+    
+    .PARAMETER WorkingDirectory
+    The working directory for the process.
+    
+    .PARAMETER Wait
+    Wait for the process to exit without timeout.
+    
+    .PARAMETER Timeout
+    Wait for the process to exit with a timeout in milliseconds.
+    
+    .PARAMETER TimeSpan
+    Wait for the process to exit with a TimeSpan timeout.
+    
+    .PARAMETER TimeoutAction
+    Action to take when wait operations timeout. Valid values are 'Continue', 'Inquire', 'SilentlyContinue', 'Stop'.
+    
+    .PARAMETER RedirectOutput
+    Redirect stdout and stderr streams. When false, uses Start-Process for normal console output.
+    It is Recommended to use the PassThru switch to access the redirected output through the returned process object
+    You're welcome to think of a better solution to this.
+    
+    .PARAMETER PassThru
+    Return the process object.
+    
+    .EXAMPLE
+    # Basic usage without waiting - starts process and control returns immediately
+    Invoke-Process -FilePath "ping.exe" -ArgumentList "google.com", "-n", "10"
+
+     .EXAMPLE
+    # Basic usage with timeout - starts process and control returns immediately, the process is killed after 3 seconds
+    Invoke-Process -FilePath "ping.exe" -ArgumentList "google.com", "-n", "10" -Timeout 3
+    
+    .EXAMPLE
+    # Wait for process to complete
+    Invoke-Process -FilePath "ping.exe" -ArgumentList "google.com", "-n", "4" -Wait
+    
+    .EXAMPLE
+    # Wait with timeout (3 seconds), after 3 seconds the process is killed
+    Invoke-Process -FilePath "ping.exe" -ArgumentList "google.com", "-n", "10" -Wait -Timeout 3
+    
+    .EXAMPLE
+    # Wait with TimeSpan timeout and custom timeout action, after 3 an inquire is shown asking what to do
+    Invoke-Process -FilePath "ping.exe" -ArgumentList "google.com", "-n", "10" -Wait -TimeSpan (New-TimeSpan -Seconds 3) -TimeoutAction Inquire
+    
+    .EXAMPLE
+    # Redirect output and get process object
+    $process = Invoke-Process -FilePath "ping.exe" -ArgumentList "google.com", "-n", "10" -TimeSpan (New-TimeSpan -Seconds 3) -TimeoutAction Stop -RedirectOutput -PassThru
+    $output = $process.StandardOutput.ReadToEnd()
+    $errors = $process.StandardError.ReadToEnd()
+   
+    .LINK
+    https://gist.github.com/YoraiLevi/d0d95011bed792dff57a301dbc2780ec
+    .LINK
+    https://stackoverflow.com/a/66700583/12603110
+    .LINK
+    https://stackoverflow.com/q/36933527/12603110
+    .LINK
+    https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-process?view=powershell-7.5#parameters
+    .LINK
+    https://github.com/PowerShell/PowerShell/blob/d8b1cc55332079d2be94cc266891c85e57d88c55/src/Microsoft.PowerShell.Commands.Management/commands/management/Process.cs#L1597
+    #>
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'NoWait')]
     param
     (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, Position = 0)]
         [ValidateNotNullOrEmpty()]
+        [Alias('PSPath', 'Path')]
         [string]$FilePath,
-
-        [Parameter()]
+        [Parameter(Position = 1)]
+        [string[]]$ArgumentList = @(),
         [ValidateNotNullOrEmpty()]
-        [string]$ArgumentList,
+        [string]$WorkingDirectory,
 
-        # [ValidateSet("Full", "StdOut", "StdErr", "ExitCode", "None")]
-        # [string]$DisplayLevel
-        [Parameter()]
-        [switch]$Wait
+        [Parameter(ParameterSetName = 'WithTimeout')]
+        [Parameter(ParameterSetName = 'WithTimeSpan')]
+        [Parameter(Mandatory, ParameterSetName = 'WaitExit')]
+        [switch]$Wait,
+        [Parameter(Mandatory, ParameterSetName = 'WithTimeout')]
+        [int]$Timeout,
+        [Parameter(Mandatory, ParameterSetName = 'WithTimeSpan')]
+        [System.TimeSpan]$TimeSpan,
+        [Parameter(ParameterSetName = 'WithTimeout')]
+        [Parameter(ParameterSetName = 'WithTimeSpan')]
+        [ValidateSet('Continue', 'Inquire', 'SilentlyContinue', 'Stop')]
+        [string]$TimeoutAction = 'Stop',
+        [switch]$RedirectOutput,
+        [switch]$PassThru,
+        # Consider adding support for the other Start-Process parameters and make this into a drop in replacement for Start-Process:
+        # https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/start-process?view=powershell-7.5#parameters
+        # partial eg:
+        # [-Verb <string>]
+        # [-WindowStyle <ProcessWindowStyle>]
+        [hashtable]$Environment,
+        [switch]$UseNewEnvironment
     )
 
     $ErrorActionPreference = 'Stop'
 
-    # try {
-    $pinfo = New-Object System.Diagnostics.ProcessStartInfo
-    $pinfo.FileName = $FilePath
-    $pinfo.RedirectStandardError = $true
-    $pinfo.RedirectStandardOutput = $true
-    $pinfo.UseShellExecute = $false
-    $pinfo.WindowStyle = 'Hidden'
-    $pinfo.CreateNoWindow = $true
-    $pinfo.Arguments = $ArgumentList
-    $p = New-Object System.Diagnostics.Process
-    $p.StartInfo = $pinfo
-    $p.Start() | Out-Null
-    # $result = [pscustomobject]@{
-    #     Title     = ($MyInvocation.MyCommand).Name
-    #     Command   = $FilePath
-    #     Arguments = $ArgumentList
-    #     StdOut    = $p.StandardOutput.ReadToEnd()
-    #     StdErr    = $p.StandardError.ReadToEnd()
-    #     ExitCode  = $p.ExitCode
-    #     Process   = $p
-    # }
-    if ($Wait) {
-        write-host 'Waiting for process to exit...'
-        $p.WaitForExit()
+    $command = Get-Command $FilePath -CommandType Application -ErrorAction SilentlyContinue
+    $resolvedFilePath = if ($command) {
+        $command.Source
     }
-    return $p
+    else {
+        $FilePath
+    }
 
-    # if (-not([string]::IsNullOrEmpty($DisplayLevel))) {
-    #     switch($DisplayLevel) {
-    #         "Full" { return $result; break }
-    #         "StdOut" { return $result.StdOut; break }
-    #         "StdErr" { return $result.StdErr; break }
-    #         "ExitCode" { return $result.ExitCode; break }
-    #         }
-    #     }
-    # }
-    # catch {
-    # exit
-    # }
+    $argumentString = if ($ArgumentList -and $ArgumentList.Count -gt 0) {
+        " " + ($ArgumentList -join " ")
+    }
+    else {
+        ""
+    }
+    
+    $target = "$resolvedFilePath$argumentString"
+    
+    if ($PSCmdlet.ShouldProcess($target, $MyInvocation.MyCommand)) {
+        if (($TimeoutAction -eq 'Inquire') -and -not $Wait) {
+            throw "TimeoutAction 'Inquire' and 'Wait' switch are not compatible"
+        }
+
+        class Process : System.Diagnostics.Process {
+            [void] WaitForExit() {
+                $this.StandardOutput.ReadToEnd()
+                $this.StandardError.ReadToEnd()
+                ([System.Diagnostics.Process]$this).WaitForExit()
+            }
+        }
+        function InvokeTimeoutAction {
+            param(
+                [string]$TimeoutAction,
+                [System.Diagnostics.Process]$Process
+            )
+            
+            switch ($TimeoutAction) {
+                'Continue' {
+                    Write-Debug "Waiting action: Continue"
+                    Write-Warning "Process may still be running. Continuing..."
+                }
+                'Inquire' {
+                    Write-Debug "Waiting action: Inquire"
+                    $choice = Read-Host "Process is still running. What would you like to do? (K)ill, (W)ait"
+                    switch ($choice.ToLower()) {
+                        'k' { 
+                            if (!$Process.HasExited) {
+                                $Process.Kill()
+                            }
+                        }
+                        'w' {
+                            $Process.WaitForExit()
+                        }
+                        default {
+                            Write-Warning "Invalid choice. Process will continue running."
+                        }
+                    }
+                }
+                'SilentlyContinue' {
+                    Write-Debug "Waiting action: SilentlyContinue"
+                    # No action - let process continue running
+                }
+                'Stop' {
+                    Write-Debug "Waiting action: Stop"
+                    if (!$Process.HasExited) {
+                        $Process.Kill()
+                    }
+                }
+                default {
+                    Write-Debug "Waiting action: Default, should never happen"
+                    # Unreachable code
+                    Write-Error "Invalid wait action: $WaitAction"
+                }
+            }
+        }
+        $script_block = { param($Id, $Timeout)
+            $function:InvokeTimeoutAction = $using:function:InvokeTimeoutAction;
+            $TimeoutAction = $using:TimeoutAction;
+            Write-Host "TimeoutAction: $TimeoutAction, Id: $Id, Timeout: $Timeout"
+            $p = Wait-Process -Id $Id -Timeout $Timeout -PassThru;
+            if ($TimeoutAction) {
+                InvokeTimeoutAction -TimeoutAction $TimeoutAction -Process $p 
+            } 
+        }
+        $p = $null
+        if ($RedirectOutput) {
+            $pinfo = New-Object System.Diagnostics.ProcessStartInfo
+            $pinfo.FileName = $FilePath
+            $pinfo.RedirectStandardError = $true
+            $pinfo.RedirectStandardOutput = $true
+            $pinfo.UseShellExecute = $false
+            $pinfo.WindowStyle = 'Hidden'
+            $pinfo.CreateNoWindow = $true
+            $pinfo.Arguments = $ArgumentList
+            if ($WorkingDirectory) {
+                $pinfo.WorkingDirectory = $WorkingDirectory
+            }
+            function LoadEnvironmentVariable {
+                # https://github.com/PowerShell/PowerShell/blob/d8b1cc55332079d2be94cc266891c85e57d88c55/src/Microsoft.PowerShell.Commands.Management/commands/management/Process.cs#L2231C24-L2231C335
+                param(
+                    [System.Diagnostics.ProcessStartInfo]$ProcessStartInfo,
+                    [System.Collections.IDictionary]$EnvironmentVariables
+                )
+                
+                $processEnvironment = $ProcessStartInfo.EnvironmentVariables
+                foreach ($entry in $EnvironmentVariables.GetEnumerator()) {
+                    if ($processEnvironment.ContainsKey($entry.Key)) {
+                        $processEnvironment.Remove($entry.Key)
+                    }
+                    
+                    if ($null -ne $entry.Value) {
+                        if ($entry.Key -eq "PATH") {
+                            if ($IsWindows) {
+                                $machinePath = [System.Environment]::GetEnvironmentVariable($entry.Key, [System.EnvironmentVariableTarget]::Machine)
+                                $userPath = [System.Environment]::GetEnvironmentVariable($entry.Key, [System.EnvironmentVariableTarget]::User)
+                                $combinedPath = $entry.Value + [System.IO.Path]::PathSeparator + $machinePath + [System.IO.Path]::PathSeparator + $userPath
+                                $processEnvironment.Add($entry.Key, $combinedPath)
+                            }
+                            else {
+                                $processEnvironment.Add($entry.Key, $entry.Value)
+                            }
+                        }
+                        else {
+                            $processEnvironment.Add($entry.Key, $entry.Value)
+                        }
+                    }
+                }
+            }
+            # https://github.com/PowerShell/PowerShell/blob/d8b1cc55332079d2be94cc266891c85e57d88c55/src/Microsoft.PowerShell.Commands.Management/commands/management/Process.cs#L1954
+            if ($UseNewEnvironment) {
+                $pinfo.EnvironmentVariables.Clear()
+                LoadEnvironmentVariable -ProcessStartInfo $pinfo -EnvironmentVariables ([System.Environment]::GetEnvironmentVariables([System.EnvironmentVariableTarget]::Machine))
+                LoadEnvironmentVariable -ProcessStartInfo $pinfo -EnvironmentVariables ([System.Environment]::GetEnvironmentVariables([System.EnvironmentVariableTarget]::User))
+            }
+
+            if ($Environment) {
+                LoadEnvironmentVariable -ProcessStartInfo $pinfo -EnvironmentVariables $Environment
+            }
+            $p = New-Object Process
+            $p.StartInfo = $pinfo
+            $p.Start() | Out-Null
+        }
+        else {
+            $startProcessParams = @{
+                FilePath     = $FilePath
+                ArgumentList = $ArgumentList
+                PassThru     = $true
+                NoNewWindow  = $true
+            }
+            if ($WorkingDirectory) {
+                $startProcessParams.WorkingDirectory = $WorkingDirectory
+            }
+            if ($Environment) {
+                $startProcessParams.Environment = $Environment
+            }
+            if ($UseNewEnvironment) {
+                $startProcessParams.UseNewEnvironment = $UseNewEnvironment
+            }
+            $p = Start-Process @startProcessParams -Confirm:$false
+        }
+        Write-Debug "Process started: $target"
+        Write-Debug "Waiting Mode: $($PSCmdlet.ParameterSetName)"
+
+        if ($Wait) {
+            switch ($PSCmdlet.ParameterSetName) {
+                'WaitExit' {
+                    Write-Debug "Waiting for process to exit..."
+                    $p.WaitForExit() | Out-Null
+                }
+                'WithTimeout' {
+                    Write-Debug "Waiting for process to exit with timeout..."
+                    $p.WaitForExit($Timeout * 1000) | Out-Null
+                    InvokeTimeoutAction -TimeoutAction $TimeoutAction -Process $p
+                }
+                'WithTimeSpan' {
+                    Write-Debug "Waiting for process to exit with timespan..."
+                    $p.WaitForExit($TimeSpan) | Out-Null
+                    InvokeTimeoutAction -TimeoutAction $TimeoutAction -Process $p
+                }
+                default {
+                    Write-Error "Invalid parameter set: $($PSCmdlet.ParameterSetName)"
+                }
+            }
+        }
+        else {
+            switch ($PSCmdlet.ParameterSetName) {
+                'WithTimeout' {
+                    Start-Job -ScriptBlock $script_block -ArgumentList $p.Id, $Timeout | Out-Null
+                    Write-Debug "Letting process run in background with timeout..."
+                }
+                'WithTimeSpan' {
+                    Start-Job -ScriptBlock $script_block -ArgumentList $p.Id, $TimeSpan.TotalSeconds | Out-Null
+                    Write-Debug "Letting process run in background with timespan..."
+                }
+                'NoWait' {
+                    Write-Debug "Letting process run in background..."
+                }
+                default {
+                    Write-Error "Invalid parameter set: $($PSCmdlet.ParameterSetName)"
+                }
+            }
+        }
+    
+        if ($PassThru) {
+            Write-Debug "Returning process object"
+            return $p
+        }
+    }
 }
 
 
@@ -200,12 +461,14 @@ function Invoke-YesNoPrompt {
 }
 # Update local changes to chezmoi repo
 &$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
-$chezmoi_process = Start-Process -FilePath "chezmoi" -ArgumentList "re-add" -NoNewWindow -PassThru -
+$chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -RedirectOutput -Timeout 10
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
     if ($ENV:CHEZMOI -ne 1) {
-        $chezmoi_process.WaitForExit()
+        if ([char]$chezmoi_process.StandardOutput.Read() -ne '0') {
+            $chezmoi_process | Wait-Process
+        }
         $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase ; chezmoi diff) | Out-String
         $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
         if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) {
@@ -607,7 +870,7 @@ function Invoke-Chezmoi {
     chezmoi @args
 }
 Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
-$chezmoi_process.WaitForExit()
+$chezmoi_process | Wait-Process
 # Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
