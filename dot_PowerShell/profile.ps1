@@ -868,14 +868,14 @@ function Invoke-Chezmoi {
 }
 Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
 
-# $c = $chezmoi_process.StandardOutput.Read()
-# if ($null -ne $c -and $c -ne -1 ) {
-#     do {
-#         write-host "$([char]$c)" -NoNewline
-#         $c = $chezmoi_process.StandardOutput.Read()
-#     } while ($null -ne $c -and $c -ne -1)
-#     $chezmoi_process | Wait-Process
-# }
+$c = $chezmoi_process.StandardOutput.Read()
+if ($null -ne $c -and $c -ne -1 ) {
+    do {
+        write-host "$([char]$c)" -NoNewline
+        $c = $chezmoi_process.StandardOutput.Read()
+    } while ($null -ne $c -and $c -ne -1)
+    $chezmoi_process | Wait-Process
+}
 Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
