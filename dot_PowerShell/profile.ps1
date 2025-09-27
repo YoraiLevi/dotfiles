@@ -868,7 +868,7 @@ function Invoke-Chezmoi {
 }
 Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
 
-# $c = $chezmoi_process.StandardOutput.Read()
+$c = $chezmoi_process.StandardOutput.Read()
 # if ($null -ne $c -and $c -ne -1 ) {
 #     do {
 #         write-host "$([char]$c)" -NoNewline
