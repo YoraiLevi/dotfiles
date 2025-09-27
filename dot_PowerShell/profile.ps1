@@ -534,13 +534,13 @@ function Invoke-Conda {
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 
-# if (which 'chezmoi.exe') {
-#     # this needs to stay in the global scope, probably should report the error to the developer
-#     (& chezmoi completion powershell) | Out-String | Invoke-Expression
-# }
-# else {
-#     Write-Error "chezmoi isn't available on the system, How??"
-# }
+if (which 'chezmoi.exe') {
+    # this needs to stay in the global scope, probably should report the error to the developer
+    (& chezmoi completion powershell) | Out-String | Invoke-Expression
+}
+else {
+    Write-Error "chezmoi isn't available on the system, How??"
+}
 
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
 # the printout is partial compared to the original process because the speed output is in stderr
