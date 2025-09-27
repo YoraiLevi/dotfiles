@@ -130,22 +130,22 @@ function Invoke-Process {
 
     $ErrorActionPreference = 'Stop'
 
-    $command = Get-Command $FilePath -CommandType Application -ErrorAction SilentlyContinue
-    $resolvedFilePath = if ($command) {
-        $command.Source
-    }
-    else {
-        $FilePath
-    }
+    # $command = Get-Command $FilePath -CommandType Application -ErrorAction SilentlyContinue
+    # $resolvedFilePath = if ($command) {
+    #     $command.Source
+    # }
+    # else {
+    #     $FilePath
+    # }
 
-    $argumentString = if ($ArgumentList -and $ArgumentList.Count -gt 0) {
-        " " + ($ArgumentList -join " ")
-    }
-    else {
-        ""
-    }
+    # $argumentString = if ($ArgumentList -and $ArgumentList.Count -gt 0) {
+    #     " " + ($ArgumentList -join " ")
+    # }
+    # else {
+    #     ""
+    # }
     
-    $target = "$resolvedFilePath$argumentString"
+    # $target = "$resolvedFilePath$argumentString"
     
     if ($PSCmdlet.ShouldProcess($target, $MyInvocation.MyCommand)) {
         if (($TimeoutAction -eq 'Inquire') -and -not $Wait) {
@@ -460,8 +460,8 @@ function Invoke-YesNoPrompt {
 }
 # Update local changes to chezmoi repo
 &$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
-# $chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 10 -RedirectOutput -TimeoutAction Stop # this is a process object
-$chezmoi_process = chezmoi re-add & # this is a job and not a process object
+$chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 10 -RedirectOutput -TimeoutAction Stop # this is a process object
+# $chezmoi_process = chezmoi re-add & # this is a job and not a process object
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
@@ -857,13 +857,13 @@ function Invoke-Conda {
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 
-# if (which 'chezmoi.exe') {
-#     # this needs to stay in the global scope, probably should report the error to the developer
-#     (& chezmoi completion powershell) | Out-String | Invoke-Expression
-# }
-# else {
-#     Write-Error "chezmoi isn't available on the system, How??"
-# }
+if (which 'chezmoi.exe') {
+    # this needs to stay in the global scope, probably should report the error to the developer
+    (& chezmoi completion powershell) | Out-String | Invoke-Expression
+}
+else {
+    Write-Error "chezmoi isn't available on the system, How??"
+}
 
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
 # the printout is partial compared to the original process because the speed output is in stderr
