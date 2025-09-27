@@ -875,7 +875,6 @@ if ($null -ne $c -and $c -ne -1 ) {
     } while ($null -ne $c -and $c -ne -1)
     $chezmoi_process | Wait-Process
 }
-write-host $chezmoi_process.StandardError.ReadToEnd()
 Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
