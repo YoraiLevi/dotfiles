@@ -879,6 +879,7 @@ Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
 #     $chezmoi_process | Wait-Process
 # }
 # Remove-Variable -Name chezmoi_process
+$chezmoi_process | Wait-Process
 Remove-Variable -Name _EDITOR
 
 # $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
