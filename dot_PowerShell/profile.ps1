@@ -461,7 +461,7 @@ function Invoke-YesNoPrompt {
 # Update local changes to chezmoi repo
 &$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
 # $chezmoi_process = Invoke-Process -FilePath "chezmoi" -ArgumentList "re-add" -PassThru -Timeout 10 -RedirectOutput -TimeoutAction Stop
-$null = chezmoi re-add &
+$chezmoi_process = chezmoi re-add &
 # weekly update check
 if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
@@ -878,7 +878,8 @@ Set-Alias -Name chezmoi -Value Invoke-Chezmoi -Scope Global
 #     } while ($null -ne $c -and $c -ne -1)
 #     $chezmoi_process | Wait-Process
 # }
-# Remove-Variable -Name chezmoi_process
+$chezmoi_process | Wait-Job | Receive-Job
+Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
 
 # $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
