@@ -117,18 +117,17 @@ function Convert-ChezmoiAttributeString {
         return $result
     }
 }
-Write-Host "Before loop"; for ($i = 1; $i -le 10000000; $i++) { }; Write-Host "After loop"
-Write-Host "Waiting for chezmoi.exe to finish..." -ForegroundColor Green
 Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recurse -Force -File | ForEach-Object {
     $dirPath = Join-Path $ENV:CHEZMOI_DEST_DIR $_.Directory.Name
     if (Test-Path $dirPath -PathType Container) {
         $dirPath
     }
 } 
+# This loop cannot be a pipe. this is a blocking and allows for chezmoi.exe to finish before the hook finishes.
+Write-Host "Waiting for chezmoi.exe to finish..." -ForegroundColor Green
 foreach ($dirPath in $dirPaths) {
-    Write-Host "Invoking chezmoi.exe for $dirPath" -ForegroundColor Red
     & $ENV:CHEZMOI_EXECUTABLE add $dirPath
-    Write-Host "chezmoi.exe finished for $dirPath" -ForegroundColor Red
 }
 
 Write-Host "chezmoi.exe finished..." -ForegroundColor Green
+sleep 5
