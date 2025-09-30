@@ -126,10 +126,9 @@ Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recur
     }
 } 
 foreach ($dirPath in $dirPaths) {
-    Write-Host "Invoking chezmoi.exe for $dirPath" -ForegroundColor Green
+    Write-Host "Invoking chezmoi.exe for $dirPath" -ForegroundColor Red
     & $ENV:CHEZMOI_EXECUTABLE add $dirPath
-    Write-Host "chezmoi.exe finished for $dirPath" -ForegroundColor Green
+    Write-Host "chezmoi.exe finished for $dirPath" -ForegroundColor Red
 }
 
-# | ForEach-Object { Start-Process -FilePath $ENV:CHEZMOI_EXECUTABLE -ArgumentList "add", $_ -Wait -NoNewWindow -PassThru } | Wait-Process
 Write-Host "chezmoi.exe finished..." -ForegroundColor Green
