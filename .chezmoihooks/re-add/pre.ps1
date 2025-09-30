@@ -99,33 +99,42 @@ function Convert-ChezmoiAttributeString {
             Write-Debug "`$attributes[`$remaining[0]]: $($attributes[$remaining[0]])"
             Write-Debug "`$result: $result"
             Write-Debug "`$remaining: $remaining"
-            $result += $attributes[$remaining[0]]
-            if ("literal_" -eq $remaining[0]) {
+            $token = $remaining[0]
+            if (($remaining.Length - 1) -gt 0) {
+                $remaining = $remaining[1..($remaining.Length - 1)]
+            }
+            else {
+                $remaining = @()
+            }
+
+            if ("literal_" -eq $token) {
                 Write-Debug "literal_ found"
                 break
             }
-            if ($null -eq $attributes[$remaining[0]]) {
-                Write-Debug "`$attributes[$remaining[0]] is null"
-                $result += $remaining[0]
+            if ($null -eq $attributes[$token]) {
+                Write-Debug "`$attributes[`$token] is null"
+                $result += $token
                 break
             }
-            $remaining = $remaining[1..($remaining.Length - 1)]
+            else {
+                $result += $attributes[$token]
+            }
         }
-        $result += $remaining[1..($remaining.Length - 1)] -join ""
+        $result += $remaining -join ""
 
         return $result
     }
 }
-$dirPaths = Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recurse -Force -File | ForEach-Object {
-    $dirPath = Join-Path $ENV:CHEZMOI_DEST_DIR $_.Directory.Name
+$dirPaths = Get-ChildItem -Path "$ENV:CHEZMOI_WORKING_TREE" -Filter '.re-add-recursive' -Recurse -Force -File | ForEach-Object {
+    $dirPath = Join-Path $ENV:CHEZMOI_DEST_DIR (Convert-ChezmoiAttributeString $_.Directory.Name)
     if (Test-Path $dirPath) {
         $dirPath
     }
 } 
 Write-Host "dirPaths: $dirPaths"
-Write-Debug "Waiting for chezmoi.exe to finish..."
+Write-Host "Waiting for chezmoi.exe to finish..."
 foreach ($dirPath in $dirPaths) {
-    Write-Debug "Invoking chezmoi.exe for $dirPath"
+    Write-Host "Invoking chezmoi.exe for $dirPath"
     Write-Host "Invoking chezmoi.exe for $dirPath"
     & $ENV:CHEZMOI_EXECUTABLE add $dirPath
     Write-Debug "chezmoi.exe finished for $dirPath"
