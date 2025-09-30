@@ -1,3 +1,4 @@
+$existingVariables = Get-Variable
 $_EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
 Set-Alias -Name code -Value $_EDITOR
 Set-Alias -Name vscode -Value $_EDITOR
@@ -261,9 +262,8 @@ function tail {
 }
 
 # Navigation Shortcuts
-function home { Set-Location -Path $HOME }
-Set-Alias -Name user -Value home
-Set-Alias -Name ~/ -Value home
+function Set-LocationHome { Set-Location -Path $HOME }
+Set-Alias -Name ~/ -Value Set-LocationHome
 
 function Up {
     param([int]$Levels = 1)
@@ -475,14 +475,22 @@ function Find-EnvPath {
     return $envPaths -ne $null
 }
 
+function Get-Type {
+    param(
+        [Parameter(ValueFromPipeline = $true, Mandatory = $true)]
+        [object]$Object
+    )
+    process {
+        $Object.GetType()
+    }
+}
+
 # https://stackoverflow.com/a/51956864/12603110 - powershell - Remove all variables
 # $existingVariables = Get-Variable
 # try {
 #     # your script here
 # } finally {
-#     Get-Variable |
-#         Where-Object Name -notin $existingVariables.Name |
-#         Remove-Variable
+#     Get-Variable | Where-Object Name -notin $existingVariables.Name | Remove-Variable
 # }
 
 # https://github.com/giggio/posh-alias
@@ -553,6 +561,7 @@ else {
 if (Get-Module -ListAvailable -Name Pscx) {
     Import-Module Pscx -ErrorAction SilentlyContinue
     $Pscx:Preferences['TextEditor'] = $(which $_EDITOR)
+    Set-Alias -Name touch -Value Touch-File # pscx has a touch alias
 
 }
 else {
@@ -569,8 +578,6 @@ else {
 #     } while ($null -ne $c -and $c -ne -1)
 #     $chezmoi_process | Wait-Process
 # }
-Remove-Variable -Name chezmoi_process
-Remove-Variable -Name _EDITOR
 
 # $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
 # $LazyLoadProfile = [PowerShell]::Create()
@@ -586,3 +593,7 @@ Remove-Variable -Name _EDITOR
 #     $LazyLoadProfileRunspace.Close()
 #     $LazyLoadProfileRunspace.Dispose()
 # }
+
+# Remove-Variable -Name chezmoi_process
+# Remove-Variable -Name _EDITOR
+Get-Variable | Where-Object Name -notin $existingVariables.Name
