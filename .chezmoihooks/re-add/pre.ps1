@@ -1,6 +1,6 @@
 param()
 Write-Host $PSCommandPath -ForegroundColor Green
-chezmoi.exe add "C:\Users\Yorai\test_text.txt"
+chezmoi.exe init
 # Get-ChildItem Env: | Where-Object { $_.Name -like 'CHEZMOI*' } | ForEach-Object { Write-Host $_.Name, $_.Value -ForegroundColor Green }
 
 # CHEZMOI 1
