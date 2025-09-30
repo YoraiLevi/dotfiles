@@ -135,7 +135,6 @@ Write-Host "dirPaths: $dirPaths"
 Write-Host "Waiting for chezmoi.exe to finish..."
 foreach ($dirPath in $dirPaths) {
     Write-Host "Invoking chezmoi.exe for $dirPath"
-    Write-Host "Invoking chezmoi.exe for $dirPath"
     & $ENV:CHEZMOI_EXECUTABLE add $dirPath
     Write-Debug "chezmoi.exe finished for $dirPath"
 }
