@@ -134,7 +134,9 @@ Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recur
     $dirPath = Join-Path $ENV:CHEZMOI_DEST_DIR $_.Directory.Name
     if (Test-Path $dirPath -PathType Container) {
         # Directly invoke chezmoi.exe and wait for it to finish before continuing
+        Write-Host "Invoking chezmoi.exe for $dirPath" -ForegroundColor Green
         & $ENV:CHEZMOI_EXECUTABLE add $dirPath
+        Write-Host "chezmoi.exe finished for $dirPath" -ForegroundColor Green
     }
 }
 
