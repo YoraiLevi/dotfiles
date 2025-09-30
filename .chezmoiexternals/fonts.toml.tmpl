@@ -1,7 +1,7 @@
-{{ if eq .chezmoi.os "windows" -}}
-["./AppData/Local/Microsoft/Windows/Fonts"]
-    type = "archive"
-    url = {{ gitHubLatestReleaseAssetURL "ryanoasis/nerd-fonts" "CascadiaMono.zip" | quote }}
-    refreshPeriod = "168h"
-    exact = true
-{{- end -}}
+# {{ if eq .chezmoi.os "windows" -}}
+# ["./AppData/Local/Microsoft/Windows/Fonts"]
+#     type = "archive"
+#     url = {{ gitHubLatestReleaseAssetURL "ryanoasis/nerd-fonts" "CascadiaMono.zip" | quote }}
+#     refreshPeriod = "168h"
+#     exact = true
+# {{- end -}}
