@@ -117,7 +117,7 @@ function Convert-ChezmoiAttributeString {
         return $result
     }
 }
-Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recurse -Force -File | ForEach-Object {
+$dirPaths = Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recurse -Force -File | ForEach-Object {
     $dirPath = Join-Path $ENV:CHEZMOI_DEST_DIR $_.Directory.Name
     if (Test-Path $dirPath -PathType Container) {
         $dirPath
@@ -127,7 +127,7 @@ Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recur
 Write-Host "Waiting for chezmoi.exe to finish..." -ForegroundColor Green
 foreach ($dirPath in $dirPaths) {
     Write-Host "Invoking chezmoi.exe for $dirPath" -ForegroundColor Green
-    Write-Host "& $ENV:CHEZMOI_EXECUTABLE add $dirPath"
+    & $ENV:CHEZMOI_EXECUTABLE add $dirPath
     Write-Host "chezmoi.exe finished for $dirPath" -ForegroundColor Green
 }
 
