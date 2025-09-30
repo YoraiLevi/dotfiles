@@ -594,6 +594,5 @@ else {
 #     $LazyLoadProfileRunspace.Dispose()
 # }
 
-# Remove-Variable -Name chezmoi_process
-# Remove-Variable -Name _EDITOR
-Get-Variable | Where-Object Name -notin $existingVariables.Name
+Remove-Variable -Name chezmoi_process
+Remove-Variable -Name _EDITOR
