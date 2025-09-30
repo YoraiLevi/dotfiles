@@ -1,6 +1,6 @@
 param()
 Write-Host $PSCommandPath -ForegroundColor Green
-Get-ChildItem Env: | Where-Object { $_.Name -like 'CHEZMOI*' } | ForEach-Object { Write-Host $_.Name, $_.Value -ForegroundColor Yellow }
+# Get-ChildItem Env: | Where-Object { $_.Name -like 'CHEZMOI*' } | ForEach-Object { Write-Host $_.Name, $_.Value -ForegroundColor Yellow }
 
 # CHEZMOI 1
 # CHEZMOI_a 1
@@ -139,4 +139,3 @@ foreach ($dirPath in $dirPaths) {
     Write-Debug "chezmoi.exe finished for $dirPath"
 }
 Write-Debug "chezmoi.exe finished..."
-sleep 10
