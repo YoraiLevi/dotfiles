@@ -117,6 +117,8 @@ function Convert-ChezmoiAttributeString {
         return $result
     }
 }
+Write-Host "Before loop"; for ($i = 1; $i -le 10000000; $i++) { }; Write-Host "After loop"
+
 Write-Host "Waiting for chezmoi.exe to finish..." -ForegroundColor Green
 Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recurse -Force -File | ForEach-Object {
     $dirPath = Join-Path $ENV:CHEZMOI_DEST_DIR $_.Directory.Name
