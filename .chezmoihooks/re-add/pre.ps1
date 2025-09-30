@@ -122,6 +122,7 @@ $dirPaths = Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recur
         $dirPath
     }
 } 
+Write-Host "dirPaths: $dirPaths"
 Write-Debug "Waiting for chezmoi.exe to finish..."
 foreach ($dirPath in $dirPaths) {
     Write-Debug "Invoking chezmoi.exe for $dirPath"
