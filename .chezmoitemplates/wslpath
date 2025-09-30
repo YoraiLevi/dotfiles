@@ -1,0 +1,1 @@
+{{ output "wsl" "wslpath" "-u" (. | replace `\` `/`) | trim }}

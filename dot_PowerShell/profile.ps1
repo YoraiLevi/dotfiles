@@ -8,17 +8,13 @@ catch {
     Write-Error "posh-git isn't available on the system, execute:"
     Write-Error 'PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force'
 }
-if (Get-Command chezmo1i.exe -ErrorAction SilentlyContinue){
+if (Get-Command chezmoi.exe -ErrorAction SilentlyContinue){
     # this needs to stay in the global scope, probably should report the error to the developer
     (& chezmoi completion powershell) | Out-String | Invoke-Expression
-}
-else {
+} else {
     Write-Error "chezmoi isn't available on the system, How??"
 }
-
-
-
-$existingVariables = Get-Variable
+$existingVariables = Get-Variable # Some setup may not work if the variables are not removed, keep that in mind
 
 $_EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
 Set-Alias -Name code -Value $_EDITOR
@@ -600,6 +596,6 @@ else {
 #     $LazyLoadProfileRunspace.Dispose()
 # }
 
-Remove-Variable -Name chezmoi_process
-Remove-Variable -Name _EDITOR
-Get-Variable | Where-Object Name -notin $existingVariables.Name
+# Remove-Variable -Name chezmoi_process
+# Remove-Variable -Name _EDITOR
+Get-Variable | Where-Object Name -notin $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind

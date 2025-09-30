@@ -12,6 +12,12 @@ diff:
     - scripts
 
 {{ if eq .chezmoi.os "windows" -}}
+{{- $uvAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool](&{try {Get-Command uv.exe -ErrorAction Stop } catch {}})" | lower | trim -}}
+{{- $pwshAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool](&{try {Get-Command pwsh.exe -ErrorAction Stop } catch {}})" | lower | trim -}}
+{{- $pwshPathUnquoted := output "powershell.exe" "-NoProfile" "-Command" "(&{try { (Get-Command pwsh.exe, powershell.exe -Type Application -ErrorAction SilentlyContinue | Select-Object -First 1).Source} catch {}})" | trim -}}
+{{- $pwshPath := $pwshPathUnquoted | squote -}}
+{{- $wslAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool]((&{try { wsl --list --quiet } catch { }} | Out-String) -join ' ' -replace [char]0, '' -replace '\\s+', ' ')" | lower | trim -}}
+
 cd: 
   command : "pwsh.exe"
 data:
@@ -58,21 +64,15 @@ data:
     # Performance Server (7)
     # Maximum (8)
     PCSystemType: {{ output "powershell.exe" "-NoProfile" "if($ENV:PCSystemType){$ENV:PCSystemType}else{(Get-WmiObject -Class Win32_ComputerSystem).PCSystemType}" | trim}}
-{{ end -}}
+    username_wsl: {{ template "username_wsl" }}
 
 #[edit]
 #    command : "code-insders" # doesn't work with `chezmoi edit`, $ENV:EDITOR does work
 #    flags : ["--wait"]
 
-{{ if eq .chezmoi.os "windows" -}}
-{{- $uvAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool](&{try {Get-Command uv.exe -ErrorAction Stop } catch {}})" | lower | trim -}}
-{{- $pwshAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool](&{try {Get-Command pwsh.exe -ErrorAction Stop } catch {}})" | lower | trim -}}
-{{- $pwshPathUnquoted := output "powershell.exe" "-NoProfile" "-Command" "(&{try { (Get-Command pwsh.exe, powershell.exe -Type Application -ErrorAction SilentlyContinue | Select-Object -First 1).Source} catch {}})" | trim -}}
-{{- $pwshPath := $pwshPathUnquoted | squote -}}
 
-{{- $wslAvailable := output "powershell.exe" "-NoProfile" "-Command" "[bool]((&{try { wsl --list --quiet } catch { }} | Out-String) -join ' ' -replace [char]0, '' -replace '\\s+', ' ')" | lower | trim -}}
 
-{{- output "powershell.exe" "-NoProfile" "-File" (printf "%s/.chezmoilib/generate_hooks.ps1" .chezmoi.sourceDir) (printf "%s/.chezmoihooks" .chezmoi.sourceDir) ($pwshPathUnquoted) | trim | fromJson | toYaml }}
+{{ output "powershell.exe" "-NoProfile" "-File" (printf "%s/.chezmoilib/generate_hooks.ps1" .chezmoi.sourceDir) (printf "%s/.chezmoihooks" .chezmoi.sourceDir) ($pwshPathUnquoted) | trim | fromJson | toYaml }}
 interpreters:
   js :
     command : {{ $pwshPath }}
