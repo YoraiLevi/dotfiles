@@ -1,8 +1,3 @@
-$existingVariables = Get-Variable
-$_EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
-Set-Alias -Name code -Value $_EDITOR
-Set-Alias -Name vscode -Value $_EDITOR
-$ENV:EDITOR = "$_EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
 # if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
 # }
 try {
@@ -13,6 +8,13 @@ catch {
     Write-Error "posh-git isn't available on the system, execute:"
     Write-Error 'PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force'
 }
+
+$existingVariables = Get-Variable
+
+$_EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+Set-Alias -Name code -Value $_EDITOR
+Set-Alias -Name vscode -Value $_EDITOR
+$ENV:EDITOR = "$_EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
 
 Set-Alias -Name sudo -Value gsudo
 
@@ -486,6 +488,7 @@ function Get-Type {
 }
 
 # https://stackoverflow.com/a/51956864/12603110 - powershell - Remove all variables
+# This can make gitposh fail
 # $existingVariables = Get-Variable
 # try {
 #     # your script here
@@ -596,3 +599,4 @@ else {
 
 Remove-Variable -Name chezmoi_process
 Remove-Variable -Name _EDITOR
+Get-Variable | Where-Object Name -notin $existingVariables.Name
