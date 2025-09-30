@@ -64,7 +64,9 @@ data:
     # Performance Server (7)
     # Maximum (8)
     PCSystemType: {{ output "powershell.exe" "-NoProfile" "if($ENV:PCSystemType){$ENV:PCSystemType}else{(Get-WmiObject -Class Win32_ComputerSystem).PCSystemType}" | trim}}
-    username_wsl: {{ template "username_wsl" }}
+    {{- if eq $wslAvailable "true" }}
+    username_wsl: {{ output "wsl" "whoami" }}
+    {{- end }}
 
 #[edit]
 #    command : "code-insders" # doesn't work with `chezmoi edit`, $ENV:EDITOR does work
