@@ -127,9 +127,10 @@ Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recur
 Write-Host "Waiting for chezmoi.exe to finish..." -ForegroundColor Green
 foreach ($dirPath in $dirPaths) {
     Write-Host "Invoking chezmoi.exe for $dirPath" -ForegroundColor Green
-    echo "& $ENV:CHEZMOI_EXECUTABLE add $dirPath"
+    Write-Host "& $ENV:CHEZMOI_EXECUTABLE add $dirPath"
     Write-Host "chezmoi.exe finished for $dirPath" -ForegroundColor Green
 }
 
 Write-Host "chezmoi.exe finished..." -ForegroundColor Green
 sleep 5
+Write-Host "After sleep" -ForegroundColor Green
