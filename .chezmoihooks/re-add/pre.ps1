@@ -122,5 +122,5 @@ Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recur
     if (Test-Path $dirPath -PathType Container) {
         $dirPath
     }
-} | ForEach-Object { chezmoi.exe add $_ } 
+} | ForEach-Object { Start-Process -FilePath $ENV:CHEZMOI_EXECUTABLE -ArgumentList "add", $_ -Wait }
 Write-Host "Waiting for chezmoi.exe to finish..." -ForegroundColor Green
