@@ -1,3 +1,3 @@
 param()
 Write-Host $PSCommandPath -ForegroundColor Green
-Write-Host $args -ForegroundColor Green
+Get-ChildItem Env: | Where-Object { $_.Name -like 'CHEZMOI*' } | ForEach-Object { Write-Host $_.Name, $_.Value -ForegroundColor Green }
