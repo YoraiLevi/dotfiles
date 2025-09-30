@@ -39,7 +39,6 @@ Write-Host $PSCommandPath -ForegroundColor Green
 # $ENV:CHEZMOI_WORKING_TREE
 
 
-
 function Convert-ChezmoiAttributeString {
     <#
     .SYNOPSIS
@@ -123,14 +122,10 @@ $dirPaths = Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recur
         $dirPath
     }
 } 
-# This loop cannot be a pipe. this is a blocking and allows for chezmoi.exe to finish before the hook finishes.
-Write-Host "Waiting for chezmoi.exe to finish..." -ForegroundColor Green
+Write-Debug "Waiting for chezmoi.exe to finish..."
 foreach ($dirPath in $dirPaths) {
-    Write-Host "Invoking chezmoi.exe for $dirPath" -ForegroundColor Green
+    Write-Debug "Invoking chezmoi.exe for $dirPath"
     & $ENV:CHEZMOI_EXECUTABLE add $dirPath
-    Write-Host "chezmoi.exe finished for $dirPath" -ForegroundColor Green
+    Write-Debug "chezmoi.exe finished for $dirPath"
 }
-
-Write-Host "chezmoi.exe finished..." -ForegroundColor Green
-sleep 5
-Write-Host "After sleep" -ForegroundColor Green
+Write-Debug "chezmoi.exe finished..."
