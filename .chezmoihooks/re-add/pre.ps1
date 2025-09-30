@@ -118,12 +118,24 @@ function Convert-ChezmoiAttributeString {
     }
 }
 Write-Host "Before loop"; for ($i = 1; $i -le 10000000; $i++) { }; Write-Host "After loop"
+# The reason this block does NOT block the chezmoi process (i.e., the hook returns immediately)
+# is because Start-Process launches a new process and returns control to the script.
+# Even with -Wait, Start-Process only waits for the launched process, not for the parent script to remain busy.
+# If the pipeline is empty (no files found), the script finishes instantly.
+# In contrast, a busy loop (like for ($i = 1; $i -le 10000000; $i++) { }) keeps the PowerShell process running and blocks the hook.
+
+# To ensure the hook blocks until all child chezmoi.exe processes finish, you should NOT use Start-Process.
+# Instead, call chezmoi.exe directly and wait for it to finish, e.g. with & (call operator) or Invoke-Expression.
+# This way, the PowerShell process (and thus the hook) will not exit until all work is done.
 
 Write-Host "Waiting for chezmoi.exe to finish..." -ForegroundColor Green
+
 Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter '.re-add-recursive' -Recurse -Force -File | ForEach-Object {
     $dirPath = Join-Path $ENV:CHEZMOI_DEST_DIR $_.Directory.Name
     if (Test-Path $dirPath -PathType Container) {
-        $dirPath
+        # Directly invoke chezmoi.exe and wait for it to finish before continuing
+        & $ENV:CHEZMOI_EXECUTABLE add $dirPath
     }
-} | ForEach-Object { Start-Process -FilePath $ENV:CHEZMOI_EXECUTABLE -ArgumentList "add", $_ -Wait -NoNewWindow -PassThru } | Wait-Process
+}
+
 Write-Host "chezmoi.exe finished..." -ForegroundColor Green
