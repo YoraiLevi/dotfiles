@@ -8,6 +8,15 @@ catch {
     Write-Error "posh-git isn't available on the system, execute:"
     Write-Error 'PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force'
 }
+if (Get-Command chezmo1i.exe -ErrorAction SilentlyContinue){
+    # this needs to stay in the global scope, probably should report the error to the developer
+    (& chezmoi completion powershell) | Out-String | Invoke-Expression
+}
+else {
+    Write-Error "chezmoi isn't available on the system, How??"
+}
+
+
 
 $existingVariables = Get-Variable
 
@@ -211,6 +220,8 @@ if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Si
 #     }
 # }
 # Set-Alias -Name eds -Value Edit-Setup
+
+
 
 function Find-Command {
     [CmdletBinding()]
@@ -552,14 +563,6 @@ function Invoke-Conda {
     conda @args
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
-
-if (which 'chezmoi.exe') {
-    # this needs to stay in the global scope, probably should report the error to the developer
-    (& chezmoi completion powershell) | Out-String | Invoke-Expression
-}
-else {
-    Write-Error "chezmoi isn't available on the system, How??"
-}
 
 if (Get-Module -ListAvailable -Name Pscx) {
     Import-Module Pscx -ErrorAction SilentlyContinue
