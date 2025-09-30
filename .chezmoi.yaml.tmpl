@@ -3,9 +3,9 @@ git:
   autoPush : true
   autoAdd: true
 
-merge:
-    command : "pwsh"
-    args : ["-Command", "cp {{ `{{ .Target }}` }} {{ `{{ .Target }}` }}.base && code --wait --new-window --merge {{ `{{ .Destination }}` }} {{ `{{ .Target  }}` }} {{ `{{ .Target }}` }}.base {{ `{{ .Source }}` }}"]
+# merge:
+#    command : "pwsh"
+#    args : ["-Command", "cp {{ `{{ .Target }}` }} {{ `{{ .Target }}` }}.base && code --wait --new-window --merge {{ `{{ .Destination }}` }} {{ `{{ .Target  }}` }} {{ `{{ .Target }}` }}.base {{ `{{ .Source }}` }}"]
 
 diff:
   exclude:
@@ -65,7 +65,9 @@ data:
     # Maximum (8)
     PCSystemType: {{ output "powershell.exe" "-NoProfile" "if($ENV:PCSystemType){$ENV:PCSystemType}else{(Get-WmiObject -Class Win32_ComputerSystem).PCSystemType}" | trim}}
     {{- if eq $wslAvailable "true" }}
-    username_wsl: {{ output "wsl" "whoami" }}
+    usernameWsl: {{ output "wsl" "whoami" | trim }}
+    homeDirWsl: {{ output "wsl" "wslpath" "~/" | trim }}
+    homedirWslWin: {{ output "wsl" "wslpath" "-w" "~/" | trim }}
     {{- end }}
 
 #[edit]
