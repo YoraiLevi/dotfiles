@@ -16,10 +16,10 @@
 		"editor.defaultFormatter": "ms-python.black-formatter",
 		
 		"editor.wordWrap": "on",
-		"editor.formatOnSave": true,
-		"editor.codeActionsOnSave": {
-			"source.organizeImports": "explicit"
-		},
+		// "editor.formatOnSave": true,
+		// "editor.codeActionsOnSave": {
+			// "source.organizeImports": "explicit"
+		// },
 		"editor.formatOnType": true,
 	},
 	"python.testing.pytestEnabled": true,
