@@ -550,6 +550,15 @@ else {
     Write-Error "chezmoi isn't available on the system, How??"
 }
 
+if (Get-Module -ListAvailable -Name Pscx) {
+    Import-Module Pscx -ErrorAction SilentlyContinue
+    $Pscx:Preferences['TextEditor'] = $(which $_EDITOR)
+
+}
+else {
+    Write-Error "Pscx isn't available on the system, execute:`nInstall-Module Pscx -Scope CurrentUser -Force"
+}
+
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
 # the printout is partial compared to the original process because the speed output is in stderr
 # $c = $chezmoi_process.StandardOutput.Read()

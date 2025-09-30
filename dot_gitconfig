@@ -3,6 +3,7 @@
     name = Yorai
 [push]
     default = simple
+	autoSetupRemote = false
 [pull]
     rebase = true
 [grep]
