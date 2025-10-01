@@ -2,5 +2,7 @@
 echo "== {{ .chezmoi.sourceFile | trim }} =="
 rm ~/.bashrc 2> /dev/null
 rm ~/.gitconfig 2> /dev/null
+rm ~/.profile 2> /dev/null
 ln -sf "$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")/.wsl2/.bashrc" ~/.bashrc 
 ln -sf "$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")/.wsl2/.gitconfig" ~/.gitconfig 
+ln -sf "$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")/.wsl2/.profile" ~/.profile 

@@ -65,9 +65,14 @@ data:
     # Maximum (8)
     PCSystemType: {{ output "powershell.exe" "-NoProfile" "if($ENV:PCSystemType){$ENV:PCSystemType}else{(Get-WmiObject -Class Win32_ComputerSystem).PCSystemType}" | trim}}
     {{- if eq $wslAvailable "true" }}
+    homeDir: {{ .chezmoi.homeDir }}
+    destDir: {{ .chezmoi.destDir }}
+    username: {{ .chezmoi.username }}
     usernameWsl: {{ output "wsl" "whoami" | trim }}
     homeDirWsl: {{ output "wsl" "wslpath" "~/" | trim }}
     homedirWslWin: {{ output "wsl" "wslpath" "-w" "~/" | trim }}
+    destDirWsl: {{ output "wsl" "wslpath" "~/" | trim }}
+    destDirWslWin: {{ output "wsl" "wslpath" "-w" "~/" | trim }}
     {{- end }}
 
 #[edit]
