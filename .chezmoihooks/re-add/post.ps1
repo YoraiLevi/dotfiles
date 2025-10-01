@@ -16,5 +16,5 @@ try {
     & $ENV:CHEZMOI_EXECUTABLE init @params
 }
 catch {
-    Write-Error "Failed to invoke chezmoi.exe for $dirPath. Error: $_"
+    Write-Error "Failed to chezmoi init with $params. Error: $_"
 }
