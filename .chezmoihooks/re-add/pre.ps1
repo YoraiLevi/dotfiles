@@ -135,10 +135,17 @@ $dirPaths = Get-ChildItem -Path "$ENV:CHEZMOI_WORKING_TREE" -Filter '.re-add-rec
 } 
 Write-Host "dirPaths: $dirPaths"
 Write-Host "Waiting for chezmoi.exe to finish..."
+$params = @()
+if ("--debug" -in $ENV:CHEZMOI_ARGS) {
+    $params += "--debug"
+}
+if ("--verbose" -in $ENV:CHEZMOI_ARGS) {
+    $params += "--verbose"
+}
 foreach ($dirPath in $dirPaths) {
     Write-Host "Invoking chezmoi.exe for $dirPath"
     try {
-        & $ENV:CHEZMOI_EXECUTABLE add $dirPath
+        & $ENV:CHEZMOI_EXECUTABLE add $dirPath @params
     }
     catch {
         Write-Error "Failed to invoke chezmoi.exe for $dirPath. Error: $_"
