@@ -8,10 +8,11 @@ catch {
     Write-Error "posh-git isn't available on the system, execute:"
     Write-Error 'PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force'
 }
-if (Get-Command chezmoi.exe -ErrorAction SilentlyContinue){
+if (Get-Command chezmoi.exe -ErrorAction SilentlyContinue) {
     # this needs to stay in the global scope, probably should report the error to the developer
     (& chezmoi completion powershell) | Out-String | Invoke-Expression
-} else {
+}
+else {
     Write-Error "chezmoi isn't available on the system, How??"
 }
 $existingVariables = Get-Variable # Some setup may not work if the variables are not removed, keep that in mind
@@ -160,7 +161,7 @@ if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction Si
         }
     }
     # fetch latest changes from chezmoi repo
-    Update-PowerShell
+    # Update-PowerShell # updated with windows update??
 }
 
 # # PSReadLine option to add a matching closing bracket for (, [ and { - cannot copy paste it adds brackets in terminal
@@ -319,7 +320,10 @@ Function Touch-File {
 }
 Set-Alias -Name touch -Value Touch-File
 
-
+function Restart-WSL {
+    wsl --shutdown && wsl exit
+}
+Set-Alias -Name Restart-WSL2 -Value Restart-WSL
 
 function Extract-Archive {
     param([string]$Path)
