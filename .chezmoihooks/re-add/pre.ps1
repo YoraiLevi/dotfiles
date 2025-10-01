@@ -1,45 +1,7 @@
 param()
-$ErrorActionPreference = 'Stop'
 Write-Host $PSCommandPath -ForegroundColor Green
-
-# Get-ChildItem Env: | Where-Object { $_.Name -like 'CHEZMOI*' } | ForEach-Object { Write-Host $_.Name, $_.Value -ForegroundColor Yellow }
-
-# CHEZMOI 1
-# CHEZMOI_a 1
-# CHEZMOI_ARCH amd64
-# CHEZMOI_ARGS C:\Users\Yorai/.local/bin\chezmoi.exe re-add
-# CHEZMOI_CACHE_DIR C:/Users/Yorai/.cache/chezmoi
-# CHEZMOI_COMMAND re-add
-# CHEZMOI_COMMAND_DIR C:/Users/Yorai/.local/share/chezmoi
-# CHEZMOI_CONFIG_FILE C:/Users/Yorai/.config/chezmoi/chezmoi.yaml
-# CHEZMOI_DEST_DIR C:/Users/Yorai
-# CHEZMOI_EXECUTABLE C:/Users/Yorai/.local/bin/chezmoi.exe
-# CHEZMOI_FQDN_HOSTNAME DESKTOP-FFSUH9G
-# CHEZMOI_GID S-1-5-21-3726588303-2376105255-2108496670-513
-# CHEZMOI_GROUP
-# CHEZMOI_HOME_DIR C:/Users/Yorai
-# CHEZMOI_HOSTNAME DESKTOP-FFSUH9G
-# CHEZMOI_OS windows
-# CHEZMOI_SOURCE_DIR C:/Users/Yorai/.local/share/chezmoi
-# CHEZMOI_UID S-1-5-21-3726588303-2376105255-2108496670-1001
-# CHEZMOI_USERNAME DESKTOP-FFSUH9G\Yorai
-# CHEZMOI_VERSION_BUILT_BY goreleaser
-# CHEZMOI_VERSION_COMMIT ca8fe5bfcb148741d2763d93ce0d562e04fa3ae3
-# CHEZMOI_VERSION_DATE 2025-02-07T22:13:25Z
-# CHEZMOI_VERSION_VERSION 2.59.1
-# CHEZMOI_WINDOWS_VERSION_CURRENT_BUILD 26100
-# CHEZMOI_WINDOWS_VERSION_CURRENT_MAJOR_VERSION_NUMBER %!s(uint64=10)
-# CHEZMOI_WINDOWS_VERSION_CURRENT_MINOR_VERSION_NUMBER %!s(uint64=0)
-# CHEZMOI_WINDOWS_VERSION_CURRENT_VERSION 6.3
-# CHEZMOI_WINDOWS_VERSION_DISPLAY_VERSION 24H2
-# CHEZMOI_WINDOWS_VERSION_EDITION_ID Professional
-# CHEZMOI_WINDOWS_VERSION_PRODUCT_NAME Windows 10 Pro
-
-
-# CHEZMOI_WORKING_TREE C:/Users/Yorai/.local/share/chezmoi
-
-# $ENV:CHEZMOI_WORKING_TREE
-
+# Uncomment to assist with debugging
+# Get-ChildItem Env: | Where-Object { $_.Name -like 'CHEZMOI*' } | ForEach-Object { Write-Debug $_.Name, $_.Value -ForegroundColor Yellow }
 
 function Convert-ChezmoiAttributeString {
     <#
@@ -127,29 +89,156 @@ function Convert-ChezmoiAttributeString {
         return $result
     }
 }
-$dirPaths = Get-ChildItem -Path "$ENV:CHEZMOI_WORKING_TREE" -Filter '.re-add-recursive' -Recurse -Force -File | ForEach-Object {
-    $dirPath = Join-Path $ENV:CHEZMOI_DEST_DIR (Convert-ChezmoiAttributeString $_.Directory.Name)
-    if (Test-Path $dirPath) {
-        $dirPath
-    }
-} 
-Write-Host "dirPaths: $dirPaths"
-Write-Host "Waiting for chezmoi.exe to finish..."
+
+
+# https://www.chezmoi.io/reference/command-line-flags/global/
+# --cache directory
+# --color value
+# -c, --config filename
+# --config-format format
+# -D, --destination directory
+# -n, --dry-run
+# --force
+# --interactive
+# -k, --keep-going
+# --mode file | symlink
+# --no-pager
+# --no-tty
+# -o, --output filename
+# --persistent-state filename
+# --progress value
+# -S, --source directory
+# --source-path
+# # -R, --refresh-externals [value]
+# # --use-builtin-age [bool]
+# # --use-builtin-diff [bool]
+# # --use-builtin-git [bool]
+# -v, --verbose
+# --version
+# -w, --working-tree directory
+
+# https://www.chezmoi.io/reference/command-line-flags/common/
+# --age-recipient recipient
+# --age-recipient-file recipient-file
+# -x, --exclude types
+# -f, --format json|yaml
+# -h, --help
+# -i, --include types
+# --init
+# -P, --parent-dirs
+# -p, --path-style style
+# -r, --recursive
+# --tree
+
+# https://www.chezmoi.io/reference/commands/re-add/
+# Common flags
+# -x, --exclude types
+# -i, --include types
+# -r, --recursive
+
+
 $params = @()
-if ("--debug" -in $ENV:CHEZMOI_ARGS) {
+if (("--debug" -in $ENV:CHEZMOI_ARGS) -or ("-d" -in $ENV:CHEZMOI_ARGS)) {
     $params += "--debug"
+    # $DebugPreference = 'Continue' # these don't work in a file?
 }
-if ("--verbose" -in $ENV:CHEZMOI_ARGS) {
+if (("--verbose" -in $ENV:CHEZMOI_ARGS) -or ("-v" -in $ENV:CHEZMOI_ARGS)) {
     $params += "--verbose"
 }
-foreach ($dirPath in $dirPaths) {
-    Write-Host "Invoking chezmoi.exe for $dirPath"
+if (("--dry-run" -in $ENV:CHEZMOI_ARGS) -or ("-n" -in $ENV:CHEZMOI_ARGS)) {
+    $params += "--dry-run"
+}
+
+$SPECIAL_FILE_NAME_REGEX = '.chezmoi-re-add*'
+$FORGET_PROPERTY_REGEX = '*.forget*'
+$FORGET_RECURSIVE_PROPERTY_REGEX = '*.recursive-forget*'
+$RECURSIVE_PROPERTY_REGEX = '*.recursive-add*'
+
+$recursiveFiles = Get-ChildItem -Path "$ENV:CHEZMOI_WORKING_TREE" -Filter $SPECIAL_FILE_NAME_REGEX -Recurse -Force -File
+foreach ($recursiveFile in $recursiveFiles) {
+    $chezmoiTrackedDir = $recursiveFile.Directory
+    # Verify that the local directory exists, else skip, we don't have anything to re-add or forget
     try {
-        & $ENV:CHEZMOI_EXECUTABLE add $dirPath @params
+        $localDirPath = Join-Path $ENV:CHEZMOI_DEST_DIR (Convert-ChezmoiAttributeString $chezmoiTrackedDir.Name)
+        $null = Get-Item -Path $localDirPath -ErrorAction Stop
     }
     catch {
-        Write-Error "Failed to invoke chezmoi.exe for $dirPath. Error: $_"
+        Write-Debug "Failed to get directory path for $localDirPath"
+        Write-Warning $_
+        continue
     }
-    Write-Debug "chezmoi.exe finished for $dirPath"
+    $do_recursive_forget = $recursiveFile.Name -like $FORGET_RECURSIVE_PROPERTY_REGEX
+    $do_forget = ($recursiveFile.Name -like $FORGET_PROPERTY_REGEX) -or $do_recursive_forget
+
+    if ($do_forget) {
+        $forget_params = $params.clone()
+
+        $chezmoiManagedFiles = Get-ChildItem -Path $chezmoiTrackedDir -Force -Recurse:$do_recursive_forget # attempt recursive forget
+        
+        $filteredManagedFiles = $chezmoiManagedFiles | Where-Object { $_.Length -gt 0 -and -not $_.Name.EndsWith('.tmpl') -and -not ($_.Name -like $SPECIAL_FILE_NAME_REGEX) }
+        Write-Debug "Found $($filteredManagedFiles.Count) managed files"
+        foreach ($managedFile in $filteredManagedFiles) {
+            if (-not (Test-Path $managedFile.FullName)) {
+                Write-Debug "File managed file found at $managedFile doesn't exist anymore (why?), no need to forget it"
+                continue
+            }
+            try {
+                $resolvedItem = Resolve-Path -LiteralPath $managedFile.FullName -RelativeBasePath $ENV:CHEZMOI_WORKING_TREE -Relative -ErrorAction Stop
+            }
+            catch {
+                Write-Debug "Failed to resolve path for $managedFile"
+                Write-Warning $_
+                continue
+            }
+            $l = (($resolvedItem -replace '/', '\') -split '\\' | ForEach-Object { Convert-ChezmoiAttributeString $_ })
+            $localFilePath = Join-Path $ENV:CHEZMOI_DEST_DIR @l
+            try {
+                $localFile = Get-Item -Path $localFilePath -Force -ErrorAction Stop
+                Write-Debug "File $localFilePath exists, no need to forget it"
+                continue
+            }
+            catch {
+                Write-Debug "File $localFilePath doesn't exist, need to forget it"
+                Write-Debug "forgetting $localFilePath with chezmoi.exe"
+                # https://www.chezmoi.io/reference/commands/forget/
+                & $ENV:CHEZMOI_EXECUTABLE forget $localFilePath @forget_params --force
+                Write-Debug "chezmoi.exe finished forgetting $localFilePath"
+            }
+        }
+    }
+
+    # https://www.chezmoi.io/reference/commands/add/
+    # -a, --autotemplate
+    # --create
+    # --encrypt
+    # --exact
+    # --follow
+    # -p, --prompt
+    # -q, --quiet
+    # --secrets ignore | warning | error
+    # -T, --template
+    # --template-symlinks
+    # Common flags
+    # -x, --exclude types
+    # -f, --force
+    # -i, --include types
+    # -r, --recursive
+    $add_params = $params.clone()
+    if ($recursiveFile.Name -like $RECURSIVE_PROPERTY_REGEX) {
+        # recursive re-add
+        $add_params += "--recursive=true"
+    }
+    else {
+        $add_params += "--recursive=false" # this adds the folder without any files, a directory with .keep
+    }
+
+    # "Re-add" the directory, adds newly created files and directories (if recursive is true)
+    try {
+        Write-Debug "Adding $localDirPath with chezmoi.exe"
+        & $ENV:CHEZMOI_EXECUTABLE add $localDirPath @add_params
+        Write-Debug "chezmoi.exe finished adding $localDirPath"
+    }
+    catch {
+        Write-Warning $_
+    }
 }
-Write-Debug "chezmoi.exe finished..."
