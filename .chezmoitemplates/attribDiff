@@ -1,0 +1,39 @@
+{{- /* usage: template "attribDiff" dict "path" "Path/to/file/or/folder" "attributes" (list 'A' 'R' 'S' 'H' 'O' 'I' 'X' 'P' 'U' 'B') "flags" (list "/s" "/d" "/l) */ -}}
+{{- /* output: attrib /s /d/ /l -+A -+R -+S -+H ... $filePath */ -}}
+{{- /* usage: template "attribDiff" dict "path" "Path/to/file/or/folder" "attributes" (list "A" "R" "S" "H" "O" "I" "X" "P" "U" "B") "flags" (list "/s" "/d" "/l") */ -}}
+{{- /* usage: {{ template "attribDiff" dict "path" "desktop.ini" "attributes" (list "A" "S" "H" ) }} */ -}}
+{{- /* usage: {{ template "attribDiff" dict "path" "desktop.ini" "attributes" (list "A" ) }} */ -}}
+{{- $attribs := index . "attributes" | default (list) -}}
+{{- $flags := index . "flags" | default (list) -}}
+{{- $path := index . "path" | trim -}}
+{{- $attribOut := (output "attrib.exe" $path) | trim -}}
+{{- $attribLine := (splitList "\n" $attribOut | first) -}}
+{{- $attribFields := splitList " " $attribLine -}}
+{{- $attrStr := "" -}}
+{{- if gt (len $attribFields) 0 -}}
+  {{- $attrStr = (join "" (slice $attribFields 0 (sub (len $attribFields) 1))) -}}
+{{- end -}}
+{{- $currentSet := list -}}
+{{- range $i, $c := (splitList "" $attrStr) -}}
+  {{- if and $c (ne $c "") -}}
+    {{- $currentSet = (append $currentSet $c) -}}
+  {{- end -}}
+{{- end -}}
+{{- $wantSet := $attribs -}}
+{{- $toAdd := list -}}
+{{- $toRemove := list -}}
+{{- /* Attributes to add: in wantSet but not in currentSet */ -}}
+{{- range $i, $w := $wantSet -}}
+  {{- if not (has $w $currentSet) -}}
+    {{- $toAdd = (append $toAdd $w) -}}
+  {{- end -}}
+{{- end -}}
+{{- /* Attributes to remove: in currentSet but not in wantSet */ -}}
+{{- range $i, $c := $currentSet -}}
+  {{- if not (has $c $wantSet) -}}
+    {{- $toRemove = (append $toRemove $c) -}}
+  {{- end -}}
+{{- end -}}
+{{- if or (gt (len $toAdd) 0) (gt (len $toRemove) 0) -}}
+attrib {{ range $toAdd }}+{{.}} {{end}}{{ range $toRemove }}-{{.}} {{end}}{{ $path }} {{ range $flags }}{{.}} {{end}}
+{{- end -}}

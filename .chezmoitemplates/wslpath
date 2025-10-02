@@ -1,1 +1,2 @@
+{{/* converts windows path to wsl. usage: {{ template "wslpath" }} */}}
 {{ output "wsl" "wslpath" "-u" (. | replace `\` `/`) | trim }}

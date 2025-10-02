@@ -1,1 +1,2 @@
+{{/* usage: {{ template "username_wsl" }} */}}
 {{ output "wsl" "whoami" }}

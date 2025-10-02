@@ -57,6 +57,8 @@ software:
   winget:
     - name: 9nblggh1zbkw # dynamic theme
       source: msstore
+    - name: Anysphere.Cursor # winget.exe install --id "Anysphere.Cursor" --exact --source winget --accept-source-agreements --disable-interactivity --silent --accept-package-agreements --force
+      source: winget
 python:
   pip:
     - name: virtualenv

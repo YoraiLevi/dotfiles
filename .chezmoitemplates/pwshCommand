@@ -1,0 +1,3 @@
+{{/* usage: {{ template "pwshCommand" "echo hello world"}} */}}
+{{- $pwshPath := coalesce  (lookPath "pwsh.exe") (lookPath "powershell.exe") }}
+{{- output $pwshPath "-NoProfile" "-Command" . | lower | trim -}}
