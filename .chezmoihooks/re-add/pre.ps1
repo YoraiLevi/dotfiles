@@ -74,7 +74,7 @@ foreach ($recursiveFile in $recursiveFiles) {
     $chezmoiTrackedDir = $recursiveFile.Directory
     # Verify that the local directory exists, else skip, we don't have anything to re-add or forget
     try {
-        $localDirPath = Join-Path $ENV:CHEZMOI_DEST_DIR (Convert-ChezmoiAttributeString $chezmoiTrackedDir.Name)
+        $localDirPath = ConvertTo-LocalPath $chezmoiTrackedDir.FullName -ErrorAction Stop
         $null = Get-Item -Path $localDirPath -ErrorAction Stop
     }
     catch {
