@@ -4,10 +4,10 @@
 {{- if stat $targetDesktopIniPath -}}
 {{- $sourceChecksum := include $sourceDesktopIniPath | sha256sum -}}
 {{- $targetChecksum := include $targetDesktopIniPath | sha256sum -}}
-{{ $attribCmd := template "attribDiff" dict "path" "desktop.ini" "attributes" (list "A" "S" "H" ) }}
-{{- if or (ne $sourceChecksum $targetChecksum) (ne $attribCmd "") -}}
+{{- $hasCorrectPerms := output "powershell.exe" "-NoProfile" "-Command" (printf "$filePath = '%s'; $attributes = (Get-Item -Path $filePath -Force).Attributes; [boolean]($attributes -band [System.IO.FileAttributes]::Hidden -and $attributes -band [System.IO.FileAttributes]::System)" $targetDesktopIniPath) | trim | lower -}}
+{{- if or (ne $sourceChecksum $targetChecksum) (eq $hasCorrectPerms "false") -}}
 echo "== {{ .chezmoi.sourceFile | trim }} =="
-{{ $attribCmd }}
+attrib +h +s desktop.ini
 attrib +r -h .
 {{- end -}}
 {{- else -}}
