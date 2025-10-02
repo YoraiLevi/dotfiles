@@ -1,0 +1,1 @@
+$ENV:CHEZMOI_DATA = (chezmoi data | out-string | ConvertFrom-Json)
