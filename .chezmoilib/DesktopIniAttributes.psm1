@@ -8,7 +8,6 @@ function Test-ChezmoiEnvVars {
         throw "CHEZMOI_WORKING_TREE and CHEZMOI_DEST_DIR environment variables must be set"
     }
 }
-
 function Remove-DesktopIniAttributes {
     param (
         [Parameter(

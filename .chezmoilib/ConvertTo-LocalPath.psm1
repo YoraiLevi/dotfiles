@@ -20,6 +20,13 @@ function ConvertTo-LocalPath {
     )
     Test-ChezmoiEnvVars
     $managedFile = Get-Item -Path $InputString -Force -ErrorAction Stop
+
+    # Check if $ENV:CHEZMOI_WORKING_TREE is an ancestor of $managedFile.FullName
+    $workingTree = [System.IO.Path]::GetFullPath($ENV:CHEZMOI_WORKING_TREE)
+    $filePath = [System.IO.Path]::GetFullPath($managedFile.FullName)
+    if (-not ($filePath.StartsWith($workingTree, [System.StringComparison]::OrdinalIgnoreCase))) {
+        throw "The file '$filePath' is not under the CHEZMOI_WORKING_TREE directory '$workingTree'."
+    }
     if (-not (Test-Path $managedFile.FullName)) {
         Write-Debug "File managed file found at $managedFile doesn't exist"
         return
