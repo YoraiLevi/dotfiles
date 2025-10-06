@@ -2,7 +2,7 @@
 ["./.local/bin/ahk_TTS.exe"]
     type = "file"
     url = {{ gitHubLatestReleaseAssetURL "YoraiLevi/ahk-autohotkeys" "ahk_TTS_all.exe" | quote }}
-    refreshPeriod = "168h"
+    refreshPeriod = "1h"
     executable = true
 ["./.local/bin/ahk_REMAP.exe"]
     type = "file"
@@ -13,6 +13,6 @@
 {{- else }}
     url = {{ gitHubLatestReleaseAssetURL "YoraiLevi/ahk-autohotkeys" "ahk_keyboard_remap_all.exe" | quote }}
 {{- end }}
-    refreshPeriod = "168h"
+    refreshPeriod = "1h"
     executable = true
 {{- end -}}
