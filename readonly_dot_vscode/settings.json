@@ -63,7 +63,6 @@
 	"diffEditor.ignoreTrimWhitespace": true,
 	"diffEditor.codeLens": true,
 	"diffEditor.renderSideBySide": true,
-	"diffEditor.hideUnchangedRegions.enabled": true,
 	"remote.autoForwardPortsSource": "hybrid",
 	"search.searchOnType": true, // ctrl+shift+f auto search on typing in search
 	"search.showLineNumbers": true,
