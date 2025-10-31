@@ -193,4 +193,12 @@
 	"powershell.codeFormatting.whitespaceBetweenParameters": true,
 	"powershell.pester.useLegacyCodeLens": false,
 	"powershell.integratedConsole.startInBackground": true,
+	"cursor.enable_git_worktrees_setting": true,
+	"cursor.agent_layout_browser_beta_setting": true,
+	"cursor.composer.usageSummaryDisplay": "always",
+	"cursor.composer.shouldAllowCustomModes": true,
+	"python.testing.pytestArgs": [
+		"-vv",
+		"-s"
+	],
 }

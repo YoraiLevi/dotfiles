@@ -206,7 +206,7 @@
     {
         "key": "ctrl+t",
         "command": "workbench.action.files.newUntitledFile",
-        "when": "editorFocus"
+        "when": "editorFocus || !(composerFocused || activeEditor)"
     },
     {
         "key": "ctrl+n",
@@ -1746,18 +1746,8 @@
         "when": "filesExplorerFocus && foldersViewVisible && !explorerResourceIsRoot && !inputFocus"
     },
     {
-        "key": "ctrl+e",
-        "command": "workbench.action.focusSideBar",
-        "when": "editorFocus"
-    },
-    {
         "key": "ctrl+0",
         "command": "-workbench.action.focusSideBar"
-    },
-    {
-        "key": "ctrl+e",
-        "command": "workbench.action.focusActiveEditorGroup",
-        "when": "!editorFocus"
     },
     {
         "key": "shift+alt+a",
@@ -1812,5 +1802,38 @@
         "key": "ctrl+f4",
         "command": "-workbench.action.terminal.killEditor",
         "when": "terminalEditorFocus && terminalFocus && terminalHasBeenCreated && resourceScheme == 'vscode-terminal' || terminalEditorFocus && terminalFocus && terminalProcessSupported && resourceScheme == 'vscode-terminal' || terminalEditorFocus && terminalFocus && terminalHasBeenCreated && terminalProcessSupported && resourceScheme == 'vscode-terminal'"
-    }
+    },
+    {
+        "key": "ctrl+shift+w",
+        "command": "workbench.action.closeEditorsInGroup"
+    },
+    {
+        "key": "ctrl+shift+w",
+        "command": "-workbench.action.closeWindow"
+    },
+    
+    {
+        "key": "ctrl+e",
+        "command": "workbench.action.focusSideBar",
+    },
+    {
+        "key": "ctrl+e",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "!editorFocus"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "-cursor.composer.openAgentWindow",
+        "when": "cursor.appLayoutEnabled && cursor.appLayout != 'agent'"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "-cursor.composer.openEditorWindow",
+        "when": "cursor.appLayoutEnabled && cursor.appLayout == 'agent'"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "-editor.action.toggleScreenReaderAccessibilityMode",
+        "when": "accessibilityHelpIsShown"
+    },
 ]
