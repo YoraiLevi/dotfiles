@@ -1,4 +1,7 @@
 {
+	"update.showReleaseNotes": true,
+	"update.enableWindowsBackgroundUpdates": false,
+	"update.mode": "none",
 	"cursor.cpp.enablePartialAccepts": true,
 	"cursor.diffs.useCharacterLevelDiffs": true,
 	"cursor.terminal.usePreviewBox": true,
@@ -14,11 +17,10 @@
 	"[python]": {
 		"diffEditor.ignoreTrimWhitespace": true,
 		"editor.defaultFormatter": "ms-python.black-formatter",
-		
 		"editor.wordWrap": "on",
 		// "editor.formatOnSave": true,
 		// "editor.codeActionsOnSave": {
-			// "source.organizeImports": "explicit"
+		// "source.organizeImports": "explicit"
 		// },
 		"editor.formatOnType": true,
 	},
@@ -201,4 +203,7 @@
 		"-vv",
 		"-s"
 	],
+	"githubPullRequests.pullBranch": "never",
+	"gitlens.ai.model": "gitkraken",
+	"gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
 }
