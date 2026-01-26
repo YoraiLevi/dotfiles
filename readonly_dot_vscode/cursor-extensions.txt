@@ -9,6 +9,7 @@ britesnow.vscode-toggle-quotes
 codezombiech.gitignore
 davidanson.vscode-markdownlint
 dbaeumer.vscode-eslint
+donjayamanne.python-environment-manager
 donjayamanne.python-extension-pack
 eamodio.gitlens
 github.vscode-github-actions
