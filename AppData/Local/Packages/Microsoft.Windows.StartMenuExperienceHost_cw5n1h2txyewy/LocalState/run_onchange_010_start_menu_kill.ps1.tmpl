@@ -1,4 +1,4 @@
-# {{ include (joinPath .chezmoi.sourceDir (dir .chezmoi.sourceFile) "my_start.bin") | sha256sum }}
-# {{ include (joinPath .chezmoi.destDir (dir .chezmoi.targetFile) "my_start.bin") | sha256sum }}
+# {{ range glob (joinPath (.chezmoi.sourceDir | toString) "my_start.bin") }}{{ include . | sha256sum }} {{ end }}
+# {{ range glob (joinPath (.chezmoi.destDir | toString) "my_start.bin") }}{{ include . | sha256sum }} {{ end }}
 echo "== {{ .chezmoi.sourceFile | trim }} =="
 Stop-Process -Name "StartMenuExperienceHost"
