@@ -5,3 +5,5 @@ swap=100GB
 vmIdleTimeout=180
 [experimental]
 sparseVhd=true
+[wsl2]
+guiApplications=false
