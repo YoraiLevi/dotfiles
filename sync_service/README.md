@@ -15,7 +15,7 @@ A Windows Service that automatically runs `chezmoi init --apply` every 5 minutes
 
 2. **Run the installation script:**
    ```powershell
-   cd C:\Users\devic\.local\share\chezmoi\.chezmoiscripts\setup
+   cd C:\Users\devic\.local\share\chezmoi\sync_service
    .\install_sync_service.ps1
    ```
 
@@ -89,7 +89,7 @@ To remove the service:
 
 2. **Run the uninstallation script:**
    ```powershell
-   cd C:\Users\devic\.local\share\chezmoi\.chezmoiscripts\setup
+   cd C:\Users\devic\.local\share\chezmoi\sync_service
    .\uninstall_sync_service.ps1
    ```
 
@@ -145,7 +145,7 @@ sc.exe config ChezmoiSync start= auto
 
 ### How It Works
 
-1. **Installation Script** copies the wrapper script to a permanent location and creates a Windows Service using `New-Service`
+1. **Installation Script** copies the wrapper script to a permanent location and creates a Windows Service using NSSM
 2. **Windows Service** launches PowerShell with the wrapper script
 3. **Wrapper Script** runs in an infinite loop:
    - Executes `chezmoi init --apply`
