@@ -143,6 +143,13 @@
 			// "editorOverviewRuler.wordHighlightForeground": "#a0a0a0cc",
 			// "editorOverviewRuler.wordHighlightStrongForeground": "#c0a0c0cc",
 			// "editorOverviewRuler.wordHighlightTextForeground": "#a0a0a0cc",
+			"button.background": "#403e41",
+			"button.foreground": "#fcfcfa",
+			// "button.hoverBackground": "#5b595c",
+			"button.secondaryBackground": "#403e41",
+			"button.secondaryForeground": "#c1c0c0",
+			// "button.secondaryHoverBackground": "#5b595c",
+			// "button.separator": "#2d2a2e",
 		}
 	},
 	"editor.tokenColorCustomizations": {
