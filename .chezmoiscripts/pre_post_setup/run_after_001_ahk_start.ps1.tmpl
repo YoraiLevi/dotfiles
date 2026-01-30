@@ -104,48 +104,138 @@ function Start-ProcessInUserSession {
     }
 }
 
+# Function to compare temp binary with active binary
+function Test-BinaryChanged {
+    param(
+        [string]$TempPath,
+        [string]$ActivePath
+    )
+    
+    # If temp doesn't exist, no update available
+    if (-not (Test-Path $TempPath)) {
+        return $false
+    }
+    
+    # If active doesn't exist, it's a new installation
+    if (-not (Test-Path $ActivePath)) {
+        return $true
+    }
+    
+    # Compare file hashes
+    $tempHash = (Get-FileHash -Path $TempPath -Algorithm SHA256).Hash
+    $activeHash = (Get-FileHash -Path $ActivePath -Algorithm SHA256).Hash
+    
+    return ($tempHash -ne $activeHash)
+}
+
+# Function to update and restart a specific AHK binary
+function Update-AhkBinary {
+    param(
+        [string]$TempPath,
+        [string]$ActivePath,
+        [int]$SessionId
+    )
+    
+    $scriptName = [System.IO.Path]::GetFileNameWithoutExtension($ActivePath)
+    
+    # Find and stop the specific process
+    $process = Get-Process -Name $scriptName -ErrorAction SilentlyContinue
+    if ($process) {
+        Write-Host "Stopping $scriptName (PID: $($process.Id)) for update..."
+        Stop-Process -Id $process.Id -Force
+        Start-Sleep -Milliseconds 300
+    }
+    
+    # Copy temp to active location
+    try {
+        Copy-Item -Path $TempPath -Destination $ActivePath -Force
+        Write-Host "Updated $scriptName binary"
+    }
+    catch {
+        Write-Host "ERROR: Failed to copy $TempPath to $ActivePath - $_"
+        return
+    }
+    
+    # Start the updated binary
+    Write-Host "Starting updated $scriptName..."
+    if ($SessionId -and (Test-IsSession0)) {
+        Start-ProcessInUserSession -FilePath $ActivePath -SessionId $SessionId
+    }
+    else {
+        Start-Process -FilePath $ActivePath
+    }
+}
+
+# Function to start AHK script if not already running
+function Start-AhkIfNotRunning {
+    param(
+        [string]$ActivePath,
+        [int]$SessionId
+    )
+    
+    $scriptName = [System.IO.Path]::GetFileNameWithoutExtension($ActivePath)
+    
+    # Check if already running
+    $process = Get-Process -Name $scriptName -ErrorAction SilentlyContinue
+    if ($process) {
+        Write-Host "$scriptName already running (PID: $($process.Id))"
+        return
+    }
+    
+    # Start it
+    Write-Host "Starting $scriptName..."
+    if ($SessionId -and (Test-IsSession0)) {
+        Start-ProcessInUserSession -FilePath $ActivePath -SessionId $SessionId
+    }
+    else {
+        Start-Process -FilePath $ActivePath
+    }
+}
+
 # Main logic
-$startup_dir = (New-Object -ComObject WScript.Shell).SpecialFolders.Item("Startup")
+$binDir = "{{ .chezmoi.homeDir }}\.local\bin"
+$tempDir = Join-Path $binDir "temp"
 $isSession0 = Test-IsSession0
+$sessionId = if ($isSession0) { Get-ActiveUserSessionId } else { $null }
+
+# Define managed AHK scripts
+$ahkScripts = @(
+    "ahk_TTS.exe",
+    "ahk_REMAP.exe"
+)
+
+Write-Host "Checking for AHK updates..."
 
 if ($isSession0) {
     Write-Host "Detected Session 0 (service context). Using PsExec to launch in user session."
-    $activeSessionId = Get-ActiveUserSessionId
-    
-    if ($null -eq $activeSessionId) {
+    if ($null -eq $sessionId) {
         Write-Host "Warning: No active user session found. AHK scripts will not be launched."
     }
     else {
-        Write-Host "Active user session: $activeSessionId"
-        
-        # Launch AHK executables
-        Get-ChildItem $startup_dir -Filter 'ahk_*.exe' -File | ForEach-Object {
-            Start-ProcessInUserSession -FilePath $_.FullName -SessionId $activeSessionId
-        }
-        
-        # Launch AHK shortcuts (extract target and launch that)
-        Get-ChildItem $startup_dir -Filter 'ahk_*.lnk' -File | ForEach-Object {
-            try {
-                $shell = New-Object -ComObject WScript.Shell
-                $shortcut = $shell.CreateShortcut($_.FullName)
-                $targetPath = $shortcut.TargetPath
-                if ($targetPath -and (Test-Path $targetPath)) {
-                    Start-ProcessInUserSession -FilePath $targetPath -SessionId $activeSessionId
-                }
-            }
-            catch {
-                Write-Host "Warning: Could not process shortcut $($_.Name): $_"
-            }
-        }
+        Write-Host "Active user session: $sessionId"
     }
 }
 else {
     Write-Host "Not in Session 0. Launching AHK scripts directly."
-    # Direct launch (original behavior)
-    Get-ChildItem $startup_dir -Filter 'ahk_*.exe' -File | ForEach-Object { 
-        Start-Process -FilePath $_ 
+}
+
+foreach ($scriptName in $ahkScripts) {
+    $tempPath = Join-Path $tempDir $scriptName
+    $activePath = Join-Path $binDir $scriptName
+    
+    $changed = Test-BinaryChanged -TempPath $tempPath -ActivePath $activePath
+    
+    if ($changed) {
+        Write-Host "Detected update for $scriptName"
+        Update-AhkBinary -TempPath $tempPath -ActivePath $activePath -SessionId $sessionId
     }
-    Get-ChildItem $startup_dir -Filter 'ahk_*.lnk' -File | ForEach-Object { 
-        Invoke-Item $_ 
+    else {
+        Write-Host "$scriptName is up to date"
+        # Ensure it's running (handles first boot or manual kills)
+        if (Test-Path $activePath) {
+            Start-AhkIfNotRunning -ActivePath $activePath -SessionId $sessionId
+        }
     }
 }
+
+Write-Host "AHK management complete"
