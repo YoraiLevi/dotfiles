@@ -2,16 +2,17 @@
 # This script runs continuously as a Windows Service, executing chezmoi init --apply every 5 minutes
 
 # Configuration
-$ChezmoiPath = (get-command chezmoi).Source #"$env:USERPROFILE\.local\bin\chezmoi.exe"
+$ChezmoiPath = (Get-Command chezmoi).Source #"$env:USERPROFILE\.local\bin\chezmoi.exe"
 $LogDir = "$env:USERPROFILE\.local\share\chezmoi-sync\logs"
 $LogFile = Join-Path $LogDir "sync-service.log"
-$IntervalSeconds = 5*60  # 5 minutes
+$IntervalSeconds = 5 * 60  # 5 minutes
 
 # Ensure log directory exists
 if (-not (Test-Path $LogDir)) {
     try {
         New-Item -ItemType Directory -Path $LogDir -Force | Out-Null
-    } catch {
+    }
+    catch {
         throw
     }
 }
@@ -36,6 +37,18 @@ function Invoke-ChezmoiSync {
             return
         }
         
+        # Execute chezmoi re-add before init --apply
+        Write-Log "Running chezmoi re-add..."
+        $reAddOutput = & $ChezmoiPath re-add 2>&1 | Tee-Object -FilePath $LogFile -Append
+        $reAddExitCode = $LASTEXITCODE
+
+        if ($reAddExitCode -eq 0) {
+            Write-Log "chezmoi re-add completed successfully"
+        }
+        else {
+            Write-Log "ERROR: chezmoi re-add failed with exit code $reAddExitCode"
+        }
+
         # Execute chezmoi init --apply
         $output = & $ChezmoiPath init --apply --force 2>&1 | Tee-Object -FilePath $LogFile -Append
         $exitCode = $LASTEXITCODE
@@ -43,11 +56,12 @@ function Invoke-ChezmoiSync {
         if ($exitCode -eq 0) {
             Write-Log "Chezmoi sync completed successfully"
             if ($output) {
-                Write-Log "Output: $output"
+                # Write-Log "Output: $output"
             }
-        } else {
+        }
+        else {
             Write-Log "ERROR: Chezmoi sync failed with exit code $exitCode"
-            Write-Log "Output: $output"
+            # Write-Log "Output: $output"
         }
     }
     catch {
