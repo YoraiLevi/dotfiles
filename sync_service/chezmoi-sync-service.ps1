@@ -37,7 +37,7 @@ function Invoke-ChezmoiSync {
         }
         
         # Execute chezmoi init --apply
-        $output = & $ChezmoiPath init --apply 2>&1
+        $output = & $ChezmoiPath init --apply --force 2>&1
         $exitCode = $LASTEXITCODE
         
         if ($exitCode -eq 0) {

@@ -10,8 +10,7 @@ $ServiceDisplayName = "Chezmoi Sync Service"
 $ServiceDescription = "Automatically syncs chezmoi dotfiles every 5 minutes by running 'chezmoi init --apply'"
 $WrapperScriptSource = Join-Path $PSScriptRoot "chezmoi-sync-service.ps1"
 $WrapperScriptDest = "$env:USERPROFILE\.local\bin\chezmoi-sync-service.ps1"
-$NssmPath = "$env:USERPROFILE\.local\bin\nssm.exe"
-$NssmDownloadUrl = "https://nssm.cc/release/nssm-2.24.zip"
+$NssmPath = Get-Command nssm.exe -ErrorAction Stop
 $LogFile = "$env:USERPROFILE\.local\share\chezmoi-sync\logs\install.log"
 
 # Function to write log entries
@@ -52,59 +51,6 @@ try {
 }
 
 Write-Log "Starting Chezmoi Sync Service installation..."
-
-# Download and install NSSM if needed
-if (-not (Test-Path $NssmPath)) {
-    Write-Log "NSSM not found. Downloading..."
-    
-    try {
-        $tempZip = Join-Path $env:TEMP "nssm.zip"
-        $tempExtract = Join-Path $env:TEMP "nssm_extract"
-        
-        # Clean up any existing files
-        if (Test-Path $tempZip) { Remove-Item -Path $tempZip -Force }
-        if (Test-Path $tempExtract) { Remove-Item -Path $tempExtract -Recurse -Force }
-        
-        # Download NSSM
-        Write-Log "Downloading NSSM from $NssmDownloadUrl..."
-        Invoke-WebRequest -Uri $NssmDownloadUrl -OutFile $tempZip -UseBasicParsing
-        
-        # Extract NSSM using .NET (more compatible)
-        Write-Log "Extracting NSSM..."
-        Add-Type -AssemblyName System.IO.Compression.FileSystem
-        [System.IO.Compression.ZipFile]::ExtractToDirectory($tempZip, $tempExtract)
-        
-        # Determine architecture and copy appropriate version
-        $arch = if ([Environment]::Is64BitOperatingSystem) { "win64" } else { "win32" }
-        $nssmExe = Get-ChildItem -Path $tempExtract -Recurse -Filter "nssm.exe" | Where-Object { $_.FullName -like "*$arch*" } | Select-Object -First 1
-        
-        if (-not $nssmExe) {
-            Write-Log "Failed to find NSSM executable in download" "ERROR"
-            Write-Log "Available files: $(Get-ChildItem -Path $tempExtract -Recurse -Filter '*.exe' | Select-Object -ExpandProperty FullName)" "ERROR"
-            exit 1
-        }
-        
-        # Copy to destination
-        $destDir = Split-Path $NssmPath -Parent
-        if (-not (Test-Path $destDir)) {
-            New-Item -ItemType Directory -Path $destDir -Force | Out-Null
-        }
-        Copy-Item -Path $nssmExe.FullName -Destination $NssmPath -Force
-        
-        # Cleanup
-        Remove-Item -Path $tempZip -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path $tempExtract -Recurse -Force -ErrorAction SilentlyContinue
-        
-        Write-Log "NSSM installed successfully at $NssmPath" "SUCCESS"
-    }
-    catch {
-        Write-Log "Failed to download/install NSSM: $_" "ERROR"
-        Write-Log "Error details: $($_.Exception.Message)" "ERROR"
-        exit 1
-    }
-} else {
-    Write-Log "NSSM found at $NssmPath"
-}
 
 # Check if service already exists
 $existingService = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
@@ -150,7 +96,7 @@ catch {
 }
 
 # Check if chezmoi.exe exists
-$chezmoiPath = "$env:USERPROFILE\.local\bin\chezmoi.exe"
+$chezmoiPath = (get-command chezmoi).Source
 if (-not (Test-Path $chezmoiPath)) {
     Write-Log "WARNING: chezmoi.exe not found at $chezmoiPath - service may fail to run" "WARN"
 }

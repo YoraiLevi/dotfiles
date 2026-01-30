@@ -6,5 +6,12 @@
     path = "procexp.exe"
     refreshPeriod = "168h"
     executable = true
-{{- end -}}
 
+["./.local/bin/nssm.exe"]
+    # https://nssm.cc/download
+    type = "archive-file"
+    url = "https://nssm.cc/release/nssm-2.24.zip"
+    path = "nssm-2.24/win64/nssm.exe"
+    refreshPeriod = "168h"
+    executable = true
+{{- end -}}
