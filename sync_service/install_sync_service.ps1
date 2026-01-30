@@ -1,6 +1,6 @@
 # Chezmoi Sync Service Installation Script
 # This script creates and starts a Windows Service that runs chezmoi init --apply every 5 minutes
-# Requires Administrator privileges
+# Requires Administrator privileges and Servy to be installed
 
 #Requires -RunAsAdministrator
 
@@ -10,7 +10,7 @@ $ServiceDisplayName = "Chezmoi Sync Service"
 $ServiceDescription = "Automatically syncs chezmoi dotfiles every 5 minutes by running 'chezmoi init --apply'"
 $WrapperScriptSource = Join-Path $PSScriptRoot "chezmoi-sync-service.ps1"
 $WrapperScriptDest = "$env:USERPROFILE\.local\bin\chezmoi-sync-service.ps1"
-$NssmPath = Get-Command nssm.exe -ErrorAction Stop
+$ServyModulePath = "C:\Program Files\Servy\Servy.psm1"
 $LogFile = "$env:USERPROFILE\.local\share\chezmoi-sync\logs\install.log"
 
 # Function to write log entries
@@ -52,17 +52,33 @@ try {
 
 Write-Log "Starting Chezmoi Sync Service installation..."
 
+# Import Servy PowerShell Module
+try {
+    if (-not (Test-Path $ServyModulePath)) {
+        Write-Log "Servy module not found at $ServyModulePath" "ERROR"
+        Write-Log "Please ensure Servy is installed: https://github.com/aelassas/servy" "ERROR"
+        exit 1
+    }
+    
+    Import-Module $ServyModulePath -Force
+    Write-Log "Servy PowerShell module loaded successfully"
+}
+catch {
+    Write-Log "Failed to load Servy module: $_" "ERROR"
+    exit 1
+}
+
 # Check if service already exists
 $existingService = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
 if ($existingService) {
     Write-Log "Service '$ServiceName' already exists. Stopping and removing..." "WARN"
     
     try {
-        # Use NSSM to stop and remove the service
-        & $NssmPath stop $ServiceName confirm 2>&1 | Out-Null
+        # Use Servy to stop and remove the service
+        Stop-ServyService -Quiet -Name $ServiceName
         Start-Sleep -Seconds 2
         
-        & $NssmPath remove $ServiceName confirm 2>&1 | Out-Null
+        Uninstall-ServyService -Quiet -Name $ServiceName
         
         Write-Log "Existing service removed"
         Start-Sleep -Seconds 2
@@ -101,9 +117,22 @@ if (-not (Test-Path $chezmoiPath)) {
     Write-Log "WARNING: chezmoi.exe not found at $chezmoiPath - service may fail to run" "WARN"
 }
 
-# Get PowerShell path
-$pwshPath = (Get-Command pwsh.exe -ErrorAction Stop).Source
-Write-Log "PowerShell path: $pwshPath"
+# Get PowerShell path (prefer pwsh.exe, fallback to powershell.exe)
+$pwshPath = $null
+try {
+    $pwshPath = (Get-Command pwsh.exe -ErrorAction Stop).Source
+    Write-Log "Using PowerShell Core: $pwshPath"
+}
+catch {
+    try {
+        $pwshPath = (Get-Command powershell.exe -ErrorAction Stop).Source
+        Write-Log "Using Windows PowerShell: $pwshPath"
+    }
+    catch {
+        Write-Log "Neither pwsh.exe nor powershell.exe found in PATH" "ERROR"
+        exit 1
+    }
+}
 
 # Get current user credentials for the service
 Write-Log "Service will run as current user: $env:USERNAME"
@@ -115,40 +144,39 @@ if (-not $credential) {
     exit 1
 }
 
-# Create the service using NSSM
+# Create the service using Servy
 try {
-    Write-Log "Creating service using NSSM..."
+    Write-Log "Creating service using Servy..."
     
-    # Install the service
-    $result = & $NssmPath install $ServiceName $pwshPath "-NoProfile" "-ExecutionPolicy" "Bypass" "-File" "`"$WrapperScriptDest`"" 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        Write-Log "NSSM install failed: $result" "ERROR"
-        exit 1
-    }
-    
-    # Set display name
-    & $NssmPath set $ServiceName DisplayName $ServiceDisplayName | Out-Null
-    
-    # Set description
-    & $NssmPath set $ServiceName Description $ServiceDescription | Out-Null
-    
-    # Set startup type to automatic
-    & $NssmPath set $ServiceName Start SERVICE_AUTO_START | Out-Null
-    
-    # Set user account
     $username = $credential.UserName
     $password = $credential.GetNetworkCredential().Password
-    & $NssmPath set $ServiceName ObjectName $username $password | Out-Null
-    
-    # Set working directory to user profile
-    & $NssmPath set $ServiceName AppDirectory $env:USERPROFILE | Out-Null
-    
-    # Configure stdout/stderr logging
     $serviceLogDir = "$env:USERPROFILE\.local\share\chezmoi-sync\logs"
-    & $NssmPath set $ServiceName AppStdout "$serviceLogDir\nssm-stdout.log" | Out-Null
-    & $NssmPath set $ServiceName AppStderr "$serviceLogDir\nssm-stderr.log" | Out-Null
     
-    Write-Log "Service created successfully using NSSM" "SUCCESS"
+    # Ensure log directory exists
+    if (-not (Test-Path $serviceLogDir)) {
+        New-Item -ItemType Directory -Path $serviceLogDir -Force | Out-Null
+    }
+    
+    # Install the service using Servy PowerShell Module
+    Install-ServyService `
+        -Quiet `
+        -Name $ServiceName `
+        -DisplayName $ServiceDisplayName `
+        -Description $ServiceDescription `
+        -Path $pwshPath `
+        -StartupDir $env:USERPROFILE `
+        -Params "-NoProfile -ExecutionPolicy Bypass -File `"$WrapperScriptDest`"" `
+        -StartupType "Automatic" `
+        -Priority "Normal" `
+        -Stdout "$serviceLogDir\service-stdout.log" `
+        -Stderr "$serviceLogDir\service-stderr.log" `
+        -EnableSizeRotation `
+        -RotationSize "10" `
+        -MaxRotations "5" `
+        -User $username `
+        -Password $password
+    
+    Write-Log "Service created successfully using Servy" "SUCCESS"
 }
 catch {
     Write-Log "Failed to create service: $_" "ERROR"
@@ -160,7 +188,7 @@ catch {
 try {
     Write-Log "Starting service..."
     
-    & $NssmPath start $ServiceName 2>&1 | Out-Null
+    Start-ServyService -Quiet -Name $ServiceName
     
     # Wait a moment and check status
     Start-Sleep -Seconds 3

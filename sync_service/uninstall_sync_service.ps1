@@ -1,13 +1,13 @@
 # Chezmoi Sync Service Uninstallation Script
 # This script stops and removes the Chezmoi Sync Windows Service
-# Requires Administrator privileges
+# Requires Administrator privileges and Servy to be installed
 
 #Requires -RunAsAdministrator
 
 # Configuration
 $ServiceName = "ChezmoiSync"
 $WrapperScriptPath = "$env:USERPROFILE\.local\bin\chezmoi-sync-service.ps1"
-$NssmPath = "$env:USERPROFILE\.local\bin\nssm.exe"
+$ServyModulePath = "C:\Program Files\Servy\Servy.psm1"
 $LogFile = "$env:USERPROFILE\.local\share\chezmoi-sync\logs\uninstall.log"
 
 # Function to write log entries
@@ -49,6 +49,19 @@ try {
 
 Write-Log "Starting Chezmoi Sync Service uninstallation..."
 
+# Import Servy PowerShell Module
+try {
+    if (Test-Path $ServyModulePath) {
+        Import-Module $ServyModulePath -Force
+        Write-Log "Servy PowerShell module loaded successfully"
+    } else {
+        Write-Log "Servy module not found at $ServyModulePath - will attempt standard removal" "WARN"
+    }
+}
+catch {
+    Write-Log "Failed to load Servy module: $_" "WARN"
+}
+
 # Check if service exists
 $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
 
@@ -57,28 +70,30 @@ if (-not $service) {
 } else {
     Write-Log "Found service: $($service.DisplayName)"
     
-    # Check if NSSM is available
-    if (Test-Path $NssmPath) {
-        Write-Log "Using NSSM to remove service..."
+    # Try to use Servy if module is loaded
+    $servyAvailable = Get-Command Uninstall-ServyService -ErrorAction SilentlyContinue
+    
+    if ($servyAvailable) {
+        Write-Log "Using Servy to remove service..."
         
         try {
             # Stop the service
-            & $NssmPath stop $ServiceName confirm 2>&1 | Out-Null
+            Stop-ServyService -Quiet -Name $ServiceName
             Write-Log "Service stopped"
             Start-Sleep -Seconds 2
             
             # Remove the service
-            & $NssmPath remove $ServiceName confirm 2>&1 | Out-Null
-            Write-Log "Service removed successfully using NSSM" "SUCCESS"
+            Uninstall-ServyService -Quiet -Name $ServiceName
+            Write-Log "Service removed successfully using Servy" "SUCCESS"
             Start-Sleep -Seconds 2
         }
         catch {
-            Write-Log "Error removing service with NSSM: $_" "ERROR"
+            Write-Log "Error removing service with Servy: $_" "ERROR"
             exit 1
         }
     } else {
         # Fallback to standard service removal
-        Write-Log "NSSM not found, using standard service removal..."
+        Write-Log "Servy not available, using standard service removal..."
         
         # Stop the service if running
         try {

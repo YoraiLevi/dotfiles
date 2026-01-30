@@ -2,11 +2,21 @@
 
 A Windows Service that automatically runs `chezmoi init --apply` every 5 minutes to keep your dotfiles synchronized.
 
+This service uses [Servy](https://github.com/aelassas/servy) as the Windows Service manager, providing built-in log rotation, health monitoring, and automatic recovery features.
+
+## Prerequisites
+
+- **Servy** must be installed on your system
+  - Download from: https://github.com/aelassas/servy
+  - The Servy PowerShell module should be available at `C:\Program Files\Servy\Servy.psm1`
+- Administrator privileges to install/uninstall Windows services
+- PowerShell 5.1+ or PowerShell Core (pwsh)
+
 ## Files
 
-- **`install_sync_service.ps1`** - Installation script (creates and starts the service)
+- **`install_sync_service.ps1`** - Installation script (creates and starts the service using Servy)
 - **`chezmoi-sync-service.ps1`** - Service wrapper script (runs continuously)
-- **`uninstall_sync_service.ps1`** - Uninstallation script (removes the service)
+- **`uninstall_sync_service.ps1`** - Uninstallation script (removes the service using Servy)
 
 ## Installation
 
@@ -40,9 +50,13 @@ A Windows Service that automatically runs `chezmoi init --apply` every 5 minutes
 
 The service creates detailed logs for monitoring and troubleshooting:
 
-- **Service Logs:** `%USERPROFILE%\.local\share\chezmoi-sync\logs\sync-service.log`
+- **Service Logs:** `%USERPROFILE%\.local\share\chezmoi-sync\logs\sync-service.log` (from wrapper script)
+- **Service stdout:** `%USERPROFILE%\.local\share\chezmoi-sync\logs\service-stdout.log` (Servy managed, auto-rotated)
+- **Service stderr:** `%USERPROFILE%\.local\share\chezmoi-sync\logs\service-stderr.log` (Servy managed, auto-rotated)
 - **Installation Log:** `%USERPROFILE%\.local\share\chezmoi-sync\logs\install.log`
 - **Uninstallation Log:** `%USERPROFILE%\.local\share\chezmoi-sync\logs\uninstall.log`
+
+Servy automatically rotates stdout/stderr logs when they reach 10 MB, keeping the last 5 files.
 
 ### View Recent Logs
 
@@ -145,13 +159,17 @@ sc.exe config ChezmoiSync start= auto
 
 ### How It Works
 
-1. **Installation Script** copies the wrapper script to a permanent location and creates a Windows Service using NSSM
-2. **Windows Service** launches PowerShell with the wrapper script
+1. **Installation Script** copies the wrapper script to a permanent location and creates a Windows Service using Servy
+2. **Servy Service Manager** launches PowerShell with the wrapper script and monitors its health
 3. **Wrapper Script** runs in an infinite loop:
    - Executes `chezmoi init --apply`
    - Logs the results
    - Sleeps for 5 minutes
    - Repeats
+4. **Servy Features**:
+   - Automatically rotates log files when they reach 10 MB
+   - Keeps the last 5 rotated log files
+   - Monitors service health and can automatically restart on failure
 
 ### Service Account
 
@@ -159,6 +177,15 @@ The service runs under your Windows user account because:
 - Chezmoi needs access to your home directory (`%USERPROFILE%`)
 - Git credentials are stored per-user
 - The chezmoi source directory is in your user profile
+
+### Why Servy?
+
+Servy provides several advantages over other Windows Service managers:
+- **Built-in log rotation** - Automatic size-based and date-based rotation
+- **Health monitoring** - Detects if the process crashes
+- **PowerShell-native** - Clean cmdlets instead of command-line strings
+- **Modern & maintained** - Active development with comprehensive documentation
+- **Single-command installation** - All configuration in one cmdlet call
 
 ### Modifying the Sync Interval
 
@@ -188,3 +215,5 @@ Common intervals:
 - Each sync execution is logged with timestamps
 - The service will survive system reboots (automatic startup)
 - Multiple sync operations won't overlap (sequential execution)
+- Log files are automatically rotated by Servy to prevent disk space issues
+- Servy documentation: https://github.com/aelassas/servy/wiki

@@ -49,6 +49,8 @@ software:
     - name: zoom
     - name: audacity
     - name: audacity-ffmpeg
+    
+    - name: servy
 
     # - name: office365business
     #   params: /productid:O365HomePremRetail /exclude:Access Groove Lync OneDrive OneNote Outlook Publisher /updates:TRUE /eula:TRUE

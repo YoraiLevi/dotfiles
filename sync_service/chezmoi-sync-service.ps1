@@ -37,7 +37,7 @@ function Invoke-ChezmoiSync {
         }
         
         # Execute chezmoi init --apply
-        $output = & $ChezmoiPath init --apply --force 2>&1
+        $output = & $ChezmoiPath init --apply --force 2>&1 | Tee-Object -FilePath $LogFile -Append
         $exitCode = $LASTEXITCODE
         
         if ($exitCode -eq 0) {
