@@ -1,4 +1,5 @@
 Install.ps1
+sync_service
 *.md
 my_start.bin
 .chezmoiinterpreters

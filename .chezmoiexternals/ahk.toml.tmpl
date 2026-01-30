@@ -1,10 +1,10 @@
 {{ if eq .chezmoi.os "windows" -}}
-["./.local/bin/ahk_TTS.exe"]
+["./.local/bin/temp/ahk_TTS.exe"]
     type = "file"
     url = {{ gitHubLatestReleaseAssetURL "YoraiLevi/ahk-autohotkeys" "ahk_TTS_all.exe" | quote }}
     refreshPeriod = "1m"
     executable = true
-["./.local/bin/ahk_REMAP.exe"]
+["./.local/bin/temp/ahk_REMAP.exe"]
     type = "file"
 {{- if contains .BaseBoard  "TP412FAC" }}
     url = {{ gitHubLatestReleaseAssetURL "YoraiLevi/ahk-autohotkeys" "ahk_keyboard_remap_TP412FAC.exe" | quote }}

@@ -1,4 +1,241 @@
 echo "== {{ .chezmoi.sourceFile | trim }} =="
-$startup_dir = (New-Object -ComObject WScript.Shell).SpecialFolders.Item("Startup")
-Get-Childitem $startup_dir -Filter 'ahk_*.exe' -File | % { Start-Process -NoNewWindow -FilePath $_ }
-Get-Childitem $startup_dir -Filter 'ahk_*.lnk' -File | % { Invoke-Item  $_ }
+
+# Function to detect if running in Session 0 (service context)
+function Test-IsSession0 {
+    $sessionId = [System.Diagnostics.Process]::GetCurrentProcess().SessionId
+    return ($sessionId -eq 0)
+}
+
+# Function to get active user session ID
+function Get-ActiveUserSessionId {
+    try {
+        # Method 1: Try using quser.exe with full path
+        $quserPath = "$env:SystemRoot\System32\quser.exe"
+        if (Test-Path $quserPath) {
+            $sessions = & $quserPath 2>&1 | Select-String "Active"
+            if ($sessions) {
+                $sessionLine = $sessions.Line
+                # Extract session ID (typically 3rd column)
+                $sessionId = ($sessionLine -split '\s+')[2]
+                if ($sessionId -match '^\d+$') {
+                    Write-Host "Found active session using quser: $sessionId"
+                    return [int]$sessionId
+                }
+            }
+        }
+    }
+    catch {
+        Write-Host "Warning: quser method failed: $_"
+    }
+    
+    try {
+        # Method 2: Fallback to WMI/CIM
+        $activeSessions = Get-CimInstance -ClassName Win32_LogonSession | Where-Object {
+            $_.LogonType -eq 2  # Interactive logon
+        }
+        
+        foreach ($session in $activeSessions) {
+            $user = Get-CimInstance -ClassName Win32_LoggedOnUser | Where-Object {
+                $_.Dependent.LogonId -eq $session.LogonId
+            }
+            
+            if ($user) {
+                # Try to get session ID from process
+                $explorer = Get-Process -Name explorer -ErrorAction SilentlyContinue | Select-Object -First 1
+                if ($explorer) {
+                    $sessionId = $explorer.SessionId
+                    if ($sessionId -gt 0) {
+                        Write-Host "Found active session using WMI/Explorer: $sessionId"
+                        return [int]$sessionId
+                    }
+                }
+            }
+        }
+    }
+    catch {
+        Write-Host "Warning: WMI method failed: $_"
+    }
+    
+    try {
+        # Method 3: Simple fallback - look for explorer.exe session
+        $explorer = Get-Process -Name explorer -ErrorAction SilentlyContinue | 
+                    Where-Object { $_.SessionId -gt 0 } | 
+                    Select-Object -First 1
+        
+        if ($explorer) {
+            Write-Host "Found active session via explorer.exe: $($explorer.SessionId)"
+            return [int]$explorer.SessionId
+        }
+    }
+    catch {
+        Write-Host "Warning: Explorer method failed: $_"
+    }
+    
+    return $null
+}
+
+# Function to launch process in user session using PsExec
+function Start-ProcessInUserSession {
+    param(
+        [string]$FilePath,
+        [int]$SessionId
+    )
+    
+    $psexecPath = "{{ .chezmoi.homeDir }}\.local\bin\PsExec64.exe"
+    
+    if (-not (Test-Path $psexecPath)) {
+        Write-Host "Warning: PsExec64.exe not found at $psexecPath, falling back to direct launch"
+        Start-Process -FilePath $FilePath
+        return
+    }
+    
+    try {
+        # Use PsExec to launch in user session
+        # -s: Run as SYSTEM (required to access other sessions)
+        # -i: Interactive - run in the specified session
+        # -d: Don't wait for process to terminate
+        # -accepteula: Auto-accept EULA
+        & $psexecPath -accepteula -s -i $SessionId -d $FilePath 2>&1 | Out-Null
+        Write-Host "Launched $FilePath in session $SessionId via PsExec"
+    }
+    catch {
+        Write-Host "Warning: Failed to launch via PsExec: $_. Trying direct launch."
+        Start-Process -FilePath $FilePath
+    }
+}
+
+# Function to compare temp binary with active binary
+function Test-BinaryChanged {
+    param(
+        [string]$TempPath,
+        [string]$ActivePath
+    )
+    
+    # If temp doesn't exist, no update available
+    if (-not (Test-Path $TempPath)) {
+        return $false
+    }
+    
+    # If active doesn't exist, it's a new installation
+    if (-not (Test-Path $ActivePath)) {
+        return $true
+    }
+    
+    # Compare file hashes
+    $tempHash = (Get-FileHash -Path $TempPath -Algorithm SHA256).Hash
+    $activeHash = (Get-FileHash -Path $ActivePath -Algorithm SHA256).Hash
+    
+    return ($tempHash -ne $activeHash)
+}
+
+# Function to update and restart a specific AHK binary
+function Update-AhkBinary {
+    param(
+        [string]$TempPath,
+        [string]$ActivePath,
+        [int]$SessionId
+    )
+    
+    $scriptName = [System.IO.Path]::GetFileNameWithoutExtension($ActivePath)
+    
+    # Find and stop the specific process
+    $process = Get-Process -Name $scriptName -ErrorAction SilentlyContinue
+    if ($process) {
+        Write-Host "Stopping $scriptName (PID: $($process.Id)) for update..."
+        Stop-Process -Id $process.Id -Force
+        Start-Sleep -Milliseconds 300
+    }
+    
+    # Copy temp to active location
+    try {
+        Copy-Item -Path $TempPath -Destination $ActivePath -Force
+        Write-Host "Updated $scriptName binary"
+    }
+    catch {
+        Write-Host "ERROR: Failed to copy $TempPath to $ActivePath - $_"
+        return
+    }
+    
+    # Start the updated binary
+    Write-Host "Starting updated $scriptName..."
+    if ($SessionId -and (Test-IsSession0)) {
+        Start-ProcessInUserSession -FilePath $ActivePath -SessionId $SessionId
+    }
+    else {
+        Start-Process -FilePath $ActivePath
+    }
+}
+
+# Function to start AHK script if not already running
+function Start-AhkIfNotRunning {
+    param(
+        [string]$ActivePath,
+        [int]$SessionId
+    )
+    
+    $scriptName = [System.IO.Path]::GetFileNameWithoutExtension($ActivePath)
+    
+    # Check if already running
+    $process = Get-Process -Name $scriptName -ErrorAction SilentlyContinue
+    if ($process) {
+        Write-Host "$scriptName already running (PID: $($process.Id))"
+        return
+    }
+    
+    # Start it
+    Write-Host "Starting $scriptName..."
+    if ($SessionId -and (Test-IsSession0)) {
+        Start-ProcessInUserSession -FilePath $ActivePath -SessionId $SessionId
+    }
+    else {
+        Start-Process -FilePath $ActivePath
+    }
+}
+
+# Main logic
+$binDir = "{{ .chezmoi.homeDir }}\.local\bin"
+$tempDir = Join-Path $binDir "temp"
+$isSession0 = Test-IsSession0
+$sessionId = if ($isSession0) { Get-ActiveUserSessionId } else { $null }
+
+# Define managed AHK scripts
+$ahkScripts = @(
+    "ahk_TTS.exe",
+    "ahk_REMAP.exe"
+)
+
+Write-Host "Checking for AHK updates..."
+
+if ($isSession0) {
+    Write-Host "Detected Session 0 (service context). Using PsExec to launch in user session."
+    if ($null -eq $sessionId) {
+        Write-Host "Warning: No active user session found. AHK scripts will not be launched."
+    }
+    else {
+        Write-Host "Active user session: $sessionId"
+    }
+}
+else {
+    Write-Host "Not in Session 0. Launching AHK scripts directly."
+}
+
+foreach ($scriptName in $ahkScripts) {
+    $tempPath = Join-Path $tempDir $scriptName
+    $activePath = Join-Path $binDir $scriptName
+    
+    $changed = Test-BinaryChanged -TempPath $tempPath -ActivePath $activePath
+    
+    if ($changed) {
+        Write-Host "Detected update for $scriptName"
+        Update-AhkBinary -TempPath $tempPath -ActivePath $activePath -SessionId $sessionId
+    }
+    else {
+        Write-Host "$scriptName is up to date"
+        # Ensure it's running (handles first boot or manual kills)
+        if (Test-Path $activePath) {
+            Start-AhkIfNotRunning -ActivePath $activePath -SessionId $sessionId
+        }
+    }
+}
+
+Write-Host "AHK management complete"
