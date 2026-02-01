@@ -25,7 +25,7 @@ $_EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAc
 Set-Alias -Name code -Value $_EDITOR
 Set-Alias -Name vscode -Value $_EDITOR
 $ENV:EDITOR = "$_EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
-$ENV:GIT_EXTERNAL_DIFF = $_EDITOR
+# $ENV:GIT_EXTERNAL_DIFF = $_EDITOR
 Set-Alias -Name sudo -Value gsudo
 
 # https://github.com/ChrisTitusTech/powershell-profile/blob/e89e9b0f968fa2224c8a9400d2023770362fb278/Microsoft.PowerShell_profile.ps1#L446
