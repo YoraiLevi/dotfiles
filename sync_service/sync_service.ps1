@@ -379,7 +379,7 @@ Chezmoi path: $ChezmoiPath
             Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
             throw "chezmoi re-add failed with exit code $reAddExitCode"
         }
-        $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase ; chezmoi diff) | Out-String
+        $Chezmoi_diff = $(& $ChezmoiPath git pull -- --autostash --rebase) | Out-String
         $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
         if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) {
             # Execute chezmoi update --init --apply --force
@@ -404,7 +404,9 @@ Chezmoi path: $ChezmoiPath
                 throw "chezmoi update --init --apply --force failed with exit code $exitCode"
             }
         }
-
+        else {
+            Write-Log "No changes detected from chezmoi git pull" "INFO"
+        }
     }
     catch {
         Write-Log "ERROR: Exception during chezmoi sync - $_" "ERROR"
