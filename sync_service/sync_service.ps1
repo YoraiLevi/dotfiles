@@ -186,7 +186,7 @@ function Write-Log {
         "WARN"    = 2
         "SUCCESS" = 1
         "INFO"    = 0
-        "ALWAYS" = 100 # Always log this message
+        "ALWAYS"  = 100 # Always log this message
     }
 
     # Get effective log level (script:LogLevel or fallback to INFO)
@@ -782,7 +782,7 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
 # ============================================================================
 # MAIN EXECUTION - branch based on parameter set
 # ============================================================================
-Write-Log $VERSION "INFO"
+Write-Log $VERSION "ALWAYS"
 if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
     # ========================================================================
     # RUN MODE - Execute the service loop
@@ -833,18 +833,17 @@ if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "Run
                     $waited++
                 }
             }
+            Write-Log "Continuous run finished" "INFO"
         }
         else {
             Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
+            Write-Log "Run finished" "INFO"
         }
     }
     catch {
         Write-Log "FATAL: Service loop terminated - $_" "ERROR"
         Write-Log "Stack trace: $($_.ScriptStackTrace)" "ERROR"
         throw
-    }
-    finally {
-        Write-Log "Chezmoi Sync Service stopped gracefully" "INFO"
     }
 }
 elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
