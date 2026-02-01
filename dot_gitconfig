@@ -23,6 +23,9 @@
 [difftool "cursor"]
         cmd = cursor -w -n --diff $LOCAL $REMOTE
 
+[difftool "vscode"]
+	cmd = code --wait --diff $LOCAL $REMOTE
+
 [merge]
         tool = vscode-insiders
 [mergetool "vscode-insiders"]
@@ -41,3 +44,4 @@
 	acp = !git add -u && git commit -m \"\" --allow-empty-message && git push origin
 [i18n]
 	logOutputEncoding = utf-8
+
