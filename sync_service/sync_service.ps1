@@ -733,7 +733,7 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
     $LogLevel = $config.LogLevel
     $EnableReAdd = $config.EnableReAdd
 
-    if (-not $(Test-Path $ChezmoiPath) -or -not $(Get-Command $ChezmoiPath)) {
+    if (-not $(Test-Path $ChezmoiPath) -and -not $(Get-Command $ChezmoiPath)) {
         Write-Log "Chezmoi path not found at: $ChezmoiPath" "ERROR"
         throw "Chezmoi path not found at: $ChezmoiPath"
     }
