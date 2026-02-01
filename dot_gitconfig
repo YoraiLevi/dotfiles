@@ -14,9 +14,9 @@
     eol = lf
 
 ; https://stackoverflow.com/a/71192747/12603110
-# [diff]
-# 	tool = cursor
-#         prompt = false
+[diff]
+	tool = cursor
+        prompt = false
 [difftool "vscode-insiders"]
         cmd = code-insiders -w -n --diff $LOCAL $REMOTE
 
