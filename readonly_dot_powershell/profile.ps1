@@ -146,7 +146,7 @@ function Invoke-YesNoPrompt {
     }
 }
 # Update local changes to chezmoi repo
-&$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
+# &$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
 
 
 # # PSReadLine option to add a matching closing bracket for (, [ and { - cannot copy paste it adds brackets in terminal
