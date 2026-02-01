@@ -275,9 +275,15 @@ function Save-ServiceConfig {
 
         [Parameter(Mandatory = $true)]
         [string]$ChezmoiPath,
-        [Nullable[int]]$SyncIntervalMinutes,
-        [Nullable[bool]]$EnableReAdd,
-        [Nullable[string]]$LogLevel
+
+        [Parameter(Mandatory = $false)]
+        $SyncIntervalMinutes = $null,
+
+        [Parameter(Mandatory = $false)]
+        $EnableReAdd = $null,
+
+        [Parameter(Mandatory = $false)]
+        $LogLevel = $null
     )
     
     $config = Get-DefaultServiceConfig
@@ -417,7 +423,7 @@ function Remove-ServyServiceAndWait {
 
     $existingService = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
     if (-not $existingService) {
-        return  # Nothing to remove
+        throw "Service '$ServiceName' not found"
     }
 
     Write-Log "Service '$ServiceName' found. Stopping and removing..."
@@ -426,13 +432,12 @@ function Remove-ServyServiceAndWait {
     try {
         if (-not (Test-ServyAvailable -ServyModulePath $ServyModulePath)) {
             throw "Servy not available"
-
         }
     
         Write-Log "Using Servy to remove service..."
         
         # Stop the service
-        Stop-ServyService -Quiet -Name $ServiceName
+        $null = Stop-ServyService -Quiet -Name $ServiceName -ErrorAction Stop
 
         # Wait for the service to stop
         $stopped = Wait-ForPredicate -Predicate { 
@@ -448,7 +453,7 @@ function Remove-ServyServiceAndWait {
         }
 
         # Remove the service
-        Uninstall-ServyService -Quiet -Name $ServiceName
+        $null = Uninstall-ServyService -Quiet -Name $ServiceName -ErrorAction Stop
 
         # Wait for service removal confirmation
         Wait-ForPredicate -Predicate { -not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) } -TimeoutSeconds 5 -IntervalSeconds 0.2
@@ -482,10 +487,10 @@ function Start-ServyServiceAndWait {
 
         # Try Servy first, fallback to standard Start-Service
         if (Test-ServyAvailable -ServyModulePath $ServyModulePath) {
-            Start-ServyService -Quiet -Name $ServiceName
+            $null = Start-ServyService -Quiet -Name $ServiceName -ErrorAction Stop
         }
         else {
-            Start-Service -Name $ServiceName -ErrorAction Stop
+            $null = Start-Service -Name $ServiceName -ErrorAction Stop
         }
 
         # Wait for the service to transition to 'Running' (timeout: 8 seconds)
@@ -547,6 +552,9 @@ function Install-ServyServiceAndWait {
     $ServiceScriptDestFile = Join-Path $ServiceDir $(Split-Path $PSCommandPath -Leaf)
     # Create the service using Servy
     try {
+        if (-not (Test-ServyAvailable -ServyModulePath $ServyModulePath)) {
+            throw "Servy not available"
+        }
         Write-Log "Creating service using Servy..."
 
         # Use consistent credential format (full DOMAIN\User format for service)
@@ -556,8 +564,8 @@ function Install-ServyServiceAndWait {
         Write-Log "Service will run as: $username"
 
         # Install the service using Servy PowerShell Module
-        Install-ServyService `
-            -Quiet `
+        $null = Install-ServyService `
+            -Quiet -ErrorAction Stop `
             -Name $ServiceName `
             -DisplayName $ServiceDisplayName `
             -Description $ServiceDescription `
@@ -668,37 +676,36 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
         }
     }
     
-    # Validate credentials
-    try {
-        $netCred = $Credentials.GetNetworkCredential()
-        $credUser = $netCred.UserName
-        $credPass = $netCred.Password
-        $credDomain = $netCred.Domain
+    #     # Validate credentials
+    #     try {
+    #         $netCred = $Credentials.GetNetworkCredential()
+    #         $credUser = $netCred.UserName
+    #         $credPass = $netCred.Password
+    #         $credDomain = $netCred.Domain
         
-        # Use the same format that will be used for service installation
+    #         # Use the same format that will be used for service installation
         
-        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-        $contextType = if ($credDomain) { 
-            [System.DirectoryServices.AccountManagement.ContextType]::Domain 
-        }
-        else { 
-            [System.DirectoryServices.AccountManagement.ContextType]::Machine 
-        }
-        $context = if ($credDomain) { $credDomain } else { $env:COMPUTERNAME }
-        $pc = New-Object System.DirectoryServices.AccountManagement.PrincipalContext($contextType, $context)
+    #         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+    #         $contextType = if ($credDomain) { 
+    #             [System.DirectoryServices.AccountManagement.ContextType]::Domain 
+    #         }
+    #         else { 
+    #             [System.DirectoryServices.AccountManagement.ContextType]::Machine 
+    #         }
+    #         $context = if ($credDomain) { $credDomain } else { $env:COMPUTERNAME }
+    #         $pc = New-Object System.DirectoryServices.AccountManagement.PrincipalContext($contextType, $context)
         
-        if (-not $pc.ValidateCredentials($credUser, $credPass)) {
-            Write-Log "Invalid credentials provided. Please check username and password." "ERROR"
-            exit 1
-        }
-        Write-Log "Credentials validated successfully for user: $credUser"
-    }
-    catch {
-        Write-Log "Warning: Could not validate credentials: $_" "WARN"
-        Write-Log "Service installation will continue, but service may fail to start if credentials are incorrect." "WARN"
-    }
+    #         if (-not $pc.ValidateCredentials($credUser, $credPass)) {
+    #             Write-Log "Invalid credentials provided. Please check username and password." "ERROR"
+    #             exit 1
+    #         }
+    #         Write-Log "Credentials validated successfully for user: $credUser"
+    #     }
+    #     catch {
+    #         Write-Log "Warning: Could not validate credentials: $_" "WARN"
+    #         Write-Log "Service installation will continue, but service may fail to start if credentials are incorrect." "WARN"
+    #     }
     
-    Write-Log "Starting Chezmoi Sync Service installation..."
 }
 
 # ============================================================================
@@ -755,6 +762,7 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
     }
     catch {
         Write-Log "FATAL: Service loop terminated - $_" "ERROR"
+        Write-Log "Stack trace: $($_.ScriptStackTrace)" "ERROR"
         throw
     }
     finally {
@@ -770,20 +778,25 @@ elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
         # Summary
         Write-Log "`nUninstallation completed!" "SUCCESS"
         Write-Log "Service '$ServiceName' has been removed from the system"
-        Write-Log "You can manually delete these if no longer needed" # consider using the registry/metadata to track installation path/files?
+        Write-Log "You can manually delete related files if no longer needed" # consider using the registry/metadata to track installation path/files?
     }
     catch {
         Write-Log "Uninstallation failed: $_" "ERROR"
+        Write-Log "Stack trace: $($_.ScriptStackTrace)" "ERROR"
         exit 1
     }
 }
 elseif ($PSCmdlet.ParameterSetName -eq "Install") {
+    Write-Log "Starting Chezmoi Sync Service installation..."
     # Install mode - remove any existing service, then install new one
     $serviceCreated = $false
     
     try {
         # Remove any existing service first
-        Remove-ServyServiceAndWait -ServiceName $ServiceName
+        if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
+            Write-Log "Removing existing service '$ServiceName'..." "INFO"
+            Remove-ServyServiceAndWait -ServiceName $ServiceName
+        }
         
         # Create configuration file
         $ConfigPath = Join-Path $ServiceDir "config.json"
@@ -823,7 +836,7 @@ elseif ($PSCmdlet.ParameterSetName -eq "Install") {
     }
     catch {
         Write-Log "Installation failed: $_" "ERROR"
-        
+        Write-Log "Stack trace: $($_.ScriptStackTrace)" "ERROR"
         # Remove service if it was created on failure
         if ($serviceCreated) {
             try {
