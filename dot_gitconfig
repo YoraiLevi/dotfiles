@@ -20,6 +20,9 @@
 [difftool "vscode-insiders"]
         cmd = code-insiders -w -n --diff $LOCAL $REMOTE
 
+[difftool "cursor"]
+        cmd = cursor -w -n --diff $LOCAL $REMOTE
+
 [merge]
         tool = vscode-insiders
 [mergetool "vscode-insiders"]
