@@ -80,7 +80,7 @@ param(
     [Parameter(ParameterSetName = "Install")]
     [Parameter(ParameterSetName = "Uninstall")]
     [ValidateNotNullOrEmpty()]
-    [ValidatePattern("^[a-zA-Z0-9_]+$")] # Allow only alphanumerics + underscore for service name
+    [ValidatePattern("^[a-zA-Z0-9_-]+$")] # Allow only alphanumerics + underscore + hyphen for service name
     [string]$ServiceName = "ChezmoiSync",
 
     # Install-only parameters
@@ -98,10 +98,14 @@ param(
     [Parameter(ParameterSetName = "Install")]
     [Parameter(ParameterSetName = "Uninstall")]
     [ValidateNotNullOrEmpty()]
-    [string]$ServiceScriptDest = "$env:USERPROFILE\.local\bin",
+    [string]$ServiceScriptDest = "$env:USERPROFILE\.local\bin", # deprecate this parameter only ServiceDir is required
+
+    # Install-only parameter
+    [Parameter(ParameterSetName = "Install")]
+    [ValidateNotNullOrEmpty()]
+    [string]$ServiceDir = "$env:USERPROFILE\.local\share\chezmoi-sync\",
 
     # Shared parameter (needed for both install and uninstall)
-    # Note: Validation is relaxed for uninstall mode - handled in script body
     [Parameter(ParameterSetName = "Install")]
     [Parameter(ParameterSetName = "Uninstall")]
     [ValidateNotNullOrEmpty()]
@@ -115,11 +119,6 @@ param(
             "C:\Program Files\Servy\Servy.psm1"
         }
     ),
-
-    # Install-only parameter
-    [Parameter(ParameterSetName = "Install")]
-    [ValidateNotNullOrEmpty()]
-    [string]$ServiceDir = "$env:USERPROFILE\.local\share\chezmoi-sync\",
 
     # Shared parameter (needed for both install and uninstall logs)
     [Parameter(ParameterSetName = "Install")]
@@ -177,37 +176,29 @@ param(
 )
 
 # ============================================================================
-# SCRIPT INITIALIZATION
-# ============================================================================
-
-$script:logDirCreated = $false
-
-# ============================================================================
 # FUNCTION DEFINITIONS
 # ============================================================================
 
 # Helper function to ensure directory exists
-function Assert-DirectoryExists {
+function Assert-CreateDirectory {
     param(
         [Parameter(Mandatory)]
-        [string]$Path,
+        [string]$Path
         
-        [Parameter(Mandatory)]
-        [string]$Description
     )
     
     if (-not (Test-Path $Path)) {
         try {
             New-Item -ItemType Directory -Path $Path -Force | Out-Null
-            Write-Verbose "Created $Description directory: $Path"
+            Write-Verbose "Created directory: $Path"
         }
         catch {
-            throw "Failed to create $Description directory '$Path': $_"
+            throw "Failed to create directory '$Path': $_"
         }
     }
     
     if (-not (Test-Path $Path -PathType Container)) {
-        throw "$Description '$Path' exists but is not a directory. Please provide a directory path."
+        throw "'$Path' exists but is not a directory. Please provide a directory path."
     }
 }
 
@@ -216,16 +207,6 @@ function Write-Log {
     param([string]$Message, [string]$Level = "INFO")
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logMessage = "[$timestamp] [$Level] $Message"
-
-    # Ensure log directory exists (only on first call)
-    if (-not $script:logDirCreated) {
-        if (-not (Test-Path $script:InstallLogDir)) {
-            New-Item -ItemType Directory -Path $script:InstallLogDir -Force | Out-Null
-        }
-        $script:logDirCreated = $true
-    }
-
-    Add-Content -Path $script:InstallLogFile -Value $logMessage
 
     # Color output based on level
     switch ($Level) {
@@ -288,31 +269,10 @@ function Show-ToastNotification {
             $xml.LoadXml($ToastXml)
             $toast = New-Object Windows.UI.Notifications.ToastNotification $xml
             [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("ChezmoiSync").Show($toast)
-        } catch {
+        }
+        catch {
             Write-Log "Failed to show toast notification: $_" "WARN"
         }
-    }
-}
-
-# Function to rotate log files
-function Move-LogFile {
-    param(
-        [string]$LogFilePath,
-        [int]$MaxSizeMB = 10,
-        [int]$MaxRotations = 5
-    )
-    
-    if ((Test-Path $LogFilePath) -and ((Get-Item $LogFilePath).Length -gt ($MaxSizeMB * 1MB))) {
-        # Rotate existing logs
-        for ($i = $MaxRotations - 1; $i -gt 0; $i--) {
-            $src = "$LogFilePath.$i"
-            $dst = "$LogFilePath.$($i + 1)"
-            if (Test-Path $src) {
-                Move-Item $src $dst -Force
-            }
-        }
-        Move-Item $LogFilePath "$LogFilePath.1" -Force
-        Write-Log "Log file rotated" "INFO"
     }
 }
 
@@ -326,12 +286,12 @@ function Save-ServiceConfig {
     )
     
     $config = @{
-        ChezmoiPath = $ChezmoiPath
+        ChezmoiPath         = $ChezmoiPath
         SyncIntervalMinutes = $SyncIntervalMinutes
-        EnableReAdd = $EnableReAdd
-        LogLevel = "INFO"
-        MaxLogSizeMB = 10
-        MaxLogRotations = 5
+        EnableReAdd         = $EnableReAdd
+        LogLevel            = "INFO"
+        MaxLogSizeMB        = 10
+        MaxLogRotations     = 5
     }
     
     try {
@@ -378,8 +338,6 @@ function Invoke-ChezmoiSync {
     
     try {
         # Rotate log if needed
-        Move-LogFile -LogFilePath $ServiceLogFile -MaxSizeMB 10 -MaxRotations 5
-        
         Write-Log "Starting chezmoi sync..." "INFO"
         
         # Check if chezmoi.exe exists
@@ -479,7 +437,8 @@ function Remove-ServyServiceAndWait {
 
             if ($stopped) {
                 Write-Log "Service stopped"
-            } else {
+            }
+            else {
                 Write-Log "Service stop timed out" "WARN"
             }
 
@@ -516,7 +475,8 @@ function Remove-ServyServiceAndWait {
                 
                 if ($stopped) {
                     Write-Log "Service stopped successfully"
-                } else {
+                }
+                else {
                     Write-Log "Service stop timed out" "WARN"
                 }
             }
@@ -654,7 +614,8 @@ function Install-ServyServiceAndWait {
             # Handle "cannot overwrite itself" gracefully
             if ($_.Exception.Message -like "*Cannot overwrite the item with itself*") {
                 Write-Log "Script already at destination (same file)" "INFO"
-            } else {
+            }
+            else {
                 Write-Log "Failed to copy service script: $_" "ERROR"
                 throw
             }
@@ -723,9 +684,9 @@ function Install-ServyServiceAndWait {
 if ($PSCmdlet.ParameterSetName -eq "Install") {
     # Ensure required directories exist
     try {
-        Assert-DirectoryExists -Path $ServiceScriptDest -Description "ServiceScriptDest"
-        Assert-DirectoryExists -Path $InstallLogDir -Description "InstallLogDir"
-        Assert-DirectoryExists -Path $ServiceDir -Description "ServiceDir"
+        Assert-CreateDirectory -Path $ServiceScriptDest
+        Assert-CreateDirectory -Path $InstallLogDir
+        Assert-CreateDirectory -Path $ServiceDir
     }
     catch {
         Write-Error $_
@@ -749,7 +710,7 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
     
     # Ensure ServiceLogDir exists
     try {
-        Assert-DirectoryExists -Path $ServiceLogDir -Description "ServiceLogDir"
+        Assert-CreateDirectory -Path $ServiceLogDir
     }
     catch {
         Write-Error $_
@@ -830,7 +791,8 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
     try {
         $ChezmoiPath = (Get-Command chezmoi -ErrorAction Stop).Source
         Write-Log "Found chezmoi at: $ChezmoiPath"
-    } catch {
+    }
+    catch {
         Write-Log "chezmoi.exe not found in PATH. Please install chezmoi first." "ERROR"
         Write-Log "Visit https://www.chezmoi.io/install/ for installation instructions." "ERROR"
         exit 1
@@ -864,7 +826,8 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
         $contextType = if ($credDomain) { 
             [System.DirectoryServices.AccountManagement.ContextType]::Domain 
-        } else { 
+        }
+        else { 
             [System.DirectoryServices.AccountManagement.ContextType]::Machine 
         }
         $context = if ($credDomain) { $credDomain } else { $env:COMPUTERNAME }
@@ -923,12 +886,14 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
         $ChezmoiPath = $config.ChezmoiPath
         $IntervalSeconds = $config.SyncIntervalMinutes * 60
         Write-Log "Using configuration from: $ConfigPath"
-    } else {
+    }
+    else {
         # Fallback to defaults if config not found
         Write-Log "Configuration not found, using defaults" "WARN"
         try {
             $ChezmoiPath = (Get-Command chezmoi -ErrorAction Stop).Source
-        } catch {
+        }
+        catch {
             Write-Log "FATAL: chezmoi.exe not found in PATH and no configuration file exists" "ERROR"
             exit 1
         }
