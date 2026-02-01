@@ -1,3 +1,4 @@
 *.log
+*.tmp
 sync_service/logs/*
 sync_service/config.json

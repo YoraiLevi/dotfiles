@@ -427,7 +427,9 @@ Chezmoi path: $ChezmoiPath
         }
         $Chezmoi_diff = $(& $ChezmoiPath git pull -- --autostash --rebase) | Out-String
         $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
-        if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) {
+    
+        if ((-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) -or ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date))) {
+            (Get-Date).Date.AddHours(6).DateTime > "$PSScriptRoot/date.tmp"
             # Execute chezmoi update --init --apply --force
             & $ChezmoiPath update --init --apply --force 2>&1
             $exitCode = $LASTEXITCODE
