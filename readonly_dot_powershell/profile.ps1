@@ -1,5 +1,9 @@
-# if (-not ($ENV:CHEZMOI -eq 1)){ # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
-# }
+# chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
+if (($ENV:CHEZMOI -eq 1)) {
+    # don't load the profile if chezmoi is active
+    # why would you edit with chezmoi active anyway?
+    return
+}
 try {
     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
     Import-Module posh-git -ErrorAction Stop
@@ -43,13 +47,13 @@ function Get-ChocoPackage {
         [Parameter(Mandatory)]
         [string]$PackageName
     )
-    $choco_list = choco list --lo --limit-output --exact $PackageName | ConvertFrom-Csv -delimiter "|" -Header Id, Version
+    $choco_list = choco list --lo --limit-output --exact $PackageName | ConvertFrom-Csv -Delimiter "|" -Header Id, Version
     return $choco_list
 }
 function Select-Zip {
     # https://stackoverflow.com/a/44055098/12603110
     [CmdletBinding()]
-    Param(
+    param(
         $First,
         $Second,
         $ResultSelector = { , $args }
@@ -132,11 +136,11 @@ function Invoke-YesNoPrompt {
     )
     # https://stackoverflow.com/a/60101530/12603110 - Prompt for yes or no - without repeating on new line if wrong input
     $Cursor = [System.Console]::CursorTop
-    Do {
+    do {
         [System.Console]::CursorTop = $Cursor
         $Answer = Read-Host -Prompt "$Prompt (y/n)"
     }
-    Until ($Answer -eq 'y' -or $Answer -eq 'n')
+    until ($Answer -eq 'y' -or $Answer -eq 'n')
     if ($Answer -eq 'y') {
         & $Action
     }
@@ -277,7 +281,7 @@ $PSDefaultParameterValues = @{'Format-Table:Autosize' = $true }
 function ll { param($Path = '') Get-ChildItem -Path $Path -Force }
 
 # https://www.reddit.com/r/PowerShell/comments/fsv3kt/comment/fm4va8o/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-Function Touch-File {
+function Touch-File {
     <#
       .SYNOPSIS
       Creates an empty file
@@ -289,10 +293,10 @@ Function Touch-File {
       Touch "C:\down\test.txt"
     #>
     $file = $args[0]
-    If ($file -eq $null) {
-        Throw 'No filename supplied'
+    if ($file -eq $null) {
+        throw 'No filename supplied'
     }
-    If (Test-Path -Path $file) {
+    if (Test-Path -Path $file) {
         (Get-ChildItem -Path $file).LastWriteTime = Get-Date
     }
     else {
@@ -538,7 +542,7 @@ Set-Alias -Name uvx -Value Invoke-Uvx -Scope Global
 
 function Invoke-Conda {
     Remove-Alias -Name conda -Scope Global
-    If (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
+    if (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
         (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
     }
     conda @args
@@ -583,4 +587,4 @@ else {
 
 # Remove-Variable -Name chezmoi_process
 # Remove-Variable -Name _EDITOR
-Get-Variable | Where-Object Name -notin $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
+Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind

@@ -811,7 +811,9 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
             Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
             
             # Wait with cancellation check
+            $nextSyncTime = (Get-Date).AddSeconds($IntervalSeconds)
             Write-Log "Waiting $IntervalSeconds seconds until next sync..." "INFO"
+            Write-Log "Next sync scheduled at: $($nextSyncTime)" "INFO"
             $waited = 0
             while ((-not $script:shouldStop) -and ($waited -lt $IntervalSeconds)) {
                 Start-Sleep -Seconds 1
