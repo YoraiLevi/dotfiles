@@ -793,7 +793,10 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
 # ============================================================================
 # MAIN EXECUTION - branch based on parameter set
 # ============================================================================
-Write-Log "Script version: $VERSION" "ALWAYS"
+Write-Log "#########################################################" "ALWAYS"
+Write-Log "#################### Chezmoi Sync Service ########################" "ALWAYS"
+Write-Log "#########################################################" "ALWAYS"
+Write-Log "Version: $VERSION" "ALWAYS"
 if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
     # ========================================================================
     # RUN MODE - Execute the service loop
