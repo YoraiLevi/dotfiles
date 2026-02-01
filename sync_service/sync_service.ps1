@@ -259,8 +259,7 @@ function Test-ServyAvailable {
 function Show-ToastNotification {
     param(
         [string]$Title = "Chezmoi Sync Service",
-        [string]$Message,
-        [string]$LogFilePath
+        [string]$Message
     )
     
     # Only works on Windows 10+

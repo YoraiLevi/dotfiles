@@ -147,22 +147,22 @@ function Invoke-YesNoPrompt {
 # $chezmoi_process = chezmoi re-add & # this is a job and not a process object
 # $chezmoi_process = $null
 # weekly update check
-if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
-    (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
-    if ($ENV:CHEZMOI -ne 1) {
-        $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase ; chezmoi diff) | Out-String
-        $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
-        if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) {
-            # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
-            chezmoi diff
-            Invoke-YesNoPrompt -Prompt 'Chezmoi changes detected! Install them now?' -Action { 
-                chezmoi update --init --apply &
-            }
-        }
-    }
-    # fetch latest changes from chezmoi repo
-    # Update-PowerShell # updated with windows update??
-}
+# if ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date)) {
+#     (Get-Date).Date.AddDays(7).DateTime > "$PSScriptRoot/date.tmp"
+#     if ($ENV:CHEZMOI -ne 1) {
+#         $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase ; chezmoi diff) | Out-String
+#         $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
+#         if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) {
+#             # https://www.chezmoi.io/user-guide/daily-operations/#pull-the-latest-changes-from-your-repo-and-see-what-would-change-without-actually-applying-the-changes
+#             chezmoi diff
+#             Invoke-YesNoPrompt -Prompt 'Chezmoi changes detected! Install them now?' -Action { 
+#                 chezmoi update --init --apply &
+#             }
+#         }
+#     }
+#     # fetch latest changes from chezmoi repo
+#     # Update-PowerShell # updated with windows update??
+# }
 
 # # PSReadLine option to add a matching closing bracket for (, [ and { - cannot copy paste it adds brackets in terminal
 # # https://www.reddit.com/r/PowerShell/comments/fsv3kt/comment/fm44e6i/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
