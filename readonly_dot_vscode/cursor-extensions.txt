@@ -3,6 +3,7 @@ anysphere.cursorpyright
 anysphere.remote-containers
 anysphere.remote-ssh
 anysphere.remote-wsl
+arturock.gitstash
 batisteo.vscode-django
 bierner.markdown-mermaid
 britesnow.vscode-toggle-quotes
@@ -13,6 +14,7 @@ dbaeumer.vscode-eslint
 donjayamanne.python-environment-manager
 donjayamanne.python-extension-pack
 eamodio.gitlens
+git-ai.git-ai-vscode
 github.vscode-github-actions
 github.vscode-pull-request-github
 hbenl.vscode-test-explorer
@@ -22,6 +24,7 @@ jackiotyu.git-worktree-manager
 jbro.vscode-default-keybindings
 jebbs.markdown-extended
 kevinrose.vsc-python-indent
+lang2hong.githd
 mark-wiemer.vscode-autohotkey-plus-plus
 monokai.theme-monokai-pro-vscode
 ms-azuretools.vscode-containers
@@ -37,6 +40,7 @@ ms-toolsai.vscode-jupyter-slideshow
 ms-vscode.powershell
 ms-vscode.test-adapter-converter
 njpwerner.autodocstring
+paragdiwan.gitpatch
 randomfractalsinc.snippets-viewer
 redhat.vscode-yaml
 ryuta46.multi-command
