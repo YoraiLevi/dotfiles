@@ -7,6 +7,7 @@ batisteo.vscode-django
 bierner.markdown-mermaid
 britesnow.vscode-toggle-quotes
 codezombiech.gitignore
+danielroedl.meld-diff
 davidanson.vscode-markdownlint
 dbaeumer.vscode-eslint
 donjayamanne.python-environment-manager
