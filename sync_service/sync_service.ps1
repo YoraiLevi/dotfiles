@@ -379,27 +379,30 @@ Chezmoi path: $ChezmoiPath
             Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
             throw "chezmoi re-add failed with exit code $reAddExitCode"
         }
-
-        # Execute chezmoi update --init --apply --force
-        & $ChezmoiPath update --init --apply --force 2>&1
-        $exitCode = $LASTEXITCODE
-        
-        if ($exitCode -eq 0) {
-            Write-Log "Chezmoi sync completed successfully" "SUCCESS"
-        }
-        else {
-            Write-Log "ERROR: Chezmoi sync failed with exit code $exitCode" "ERROR"
-
-            $message = @"
+        $Chezmoi_diff = $(chezmoi git pull -- --autostash --rebase ; chezmoi diff) | Out-String
+        $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
+        if (-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) {
+            # Execute chezmoi update --init --apply --force
+            & $ChezmoiPath update --init --apply --force 2>&1
+            $exitCode = $LASTEXITCODE
+            
+            if ($exitCode -eq 0) {
+                Write-Log "Chezmoi sync completed successfully" "SUCCESS"
+            }
+            else {
+                Write-Log "ERROR: Chezmoi sync failed with exit code $exitCode" "ERROR"
+    
+                $message = @"
 chezmoi update --init --apply --force failed.
 Please check your Chezmoi configuration or the sync log for details.
 
 Chezmoi path: $ChezmoiPath
 "@
-
-            Show-ToastNotification -Message $message
-            Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
-            throw "chezmoi update --init --apply --force failed with exit code $exitCode"
+    
+                Show-ToastNotification -Message $message
+                Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
+                throw "chezmoi update --init --apply --force failed with exit code $exitCode"
+            }
         }
 
     }
