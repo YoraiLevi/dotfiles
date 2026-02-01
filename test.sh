@@ -5,7 +5,46 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
 NC='\033[0m' # No Color
+
+# Parse command line arguments
+VERBOSE=false
+QUIET=false
+
+show_help() {
+    echo "Usage: $0 [OPTIONS]"
+    echo ""
+    echo "System and development environment checker"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help       Show this help message"
+    echo "  -v, --verbose    Show verbose output"
+    echo "  -q, --quiet      Only show summary"
+    echo ""
+}
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        -v|--verbose)
+            VERBOSE=true
+            shift
+            ;;
+        -q|--quiet)
+            QUIET=true
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1"
+            show_help
+            exit 1
+            ;;
+    esac
+done
 
 echo -e "${BLUE}Running system checks...${NC}\n"
 
@@ -86,6 +125,43 @@ fi
 echo -e "\n${YELLOW}Memory:${NC}"
 if command -v free &> /dev/null; then
     free -h | grep "^Mem:" | awk '{print "  Total: "$2"  Used: "$3"  Free: "$4}'
+fi
+
+# Check network connectivity
+echo -e "\n${YELLOW}Network Connectivity:${NC}"
+if ping -c 1 -W 2 8.8.8.8 &> /dev/null; then
+    echo -e "  ${GREEN}✓${NC} Internet connection available"
+else
+    echo -e "  ${RED}✗${NC} No internet connection"
+fi
+
+if ping -c 1 -W 2 github.com &> /dev/null; then
+    echo -e "  ${GREEN}✓${NC} GitHub is reachable"
+else
+    echo -e "  ${RED}✗${NC} GitHub is not reachable"
+fi
+
+# Check important environment variables
+echo -e "\n${YELLOW}Environment Variables:${NC}"
+[ -n "$PATH" ] && echo -e "  ${GREEN}✓${NC} PATH is set (${#PATH} characters)"
+[ -n "$HOME" ] && echo -e "  ${GREEN}✓${NC} HOME: $HOME"
+[ -n "$EDITOR" ] && echo -e "  ${GREEN}✓${NC} EDITOR: $EDITOR" || echo -e "  ${YELLOW}!${NC} EDITOR not set"
+[ -n "$VISUAL" ] && echo -e "  ${GREEN}✓${NC} VISUAL: $VISUAL" || echo -e "  ${YELLOW}!${NC} VISUAL not set"
+
+# Check SSH setup
+echo -e "\n${YELLOW}SSH Configuration:${NC}"
+if [ -d "$HOME/.ssh" ]; then
+    echo -e "  ${GREEN}✓${NC} .ssh directory exists"
+    if [ -f "$HOME/.ssh/id_rsa" ] || [ -f "$HOME/.ssh/id_ed25519" ]; then
+        echo -e "  ${GREEN}✓${NC} SSH key found"
+    else
+        echo -e "  ${YELLOW}!${NC} No SSH key found"
+    fi
+    if [ -f "$HOME/.ssh/config" ]; then
+        echo -e "  ${GREEN}✓${NC} SSH config exists"
+    fi
+else
+    echo -e "  ${RED}✗${NC} .ssh directory not found"
 fi
 
 # Summary
