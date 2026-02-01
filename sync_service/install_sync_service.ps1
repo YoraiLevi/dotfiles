@@ -177,6 +177,12 @@ param(
 )
 
 # ============================================================================
+# SCRIPT INITIALIZATION
+# ============================================================================
+
+$script:logDirCreated = $false
+
+# ============================================================================
 # FUNCTION DEFINITIONS
 # ============================================================================
 
@@ -213,13 +219,13 @@ function Write-Log {
 
     # Ensure log directory exists (only on first call)
     if (-not $script:logDirCreated) {
-        if (-not (Test-Path $InstallLogDir)) {
-            New-Item -ItemType Directory -Path $InstallLogDir -Force | Out-Null
+        if (-not (Test-Path $script:InstallLogDir)) {
+            New-Item -ItemType Directory -Path $script:InstallLogDir -Force | Out-Null
         }
         $script:logDirCreated = $true
     }
 
-    Add-Content -Path $InstallLogFile -Value $logMessage
+    Add-Content -Path $script:InstallLogFile -Value $logMessage
 
     # Color output based on level
     switch ($Level) {
@@ -289,7 +295,7 @@ function Show-ToastNotification {
 }
 
 # Function to rotate log files
-function Rotate-LogFile {
+function Move-LogFile {
     param(
         [string]$LogFilePath,
         [int]$MaxSizeMB = 10,
@@ -372,7 +378,7 @@ function Invoke-ChezmoiSync {
     
     try {
         # Rotate log if needed
-        Rotate-LogFile -LogFilePath $ServiceLogFile -MaxSizeMB 10 -MaxRotations 5
+        Move-LogFile -LogFilePath $ServiceLogFile -MaxSizeMB 10 -MaxRotations 5
         
         Write-Log "Starting chezmoi sync..." "INFO"
         
@@ -481,7 +487,7 @@ function Remove-ServyServiceAndWait {
             Uninstall-ServyService -Quiet -Name $ServiceName
 
             # Wait for service removal confirmation
-            $removed = Wait-ForPredicate -Predicate { -not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) } -TimeoutSeconds 5 -IntervalSeconds 0.2
+            Wait-ForPredicate -Predicate { -not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) } -TimeoutSeconds 5 -IntervalSeconds 0.2
 
             if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
                 Write-Log "Warning: Service '$ServiceName' still exists after Servy removal." "WARN"
@@ -524,7 +530,7 @@ function Remove-ServyServiceAndWait {
             
             if ($LASTEXITCODE -eq 0) {
                 # Wait for service to be fully removed
-                $removed = Wait-ForPredicate -Predicate { 
+                Wait-ForPredicate -Predicate { 
                     -not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) 
                 } -TimeoutSeconds 5 -IntervalSeconds 0.2
                 
@@ -569,7 +575,7 @@ function Start-ServyServiceAndWait {
         }
 
         # Wait for the service to transition to 'Running' (timeout: 8 seconds)
-        $running = Wait-ForPredicate -Predicate { 
+        Wait-ForPredicate -Predicate { 
             $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
             $svc -and $svc.Status -eq 'Running'
         } -TimeoutSeconds 8 -IntervalSeconds 0.5
@@ -679,7 +685,7 @@ function Install-ServyServiceAndWait {
             -Password $password
 
         # Wait for the service to appear in the service list (installed)
-        $created = Wait-ForPredicate -Predicate { Get-Service -Name $ServiceName -ErrorAction SilentlyContinue } -TimeoutSeconds 5 -IntervalSeconds 0.2
+        Wait-ForPredicate -Predicate { Get-Service -Name $ServiceName -ErrorAction SilentlyContinue } -TimeoutSeconds 5 -IntervalSeconds 0.2
 
         # Confirm service object exists
         if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
@@ -751,7 +757,8 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
     }
     
     $ServiceLogFile = Join-Path $ServiceLogDir $LogFileName
-    $InstallLogFile = Join-Path $InstallLogDir "install.log"
+    $script:InstallLogFile = Join-Path $InstallLogDir "install.log"
+    $script:InstallLogDir = $InstallLogDir
     $StdoutLogFile = $ServiceLogFile
     $StderrLogFile = $ServiceLogFile
     $ServiceScriptDestFile = Join-Path $ServiceScriptDest "chezmoi-sync-service.ps1"
@@ -761,7 +768,8 @@ elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
     if (-not (Test-Path $InstallLogDir)) {
         New-Item -ItemType Directory -Path $InstallLogDir -Force | Out-Null
     }
-    $InstallLogFile = Join-Path $InstallLogDir "uninstall.log"
+    $script:InstallLogFile = Join-Path $InstallLogDir "uninstall.log"
+    $script:InstallLogDir = $InstallLogDir
     # Use the same default filename as Install mode for consistency
     $ServiceScriptDestFile = Join-Path $ServiceScriptDest "chezmoi-sync-service.ps1"
 }
@@ -854,7 +862,11 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
         $serviceUsername = $Credentials.UserName  # Full format (DOMAIN\User or MACHINE\User)
         
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-        $contextType = if ($credDomain) { 'Domain' } else { 'Machine' }
+        $contextType = if ($credDomain) { 
+            [System.DirectoryServices.AccountManagement.ContextType]::Domain 
+        } else { 
+            [System.DirectoryServices.AccountManagement.ContextType]::Machine 
+        }
         $context = if ($credDomain) { $credDomain } else { $env:COMPUTERNAME }
         $pc = New-Object System.DirectoryServices.AccountManagement.PrincipalContext($contextType, $context)
         
@@ -898,7 +910,8 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
         }
     }
     
-    # Set the log file for Write-Log function BEFORE calling anything that logs
+    # Set the log file and directory for Write-Log function BEFORE calling anything that logs
+    $script:InstallLogDir = $ServiceLogDir
     $script:InstallLogFile = $ServiceLogFile
     
     # Load configuration (can now safely call Write-Log)
@@ -1001,7 +1014,6 @@ elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
 elseif ($PSCmdlet.ParameterSetName -eq "Install") {
     # Install mode - remove any existing service, then install new one
     $serviceCreated = $false
-    $scriptCopied = $false
     $configCreated = $false
     
     try {
@@ -1056,7 +1068,7 @@ elseif ($PSCmdlet.ParameterSetName -eq "Install") {
             }
         }
         
-        if ($scriptCopied -and (Test-Path $ServiceScriptDestFile)) {
+        if (Test-Path $ServiceScriptDestFile) {
             try {
                 Remove-Item -Path $ServiceScriptDestFile -Force
                 Write-Log "Script rollback completed" "INFO"
