@@ -172,6 +172,7 @@ param(
 # FUNCTION DEFINITIONS
 # ============================================================================
 
+$VERSION = "v20260201"
 
 # Function to write log entries
 function Write-Log {
@@ -185,6 +186,7 @@ function Write-Log {
         "WARN"    = 2
         "SUCCESS" = 1
         "INFO"    = 0
+        "ALWAYS" = 100 # Always log this message
     }
 
     # Get effective log level (script:LogLevel or fallback to INFO)
@@ -780,7 +782,7 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
 # ============================================================================
 # MAIN EXECUTION - branch based on parameter set
 # ============================================================================
-
+Write-Log $VERSION "INFO"
 if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
     # ========================================================================
     # RUN MODE - Execute the service loop
