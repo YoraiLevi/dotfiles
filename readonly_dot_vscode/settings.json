@@ -11,7 +11,6 @@
 	"editor.gotoLocation.multipleImplementations": "gotoAndPeek",
 	"editor.gotoLocation.multipleReferences": "gotoAndPeek",
 	"editor.gotoLocation.multipleTypeDefinitions": "gotoAndPeek",
-	"editor.inlineSuggest.edits.showCollapsed": true,
 	"editor.formatOnSaveMode": "modificationsIfAvailable",
 	"references.preferredLocation": "view",
 	"[python]": {
@@ -176,7 +175,6 @@
 			},
 		],
 	},
-	"editor.minimap.enabled": true,
 	"[dockercompose]": {
 		"editor.insertSpaces": true,
 		"editor.tabSize": 2,
@@ -192,7 +190,6 @@
 		"editor.defaultFormatter": "redhat.vscode-yaml"
 	},
 	"workbench.commandPalette.experimental.suggestCommands": true,
-	"breadcrumbs.enabled": false,
 	"workbench.editor.editorActionsLocation": "titleBar",
 	"window.title": "${dirty} ${rootName}${separator}${activeEditorMedium} ${dirty}",
 	"terminal.integrated.tabs.title": "${shellCommand}",
@@ -213,4 +210,6 @@
 	"githubPullRequests.pullBranch": "never",
 	"gitlens.ai.model": "gitkraken",
 	"gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
+	"editor.inlineSuggest.edits.showCollapsed": true,
+	"editor.minimap.enabled": true,
 }

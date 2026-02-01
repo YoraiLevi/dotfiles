@@ -13,6 +13,7 @@ donjayamanne.python-environment-manager
 donjayamanne.python-extension-pack
 eamodio.gitlens
 github.vscode-github-actions
+github.vscode-pull-request-github
 hbenl.vscode-test-explorer
 humao.rest-client
 ibm.output-colorizer
