@@ -402,6 +402,8 @@ function Invoke-ChezmoiSync {
         if (-not (Test-Path $ChezmoiPath -ErrorAction Stop)) {
             Write-Log "ERROR: chezmoi.exe not found at $ChezmoiPath" "ERROR"
         }
+        $editor = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+        & $editor --list-extensions > $ENV:USERPROFILE\.vscode\editor-extensions.txt
         
         # Execute chezmoi re-add before update
         Write-Log "Running chezmoi re-add..." "INFO"
