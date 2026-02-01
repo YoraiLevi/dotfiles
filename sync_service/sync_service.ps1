@@ -174,38 +174,49 @@ param(
 
 $VERSION = "v20260201"
 
-# Function to write log entries
+# Function to write log entries, now supports pipeline input for $Message
 function Write-Log {
-    param([string]$Message, [string]$Level = "INFO")
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-    $logMessage = "[$timestamp] [$Level] $Message"
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=0)]
+        [string]$Message,
 
-    # Define log level priorities
-    $levelPriority = @{
-        "ERROR"   = 3
-        "WARN"    = 2
-        "SUCCESS" = 1
-        "INFO"    = 0
-        "ALWAYS"  = 100 # Always log this message
+        [Parameter(Position=1)]
+        [string]$Level = "INFO"
+    )
+
+    begin {
+        # Define log level priorities
+        $levelPriority = @{
+            "ERROR"   = 3
+            "WARN"    = 2
+            "SUCCESS" = 1
+            "INFO"    = 0
+            "ALWAYS"  = 100 # Always log this message
+        }
+        # Get effective log level (script:LogLevel or fallback to INFO)
+        $configuredLevel = $script:LogLevel
+        if (-not $configuredLevel) { $configuredLevel = "INFO" }
+        $configuredPriority = $levelPriority[$configuredLevel]
+        if ($null -eq $configuredPriority) { $configuredPriority = 0 } # Default to INFO if unknown
     }
 
-    # Get effective log level (script:LogLevel or fallback to INFO)
-    $configuredLevel = $script:LogLevel
-    if (-not $configuredLevel) { $configuredLevel = "INFO" }
-    $configuredPriority = $levelPriority[$configuredLevel]
-    if ($null -eq $configuredPriority) { $configuredPriority = 0 } # Default to INFO if unknown
+    process {
+        $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        $logMessage = "[$timestamp] [$Level] $Message"
 
-    # Actual message level priority
-    $messagePriority = $levelPriority[$Level]
-    if ($null -eq $messagePriority) { $messagePriority = 0 } # Default to INFO if unknown
+        # Actual message level priority
+        $messagePriority = $levelPriority[$Level]
+        if ($null -eq $messagePriority) { $messagePriority = 0 } # Default to INFO if unknown
 
-    # Only log if message level >= configured level
-    if ($messagePriority -ge $configuredPriority) {
-        switch ($Level) {
-            "ERROR" { Write-Host $logMessage -ForegroundColor Red }
-            "WARN" { Write-Host $logMessage -ForegroundColor Yellow }
-            "SUCCESS" { Write-Host $logMessage -ForegroundColor Green }
-            default { Write-Host $logMessage }
+        # Only log if message level >= configured level
+        if ($messagePriority -ge $configuredPriority) {
+            switch ($Level) {
+                "ERROR" { Write-Host $logMessage -ForegroundColor Red }
+                "WARN" { Write-Host $logMessage -ForegroundColor Yellow }
+                "SUCCESS" { Write-Host $logMessage -ForegroundColor Green }
+                default { Write-Host $logMessage }
+            }
         }
     }
 }
@@ -415,7 +426,7 @@ function Invoke-ChezmoiSync {
         
         # Execute chezmoi re-add before update
         Write-Log "Running chezmoi re-add..." "INFO"
-        & $ChezmoiPath re-add 2>&1
+        & $ChezmoiPath re-add 2>&1 | Out-String | Write-Log
         $reAddExitCode = $LASTEXITCODE
 
         if ($reAddExitCode -eq 0) {
@@ -446,7 +457,7 @@ Chezmoi path: $ChezmoiPath
             (Get-Date).AddHours(6).AddMinutes((Get-Random -Minimum 0 -Maximum 361)).DateTime > "$PSScriptRoot/date.tmp"
             
             # Execute chezmoi update
-            & $ChezmoiPath update --init --apply --force 2>&1
+            & $ChezmoiPath update --init --apply --force 2>&1 | Out-String | Write-Log
             $exitCode = $LASTEXITCODE
             
             if ($exitCode -eq 0) {
