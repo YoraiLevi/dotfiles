@@ -154,7 +154,11 @@ param(
 
     # Install-only parameter for sync interval
     [Parameter(ParameterSetName = "Install")]
-    [int]$SyncIntervalMinutes = 5
+    [int]$SyncIntervalMinutes = 5,
+
+    [Parameter(ParameterSetName = "Install")]
+    [ValidateSet("INFO", "WARN", "ERROR", "SUCCESS")]
+    [string]$LogLevel = "INFO"
 )
 
 # ============================================================================
@@ -168,12 +172,32 @@ function Write-Log {
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logMessage = "[$timestamp] [$Level] $Message"
 
-    # Color output based on level
-    switch ($Level) {
-        "ERROR" { Write-Host $logMessage -ForegroundColor Red }
-        "WARN" { Write-Host $logMessage -ForegroundColor Yellow }
-        "SUCCESS" { Write-Host $logMessage -ForegroundColor Green }
-        default { Write-Host $logMessage }
+    # Define log level priorities
+    $levelPriority = @{
+        "ERROR"   = 3
+        "WARN"    = 2
+        "SUCCESS" = 1
+        "INFO"    = 0
+    }
+
+    # Get effective log level (script:LogLevel or fallback to INFO)
+    $configuredLevel = $script:LogLevel
+    if (-not $configuredLevel) { $configuredLevel = "INFO" }
+    $configuredPriority = $levelPriority[$configuredLevel]
+    if ($null -eq $configuredPriority) { $configuredPriority = 0 } # Default to INFO if unknown
+
+    # Actual message level priority
+    $messagePriority = $levelPriority[$Level]
+    if ($null -eq $messagePriority) { $messagePriority = 0 } # Default to INFO if unknown
+
+    # Only log if message level >= configured level
+    if ($messagePriority -ge $configuredPriority) {
+        switch ($Level) {
+            "ERROR" { Write-Host $logMessage -ForegroundColor Red }
+            "WARN" { Write-Host $logMessage -ForegroundColor Yellow }
+            "SUCCESS" { Write-Host $logMessage -ForegroundColor Green }
+            default { Write-Host $logMessage }
+        }
     }
 }
 # Helper function to ensure directory exists
@@ -760,6 +784,7 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
         throw "Chezmoi path not found at: $ChezmoiPath"
     }
 
+    $script:LogLevel = $LogLevel ?? "INFO"
     # Graceful shutdown flag
     $script:shouldStop = $false
     
