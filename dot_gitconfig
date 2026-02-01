@@ -14,14 +14,14 @@
     eol = lf
 
 # ; https://stackoverflow.com/a/71192747/12603110
-[diff]
-	tool = cursor
+# [diff]
+	# tool = cursor
 #         prompt = false
 # [difftool "vscode-insiders"]
 #         cmd = code-insiders -w -n --diff $LOCAL $REMOTE
 
-[difftool "cursor"]
-        cmd = cursor -w -n --diff $LOCAL $REMOTE
+# [difftool "cursor"]
+        # cmd = cursor -w -n --diff $LOCAL $REMOTE
 
 # [difftool "vscode"]
 # 	cmd = code --wait --diff $LOCAL $REMOTE
