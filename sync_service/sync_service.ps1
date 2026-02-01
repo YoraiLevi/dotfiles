@@ -39,7 +39,13 @@ param(
     # Uninstall switch - uninstalls the service
     [Parameter(ParameterSetName = "Uninstall", Mandatory = $true)]
     [switch]$Uninstall,
-
+    
+    [Parameter(ParameterSetName = "Run")]
+    [Parameter(ParameterSetName = "RunLoop")]
+    [switch]$Run,
+    [Parameter(ParameterSetName = "RunLoop")]
+    [switch]$Loop,
+    
     # Shared parameters (both Install and Uninstall)
     [Parameter(ParameterSetName = "Install")]
     [Parameter(ParameterSetName = "Uninstall")]
@@ -114,6 +120,7 @@ param(
 
     # Install-only parameter
     [Parameter(ParameterSetName = "Install")]
+    [Parameter(ParameterSetName = "RunLoop")]
     [ValidateNotNullOrEmpty()]
     [ValidateScript({
             if (-not (Test-Path $_)) {
@@ -402,8 +409,7 @@ function Invoke-ChezmoiSync {
         if (-not (Test-Path $ChezmoiPath -ErrorAction Stop)) {
             Write-Log "ERROR: chezmoi.exe not found at $ChezmoiPath" "ERROR"
         }
-        $editor = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
-        & $editor --list-extensions > $(Join-Path $ENV:USERPROFILE ".vscode" "$editor-extensions.txt")
+        $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions > $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
         
         # Execute chezmoi re-add before update
         Write-Log "Running chezmoi re-add..." "INFO"
@@ -772,7 +778,7 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
 # MAIN EXECUTION - branch based on parameter set
 # ============================================================================
 
-if ($PSCmdlet.ParameterSetName -eq "Run") {
+if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
     # ========================================================================
     # RUN MODE - Execute the service loop
     # ========================================================================
@@ -809,18 +815,24 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
     Write-Log "Sync interval: $IntervalSeconds seconds" "INFO"
     
     try {
-        while (-not $script:shouldStop) {
-            Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
-            
-            # Wait with cancellation check
-            $nextSyncTime = (Get-Date).AddSeconds($IntervalSeconds)
-            Write-Log "Waiting $IntervalSeconds seconds until next sync..." "INFO"
-            Write-Log "Next sync scheduled at: $($nextSyncTime)" "INFO"
-            $waited = 0
-            while ((-not $script:shouldStop) -and ($waited -lt $IntervalSeconds)) {
-                Start-Sleep -Seconds 1
-                $waited++
+        if ($Loop) {
+            while (-not $script:shouldStop) {
+                $service_script_path = $PSCommandPath
+                & pwsh -NoProfile -ExecutionPolicy Bypass -File $service_script_path -Run:$true -Loop:$false
+                
+                # Wait with cancellation check
+                $nextSyncTime = (Get-Date).AddSeconds($IntervalSeconds)
+                Write-Log "Waiting $IntervalSeconds seconds until next sync..." "INFO"
+                Write-Log "Next sync scheduled at: $($nextSyncTime)" "INFO"
+                $waited = 0
+                while ((-not $script:shouldStop) -and ($waited -lt $IntervalSeconds)) {
+                    Start-Sleep -Seconds 1
+                    $waited++
+                }
             }
+        }
+        else {
+            Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
         }
     }
     catch {
