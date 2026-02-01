@@ -782,7 +782,7 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
 # ============================================================================
 # MAIN EXECUTION - branch based on parameter set
 # ============================================================================
-Write-Log $VERSION "ALWAYS"
+Write-Log "Script version: $VERSION" "ALWAYS"
 if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
     # ========================================================================
     # RUN MODE - Execute the service loop
