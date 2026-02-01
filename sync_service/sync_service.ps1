@@ -522,7 +522,7 @@ function Remove-ServyServiceAndWait {
         $null = Uninstall-ServyService -Quiet -Name $ServiceName -ErrorAction Stop
 
         # Wait for service removal confirmation
-        Wait-ForPredicate -Predicate { -not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) } -TimeoutSeconds 5 -IntervalSeconds 0.2
+        $null = Wait-ForPredicate -Predicate { -not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) } -TimeoutSeconds 5 -IntervalSeconds 0.2
 
         if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
             Write-Log "Warning: Service '$ServiceName' still exists after Servy removal." "WARN"
@@ -560,7 +560,7 @@ function Start-ServyServiceAndWait {
         }
 
         # Wait for the service to transition to 'Running' (timeout: 8 seconds)
-        Wait-ForPredicate -Predicate { 
+        $null = Wait-ForPredicate -Predicate { 
             $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
             $svc -and $svc.Status -eq 'Running'
         } -TimeoutSeconds 8 -IntervalSeconds 0.5
@@ -616,6 +616,8 @@ function Install-ServyServiceAndWait {
     )
 
     $ServiceScriptDestFile = Join-Path $ServiceDir $(Split-Path $PSCommandPath -Leaf)
+    $Params = "-NoProfile -ExecutionPolicy Bypass -File $ServiceScriptDestFile -Run:$true -Loop:$true"
+
     # Create the service using Servy
     try {
         if (-not (Test-ServyAvailable -ServyModulePath $ServyModulePath)) {
@@ -637,7 +639,7 @@ function Install-ServyServiceAndWait {
             -Description $ServiceDescription `
             -Path $PwshPath `
             -StartupDir $env:USERPROFILE `
-            -Params "-NoProfile -ExecutionPolicy Bypass -File `"$ServiceScriptDestFile`"" `
+            -Params $Params `
             -StartupType "Automatic" `
             -Priority "Normal" `
             -Stdout "$StdoutLogFile" `
@@ -646,7 +648,7 @@ function Install-ServyServiceAndWait {
             -Password $password
 
         # Wait for the service to appear in the service list (installed)
-        Wait-ForPredicate -Predicate { Get-Service -Name $ServiceName -ErrorAction SilentlyContinue } -TimeoutSeconds 5 -IntervalSeconds 0.2
+        $null = Wait-ForPredicate -Predicate { Get-Service -Name $ServiceName -ErrorAction SilentlyContinue } -TimeoutSeconds 5 -IntervalSeconds 0.2
 
         # Confirm service object exists
         if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
@@ -689,7 +691,8 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
 }
 elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
 }
-elseif ($PSCmdlet.ParameterSetName -eq "Run") {
+elseif ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
+    $ServiceScriptDestFile = $PSCommandPath
     $ServiceDir = $PSScriptRoot
 }
 
@@ -817,9 +820,7 @@ if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "Run
     try {
         if ($Loop) {
             while (-not $script:shouldStop) {
-                $service_script_path = $PSCommandPath
-                & pwsh -NoProfile -ExecutionPolicy Bypass -File $service_script_path -Run:$true -Loop:$false
-                
+                & $PwshPath -NoProfile -ExecutionPolicy Bypass -File $ServiceScriptDestFile -Run:$true -Loop:$false
                 # Wait with cancellation check
                 $nextSyncTime = (Get-Date).AddSeconds($IntervalSeconds)
                 Write-Log "Waiting $IntervalSeconds seconds until next sync..." "INFO"
