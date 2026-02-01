@@ -60,19 +60,27 @@ param(
     [Parameter(ParameterSetName = "Install")]
     [ValidateNotNullOrEmpty()]
     [string]$ServiceDir = $(
-        # Heuristically determine if current dir is inside chezmoi source dir
-        $homeConfigDir = Join-Path $env:USERPROFILE ".local\share\chezmoi"
-        $cwd = $PWD.ProviderPath
-        if ($cwd -and (Resolve-Path $cwd -ErrorAction SilentlyContinue) -and
-            ([System.IO.Path]::GetFullPath($cwd) -replace '[\\/]+$','').ToLower().StartsWith(
-                ([System.IO.Path]::GetFullPath($homeConfigDir) -replace '[\\/]+$','').ToLower()
-            )
-        ) {
-            # Inside chezmoi source dir: default ServiceDir to script's directory
-            Split-Path -Parent $MyInvocation.MyCommand.Path
+        # Determine chezmoi source directory by running 'chezmoi source-path'
+        $default = "$env:USERPROFILE\.local\share\chezmoi-sync\"
+        try {
+            $chezmoiSourcePath = (& chezmoi source-path) 2>$null
+            if ($null -ne $chezmoiSourcePath -and $chezmoiSourcePath.Trim() -ne "") {
+                $currentDir = [System.IO.Path]::GetFullPath($PWD.ProviderPath)
+                $sourceDir = [System.IO.Path]::GetFullPath($chezmoiSourcePath.Trim())
+                if ($currentDir.ToLower().StartsWith($sourceDir.ToLower())) {
+                    # Current directory is inside source path, use script's path
+                    Split-Path -Parent $MyInvocation.MyCommand.Path
+                }
+                else {
+                    $default
+                }
+            }
+            else {
+                $default
+            }
         }
-        else {
-            "$env:USERPROFILE\.local\share\chezmoi-sync\"
+        catch {
+            $default
         }
     ),
 
@@ -828,7 +836,17 @@ elseif ($PSCmdlet.ParameterSetName -eq "Install") {
         
         # Copy this script with consistent name
         $currentScriptPath = $PSCommandPath
-        Copy-Item -Path $currentScriptPath -Destination $ServiceDir -Force -ErrorAction Stop
+        try {
+            Copy-Item -Path $currentScriptPath -Destination $ServiceDir -Force -ErrorAction Stop
+        }
+        catch {
+            # If copying failed because the source and destination are the same, continue silently
+            if ($_.Exception.Message -like 'Cannot overwrite the item * with itself.') {
+            }
+            else {
+                throw
+            }
+        }
         Write-Log "Service script copied and verified: $ServiceDir" "SUCCESS"
 
         Install-ServyServiceAndWait `

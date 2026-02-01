@@ -1,0 +1,7 @@
+[2026-02-01 08:17:04] [INFO] Configuration loaded from: C:\Users\devic\.local\share\chezmoi\sync_service\config.json
+[2026-02-01 08:17:04] [INFO] Chezmoi Sync Service started
+[2026-02-01 08:17:04] [INFO] Chezmoi path: C:\ProgramData\chocolatey\bin\chezmoi.exe
+[2026-02-01 08:17:04] [INFO] Sync interval: 300 seconds
+[2026-02-01 08:17:04] [INFO] Starting chezmoi sync...
+[2026-02-01 08:17:04] [INFO] Running chezmoi re-add...
+C:\Users\devic\.local\share\chezmoi\.chezmoihooks\re-add\pre.ps1
