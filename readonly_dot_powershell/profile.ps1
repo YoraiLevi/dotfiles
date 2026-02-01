@@ -24,7 +24,7 @@ $existingVariables = Get-Variable # Some setup may not work if the variables are
 $_EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
 Set-Alias -Name code -Value $_EDITOR
 Set-Alias -Name vscode -Value $_EDITOR
-$ENV:EDITOR = "$_EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
+# $ENV:EDITOR = "$_EDITOR -w -n" # chezmoi compatibility... exec: "code" executable file not found in %PATH%
 # $ENV:GIT_EXTERNAL_DIFF = $_EDITOR
 Set-Alias -Name sudo -Value gsudo
 
