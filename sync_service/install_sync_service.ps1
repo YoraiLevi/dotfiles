@@ -169,62 +169,16 @@ param(
     [Parameter(ParameterSetName = "Install", Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
     [ValidatePattern('^[^\\/:*?"<>|]+$')]
-    [string]$LogFileName = "sync-service.log"
+    [string]$LogFileName = "sync-service.log",
+
+    # Install-only parameter for sync interval
+    [Parameter(ParameterSetName = "Install")]
+    [int]$SyncIntervalMinutes = 5
 )
 
-# Parameter validation for Install mode (shared parameters need stricter validation)
-if ($PSCmdlet.ParameterSetName -eq "Install") {
-    # Ensure required directories exist
-    try {
-        Assert-DirectoryExists -Path $ServiceScriptDest -Description "ServiceScriptDest"
-        Assert-DirectoryExists -Path $InstallLogDir -Description "InstallLogDir"
-        Assert-DirectoryExists -Path $ServiceDir -Description "ServiceDir"
-    }
-    catch {
-        Write-Error $_
-        exit 1
-    }
-    
-    # Validate ServyModulePath exists for Install mode
-    if (-not (Test-Path $ServyModulePath -PathType Leaf)) {
-        Write-Error "ServyModulePath '$ServyModulePath' must be an existing '.psm1' file."
-        exit 1
-    }
-    if ([System.IO.Path]::GetExtension($ServyModulePath).ToLower() -ne ".psm1") {
-        Write-Error "ServyModulePath '$ServyModulePath' must be an existing '.psm1' file."
-        exit 1
-    }
-}
-
-# Log file paths (parameter dependent)
-if ($PSCmdlet.ParameterSetName -eq "Install") {
-    $ServiceLogDir = Join-Path $ServiceDir "logs"
-    
-    # Ensure ServiceLogDir exists
-    try {
-        Assert-DirectoryExists -Path $ServiceLogDir -Description "ServiceLogDir"
-    }
-    catch {
-        Write-Error $_
-        exit 1
-    }
-    
-    $serviceLogFile = Join-Path $ServiceLogDir $LogFileName
-    $InstallLogFile = Join-Path $InstallLogDir "install.log"
-    $StdoutLogFile = $serviceLogFile
-    $StderrLogFile = $serviceLogFile
-    $WrapperScriptDestFile = Join-Path $WrapperScriptDest (Split-Path $WrapperScriptSource -Leaf)
-}
-elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
-    # Uninstall mode - create log directory if it doesn't exist
-    if (-not (Test-Path $InstallLogDir)) {
-        New-Item -ItemType Directory -Path $InstallLogDir -Force | Out-Null
-    }
-    $InstallLogFile = Join-Path $InstallLogDir "uninstall.log"
-    # Use the same default filename as Install mode for consistency
-    $ServiceScriptDestFile = Join-Path $ServiceScriptDest "chezmoi-sync-service.ps1"
-}
-
+# ============================================================================
+# FUNCTION DEFINITIONS
+# ============================================================================
 
 # Helper function to ensure directory exists
 function Assert-DirectoryExists {
@@ -276,66 +230,6 @@ function Write-Log {
     }
 }
 
-# Check if running as Administrator (only for Install/Uninstall modes)
-if ($PSCmdlet.ParameterSetName -eq "Install" -or $PSCmdlet.ParameterSetName -eq "Uninstall") {
-    try {
-        $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-        $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-
-        if (-not $isAdmin) {
-            Write-Log "This script requires Administrator privileges for Install/Uninstall operations. Please run as Administrator." "ERROR"
-            exit 1
-        }
-    }
-    catch {
-        Write-Log "Failed to check Administrator privileges: $_" "ERROR"
-        exit 1
-    }
-}
-
-# Import Servy PowerShell Module
-try {
-    if (Test-Path $ServyModulePath) {
-        Import-Module $ServyModulePath -Force
-        Write-Log "Servy PowerShell module loaded successfully"
-    }
-    else {
-        if ($PSCmdlet.ParameterSetName -eq "Install") {
-            Write-Log "Servy module not found at $ServyModulePath" "ERROR"
-            exit 1
-        }
-        else {
-            Write-Log "Servy module not found at $ServyModulePath - will attempt standard removal" "WARN"
-        }
-    }
-}
-catch {
-    if ($PSCmdlet.ParameterSetName -eq "Install") {
-        Write-Log "Failed to load Servy module: $_" "ERROR"
-        exit 1
-    }
-    else {
-        Write-Log "Failed to load Servy module: $_" "WARN"
-    }
-}
-
-# Get current user Credentials for the service (Install mode only)
-if ($PSCmdlet.ParameterSetName -eq "Install") {
-    if (-not $Credentials) {
-        Write-Host "`nPlease enter your Windows password to configure the service account:" -ForegroundColor Cyan
-        Write-Log "Service will run as current user: $env:USERNAME"
-        $Credentials = Get-Credential -UserName "$env:USERDOMAIN\$env:USERNAME" -Message "Enter password for service account"
-        if (-not $Credentials) {
-            Write-Log "Credential input cancelled" "ERROR"
-            exit 1
-        }
-    }
-    Write-Log "Starting Chezmoi Sync Service installation..."
-}
-else {
-    Write-Log "Starting Chezmoi Sync Service uninstallation..."
-}
-
 function Wait-ForPredicate {
     param (
         [Parameter(Mandatory)]
@@ -351,117 +245,122 @@ function Wait-ForPredicate {
     $elapsed = 0
     while ($elapsed -lt $TimeoutSeconds) {
         if (& $Predicate) {
-            break
+            return $true
         }
         Start-Sleep -Seconds $IntervalSeconds
         $elapsed += $IntervalSeconds
     }
+    return $false
 }
 
-# ============================================================================
-# SERVICE-SPECIFIC FUNCTIONS (Run mode only)
-# ============================================================================
-
-# Function to show custom error dialog
-function Show-ErrorDialog {
+# Function to show toast notifications (replaces GUI dialogs for service context)
+function Show-ToastNotification {
     param(
+        [string]$Title = "Chezmoi Sync Service",
         [string]$Message,
         [string]$LogFilePath
     )
     
-    Add-Type -AssemblyName System.Windows.Forms
-    Add-Type -AssemblyName System.Drawing
-    
-    # Create the form
-    $form = New-Object System.Windows.Forms.Form
-    $form.Text = "Chezmoi Sync Service Error"
-    $form.Size = New-Object System.Drawing.Size(500, 280)
-    $form.StartPosition = "CenterScreen"
-    $form.FormBorderStyle = "FixedDialog"
-    $form.MaximizeBox = $false
-    $form.MinimizeBox = $false
-    $form.TopMost = $true
-    
-    # Error icon (PictureBox)
-    $iconBox = New-Object System.Windows.Forms.PictureBox
-    $iconBox.Location = New-Object System.Drawing.Point(20, 20)
-    $iconBox.Size = New-Object System.Drawing.Size(32, 32)
-    $iconBox.Image = [System.Drawing.SystemIcons]::Error.ToBitmap()
-    $form.Controls.Add($iconBox)
-    
-    # Message label
-    $label = New-Object System.Windows.Forms.Label
-    $label.Location = New-Object System.Drawing.Point(65, 20)
-    $label.Size = New-Object System.Drawing.Size(400, 160)
-    $label.Text = $Message
-    $label.AutoSize = $false
-    $form.Controls.Add($label)
-    
-    # Button panel for layout
-    $buttonPanel = New-Object System.Windows.Forms.FlowLayoutPanel
-    $buttonPanel.FlowDirection = "LeftToRight"
-    $buttonPanel.Location = New-Object System.Drawing.Point(20, 190)
-    $buttonPanel.Size = New-Object System.Drawing.Size(450, 40)
-    $buttonPanel.Anchor = "Bottom"
-    $buttonPanel.WrapContents = $false
-    
-    # Open Log button
-    $btnOpenLog = New-Object System.Windows.Forms.Button
-    $btnOpenLog.Size = New-Object System.Drawing.Size(120, 30)
-    $btnOpenLog.Text = "Open Log"
-    $btnOpenLog.DialogResult = [System.Windows.Forms.DialogResult]::Yes
-    $buttonPanel.Controls.Add($btnOpenLog)
-    
-    # Copy Path button
-    $btnCopyPath = New-Object System.Windows.Forms.Button
-    $btnCopyPath.Size = New-Object System.Drawing.Size(120, 30)
-    $btnCopyPath.Text = "Copy Path"
-    $btnCopyPath.DialogResult = [System.Windows.Forms.DialogResult]::No
-    $buttonPanel.Controls.Add($btnCopyPath)
-    
-    # OK button
-    $btnOK = New-Object System.Windows.Forms.Button
-    $btnOK.Size = New-Object System.Drawing.Size(120, 30)
-    $btnOK.Text = "OK"
-    $btnOK.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
-    $buttonPanel.Controls.Add($btnOK)
-    
-    $form.Controls.Add($buttonPanel)
-    $form.AcceptButton = $btnOK
-    
-    # Show dialog and handle result internally
-    $result = $form.ShowDialog()
-    
-    switch ($result) {
-        ([System.Windows.Forms.DialogResult]::Yes) {
-            # Open Log button clicked
-            try {
-                if (Test-Path $LogFilePath) {
-                    & $LogFilePath
-                }
-            }
-            catch {
-                Write-Log "Unable to open log file automatically: $_" "ERROR"
-            }
-        }
-        ([System.Windows.Forms.DialogResult]::No) {
-            # Copy Path button clicked
-            try {
-                $LogFilePath | Set-Clipboard
-                Write-Log "Log file path copied to clipboard" "INFO"
-                [System.Windows.Forms.MessageBox]::Show(
-                    "Log file path copied to clipboard:`n$LogFilePath",
-                    "Copied!",
-                    [System.Windows.Forms.MessageBoxButtons]::OK,
-                    [System.Windows.Forms.MessageBoxIcon]::Information
-                ) | Out-Null
-            }
-            catch {
-                Write-Log "Failed to copy log file path to clipboard: $_" "ERROR"
-            }
+    # Only works on Windows 10+
+    if ([Environment]::OSVersion.Version.Major -ge 10) {
+        $ToastXml = @"
+<toast>
+    <visual>
+        <binding template="ToastGeneric">
+            <text>$Title</text>
+            <text>$Message</text>
+            <text>Log: $LogFilePath</text>
+        </binding>
+    </visual>
+</toast>
+"@
+        try {
+            [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
+            [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime] | Out-Null
+            
+            $xml = New-Object Windows.Data.Xml.Dom.XmlDocument
+            $xml.LoadXml($ToastXml)
+            $toast = New-Object Windows.UI.Notifications.ToastNotification $xml
+            [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("ChezmoiSync").Show($toast)
+        } catch {
+            Write-Log "Failed to show toast notification: $_" "WARN"
         }
     }
-    # OK or X button: do nothing
+}
+
+# Function to rotate log files
+function Rotate-LogFile {
+    param(
+        [string]$LogFilePath,
+        [int]$MaxSizeMB = 10,
+        [int]$MaxRotations = 5
+    )
+    
+    if ((Test-Path $LogFilePath) -and ((Get-Item $LogFilePath).Length -gt ($MaxSizeMB * 1MB))) {
+        # Rotate existing logs
+        for ($i = $MaxRotations - 1; $i -gt 0; $i--) {
+            $src = "$LogFilePath.$i"
+            $dst = "$LogFilePath.$($i + 1)"
+            if (Test-Path $src) {
+                Move-Item $src $dst -Force
+            }
+        }
+        Move-Item $LogFilePath "$LogFilePath.1" -Force
+        Write-Log "Log file rotated" "INFO"
+    }
+}
+
+# Function to save service configuration
+function Save-ServiceConfig {
+    param(
+        [string]$ConfigPath,
+        [string]$ChezmoiPath,
+        [int]$SyncIntervalMinutes,
+        [bool]$EnableReAdd = $true
+    )
+    
+    $config = @{
+        ChezmoiPath = $ChezmoiPath
+        SyncIntervalMinutes = $SyncIntervalMinutes
+        EnableReAdd = $EnableReAdd
+        LogLevel = "INFO"
+        MaxLogSizeMB = 10
+        MaxLogRotations = 5
+    }
+    
+    try {
+        $configDir = Split-Path $ConfigPath -Parent
+        if (-not (Test-Path $configDir)) {
+            New-Item -ItemType Directory -Path $configDir -Force | Out-Null
+        }
+        
+        $config | ConvertTo-Json | Set-Content -Path $ConfigPath -Encoding UTF8
+        Write-Log "Configuration saved to: $ConfigPath"
+    }
+    catch {
+        Write-Log "Failed to save configuration: $_" "ERROR"
+        throw
+    }
+}
+
+# Function to load service configuration
+function Get-ServiceConfig {
+    param([string]$ConfigPath)
+    
+    if (-not (Test-Path $ConfigPath)) {
+        Write-Log "Configuration file not found at: $ConfigPath" "WARN"
+        return $null
+    }
+    
+    try {
+        $config = Get-Content -Path $ConfigPath -Raw | ConvertFrom-Json
+        Write-Log "Configuration loaded from: $ConfigPath"
+        return $config
+    }
+    catch {
+        Write-Log "Failed to load configuration: $_" "ERROR"
+        return $null
+    }
 }
 
 # Function to execute chezmoi command
@@ -472,15 +371,19 @@ function Invoke-ChezmoiSync {
     )
     
     try {
+        # Rotate log if needed
+        Rotate-LogFile -LogFilePath $ServiceLogFile -MaxSizeMB 10 -MaxRotations 5
+        
         Write-Log "Starting chezmoi sync..." "INFO"
         
         # Check if chezmoi.exe exists
         if (-not (Test-Path $ChezmoiPath)) {
             Write-Log "ERROR: chezmoi.exe not found at $ChezmoiPath" "ERROR"
+            Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
             return
         }
         
-        # Execute chezmoi re-add before init --apply
+        # Execute chezmoi re-add before update
         Write-Log "Running chezmoi re-add..." "INFO"
         & $ChezmoiPath re-add 2>&1 | Tee-Object -FilePath $ServiceLogFile -Append | Out-Null
         $reAddExitCode = $LASTEXITCODE
@@ -499,11 +402,12 @@ Chezmoi path: $ChezmoiPath
 Log file: $ServiceLogFile
 "@
 
-            Show-ErrorDialog -Message $message -LogFilePath $ServiceLogFile
-            exit 1
+            Show-ToastNotification -Message $message -LogFilePath $ServiceLogFile
+            Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
+            return
         }
 
-        # Execute chezmoi init --apply
+        # Execute chezmoi update --init --apply --force
         $output = & $ChezmoiPath update --init --apply --force 2>&1 | Tee-Object -FilePath $ServiceLogFile -Append
         $exitCode = $LASTEXITCODE
         
@@ -517,27 +421,25 @@ Log file: $ServiceLogFile
             Write-Log "ERROR: Chezmoi sync failed with exit code $exitCode" "ERROR"
 
             $message = @"
-chezmoi init --apply failed.
+chezmoi update --init --apply --force failed.
 Please check your Chezmoi configuration or the sync log for details.
 
 Chezmoi path: $ChezmoiPath
 Log file: $ServiceLogFile
 "@
 
-            Show-ErrorDialog -Message $message -LogFilePath $ServiceLogFile
+            Show-ToastNotification -Message $message -LogFilePath $ServiceLogFile
+            Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
+            return
         }
-        exit 1
 
     }
     catch {
         Write-Log "ERROR: Exception during chezmoi sync - $_" "ERROR"
         Write-Log "Stack trace: $($_.ScriptStackTrace)" "ERROR"
+        Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
     }
 }
-
-# ============================================================================
-# INSTALL/UNINSTALL FUNCTIONS
-# ============================================================================
 
 function Remove-ServyServiceAndWait {
     [CmdletBinding()]
@@ -554,7 +456,7 @@ function Remove-ServyServiceAndWait {
     Write-Log "Service '$ServiceName' found. Stopping and removing..."
 
     # Try to use Servy if available
-    $servyAvailable = Get-Command Uninstall-ServyService -ErrorAction SilentlyContinue
+    $servyAvailable = $script:ServyAvailable
     
     try {
         if ($servyAvailable) {
@@ -564,18 +466,22 @@ function Remove-ServyServiceAndWait {
             Stop-ServyService -Quiet -Name $ServiceName
 
             # Wait for the service to stop
-            Wait-ForPredicate -Predicate { 
+            $stopped = Wait-ForPredicate -Predicate { 
                 $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
                 (-not $service) -or ($service.Status -eq 'Stopped')
             } -TimeoutSeconds 5 -IntervalSeconds 0.2
 
-            Write-Log "Service stopped"
+            if ($stopped) {
+                Write-Log "Service stopped"
+            } else {
+                Write-Log "Service stop timed out" "WARN"
+            }
 
             # Remove the service
             Uninstall-ServyService -Quiet -Name $ServiceName
 
             # Wait for service removal confirmation
-            Wait-ForPredicate -Predicate { -not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) } -TimeoutSeconds 5 -IntervalSeconds 0.2
+            $removed = Wait-ForPredicate -Predicate { -not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) } -TimeoutSeconds 5 -IntervalSeconds 0.2
 
             if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
                 Write-Log "Warning: Service '$ServiceName' still exists after Servy removal." "WARN"
@@ -597,12 +503,16 @@ function Remove-ServyServiceAndWait {
                 Stop-Service -Name $ServiceName -Force -ErrorAction Stop
                 
                 # Wait for service to stop
-                Wait-ForPredicate -Predicate { 
+                $stopped = Wait-ForPredicate -Predicate { 
                     $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
                     (-not $svc) -or ($svc.Status -eq 'Stopped')
                 } -TimeoutSeconds 5 -IntervalSeconds 0.2
                 
-                Write-Log "Service stopped successfully"
+                if ($stopped) {
+                    Write-Log "Service stopped successfully"
+                } else {
+                    Write-Log "Service stop timed out" "WARN"
+                }
             }
             else {
                 Write-Log "Service is already stopped or not found"
@@ -614,7 +524,7 @@ function Remove-ServyServiceAndWait {
             
             if ($LASTEXITCODE -eq 0) {
                 # Wait for service to be fully removed
-                Wait-ForPredicate -Predicate { 
+                $removed = Wait-ForPredicate -Predicate { 
                     -not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) 
                 } -TimeoutSeconds 5 -IntervalSeconds 0.2
                 
@@ -649,7 +559,7 @@ function Start-ServyServiceAndWait {
         Write-Log "Starting service..."
 
         # Try Servy first, fallback to standard Start-Service
-        $servyAvailable = Get-Command Start-ServyService -ErrorAction SilentlyContinue
+        $servyAvailable = $script:ServyAvailable
         
         if ($servyAvailable) {
             Start-ServyService -Quiet -Name $ServiceName
@@ -659,7 +569,7 @@ function Start-ServyServiceAndWait {
         }
 
         # Wait for the service to transition to 'Running' (timeout: 8 seconds)
-        Wait-ForPredicate -Predicate { 
+        $running = Wait-ForPredicate -Predicate { 
             $svc = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
             $svc -and $svc.Status -eq 'Running'
         } -TimeoutSeconds 8 -IntervalSeconds 0.5
@@ -716,20 +626,29 @@ function Install-ServyServiceAndWait {
     # Create the service using Servy
     try {
 
-        # Copy this script itself to destination directory
+        # Copy this script with consistent name
         try {
             $currentScriptPath = $PSCommandPath
             Copy-Item -Path $currentScriptPath -Destination $ServiceScriptDestFile -Force
-            Write-Log "Service script copied to: $ServiceScriptDestFile" "SUCCESS"
+            
+            # Verify copy succeeded
+            if (-not (Test-Path $ServiceScriptDestFile)) {
+                throw "Script copy verification failed - file not found at destination"
+            }
+            
+            $srcSize = (Get-Item $currentScriptPath).Length
+            $dstSize = (Get-Item $ServiceScriptDestFile).Length
+            if ($srcSize -ne $dstSize) {
+                throw "Script copy verification failed - file sizes don't match"
+            }
+            
+            Write-Log "Service script copied and verified: $ServiceScriptDestFile" "SUCCESS"
         }
         catch {
-            if ($_.CategoryInfo.Activity -eq "Copy-Item" -and `
-                    $_.CategoryInfo.Reason -eq "IOException" -and `
-                    $_.Exception.Message -like "*Cannot overwrite the item with itself*") {
-                Write-Log "Copy-Item warning ignored: $_" "WARN"
-                # do not throw, treat as success
-            }
-            else {
+            # Handle "cannot overwrite itself" gracefully
+            if ($_.Exception.Message -like "*Cannot overwrite the item with itself*") {
+                Write-Log "Script already at destination (same file)" "INFO"
+            } else {
                 Write-Log "Failed to copy service script: $_" "ERROR"
                 throw
             }
@@ -737,8 +656,11 @@ function Install-ServyServiceAndWait {
 
         Write-Log "Creating service using Servy..."
 
-        $username = $Credentials.UserName
+        # Use consistent credential format (full DOMAIN\User format for service)
+        $username = $Credentials.UserName  # Full format: DOMAIN\User or MACHINE\User
         $password = $Credentials.GetNetworkCredential().Password
+        
+        Write-Log "Service will run as: $username"
 
         # Install the service using Servy PowerShell Module
         Install-ServyService `
@@ -748,19 +670,16 @@ function Install-ServyServiceAndWait {
             -Description $ServiceDescription `
             -Path $PwshPath `
             -StartupDir $env:USERPROFILE `
-            -Params "-NoProfile -ExecutionPolicy Bypass -File `"$WrapperScriptDestFile`"" `
+            -Params "-NoProfile -ExecutionPolicy Bypass -File `"$ServiceScriptDestFile`"" `
             -StartupType "Automatic" `
             -Priority "Normal" `
             -Stdout "$StdoutLogFile" `
             -Stderr "$StderrLogFile" `
-            -EnableSizeRotation `
-            -RotationSize "10" `
-            -MaxRotations "5" `
             -User $username `
             -Password $password
 
         # Wait for the service to appear in the service list (installed)
-        Wait-ForPredicate -Predicate { Get-Service -Name $ServiceName -ErrorAction SilentlyContinue } -TimeoutSeconds 5 -IntervalSeconds 0.2
+        $created = Wait-ForPredicate -Predicate { Get-Service -Name $ServiceName -ErrorAction SilentlyContinue } -TimeoutSeconds 5 -IntervalSeconds 0.2
 
         # Confirm service object exists
         if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
@@ -788,7 +707,172 @@ function Install-ServyServiceAndWait {
         
         throw
     }
+}
 
+# ============================================================================
+# PARAMETER VALIDATION AND INITIALIZATION
+# ============================================================================
+
+# Parameter validation for Install mode (shared parameters need stricter validation)
+if ($PSCmdlet.ParameterSetName -eq "Install") {
+    # Ensure required directories exist
+    try {
+        Assert-DirectoryExists -Path $ServiceScriptDest -Description "ServiceScriptDest"
+        Assert-DirectoryExists -Path $InstallLogDir -Description "InstallLogDir"
+        Assert-DirectoryExists -Path $ServiceDir -Description "ServiceDir"
+    }
+    catch {
+        Write-Error $_
+        exit 1
+    }
+    
+    # Validate ServyModulePath exists for Install mode
+    if (-not (Test-Path $ServyModulePath -PathType Leaf)) {
+        Write-Error "ServyModulePath '$ServyModulePath' must be an existing '.psm1' file."
+        exit 1
+    }
+    if ([System.IO.Path]::GetExtension($ServyModulePath).ToLower() -ne ".psm1") {
+        Write-Error "ServyModulePath '$ServyModulePath' must be an existing '.psm1' file."
+        exit 1
+    }
+}
+
+# Log file paths (parameter dependent)
+if ($PSCmdlet.ParameterSetName -eq "Install") {
+    $ServiceLogDir = Join-Path $ServiceDir "logs"
+    
+    # Ensure ServiceLogDir exists
+    try {
+        Assert-DirectoryExists -Path $ServiceLogDir -Description "ServiceLogDir"
+    }
+    catch {
+        Write-Error $_
+        exit 1
+    }
+    
+    $ServiceLogFile = Join-Path $ServiceLogDir $LogFileName
+    $InstallLogFile = Join-Path $InstallLogDir "install.log"
+    $StdoutLogFile = $ServiceLogFile
+    $StderrLogFile = $ServiceLogFile
+    $ServiceScriptDestFile = Join-Path $ServiceScriptDest "chezmoi-sync-service.ps1"
+}
+elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
+    # Uninstall mode - create log directory if it doesn't exist
+    if (-not (Test-Path $InstallLogDir)) {
+        New-Item -ItemType Directory -Path $InstallLogDir -Force | Out-Null
+    }
+    $InstallLogFile = Join-Path $InstallLogDir "uninstall.log"
+    # Use the same default filename as Install mode for consistency
+    $ServiceScriptDestFile = Join-Path $ServiceScriptDest "chezmoi-sync-service.ps1"
+}
+
+# ============================================================================
+# MAIN EXECUTION LOGIC
+# ============================================================================
+
+# Check if running as Administrator (only for Install/Uninstall modes)
+if ($PSCmdlet.ParameterSetName -eq "Install" -or $PSCmdlet.ParameterSetName -eq "Uninstall") {
+    try {
+        $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+        $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+        if (-not $isAdmin) {
+            Write-Log "This script requires Administrator privileges for Install/Uninstall operations. Please run as Administrator." "ERROR"
+            exit 1
+        }
+    }
+    catch {
+        Write-Log "Failed to check Administrator privileges: $_" "ERROR"
+        exit 1
+    }
+}
+
+# Import Servy PowerShell Module
+$script:ServyAvailable = $false
+
+try {
+    if (Test-Path $ServyModulePath) {
+        Import-Module $ServyModulePath -Force
+        $script:ServyAvailable = $true
+        Write-Log "Servy PowerShell module loaded successfully"
+    }
+    else {
+        if ($PSCmdlet.ParameterSetName -eq "Install") {
+            Write-Log "Servy module not found at $ServyModulePath" "ERROR"
+            exit 1
+        }
+        else {
+            Write-Log "Servy module not found at $ServyModulePath - will attempt standard removal" "WARN"
+        }
+    }
+}
+catch {
+    if ($PSCmdlet.ParameterSetName -eq "Install") {
+        Write-Log "Failed to load Servy module: $_" "ERROR"
+        exit 1
+    }
+    else {
+        Write-Log "Failed to load Servy module: $_" "WARN"
+    }
+}
+
+# Get current user Credentials for the service (Install mode only)
+if ($PSCmdlet.ParameterSetName -eq "Install") {
+    # Validate chezmoi exists and get absolute path
+    try {
+        $ChezmoiPath = (Get-Command chezmoi -ErrorAction Stop).Source
+        Write-Log "Found chezmoi at: $ChezmoiPath"
+    } catch {
+        Write-Log "chezmoi.exe not found in PATH. Please install chezmoi first." "ERROR"
+        Write-Log "Visit https://www.chezmoi.io/install/ for installation instructions." "ERROR"
+        exit 1
+    }
+    
+    if (-not $Credentials) {
+        Write-Host "`nPlease enter your Windows password to configure the service account:" -ForegroundColor Cyan
+        Write-Log "Service will run as current user: $env:USERNAME"
+        
+        # Get current user in proper format
+        $currentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+        $defaultUsername = $currentUser.Name  # Already in DOMAIN\User or MACHINE\User format
+        
+        $Credentials = Get-Credential -UserName $defaultUsername -Message "Enter password for service account"
+        if (-not $Credentials) {
+            Write-Log "Credential input cancelled" "ERROR"
+            exit 1
+        }
+    }
+    
+    # Validate credentials
+    try {
+        $netCred = $Credentials.GetNetworkCredential()
+        $credUser = $netCred.UserName
+        $credPass = $netCred.Password
+        $credDomain = $netCred.Domain
+        
+        # Use the same format that will be used for service installation
+        $serviceUsername = $Credentials.UserName  # Full format (DOMAIN\User or MACHINE\User)
+        
+        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+        $contextType = if ($credDomain) { 'Domain' } else { 'Machine' }
+        $context = if ($credDomain) { $credDomain } else { $env:COMPUTERNAME }
+        $pc = New-Object System.DirectoryServices.AccountManagement.PrincipalContext($contextType, $context)
+        
+        if (-not $pc.ValidateCredentials($credUser, $credPass)) {
+            Write-Log "Invalid credentials provided. Please check username and password." "ERROR"
+            exit 1
+        }
+        Write-Log "Credentials validated successfully for user: $serviceUsername"
+    }
+    catch {
+        Write-Log "Warning: Could not validate credentials: $_" "WARN"
+        Write-Log "Service installation will continue, but service may fail to start if credentials are incorrect." "WARN"
+    }
+    
+    Write-Log "Starting Chezmoi Sync Service installation..."
+}
+else {
+    Write-Log "Starting Chezmoi Sync Service uninstallation..."
 }
 
 # ============================================================================
@@ -800,11 +884,9 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
     # RUN MODE - Execute the service loop
     # ========================================================================
     
-    # Service configuration
-    $ChezmoiPath = (Get-Command chezmoi).Source
+    # Initialize logging FIRST (before any Write-Log calls)
     $ServiceLogDir = "$env:USERPROFILE\.local\share\chezmoi-sync\logs"
     $ServiceLogFile = Join-Path $ServiceLogDir "sync-service.log"
-    $IntervalSeconds = 5 * 60  # 5 minutes
     
     # Ensure log directory exists
     if (-not (Test-Path $ServiceLogDir)) {
@@ -816,8 +898,38 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
         }
     }
     
-    # Override the InstallLogFile for Run mode to use the service log
+    # Set the log file for Write-Log function BEFORE calling anything that logs
     $script:InstallLogFile = $ServiceLogFile
+    
+    # Load configuration (can now safely call Write-Log)
+    $ConfigPath = "$env:USERPROFILE\.local\share\chezmoi-sync\config.json"
+    $config = Get-ServiceConfig -ConfigPath $ConfigPath
+    
+    # Service configuration - use config if available, otherwise defaults
+    if ($config) {
+        $ChezmoiPath = $config.ChezmoiPath
+        $IntervalSeconds = $config.SyncIntervalMinutes * 60
+        Write-Log "Using configuration from: $ConfigPath"
+    } else {
+        # Fallback to defaults if config not found
+        Write-Log "Configuration not found, using defaults" "WARN"
+        try {
+            $ChezmoiPath = (Get-Command chezmoi -ErrorAction Stop).Source
+        } catch {
+            Write-Log "FATAL: chezmoi.exe not found in PATH and no configuration file exists" "ERROR"
+            exit 1
+        }
+        $IntervalSeconds = 5 * 60  # 5 minutes default
+    }
+    
+    # Graceful shutdown flag
+    $script:shouldStop = $false
+    
+    # Register shutdown handler
+    $null = Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action {
+        $script:shouldStop = $true
+        Write-Log "Shutdown signal received" "INFO"
+    }
     
     # Main service loop
     Write-Log "Chezmoi Sync Service started" "INFO"
@@ -825,11 +937,16 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
     Write-Log "Sync interval: $IntervalSeconds seconds" "INFO"
     
     try {
-        while ($true) {
+        while (-not $script:shouldStop) {
             Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath -ServiceLogFile $ServiceLogFile
             
+            # Wait with cancellation check
             Write-Log "Waiting $IntervalSeconds seconds until next sync..." "INFO"
-            Start-Sleep -Seconds $IntervalSeconds
+            $waited = 0
+            while ((-not $script:shouldStop) -and ($waited -lt $IntervalSeconds)) {
+                Start-Sleep -Seconds 1
+                $waited++
+            }
         }
     }
     catch {
@@ -837,7 +954,7 @@ if ($PSCmdlet.ParameterSetName -eq "Run") {
         throw
     }
     finally {
-        Write-Log "Chezmoi Sync Service stopped" "INFO"
+        Write-Log "Chezmoi Sync Service stopped gracefully" "INFO"
     }
 }
 elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
@@ -883,8 +1000,22 @@ elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
 }
 elseif ($PSCmdlet.ParameterSetName -eq "Install") {
     # Install mode - remove any existing service, then install new one
+    $serviceCreated = $false
+    $scriptCopied = $false
+    $configCreated = $false
+    
     try {
+        # Remove any existing service first
         Remove-ServyServiceAndWait -ServiceName $ServiceName
+        
+        # Create configuration file
+        $ConfigPath = Join-Path $ServiceDir "config.json"
+        Save-ServiceConfig `
+            -ConfigPath $ConfigPath `
+            -ChezmoiPath $ChezmoiPath `
+            -SyncIntervalMinutes $SyncIntervalMinutes `
+            -EnableReAdd $true
+        $configCreated = $true
         
         Install-ServyServiceAndWait `
             -ServiceScriptDestFile $ServiceScriptDestFile `
@@ -892,9 +1023,10 @@ elseif ($PSCmdlet.ParameterSetName -eq "Install") {
             -ServiceName $ServiceName `
             -ServiceDisplayName $ServiceDisplayName `
             -ServiceDescription $ServiceDescription `
-            -pwshPath $PwshPath `
-            -stdoutLogFile $StdoutLogFile `
-            -stderrLogFile $StderrLogFile
+            -PwshPath $PwshPath `
+            -StdoutLogFile $StdoutLogFile `
+            -StderrLogFile $StderrLogFile
+        $serviceCreated = $true
         
         Start-ServyServiceAndWait -ServiceName $ServiceName
 
@@ -904,16 +1036,50 @@ elseif ($PSCmdlet.ParameterSetName -eq "Install") {
         Write-Log "Display Name: $ServiceDisplayName"
         Write-Log "Service Script Directory: $ServiceScriptDest"
         Write-Log "Service Script File: $ServiceScriptDestFile"
-        Write-Log "Service Log File: $serviceLogFile"
+        Write-Log "Service Log File: $ServiceLogFile"
+        Write-Log "Config File: $ConfigPath"
         Write-Log "`nTo check service status: Get-Service -Name $ServiceName"
-        Write-Log "To view service logs: Get-Content '$serviceLogFile' -Tail 20"
+        Write-Log "To view service logs: Get-Content '$ServiceLogFile' -Tail 20"
     }
     catch {
         Write-Log "Installation failed: $_" "ERROR"
+        
+        # Rollback on failure
+        if ($serviceCreated) {
+            try {
+                Write-Log "Rolling back service installation..." "WARN"
+                Remove-ServyServiceAndWait -ServiceName $ServiceName
+                Write-Log "Service rollback completed" "INFO"
+            }
+            catch {
+                Write-Log "Failed to rollback service: $_" "WARN"
+            }
+        }
+        
+        if ($scriptCopied -and (Test-Path $ServiceScriptDestFile)) {
+            try {
+                Remove-Item -Path $ServiceScriptDestFile -Force
+                Write-Log "Script rollback completed" "INFO"
+            }
+            catch {
+                Write-Log "Failed to rollback script: $_" "WARN"
+            }
+        }
+        
+        if ($configCreated -and (Test-Path $ConfigPath)) {
+            try {
+                Remove-Item -Path $ConfigPath -Force
+                Write-Log "Config rollback completed" "INFO"
+            }
+            catch {
+                Write-Log "Failed to rollback config: $_" "WARN"
+            }
+        }
+        
         exit 1
     }
 }
 else {
-    Write-Log "Unknown parameter set '$($PSCmdlet.ParameterSetName)'. Only 'Install' and 'Uninstall' are supported." "ERROR"
+    Write-Log "INTERNAL ERROR: Unknown parameter set '$($PSCmdlet.ParameterSetName)'. This should never happen." "ERROR"
     exit 1
 }
