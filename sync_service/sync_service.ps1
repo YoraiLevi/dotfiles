@@ -59,7 +59,22 @@ param(
     # Shared parameter (needed for both install and uninstall)
     [Parameter(ParameterSetName = "Install")]
     [ValidateNotNullOrEmpty()]
-    [string]$ServiceDir = "$env:USERPROFILE\.local\share\chezmoi-sync\",
+    [string]$ServiceDir = $(
+        # Heuristically determine if current dir is inside chezmoi source dir
+        $homeConfigDir = Join-Path $env:USERPROFILE ".local\share\chezmoi"
+        $cwd = $PWD.ProviderPath
+        if ($cwd -and (Resolve-Path $cwd -ErrorAction SilentlyContinue) -and
+            ([System.IO.Path]::GetFullPath($cwd) -replace '[\\/]+$','').ToLower().StartsWith(
+                ([System.IO.Path]::GetFullPath($homeConfigDir) -replace '[\\/]+$','').ToLower()
+            )
+        ) {
+            # Inside chezmoi source dir: default ServiceDir to script's directory
+            Split-Path -Parent $MyInvocation.MyCommand.Path
+        }
+        else {
+            "$env:USERPROFILE\.local\share\chezmoi-sync\"
+        }
+    ),
 
     # Shared parameter (needed for both install and uninstall)
     [Parameter(ParameterSetName = "Install")]
