@@ -1,6 +1,0 @@
-{
-  "EnableReAdd": true,
-  "LogLevel": "INFO",
-  "SyncIntervalMinutes": 5,
-  "ChezmoiPath": "C:\\ProgramData\\chocolatey\\bin\\chezmoi.exe"
-}
