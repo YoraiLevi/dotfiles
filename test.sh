@@ -50,6 +50,43 @@ echo -e "\n${YELLOW}Checking additional tools:${NC}"
 check_command "docker" "Docker"
 check_command "python3" "Python 3"
 check_command "pip3" "pip3"
+check_command "curl" "curl"
+check_command "wget" "wget"
+check_command "jq" "jq"
+
+# Check for build tools
+echo -e "\n${YELLOW}Checking build tools:${NC}"
+check_command "make" "Make"
+check_command "gcc" "GCC"
+check_command "g++" "G++"
+check_command "cargo" "Rust Cargo"
+check_command "go" "Go"
+
+# Check system information
+echo -e "\n${YELLOW}System Information:${NC}"
+if [ -f /etc/os-release ]; then
+    OS_NAME=$(grep "^PRETTY_NAME" /etc/os-release | cut -d'"' -f2)
+    echo -e "  OS: ${OS_NAME}"
+else
+    echo -e "  OS: $(uname -s) $(uname -r)"
+fi
+echo -e "  Architecture: $(uname -m)"
+echo -e "  Hostname: $(hostname)"
+echo -e "  Shell: ${SHELL}"
+echo -e "  User: ${USER}"
+
+# Check disk space
+echo -e "\n${YELLOW}Disk Space:${NC}"
+df -h / | tail -n 1 | awk '{print "  Root: "$3" used / "$2" total ("$5" used)"}'
+if [ -d "$HOME" ]; then
+    df -h "$HOME" | tail -n 1 | awk '{print "  Home: "$3" used / "$2" total ("$5" used)"}'
+fi
+
+# Check memory
+echo -e "\n${YELLOW}Memory:${NC}"
+if command -v free &> /dev/null; then
+    free -h | grep "^Mem:" | awk '{print "  Total: "$2"  Used: "$3"  Free: "$4}'
+fi
 
 # Summary
 echo -e "\n${BLUE}========================================${NC}"
