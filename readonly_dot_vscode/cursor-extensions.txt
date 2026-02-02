@@ -14,7 +14,6 @@ dbaeumer.vscode-eslint
 donjayamanne.python-environment-manager
 donjayamanne.python-extension-pack
 eamodio.gitlens
-git-ai.git-ai-vscode
 gitcommitpeek.git-commit-peek
 github.vscode-github-actions
 github.vscode-pull-request-github

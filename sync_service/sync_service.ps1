@@ -178,10 +178,10 @@ $VERSION = "v20260201"
 function Write-Log {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=0)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, Position = 0)]
         [string]$Message,
 
-        [Parameter(Position=1)]
+        [Parameter(Position = 1)]
         [string]$Level = "INFO"
     )
 
@@ -794,7 +794,7 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
 # MAIN EXECUTION - branch based on parameter set
 # ============================================================================
 Write-Log "#########################################################" "ALWAYS"
-Write-Log "#################### Chezmoi Sync Service ########################" "ALWAYS"
+Write-Log "############### Chezmoi Sync Service #####################" "ALWAYS"
 Write-Log "#########################################################" "ALWAYS"
 Write-Log "Version: $VERSION" "ALWAYS"
 if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
@@ -829,12 +829,12 @@ if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "Run
     }
     
     # Main service loop
-    Write-Log "Chezmoi Sync Service started" "INFO"
     Write-Log "Chezmoi path: $ChezmoiPath" "INFO"
     Write-Log "Sync interval: $IntervalSeconds seconds" "INFO"
     
-    try {
-        if ($Loop) {
+    if ($Loop) {
+        try {
+            Write-Log "Service started" "INFO"
             while (-not $script:shouldStop) {
                 & $PwshPath -NoProfile -ExecutionPolicy Bypass -File $ServiceScriptDestFile -Run:$true -Loop:$false
                 # Wait with cancellation check
@@ -849,15 +849,21 @@ if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "Run
             }
             Write-Log "Continuous run finished" "INFO"
         }
-        else {
+        catch {
+            Write-Log "FATAL: Service loop terminated - $_" "ERROR"
+            Write-Log "Stack trace: $($_.ScriptStackTrace | Out-String)" "ERROR"
+            throw
+        }
+    }
+    else {
+        try {
             Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
             Write-Log "Run finished" "INFO"
         }
-    }
-    catch {
-        Write-Log "FATAL: Service loop terminated - $_" "ERROR"
-        Write-Log "Stack trace: $($_.ScriptStackTrace)" "ERROR"
-        throw
+        catch {
+            Write-Log "Stack trace: $($_.ScriptStackTrace | Out-String)" "ERROR"
+            throw
+        }
     }
 }
 elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
