@@ -1040,6 +1040,7 @@ elseif ($PSCmdlet.ParameterSetName -eq "Install") {
             -ConfigPath $ConfigPath `
             -ChezmoiPath $ChezmoiPath `
             -SyncIntervalMinutes $SyncIntervalMinutes
+        Set-AdminOnlyPermissions -Path $ConfigPath -AllowUsersRead
         
         # Copy this script with consistent name
         $currentScriptPath = $PSCommandPath
