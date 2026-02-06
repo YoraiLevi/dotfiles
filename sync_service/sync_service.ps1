@@ -679,6 +679,144 @@ function Install-ServyServiceAndWait {
     }
 }
 
+
+function Set-AdminOnlyPermissions {
+    <#
+    .SYNOPSIS
+    Removes all write permissions except for Administrators and SYSTEM
+    
+    .DESCRIPTION
+    Disables inheritance, removes all existing permissions, and grants:
+    - Administrators: Full Control
+    - SYSTEM: Full Control
+    - Users: Read-only (optional)
+    
+    .PARAMETER Path
+    Path to the file to protect
+    
+    .PARAMETER AllowUsersRead
+    If specified, allows Users group to read the file. Otherwise, only Admins and SYSTEM have access.
+    
+    .EXAMPLE
+    Set-AdminOnlyPermissions -Path "C:\path\to\file.txt"
+    
+    .EXAMPLE
+    Set-AdminOnlyPermissions -Path "C:\path\to\file.txt" -AllowUsersRead
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+        [string]$Path,
+        
+        [Parameter(Mandatory=$false)]
+        [switch]$AllowUsersRead
+    )
+    
+    process {
+        if (-not (Test-Path $Path)) {
+            Write-Error "File not found: $Path"
+            return
+        }
+        
+        try {
+            # Get current ACL
+            $acl = Get-Acl $Path
+            
+            # Disable inheritance (protect from parent permissions)
+            # First parameter: true = disable inheritance
+            # Second parameter: false = remove inherited rules
+            $acl.SetAccessRuleProtection($true, $false)
+            
+            # Remove all existing access rules
+            $acl.Access | ForEach-Object { 
+                $acl.RemoveAccessRule($_) | Out-Null
+            }
+            
+            # Add Administrator full control
+            $adminRule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+                "Administrators",
+                "FullControl",
+                "Allow"
+            )
+            $acl.AddAccessRule($adminRule)
+            
+            # Add SYSTEM full control (recommended for system stability)
+            $systemRule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+                "SYSTEM",
+                "FullControl",
+                "Allow"
+            )
+            $acl.AddAccessRule($systemRule)
+            
+            # Optionally: Add read-only for Users
+            if ($AllowUsersRead) {
+                $readRule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+                    "Users",
+                    "Read",
+                    "Allow"
+                )
+                $acl.AddAccessRule($readRule)
+            }
+            
+            # Apply the changes
+            Set-Acl $Path $acl
+            
+            Write-Host "Successfully set admin-only permissions for: $Path" -ForegroundColor Green
+            if ($AllowUsersRead) {
+                Write-Host "Users have read-only access" -ForegroundColor Cyan
+            } else {
+                Write-Host "Only Administrators and SYSTEM have access" -ForegroundColor Cyan
+            }
+        }
+        catch {
+            Write-Error "Failed to set permissions: $_"
+        }
+    }
+}
+function Reset-FilePermissions {
+    <#
+    .SYNOPSIS
+    Resets file permissions to inherit from parent folder (default state)
+    
+    .PARAMETER Path
+    Path to the file to reset permissions
+    
+    .EXAMPLE
+    Reset-FilePermissions -Path "C:\path\to\file.txt"
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+        [string]$Path
+    )
+    
+    process {
+        if (-not (Test-Path $Path)) {
+            Write-Error "File not found: $Path"
+            return
+        }
+        
+        try {
+            # Get current ACL
+            $acl = Get-Acl $Path
+            
+            # Enable inheritance from parent folder
+            # SetAccessRuleProtection(false, false)
+            # - First parameter: false = enable inheritance
+            # - Second parameter: false = remove explicit permissions
+            $acl.SetAccessRuleProtection($false, $false)
+            
+            # Apply the changes
+            Set-Acl $Path $acl
+            
+            Write-Host "Successfully reset permissions for: $Path" -ForegroundColor Green
+            Write-Host "File now inherits permissions from parent folder" -ForegroundColor Cyan
+        }
+        catch {
+            Write-Error "Failed to reset permissions: $_"
+        }
+    }
+}
 # ============================================================================
 # PARAMETER VALIDATION AND INITIALIZATION
 # ============================================================================
@@ -917,6 +1055,7 @@ elseif ($PSCmdlet.ParameterSetName -eq "Install") {
             }
         }
         Write-Log "Service script copied and verified: $ServiceDir" "SUCCESS"
+        Set-AdminOnlyPermissions -Path $ServiceScriptDestFile -AllowUsersRead
 
         Install-ServyServiceAndWait `
             -ServiceDir $ServiceDir `
