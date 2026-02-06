@@ -172,7 +172,8 @@ param(
 # FUNCTION DEFINITIONS
 # ============================================================================
 
-$VERSION = "v20260201"
+$VERSION = "v20260206"
+$ConfigFileName = "config.json"
 
 # Function to write log entries, now supports pipeline input for $Message
 function Write-Log {
@@ -566,10 +567,10 @@ function Start-ServyServiceAndWait {
 
         # Try Servy first, fallback to standard Start-Service
         if (Test-ServyAvailable -ServyModulePath $ServyModulePath) {
-            $null = Start-ServyService -Quiet -Name $ServiceName -ErrorAction Stop
+            Start-ServyService -Quiet -Name $ServiceName -ErrorAction Stop
         }
         else {
-            $null = Start-Service -Name $ServiceName -ErrorAction Stop
+            Start-Service -Name $ServiceName -ErrorAction Stop
         }
 
         # Wait for the service to transition to 'Running' (timeout: 8 seconds)
@@ -603,7 +604,7 @@ function Install-ServyServiceAndWait {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
-        [string]$ServiceDir,
+        [string]$ServiceScriptDestFile,
 
         [Parameter(Mandatory)]
         [PSCredential]$Credentials,
@@ -628,7 +629,6 @@ function Install-ServyServiceAndWait {
         [string]$StderrLogFile
     )
 
-    $ServiceScriptDestFile = Join-Path $ServiceDir $(Split-Path $PSCommandPath -Leaf)
     $Params = "-NoProfile -ExecutionPolicy Bypass -File $ServiceScriptDestFile -Run:$true -Loop:$true"
 
     # Create the service using Servy
@@ -643,10 +643,11 @@ function Install-ServyServiceAndWait {
         $password = $Credentials.GetNetworkCredential().Password
         
         Write-Log "Service will run as: $username"
+    
+
 
         # Install the service using Servy PowerShell Module
-        $null = Install-ServyService `
-            -Quiet -ErrorAction Stop `
+        Install-ServyService `
             -Name $ServiceName `
             -DisplayName $ServiceDisplayName `
             -Description $ServiceDescription `
@@ -658,7 +659,8 @@ function Install-ServyServiceAndWait {
             -Stdout "$StdoutLogFile" `
             -Stderr "$StderrLogFile" `
             -User $username `
-            -Password $password
+            -Password $password `
+            -Quiet
 
         # Wait for the service to appear in the service list (installed)
         $null = Wait-ForPredicate -Predicate { Get-Service -Name $ServiceName -ErrorAction SilentlyContinue } -TimeoutSeconds 5 -IntervalSeconds 0.2
@@ -705,10 +707,10 @@ function Set-AdminOnlyPermissions {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [string]$Path,
         
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch]$AllowUsersRead
     )
     
@@ -761,15 +763,16 @@ function Set-AdminOnlyPermissions {
             # Apply the changes
             Set-Acl $Path $acl
             
-            Write-Host "Successfully set admin-only permissions for: $Path" -ForegroundColor Green
-            if ($AllowUsersRead) {
-                Write-Host "Users have read-only access" -ForegroundColor Cyan
-            } else {
-                Write-Host "Only Administrators and SYSTEM have access" -ForegroundColor Cyan
+            $message = if ($AllowUsersRead) {
+                "Users have read-only access"
             }
+            else {
+                "Only Administrators and SYSTEM have access"
+            }
+            Write-Log "File now has admin-only permissions, $($message): $Path" "INFO"
         }
         catch {
-            Write-Error "Failed to set permissions: $_"
+            Write-Log "Failed to set permissions: $_" "ERROR"
         }
     }
 }
@@ -786,7 +789,7 @@ function Reset-FilePermissions {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [string]$Path
     )
     
@@ -809,11 +812,10 @@ function Reset-FilePermissions {
             # Apply the changes
             Set-Acl $Path $acl
             
-            Write-Host "Successfully reset permissions for: $Path" -ForegroundColor Green
-            Write-Host "File now inherits permissions from parent folder" -ForegroundColor Cyan
+            Write-Log "File now inherits permissions from parent folder: $Path" "INFO"
         }
         catch {
-            Write-Error "Failed to reset permissions: $_"
+            Write-Log "Failed to reset permissions: $_" "ERROR"
         }
     }
 }
@@ -826,6 +828,7 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
     Assert-CreateDirectory -Path $ServiceDir
 
     $ServiceLogDir = Join-Path $ServiceDir "logs"
+    $ServiceScriptDestFile = Join-Path $ServiceDir $(Split-Path $PSCommandPath -Leaf)
     
     # Ensure ServiceLogDir exists
     try {
@@ -841,6 +844,9 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
     $StderrLogFile = $ServiceLogFile
 }
 elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
+    $ServiceScriptDestFile = $PSCommandPath
+    $ServiceDir = $PSScriptRoot
+    $ConfigPath = Join-Path $ServiceDir $ConfigFileName
 }
 elseif ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
     $ServiceScriptDestFile = $PSCommandPath
@@ -882,7 +888,7 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
     }
     
     if (-not $Credentials) {
-        Write-Host "`nPlease enter your Windows password to configure the service account:" -ForegroundColor Cyan
+        Write-Host "Please enter your Windows password to configure the service account:" -ForegroundColor Cyan
         Write-Log "Service will run as current user: $env:USERNAME"
         
         # Get current user in proper format
@@ -939,7 +945,7 @@ if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "Run
     # ========================================================================
     # RUN MODE - Execute the service loop
     # ========================================================================
-    $ConfigPath = Join-Path $ServiceDir "config.json"
+    $ConfigPath = Join-Path $ServiceDir $ConfigFileName
     $config = Get-ServiceConfig -ConfigPath $ConfigPath
     # Service configuration - use config if available, otherwise defaults
     if (-not $config) {
@@ -1008,10 +1014,36 @@ elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
     # Uninstall mode - remove service and cleanup files
     try {
         # Remove the service
-        Remove-ServyServiceAndWait -ServiceName $ServiceName
-        
+        try {
+            Remove-ServyServiceAndWait -ServiceName $ServiceName
+
+        }
+        catch {
+            if ($_.Exception.Message -like 'Service * not found') {
+                Write-Log "Service not found, skipping removal" "WARN"
+            }
+            else {
+                throw
+            }
+        }
+        try {
+            if (Test-Path $ConfigPath -ErrorAction SilentlyContinue) {
+                Reset-FilePermissions -Path $ConfigPath
+            }
+        }
+        catch {
+            Write-Log "Failed to reset permissions for config file: $_" "ERROR"
+        }
+        try {
+            if (Test-Path $ServiceScriptDestFile -ErrorAction SilentlyContinue) {
+                Reset-FilePermissions -Path $ServiceScriptDestFile
+            }
+        }
+        catch {
+            Write-Log "Failed to reset permissions for service script: $_" "ERROR"
+        }
         # Summary
-        Write-Log "`nUninstallation completed!" "SUCCESS"
+        Write-Log "Uninstallation completed!" "SUCCESS"
         Write-Log "Service '$ServiceName' has been removed from the system"
         Write-Log "You can manually delete related files if no longer needed" # consider using the registry/metadata to track installation path/files?
     }
@@ -1030,11 +1062,21 @@ elseif ($PSCmdlet.ParameterSetName -eq "Install") {
         # Remove any existing service first
         if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
             Write-Log "Removing existing service '$ServiceName'..." "INFO"
-            Remove-ServyServiceAndWait -ServiceName $ServiceName
+            try {
+                Remove-ServyServiceAndWait -ServiceName $ServiceName
+            }
+            catch {
+                if ($_.Exception.Message -like 'Service * not found') {
+                    Write-Log "Service not found, skipping removal" "WARN"
+                }
+                else {
+                    throw
+                }
+            }
         }
         
         # Create configuration file
-        $ConfigPath = Join-Path $ServiceDir "config.json"
+        $ConfigPath = Join-Path $ServiceDir $ConfigFileName
         
         Save-ServiceConfig `
             -ConfigPath $ConfigPath `
@@ -1059,7 +1101,7 @@ elseif ($PSCmdlet.ParameterSetName -eq "Install") {
         Set-AdminOnlyPermissions -Path $ServiceScriptDestFile -AllowUsersRead
 
         Install-ServyServiceAndWait `
-            -ServiceDir $ServiceDir `
+            -ServiceScriptDestFile $ServiceScriptDestFile `
             -Credentials $Credentials `
             -ServiceName $ServiceName `
             -ServiceDisplayName $ServiceDisplayName `
@@ -1072,19 +1114,35 @@ elseif ($PSCmdlet.ParameterSetName -eq "Install") {
         Start-ServyServiceAndWait -ServiceName $ServiceName
 
         # Display service information
-        Write-Log "`nService installation completed!" "SUCCESS"
+        Write-Log "Service installation completed!" "SUCCESS"
         Write-Log "Service Name: $ServiceName"
         Write-Log "Display Name: $ServiceDisplayName"
         Write-Log "Service Directory: $ServiceDir"
         Write-Log "Service Log File: $ServiceLogFile"
         Write-Log "Config File: $ConfigPath"
-        Write-Log "`nTo check service status: Get-Service -Name '$ServiceName'"
+        Write-Log "To check service status: Get-Service -Name '$ServiceName'"
         Write-Log "To view service logs: Get-Content '$ServiceLogFile' -Tail 20"
     }
     catch {
         Write-Log "Installation failed: $_" "ERROR"
         Write-Log "Stack trace: $($_.ScriptStackTrace)" "ERROR"
         # Remove service if it was created on failure
+        try {
+            if (Test-Path $ConfigPath -ErrorAction SilentlyContinue) {
+                Reset-FilePermissions -Path $ConfigPath
+            }
+        }
+        catch {
+            Write-Log "Failed to reset permissions for config file: $_" "ERROR"
+        }
+        try {
+            if (Test-Path $ServiceScriptDestFile -ErrorAction SilentlyContinue) {
+                Reset-FilePermissions -Path $ServiceScriptDestFile
+            }
+        }
+        catch {
+            Write-Log "Failed to reset permissions for service script: $_" "ERROR"
+        }
         if ($serviceCreated) {
             try {
                 Write-Log "Rolling back service installation, removing service..." "WARN"
