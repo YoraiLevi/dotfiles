@@ -11,13 +11,6 @@ Development references
 TODO read about chezmoi [Special files and directories](https://www.chezmoi.io/reference/special-files-and-directories/)  
 test again and report bug related to vscode typing issue when editor is specified on toml  
 
-1) don't use editor variable in env  
-2) pwsh.exe vs cmd.exe vs default for scripts? 
-3) getting system info:
-   1) <https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem>
-   2) <https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-systemenclosure>
-   3) <https://techuisitive.com/enclosure-chassis-types-value-description-configmgr-sccm/?expand_article=1>
-
 reference examples:  
 <https://github.com/mimikun/dotfiles/tree/master>  
 <https://github.com/SeeminglyScience/dotfiles/tree/main>  
