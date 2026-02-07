@@ -184,13 +184,13 @@
 			//"editor.symbolHighlightBorder": null,
 			//"peekViewEditor.matchHighlightBorder": null,
 			//"terminal.findMatchHighlightBorder": null,
-			"editor.findMatchHighlightBackground": "#ff0000",
-			"editor.findRangeHighlightBackground": "#00ff00", // Color the range limiting the search (Enable 'Find in Selection' in the find widget). The color must not be opaque so as not to hide underlying decorations.
-			"editor.focusedStackFrameHighlightBackground": "#0000ff",
+			"editor.findMatchHighlightBackground": "#fcfcfa26", // "Search result" ctrl+f, ctrl+shift+f
+			"editor.findRangeHighlightBackground": "#fcfcfa0c", // "Find in selection" area selected color"
+			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
 
-			// "editor.hoverHighlightBackground": "#fcfcfa0c",
-			// "editor.lineHighlightBackground": "#fcfcfa0c",
-			// "editor.rangeHighlightBackground": "#403e41",
+			"editor.hoverHighlightBackground": "#fcfcfa0c", // After a period of hovering, highlights the text
+			"editor.lineHighlightBackground": "#fcfcfa0c", // Current line highlight
+			"editor.rangeHighlightBackground": "#ff0000",
 			// "editor.selectionHighlightBackground": "#240c7977",
 			// "editor.stackFrameHighlightBackground": "#c1c0c026",
 			// "editor.wordHighlightBackground": "#fcfcfa26",
