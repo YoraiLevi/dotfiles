@@ -203,9 +203,8 @@
 
 			"editor.symbolHighlightBackground": "#0000ff", // Doesn't seem to do anything?
 			
-			"notebook.symbolHighlightBackground": "#ff0000",
-			//"terminal.findMatchHighlightBackground": "#fcfcfa26",
-			//"terminal.hoverHighlightBackground": "#fcfcfa06",
+			"terminal.findMatchHighlightBackground": "#fcfcfa26",
+			"terminal.hoverHighlightBackground": "#ff0000",
 
 			"minimap.errorHighlight": "#ff6188a5",
 			"minimap.findMatchHighlight": "#afaf0e65",
