@@ -104,7 +104,7 @@ Profiling pwsh profile performance
 
 This doesn't work well:
 
-```sh
+```pwsh
 pwsh.exe -NoProfile -command 'Measure-Script -Top 10 $profile.CurrentUserAllHosts'
 ```
 
