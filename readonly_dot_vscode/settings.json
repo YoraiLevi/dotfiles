@@ -192,16 +192,14 @@
 			"editor.findRangeHighlightBackground": "#fcfcfa0c", // "Find in selection" area selected color"
 			
 			"editor.hoverHighlightBackground": "#fcfcfa06", // After a period of hovering, highlights the text
-			"editor.wordHighlightBackground": "#fcfcfa26", // Highlight of "word" at typing cursor
-			
-			"editor.selectionHighlightBackground": "#ff0000", // Highlight for same content as selection 
+			"editor.wordHighlightBackground": "#fcfcfa26", // Highlight of "word" at typing cursor and other occurances
+			"editor.selectionHighlightBackground": "#fcfcfa26", // Highlight for same content as selection 
 			
 			"editor.lineHighlightBackground": "#fcfcfa0c", // Current line highlight
 			"editor.rangeHighlightBackground": "#403e41", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
-			// "peekViewEditor.matchHighlightBackground": "#5b595c",
-			// "peekViewResult.matchHighlightBackground": "#5b595c",
 
-			//"editor.snippetTabstopHighlightBackground": "#7c7c7c4d",
+			"editor.snippetTabstopHighlightBackground": "#ff0000",
+			
 			//"editor.symbolHighlightBackground": "#fcfcfa26",
 			//"gitlens.lineHighlightBackgroundColor": "#00bcf233",
 			//"notebook.symbolHighlightBackground": "#ffffff0b",
