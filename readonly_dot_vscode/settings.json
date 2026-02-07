@@ -187,11 +187,11 @@
 			"editor.findMatchHighlightBackground": "#fcfcfa26", // "Search result" ctrl+f, ctrl+shift+f
 			"editor.findRangeHighlightBackground": "#fcfcfa0c", // "Find in selection" area selected color"
 			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
-
+			
 			"editor.hoverHighlightBackground": "#fcfcfa0c", // After a period of hovering, highlights the text
 			"editor.lineHighlightBackground": "#fcfcfa0c", // Current line highlight
-			"editor.rangeHighlightBackground": "#ff0000",
-			// "editor.selectionHighlightBackground": "#240c7977",
+			"editor.rangeHighlightBackground": "#403e41", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
+			"editor.selectionHighlightBackground": "#fcfcfa26", // Highlight for same content as selection 
 			// "editor.stackFrameHighlightBackground": "#c1c0c026",
 			// "editor.wordHighlightBackground": "#fcfcfa26",
 			// "peekViewEditor.matchHighlightBackground": "#5b595c",
