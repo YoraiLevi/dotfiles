@@ -423,8 +423,8 @@ function Invoke-ChezmoiSync {
         if (-not (Test-Path $ChezmoiPath -ErrorAction Stop)) {
             Write-Log "ERROR: chezmoi.exe not found at $ChezmoiPath" "ERROR"
         }
-        $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions > $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
-        
+        $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions | Out-File $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
+        $null = (Get-InstalledModule).Name | Out-File $(Join-Path $ENV:USERPROFILE ".powershell" "pwsh-modules.txt")
         # Execute chezmoi re-add before update
         Write-Log "Running chezmoi re-add..." "INFO"
         & $ChezmoiPath re-add 2>&1 | Out-String | Write-Log
@@ -901,37 +901,6 @@ if ($PSCmdlet.ParameterSetName -eq "Install") {
             exit 1
         }
     }
-    
-    #     # Validate credentials
-    #     try {
-    #         $netCred = $Credentials.GetNetworkCredential()
-    #         $credUser = $netCred.UserName
-    #         $credPass = $netCred.Password
-    #         $credDomain = $netCred.Domain
-        
-    #         # Use the same format that will be used for service installation
-        
-    #         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-    #         $contextType = if ($credDomain) { 
-    #             [System.DirectoryServices.AccountManagement.ContextType]::Domain 
-    #         }
-    #         else { 
-    #             [System.DirectoryServices.AccountManagement.ContextType]::Machine 
-    #         }
-    #         $context = if ($credDomain) { $credDomain } else { $env:COMPUTERNAME }
-    #         $pc = New-Object System.DirectoryServices.AccountManagement.PrincipalContext($contextType, $context)
-        
-    #         if (-not $pc.ValidateCredentials($credUser, $credPass)) {
-    #             Write-Log "Invalid credentials provided. Please check username and password." "ERROR"
-    #             exit 1
-    #         }
-    #         Write-Log "Credentials validated successfully for user: $credUser"
-    #     }
-    #     catch {
-    #         Write-Log "Warning: Could not validate credentials: $_" "WARN"
-    #         Write-Log "Service installation will continue, but service may fail to start if credentials are incorrect." "WARN"
-    #     }
-    
 }
 
 # ============================================================================
