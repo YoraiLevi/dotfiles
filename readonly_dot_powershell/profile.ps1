@@ -95,36 +95,7 @@ function Get-WingetPackage {
     }
     return $winget_out
 }
-function Update-PowerShell {
-    Write-Host 'Checking for internet connection... ' -ForegroundColor Cyan -NoNewline
-    $canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
-    if (-not $canConnectToGitHub) {
-        Write-Host 'Skipping profile update check due to GitHub.com not responding within 1 second.' -ForegroundColor Yellow
-        return
-    }
-    try {
-        Write-Host 'Checking for PowerShell updates...' -ForegroundColor Cyan
-        $currentVersion = $PSVersionTable.PSVersion.ToString()
-        $gitHubApiUrl = 'https://api.github.com/repos/PowerShell/PowerShell/releases/latest'
-        $latestReleaseInfo = Invoke-RestMethod -Uri $gitHubApiUrl
-        $latestVersion = $latestReleaseInfo.tag_name.Trim('v')
-        if ($currentVersion -lt $latestVersion) {
-            Write-Host 'Updating PowerShell...' -ForegroundColor Yellow
-            if (Get-ChocoPackage 'pwsh') {
-                sudo choco upgrade pwsh -y
-            }
-            else {
-                winget upgrade 'Microsoft.PowerShell' --accept-source-agreements --accept-package-agreements
-            }
-            if ($?) {
-                Write-Host 'PowerShell has been updated. Please restart your shell to reflect changes' -ForegroundColor Magenta
-            }
-        }
-    }
-    catch {
-        Write-Error "Failed to update PowerShell. Error: $_"
-    }
-}
+
 # https://stackoverflow.com/a/34800670/12603110 - PowerShell equivalent of LINQ Any()?
 function Invoke-YesNoPrompt {
     param(
@@ -144,9 +115,6 @@ function Invoke-YesNoPrompt {
         & $Action
     }
 }
-# Update local changes to chezmoi repo
-# &$_EDITOR --list-extensions > $ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt
-
 
 # # PSReadLine option to add a matching closing bracket for (, [ and { - cannot copy paste it adds brackets in terminal
 # # https://www.reddit.com/r/PowerShell/comments/fsv3kt/comment/fm44e6i/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
