@@ -190,19 +190,19 @@
 			"editor.findRangeHighlightBackground": "#b1f78915", // "Find in selection" area selected color"
 			
 			"editor.hoverHighlightBackground": "#8d3e8d49", // After a period of hovering, highlights the text
-			"editor.wordHighlightBackground": "#c711c749", // Highlight of "word" at typing cursor and other occurances
+			"editor.wordHighlightBackground": "#ffa9ff41", // Highlight of "word" at typing cursor and other occurances
 			"editor.selectionHighlightBackground": "#ff009d3a", // Highlight for same content as selection 
 			
 			"editor.lineHighlightBackground": "#fcfcfa20", // Current line highlight
 			"editor.rangeHighlightBackground": "#403e41", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
 
-			"editor.snippetTabstopHighlightBackground": "#7c7c7c4d", // The snipping manual fill fields
+			"editor.snippetTabstopHighlightBackground": "#ffa9ff41", // The snipping manual fill fields
 			"editor.snippetFinalTabstopHighlightBackground": "#ff0000",
 
 			"editor.symbolHighlightBackground": "#0000ff", // Doesn't seem to do anything?
 			
-			"terminal.findMatchHighlightBackground": "#fcfcfa26",
-			"terminal.hoverHighlightBackground": "#fcfcfa06",
+			"terminal.findMatchHighlightBackground": "#6e6e6e26",
+			"terminal.hoverHighlightBackground": "#8d3e8d49",
 
 			"minimap.infoHighlight": "#78dce8a5",
 			"minimap.warningHighlight": "#fc9867a5",
