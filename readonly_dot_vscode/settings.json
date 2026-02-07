@@ -201,7 +201,8 @@
 
 			"editor.symbolHighlightBackground": "#0000ff", // Doesn't seem to do anything?
 			
-			"terminal.findMatchHighlightBackground": "#58585869",
+			"terminal.findMatchHighlightBackground": "#afaf0e65",
+			"terminal.findMatchHighlightBorder": "#afaf0e",
 			"terminal.hoverHighlightBackground": "#8d3e8d49",
 
 			"minimap.infoHighlight": "#78dce8a5",
