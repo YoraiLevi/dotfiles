@@ -185,8 +185,8 @@
 			"editor.findMatchHighlightBackground": "#afaf0e65", // "Search result" ctrl+f, ctrl+shift+f
 			"editor.findRangeHighlightBackground": "#b1f78915", // "Find in selection" area selected color"
 			"editor.hoverHighlightBackground": "#8a898a73", // After a period of hovering, highlights the text
-			"editor.wordHighlightBackground": "#a9fcff41", // Highlight of "word" at typing cursor and other occurances
-			"editor.selectionHighlightBackground": "#0e9caf65", // Highlight for same content as selection 
+			"editor.wordHighlightBackground": "#0e9caf65", // Highlight of "word" at typing cursor and other occurances
+			"editor.selectionHighlightBackground": "#a9fcff41", // Highlight for same content as selection 
 			"editor.lineHighlightBackground": "#fcfcfa20", // Current line highlight
 			"editor.rangeHighlightBackground": "#403e41", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
 			"editor.snippetTabstopHighlightBackground": "#ffa9ff41", // The snipping manual fill fields
