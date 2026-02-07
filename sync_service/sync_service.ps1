@@ -303,20 +303,30 @@ function Test-ServyAvailable {
 # Function to show toast notifications (replaces GUI dialogs for service context)
 function Show-ToastNotification {
     param(
-        [string]$Title = "Chezmoi Sync Service",
-        [string]$Message
+        [Parameter(Mandatory = $true)]
+        [string]$Message,
+        [Parameter(Mandatory = $true)]
+        [string]$LogFilePath,
+        [Parameter(Mandatory = $false)]
+        [string]$Title = "Chezmoi Sync Service"
     )
     
     # Only works on Windows 10+
     if ([Environment]::OSVersion.Version.Major -lt 10) {
         return
     }
-    
     # Try using BurntToast module first (if available)
     if (Get-Module -ListAvailable -Name BurntToast) {
         try {
             Import-Module BurntToast -ErrorAction Stop
-            New-BurntToastNotification -Text $Title, $Message, "Log: $LogFilePath" -AppLogo $null -ErrorAction Stop
+            $btn = New-BTButton -Content "View Log" -Arguments $((Resolve-Path $LogFilePath).Path)
+            New-BurntToastNotification -Text $Title, $Message `
+                -AppLogo $null `
+                -ExpirationTime $((Get-Date).AddHours(8)) `
+                -Silent `
+                -Urgent `
+                -Button $btn `
+                -ErrorAction Stop
             return
         }
         catch {
@@ -443,7 +453,6 @@ Please check your Chezmoi configuration or the sync log for details.
 Chezmoi path: $ChezmoiPath
 "@
 
-            Show-ToastNotification -Message $message
             Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
             throw "chezmoi re-add failed with exit code $reAddExitCode"
         }
@@ -474,7 +483,6 @@ Please check your Chezmoi configuration or the sync log for details.
 Chezmoi path: $ChezmoiPath
 "@
     
-                Show-ToastNotification -Message $message
                 Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
                 throw "chezmoi update --init --apply --force failed with exit code $exitCode"
             }
@@ -487,7 +495,7 @@ Chezmoi path: $ChezmoiPath
         Write-Log "ERROR: Exception during chezmoi sync - $_" "ERROR"
         Write-Log "Stack trace: $($_.ScriptStackTrace)" "ERROR"
         Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
-        Show-ToastNotification -Message "ERROR: Exception during chezmoi sync - $_"
+        Show-ToastNotification -Message "ERROR: Exception during chezmoi sync - $_" -LogFilePath $ServiceLogFile
         throw
     }
 }
@@ -847,10 +855,14 @@ elseif ($PSCmdlet.ParameterSetName -eq "Uninstall") {
     $ServiceScriptDestFile = $PSCommandPath
     $ServiceDir = $PSScriptRoot
     $ConfigPath = Join-Path $ServiceDir $ConfigFileName
+    $ServiceLogDir = Join-Path $ServiceDir "logs"
+    $ServiceLogFile = Join-Path $ServiceLogDir $LogFileName
 }
 elseif ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
     $ServiceScriptDestFile = $PSCommandPath
     $ServiceDir = $PSScriptRoot
+    $ServiceLogDir = Join-Path $ServiceDir "logs"
+    $ServiceLogFile = Join-Path $ServiceLogDir $LogFileName
 }
 
 # ============================================================================
