@@ -201,8 +201,8 @@
 
 			"editor.symbolHighlightBackground": "#0000ff", // Doesn't seem to do anything?
 			
-			"terminal.findMatchHighlightBackground": "#afaf0e65",
-			"terminal.findMatchHighlightBorder": "#afaf0e",
+			"terminal.findMatchHighlightBackground": "#afaf0e65", // Ctrl+f matches in terminal
+			"terminal.findMatchHighlightBorder": "#afaf0e", // Ctrl+f matches in terminal
 			"terminal.hoverHighlightBackground": "#8d3e8d49",
 
 			"minimap.infoHighlight": "#78dce8a5",
