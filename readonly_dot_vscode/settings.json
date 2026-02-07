@@ -186,14 +186,14 @@
 			"editor.stackFrameHighlightBackground": "#0000ff",
 
 
-			"editor.findMatchHighlightBackground": "#fcfcfa26", // "Search result" ctrl+f, ctrl+shift+f
-			"editor.findRangeHighlightBackground": "#fcfcfa0c", // "Find in selection" area selected color"
+			"editor.findMatchHighlightBackground": "#8d3e8da5", // "Search result" ctrl+f, ctrl+shift+f
+			"editor.findRangeHighlightBackground": "#8d3e8da5", // "Find in selection" area selected color"
 			
 			"editor.hoverHighlightBackground": "#fcfcfa06", // After a period of hovering, highlights the text
 			"editor.wordHighlightBackground": "#fcfcfa26", // Highlight of "word" at typing cursor and other occurances
-			"editor.selectionHighlightBackground": "#fcfcfa26", // Highlight for same content as selection 
+			"editor.selectionHighlightBackground": "#8d3e8da5", // Highlight for same content as selection 
 			
-			"editor.lineHighlightBackground": "#fcfcfa0c", // Current line highlight
+			"editor.lineHighlightBackground": "#fcfcfa20", // Current line highlight
 			"editor.rangeHighlightBackground": "#403e41", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
 
 			"editor.snippetTabstopHighlightBackground": "#7c7c7c4d", // The snipping manual fill fields
@@ -204,12 +204,12 @@
 			"terminal.findMatchHighlightBackground": "#fcfcfa26",
 			"terminal.hoverHighlightBackground": "#fcfcfa06",
 
+			"minimap.infoHighlight": "#78dce8a5",
+			"minimap.warningHighlight": "#fc9867a5",
 			"minimap.errorHighlight": "#ff6188a5",
 			"minimap.findMatchHighlight": "#afaf0e65",
-			"minimap.infoHighlight": "#78dce8a5",
 			"minimap.selectionHighlight": "#c1c0c026",
-			"minimap.selectionOccurrenceHighlight": "#727072a5",
-			"minimap.warningHighlight": "#fc9867a5",
+			"minimap.selectionOccurrenceHighlight": "#8d3e8da5", // Highlight in minimap for same content as selection  
 		}
 	},
 	"editor.tokenColorCustomizations": {
