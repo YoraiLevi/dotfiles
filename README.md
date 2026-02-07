@@ -2,7 +2,7 @@
 
 Development references
 
-1) ~~Validate templates compile~~ Reduce template use ` Get-ChildItem -Path . -Filter *.ps1.tmpl -Recurse | % {$_.FullName}
+1) ~~Validate templates compile~~ Reduce template use `Get-ChildItem -Path . -Filter *.ps1.tmpl -Recurse | % {$_.FullName}`
 2) Validate code could work in theory - linter etc for pwsh? bash?
 3) setup powershell pester5 tests
 4) automated tests with vm?
