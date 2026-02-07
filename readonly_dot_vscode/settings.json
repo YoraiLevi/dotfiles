@@ -199,12 +199,13 @@
 			"editor.rangeHighlightBackground": "#403e41", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
 
 			"editor.snippetTabstopHighlightBackground": "#7c7c7c4d", // The snipping manual fill fields
+			"editor.snippetFinalTabstopHighlightBackground": "#ff0000",
 
-			"editor.symbolHighlightBackground": "#ff0000",
-			//"notebook.symbolHighlightBackground": "#ffffff0b",
+			"editor.symbolHighlightBackground": "#0000ff", // Doesn't seem to do anything?
+			
+			"notebook.symbolHighlightBackground": "#ff0000",
 			//"terminal.findMatchHighlightBackground": "#fcfcfa26",
 			//"terminal.hoverHighlightBackground": "#fcfcfa06",
-			//"editor.snippetFinalTabstopHighlightBackground": null,
 
 			"minimap.errorHighlight": "#ff6188a5",
 			"minimap.findMatchHighlight": "#afaf0e65",
