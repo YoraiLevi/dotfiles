@@ -89,7 +89,8 @@ interpreters:
     args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-File', "{{ .chezmoi.sourceDir }}/.chezmoiinterpreters/powershell_fake.ps1"]
   py :
     {{- if $uvPath }}
-    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-File', "{{ .chezmoi.sourceDir }}/.chezmoiinterpreters/py_interpreter.ps1", "{{ $uvPath }}"]
+    command : {{ $pwshPath }}
+    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-File', "{{ .chezmoi.sourceDir }}/.chezmoiinterpreters/py_interpreter.ps1", '{{ $uvPath }}']
     {{- else }}
     command : 'python.exe'
     args : ["-B", "-E"]
