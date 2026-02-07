@@ -189,7 +189,7 @@
 			"editor.findMatchHighlightBackground": "#afaf0e65", // "Search result" ctrl+f, ctrl+shift+f
 			"editor.findRangeHighlightBackground": "#b1f78915", // "Find in selection" area selected color"
 			
-			"editor.hoverHighlightBackground": "#8d3e8d36", // After a period of hovering, highlights the text
+			"editor.hoverHighlightBackground": "#8d3e8d49", // After a period of hovering, highlights the text
 			"editor.wordHighlightBackground": "#8d3e8da5", // Highlight of "word" at typing cursor and other occurances
 			"editor.selectionHighlightBackground": "#8d3e8da5", // Highlight for same content as selection 
 			
