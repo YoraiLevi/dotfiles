@@ -152,7 +152,7 @@
 			
 			
 			"debugView.valueChangedHighlight": "#ffd866",
-			"editor.findMatchHighlightBackground": "#afaf0e",
+			"editor.findMatchHighlightBackground": "#afaf0e26",
 			"editor.findMatchHighlightBorder": "#00000000",
 			"editor.findRangeHighlightBackground": "#fcfcfa0c",
 			"editor.findRangeHighlightBorder": "#00000000",
