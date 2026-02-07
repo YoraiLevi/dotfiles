@@ -3,7 +3,7 @@
 Development references
 
 1) ~~Validate templates compile~~ Reduce template use
-2) Validate code could work in theory - linter etc
+2) Validate code could work in theory - linter etc for pwsh? bash?
 3) setup powershell pester5 tests
 4) automated tests with vm?
 5) better vagrant setup?
@@ -117,7 +117,7 @@ This doesn't work well:
 pwsh.exe -NoProfile -command 'Measure-Script -Top 10 $profile.CurrentUserAllHosts'
 ```
 
-Using the custom `.chezmoilib` folder with pwsh and chezmoi templates
+Using the custom `.chezmoilib` folder with pwsh and chezmoi
 ```pwsh
 echo "== {{ .chezmoi.sourceFile | trim }} =="
 
