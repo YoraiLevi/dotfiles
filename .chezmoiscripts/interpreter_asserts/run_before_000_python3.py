@@ -1,4 +1,3 @@
-print("== {{ .chezmoi.sourceFile | trim }} ==")
 import sys
 
 print(f"{sys.executable} {sys.version}")

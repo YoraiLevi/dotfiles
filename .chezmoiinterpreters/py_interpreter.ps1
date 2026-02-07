@@ -2,6 +2,6 @@ param()
 if ($null -ne $ENV:CHEZMOI_SOURCE_FILE) {
     Write-Host "== $ENV:CHEZMOI_SOURCE_FILE ==" -ForegroundColor Green
 }
-Write-Warning "Fake interpreter executed for script: $args"
-Write-Host (Get-Content $args | Out-String)
-exit 0
+
+$ENV:CHEZMOI_DATA = (chezmoi data --format json | Out-String | ConvertFrom-Json)
+& $args
