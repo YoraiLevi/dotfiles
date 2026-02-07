@@ -116,3 +116,14 @@ This doesn't work well:
 ```
 pwsh.exe -NoProfile -command 'Measure-Script -Top 10 $profile.CurrentUserAllHosts'
 ```
+
+Using the custom `.chezmoilib` folder with pwsh and chezmoi templates
+```pwsh
+echo "== {{ .chezmoi.sourceFile | trim }} =="
+
+Import-Module (Join-Path $ENV:CHEZMOI_WORKING_TREE .chezmoilib\DesktopIniAttributes.psm1)
+
+Get-ChildItem -Path $ENV:CHEZMOI_WORKING_TREE -Filter desktop.ini -Recurse | ForEach-Object {
+    Remove-DesktopIniAttributes $_.FullName -ErrorAction Continue
+}
+```
