@@ -198,10 +198,9 @@
 			"editor.lineHighlightBackground": "#fcfcfa0c", // Current line highlight
 			"editor.rangeHighlightBackground": "#403e41", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
 
-			"editor.snippetTabstopHighlightBackground": "#ff0000",
-			
-			//"editor.symbolHighlightBackground": "#fcfcfa26",
-			//"gitlens.lineHighlightBackgroundColor": "#00bcf233",
+			"editor.snippetTabstopHighlightBackground": "#7c7c7c4d", // The snipping manual fill fields
+
+			"editor.symbolHighlightBackground": "#ff0000",
 			//"notebook.symbolHighlightBackground": "#ffffff0b",
 			//"terminal.findMatchHighlightBackground": "#fcfcfa26",
 			//"terminal.hoverHighlightBackground": "#fcfcfa06",
