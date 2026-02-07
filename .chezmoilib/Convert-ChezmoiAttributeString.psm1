@@ -1,5 +1,5 @@
 # Usage: 
-# Import-Module (Join-Path $ENV:CHEZMOI_WORKING_TREE .chezmoilib\Convert-ChezmoiAttributeString.psm1)
+# Import-Module (Join-Path $ENV:CHEZMOI_SOURCE_DIR .chezmoilib\Convert-ChezmoiAttributeString.psm1)
 
 function Convert-ChezmoiAttributeString {
     <#

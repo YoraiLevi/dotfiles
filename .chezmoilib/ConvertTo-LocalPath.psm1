@@ -1,10 +1,10 @@
 # Usage:
-# Import-Module (Join-Path $ENV:CHEZMOI_WORKING_TREE .chezmoilib\ConvertTo-LocalPath.psm1)
+# Import-Module (Join-Path $ENV:CHEZMOI_SOURCE_DIR .chezmoilib\ConvertTo-LocalPath.psm1)
 # ConvertTo-LocalPath c:\Users\Yorai\.local\share\chezmoi\dot_conda\desktop.ini      
 $ErrorActionPreference = "Stop"
 Import-Module (Join-Path $PSScriptRoot Convert-ChezmoiAttributeString.psm1)
 function Test-ChezmoiEnvVars {
-    if (($null -eq $ENV:CHEZMOI_WORKING_TREE) -or ($null -eq $ENV:CHEZMOI_DEST_DIR)) {
+    if (($null -eq $ENV:CHEZMOI_SOURCE_DIR) -or ($null -eq $ENV:CHEZMOI_DEST_DIR)) {
         throw "CHEZMOI_WORKING_TREE and CHEZMOI_DEST_DIR environment variables must be set"
     }
 }
@@ -21,8 +21,8 @@ function ConvertTo-LocalPath {
     Test-ChezmoiEnvVars
     $managedFile = Get-Item -Path $InputString -Force -ErrorAction Stop
 
-    # Check if $ENV:CHEZMOI_WORKING_TREE is an ancestor of $managedFile.FullName
-    $workingTree = [System.IO.Path]::GetFullPath($ENV:CHEZMOI_WORKING_TREE)
+    # Check if $ENV:CHEZMOI_SOURCE_DIR is an ancestor of $managedFile.FullName
+    $workingTree = [System.IO.Path]::GetFullPath($ENV:CHEZMOI_SOURCE_DIR)
     $filePath = [System.IO.Path]::GetFullPath($managedFile.FullName)
     if (-not ($filePath.StartsWith($workingTree, [System.StringComparison]::OrdinalIgnoreCase))) {
         throw "The file '$filePath' is not under the CHEZMOI_WORKING_TREE directory '$workingTree'."
@@ -32,7 +32,7 @@ function ConvertTo-LocalPath {
         return
     }
     try {
-        $resolvedItem = Resolve-Path -LiteralPath $managedFile.FullName -RelativeBasePath $ENV:CHEZMOI_WORKING_TREE -Relative -ErrorAction Stop
+        $resolvedItem = Resolve-Path -LiteralPath $managedFile.FullName -RelativeBasePath $ENV:CHEZMOI_SOURCE_DIR -Relative -ErrorAction Stop
     }
     catch {
         Write-Debug "Failed to resolve path for $managedFile"

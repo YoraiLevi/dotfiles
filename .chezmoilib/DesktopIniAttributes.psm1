@@ -4,7 +4,7 @@ Import-Module (Join-Path $PSScriptRoot Convert-ChezmoiAttributeString.psm1)
 $ErrorActionPreference = "Stop"
 
 function Test-ChezmoiEnvVars {
-    if (($null -eq $ENV:CHEZMOI_WORKING_TREE) -or ($null -eq $ENV:CHEZMOI_DEST_DIR)) {
+    if (($null -eq $ENV:CHEZMOI_SOURCE_DIR) -or ($null -eq $ENV:CHEZMOI_DEST_DIR)) {
         throw "CHEZMOI_WORKING_TREE and CHEZMOI_DEST_DIR environment variables must be set"
     }
 }

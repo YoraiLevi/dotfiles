@@ -1,7 +1,7 @@
 param()
 Write-Host $PSCommandPath -ForegroundColor Green
 
-Import-Module (Join-Path $ENV:CHEZMOI_WORKING_TREE .chezmoilib\ConvertTo-LocalPath.psm1)
+Import-Module (Join-Path $ENV:CHEZMOI_SOURCE_DIR .chezmoilib\ConvertTo-LocalPath.psm1)
 
 # Uncomment to assist with debugging
 # Get-ChildItem Env: | Where-Object { $_.Name -like 'CHEZMOI*' } | ForEach-Object { Write-Debug $_.Name, $_.Value -ForegroundColor Yellow }
@@ -69,7 +69,7 @@ $FORGET_PROPERTY_REGEX = '*.forget*'
 $FORGET_RECURSIVE_PROPERTY_REGEX = '*.recursive-forget*'
 $RECURSIVE_PROPERTY_REGEX = '*.recursive-add*'
 
-$recursiveFiles = Get-ChildItem -Path "$ENV:CHEZMOI_WORKING_TREE" -Filter $SPECIAL_FILE_NAME_REGEX -Recurse -Force -File
+$recursiveFiles = Get-ChildItem -Path "$ENV:CHEZMOI_SOURCE_DIR" -Filter $SPECIAL_FILE_NAME_REGEX -Recurse -Force -File
 foreach ($recursiveFile in $recursiveFiles) {
     $chezmoiTrackedDir = $recursiveFile.Directory
     # Verify that the local directory exists, else skip, we don't have anything to re-add or forget
