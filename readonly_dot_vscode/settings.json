@@ -215,20 +215,5 @@
 	"[markdown]": {
 		"editor.defaultFormatter": "yzhang.markdown-all-in-one"
 	},
-	"shellformat.effectLanguages": [
-
-		"shellscript",
-		"dockerfile",
-		"dotenv",
-		"hosts",
-		"jvmoptions",
-		"ignore",
-		"gitignore",
-		"properties",
-		"spring-boot-properties",
-		"azcli",
-		"bats"
-	],
-	"shellformat.path": "C:/Users/devic/.bin/shfmt.exe"
 
 }

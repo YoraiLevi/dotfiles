@@ -14,7 +14,6 @@ dbaeumer.vscode-eslint
 donjayamanne.python-environment-manager
 donjayamanne.python-extension-pack
 eamodio.gitlens
-foxundermoon.shell-format
 gitcommitpeek.git-commit-peek
 github.vscode-github-actions
 github.vscode-pull-request-github
@@ -47,6 +46,7 @@ randomfractalsinc.snippets-viewer
 redhat.vscode-yaml
 ryuta46.multi-command
 smcpeak.default-keys-windows
+stateful.runme
 tamasfe.even-better-toml
 vscjava.vscode-gradle
 wholroyd.jinja
