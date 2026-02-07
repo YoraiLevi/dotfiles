@@ -174,9 +174,6 @@
 			//"editorSuggestWidget.focusHighlightForeground": "#fcfcfa",
 			//"editorUnicodeHighlight.background": "#00000000",
 			//"editorUnicodeHighlight.border": "#fc9867",
-			//"gitlens.graphMinimapMarkerHighlightsColor": "#fbff0a",
-			//"gitlens.graphScrollMarkerHighlightsColor": "#fbff0a",
-			//"gitlens.lineHighlightOverviewRulerColor": "#00bcf299",
 			//"list.focusHighlightForeground": "#fcfcfa",
 			//"minimap.chatEditHighlight": "#2d2a2e99",
 			//"editor.findMatchHighlightForeground": null,
@@ -184,7 +181,7 @@
 			//"editor.symbolHighlightBorder": null,
 			//"peekViewEditor.matchHighlightBorder": null,
 			//"terminal.findMatchHighlightBorder": null,
-			
+
 			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
 			"editor.stackFrameHighlightBackground": "#0000ff",
 
