@@ -212,4 +212,7 @@
 	"gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
 	"editor.inlineSuggest.edits.showCollapsed": true,
 	"editor.minimap.enabled": true,
+	"[markdown]": {
+		"editor.defaultFormatter": "yzhang.markdown-all-in-one"
+	},
 }
