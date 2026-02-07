@@ -1,0 +1,8 @@
+# {{ range glob (joinPath (.chezmoi.sourceDir | toString) "pwsh-modules.txt") }}{{ include . | sha256sum }} {{ end }}
+# {{ range glob (joinPath (.chezmoi.destDir | toString) "pwsh-modules.txt") }}{{ include . | sha256sum }} {{ end }}
+
+
+cat "$ENV:USERPROFILE\.powershell\pwsh-modules.txt" -ErrorAction Continue | foreach { 
+        $ModuleName = $_
+        PowerShellGet\Install-Module -Name $ModuleName -Force:$False -Verbose:$True
+}

@@ -32,9 +32,3 @@ $pwsh_data.modules | Where-Object { $_.Scope -eq $null -or $_.Scope -eq "Current
 }
 {{end -}}
 {{- end -}}
-
-# install missing modules from .powershell/pwsh-modules.txt
-cat "$ENV:USERPROFILE\.powershell\pwsh-modules.txt" -ErrorAction Continue | foreach { 
-        $ModuleName = $_
-        PowerShellGet\Install-Module -Name $ModuleName -Force:$False -Verbose:$True
-}
