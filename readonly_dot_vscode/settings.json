@@ -184,17 +184,19 @@
 			//"editor.symbolHighlightBorder": null,
 			//"peekViewEditor.matchHighlightBorder": null,
 			//"terminal.findMatchHighlightBorder": null,
-			"editor.findMatchHighlightBackground": "#afaf0e65", //Color of the other search matches. The color must not be opaque so as not to hide underlying decorations.
-			"editor.findRangeHighlightBackground": "#fcfcfa0c", // Color the range limiting the search (Enable 'Find in Selection' in the find widget). The color must not be opaque so as not to hide underlying decorations.
-			"editor.focusedStackFrameHighlightBackground": "#c1c0c026",
-			"editor.hoverHighlightBackground": "#fcfcfa0c",
-			"editor.lineHighlightBackground": "#fcfcfa0c",
-			"editor.rangeHighlightBackground": "#403e41",
-			"editor.selectionHighlightBackground": "#240c7977",
-			"editor.stackFrameHighlightBackground": "#c1c0c026",
-			"editor.wordHighlightBackground": "#fcfcfa26",
-			"peekViewEditor.matchHighlightBackground": "#5b595c",
-			"peekViewResult.matchHighlightBackground": "#5b595c",
+			"editor.findMatchHighlightBackground": "#ff0000",
+			"editor.findRangeHighlightBackground": "#00ff00", // Color the range limiting the search (Enable 'Find in Selection' in the find widget). The color must not be opaque so as not to hide underlying decorations.
+			"editor.focusedStackFrameHighlightBackground": "#0000ff",
+
+			// "editor.hoverHighlightBackground": "#fcfcfa0c",
+			// "editor.lineHighlightBackground": "#fcfcfa0c",
+			// "editor.rangeHighlightBackground": "#403e41",
+			// "editor.selectionHighlightBackground": "#240c7977",
+			// "editor.stackFrameHighlightBackground": "#c1c0c026",
+			// "editor.wordHighlightBackground": "#fcfcfa26",
+			// "peekViewEditor.matchHighlightBackground": "#5b595c",
+			// "peekViewResult.matchHighlightBackground": "#5b595c",
+
 			//"editor.snippetTabstopHighlightBackground": "#7c7c7c4d",
 			//"editor.symbolHighlightBackground": "#fcfcfa26",
 			//"gitlens.lineHighlightBackgroundColor": "#00bcf233",
