@@ -1,5 +1,4 @@
 # windows -> wsl2:
-echo "== {{ .chezmoi.sourceFile | trim }} =="
 home="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")/.wsl2/home/"
 shopt -s dotglob      # include hidden files
 for file in "$home"/*; do
