@@ -351,7 +351,7 @@
     },
     {
         "key": "ctrl+l",
-        "command": "workbench.action.quickTextSearch"
+        "command": "workbench.action.gotoLine"
     },
     {
         "key": "ctrl+p",
