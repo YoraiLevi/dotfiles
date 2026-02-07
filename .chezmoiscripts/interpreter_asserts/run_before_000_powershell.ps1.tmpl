@@ -1,3 +1,5 @@
 echo "== {{ .chezmoi.sourceFile | trim }} =="
 echo $PSHOME\pwsh.exe
 $PSVersionTable
+
+Get-ChildItem ENV:/CHEZMOI*
