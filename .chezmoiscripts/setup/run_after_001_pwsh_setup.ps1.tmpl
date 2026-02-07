@@ -22,6 +22,7 @@ $pwsh_data.ExecutionPolicy | Where-Object { $_.Scope -ne $null -and $_.Execution
     }
 }
 {{end -}}
+# TODO install missing modules from .powershell/pwsh-modules.txt
 
 {{if (ne $newPackagesToInstall "") -}}
 $pwsh_data.PSRepository | ForEach-Object {
