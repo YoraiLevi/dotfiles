@@ -90,7 +90,7 @@ interpreters:
   py :
     {{- if $uvPath }}
     command : {{ $pwshPath }}
-    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-File', "{{ .chezmoi.sourceDir }}/.chezmoiinterpreters/py_interpreter.ps1", '{{ $uvPath }}']
+    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-File', "{{ .chezmoi.sourceDir }}/.chezmoiinterpreters/py_interpreter.ps1",'{{ $uvPath }}',"run", "python", "-B", "-E"]
     {{- else }}
     command : 'python.exe'
     args : ["-B", "-E"]
