@@ -184,16 +184,20 @@
 			//"editor.symbolHighlightBorder": null,
 			//"peekViewEditor.matchHighlightBorder": null,
 			//"terminal.findMatchHighlightBorder": null,
+			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
+			"editor.stackFrameHighlightBackground": "#0000ff",
+
+
 			"editor.findMatchHighlightBackground": "#fcfcfa26", // "Search result" ctrl+f, ctrl+shift+f
 			"editor.findRangeHighlightBackground": "#fcfcfa0c", // "Find in selection" area selected color"
-			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
 			
-			"editor.hoverHighlightBackground": "#fcfcfa0c", // After a period of hovering, highlights the text
+			"editor.hoverHighlightBackground": "#fcfcfa06", // After a period of hovering, highlights the text
+			"editor.wordHighlightBackground": "#fcfcfa26", // Highlight of "word" at typing cursor
+			
+			"editor.selectionHighlightBackground": "#ff0000", // Highlight for same content as selection 
+			
 			"editor.lineHighlightBackground": "#fcfcfa0c", // Current line highlight
 			"editor.rangeHighlightBackground": "#403e41", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
-			"editor.selectionHighlightBackground": "#fcfcfa26", // Highlight for same content as selection 
-			// "editor.stackFrameHighlightBackground": "#c1c0c026",
-			// "editor.wordHighlightBackground": "#fcfcfa26",
 			// "peekViewEditor.matchHighlightBackground": "#5b595c",
 			// "peekViewResult.matchHighlightBackground": "#5b595c",
 
