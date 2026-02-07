@@ -1,4 +1,3 @@
-echo "== {{ .chezmoi.sourceFile | trim }} =="
 echo $PSHOME\pwsh.exe
 $PSVersionTable
 

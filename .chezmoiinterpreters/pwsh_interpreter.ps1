@@ -1,3 +1,7 @@
 param()
-$ENV:CHEZMOI_DATA = (chezmoi data --format json | Out-String | ConvertFrom-Json | ConvertTo-Json -Compress -Depth 100)
+if ($null -ne $ENV:CHEZMOI_SOURCE_FILE) {
+    Write-Host "=== $ENV:CHEZMOI_SOURCE_FILE ==="
+}
+
+$ENV:CHEZMOI_DATA = (chezmoi data --format json | Out-String | ConvertFrom-Json)
 & $args

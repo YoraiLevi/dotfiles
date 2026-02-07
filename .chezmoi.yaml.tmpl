@@ -97,7 +97,7 @@ interpreters:
     {{- end }}
   ps1 : 
     command : {{ $pwshPath }}
-    args : ["-NoLogo", "-NoProfile", "-NonInteractive"]
+    args : ["-NoLogo", "-NoProfile", "-NonInteractive", '-File', "{{ .chezmoi.sourceDir }}/.chezmoiinterpreters/pwsh_interpreter.ps1"]
   sh :
     command : {{ $pwshPath }}
   {{- if eq $wslAvailable "true" }}

@@ -1,7 +1,7 @@
 # {{ range glob (joinPath (.chezmoi.sourceDir | toString) "*-extensions.txt") }}{{ include . | sha256sum }} {{ end }}
 # {{ range glob (joinPath (.chezmoi.destDir | toString) "*-extensions.txt") }}{{ include . | sha256sum }} {{ end }}
 
-echo "== {{ .chezmoi.sourceFile | trim }} =="
+
 @('cursor', 'code-insiders', 'code') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | foreach {
     $_EDITOR = $_; cat "$ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt" -ErrorAction Continue | foreach { 
         $extension = $_

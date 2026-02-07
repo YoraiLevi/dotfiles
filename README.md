@@ -110,8 +110,6 @@ pwsh.exe -NoProfile -command 'Measure-Script -Top 10 $profile.CurrentUserAllHost
 
 Using the custom `.chezmoilib` folder with pwsh and chezmoi
 ```pwsh
-echo "== {{ .chezmoi.sourceFile | trim }} =="
-
 Import-Module (Join-Path $ENV:CHEZMOI_SOURCE_DIR .chezmoilib\DesktopIniAttributes.psm1)
 
 Get-ChildItem -Path $ENV:CHEZMOI_SOURCE_DIR -Filter desktop.ini -Recurse | ForEach-Object {

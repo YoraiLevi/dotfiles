@@ -1,4 +1,3 @@
-echo "== {{ .chezmoi.sourceFile | trim }} =="
 # Check if running as Administrator
 
 $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())

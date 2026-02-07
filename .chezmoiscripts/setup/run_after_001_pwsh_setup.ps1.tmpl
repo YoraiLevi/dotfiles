@@ -2,7 +2,7 @@
 {{- $newPackagesToInstall := output "pwsh.exe" "-NoProfile" "-Command" (printf "$pwsh_data = %s | ConvertFrom-Json -AsHashTable; $pwsh_data.modules | Select-Object -ExpandProperty name | Sort-Object -Unique | Where-Object { -not (Get-Module -ListAvailable -Name $_) }" $powershell) | trim | lower -}}
 {{- $executionPolicyMismatch := output "pwsh.exe" "-NoProfile" "-Command" (printf "[bool]((%s | ConvertFrom-Json -AsHashTable).ExecutionPolicy | Where-Object { $_.Scope -ne $null -and $_.ExecutionPolicy -ne $null } | ForEach-Object { (Get-ExecutionPolicy -Scope $_.Scope) -ne $_.ExecutionPolicy } | Measure-Object -Sum | Select-Object -ExpandProperty Sum)" $powershell) | trim | lower -}}
 {{- if or (ne $newPackagesToInstall "") (eq $executionPolicyMismatch "true") -}}
-echo "== {{ .chezmoi.sourceFile | trim }} =="
+
 
 $pwsh_data = {{ $powershell }} | ConvertFrom-Json -AsHashTable
 {{if (eq $executionPolicyMismatch "true") -}}

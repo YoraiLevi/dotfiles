@@ -2,6 +2,6 @@
 {{- $checkAttributes := output "powershell.exe" "-NoProfile" "-Command" (printf "$filePath = '%s'; $attributes = (Get-Item -Path $filePath -Force).Attributes; ($attributes -band [System.IO.FileAttributes]::Hidden -and $attributes -band [System.IO.FileAttributes]::System)" $parentDir) | trim | lower -}}
 {{- if eq $checkAttributes "false" -}}
 # {{ output "powershell.exe" "-NoProfile" "attrib" $parentDir }}
-echo "== {{ .chezmoi.sourceFile | trim }} =="
+
 attrib +s +h .
 {{- end -}}

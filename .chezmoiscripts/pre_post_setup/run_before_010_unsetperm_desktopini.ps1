@@ -1,7 +1,5 @@
-echo "== {{ .chezmoi.sourceFile | trim }} =="
-
 Import-Module (Join-Path $ENV:CHEZMOI_SOURCE_DIR .chezmoilib\DesktopIniAttributes.psm1)
 
 Get-ChildItem -Path $ENV:CHEZMOI_SOURCE_DIR -Filter desktop.ini -Recurse | ForEach-Object {
-    Set-DesktopIniAttributes $_.FullName
+    Remove-DesktopIniAttributes $_.FullName -ErrorAction Continue
 }
