@@ -98,15 +98,6 @@ Debugging templates
 cat template.tmpl | chezmoi execute-template $_
 ```
 
-Character order:
-Note: Upper case is before numbers for chezmoi??
-
-```
-PS> [string](33..126 | %{$([string][char]$_)} | sort)
-
-_ - , ; : ! ? . ' " ( ) [ ] { } @ * / \ & # % ` ^ + < = > | ~ $ 0 1 2 3 4 5 6 7 8 9 A a B b C c d D e E f F g G h H I i j J K k L l m M n N o O P p Q q R r s S T t U u v V w W x X y Y Z z
-```
-
 #### Debugging
 
 Profiling pwsh profile performance
