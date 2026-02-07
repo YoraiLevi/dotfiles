@@ -184,6 +184,7 @@
 			//"editor.symbolHighlightBorder": null,
 			//"peekViewEditor.matchHighlightBorder": null,
 			//"terminal.findMatchHighlightBorder": null,
+			
 			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
 			"editor.stackFrameHighlightBackground": "#0000ff",
 
@@ -204,7 +205,7 @@
 			"editor.symbolHighlightBackground": "#0000ff", // Doesn't seem to do anything?
 			
 			"terminal.findMatchHighlightBackground": "#fcfcfa26",
-			"terminal.hoverHighlightBackground": "#ff0000",
+			"terminal.hoverHighlightBackground": "#fcfcfa06",
 
 			"minimap.errorHighlight": "#ff6188a5",
 			"minimap.findMatchHighlight": "#afaf0e65",
