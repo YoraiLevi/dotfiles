@@ -1,4 +1,7 @@
 param()
+if ($null -ne $ENV:CHEZMOI_SOURCE_FILE) {
+    Write-Host "== $ENV:CHEZMOI_SOURCE_FILE ==" -ForegroundColor Green
+}
 $ENV:CHEZMOI_DATA = (chezmoi data --format json | Out-String | ConvertFrom-Json | ConvertTo-Json -Compress -Depth 100)
 $ENV:CHEZMOI_WSL2 = 1
 
