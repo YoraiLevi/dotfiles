@@ -673,7 +673,14 @@ Register-ArgumentCompleter -Native -CommandName uvx -ScriptBlock {
 
 # I don't like the public oh my posh themes
 # use oh my posh here
-
+function Invoke-Conda {
+    Remove-Alias -Name conda -Scope Global
+    if (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
+        (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
+    }
+    conda @args
+}
+Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 # Lazy init for conda — only generated on first Tab press
 Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
