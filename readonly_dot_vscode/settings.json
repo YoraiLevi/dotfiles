@@ -273,5 +273,4 @@
 		"editor.defaultFormatter": "yzhang.markdown-all-in-one"
 	},
 	"editor.bracketPairColorization.independentColorPoolPerBracketType": true,
-	"editor.guides.bracketPairs": "active",
 }
