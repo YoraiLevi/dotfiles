@@ -1,9 +1,9 @@
 # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
-# if (($ENV:CHEZMOI -eq 1)) {
-#     # don't load the profile if chezmoi is active
-#     # why would you edit with chezmoi active anyway?
-#     return
-# }
+if (($ENV:CHEZMOI -eq 1)) {
+    # don't load the profile if chezmoi is active
+    # why would you edit with chezmoi active anyway?
+    return
+}
 try {
     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
     Import-Module posh-git -ErrorAction Stop
