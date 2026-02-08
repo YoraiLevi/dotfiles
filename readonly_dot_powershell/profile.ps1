@@ -520,7 +520,7 @@ if (Get-Module -ListAvailable -Name Pscx) {
     Import-Module Pscx -ErrorAction SilentlyContinue
     $Pscx:Preferences['TextEditor'] = $(which $_EDITOR)
     Set-Alias -Name touch -Value Touch-File # pscx has a touch alias
-
+    Set-Alias -Name Expand-Archive -Value Microsoft.PowerShell.Archive\Expand-Archive -Scope Global -Force # pscx has a Expand-Archive function
 }
 else {
     Write-Error "Pscx isn't available on the system, execute:`nInstall-Module Pscx -Scope CurrentUser -Force"
