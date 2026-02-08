@@ -268,8 +268,6 @@
 		"-s"
 	],
 	"githubPullRequests.pullBranch": "never",
-	"gitlens.ai.model": "gitkraken",
-	"gitlens.ai.gitkraken.model": "gemini:gemini-2.0-flash",
 	"editor.inlineSuggest.edits.showCollapsed": true,
 	"editor.minimap.enabled": true,
 	"[markdown]": {
