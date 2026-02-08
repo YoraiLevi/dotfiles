@@ -74,8 +74,7 @@
 	"terminal.integrated.scrollback": 90000,
 	"vscode-default-keybindings.removeOSKeybindings": true,
 	"vscode-default-keybindings.windowsKeybindings": true,
-	"window.restoreWindows": "all", // Restore windows on start unless manually opened something specific 
-	"window.zoomLevel": -1,
+	"window.restoreWindows": "all",
 	"explorer.openEditors.visible": 15,
 	"workbench.editor.showTabs": "single",
 	"workbench.editor.limit.enabled": true,
