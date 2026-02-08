@@ -7,16 +7,14 @@ if (($ENV:CHEZMOI -eq 1)) {
 # Register a one-shot idle event to load posh-git after the first prompt renders
 $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
     try {
+        # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
         Import-Module posh-git -ErrorAction Stop
     }
     catch {
         Write-Error "posh-git isn't available"
     }
 }
-Register-LazyArgumentCompleter -CommandName 'chezmoi' -CompletionCodeFactory {
-    if (-not (Get-Command chezmoi.exe -ErrorAction SilentlyContinue)) { return }
-    (& chezmoi completion powershell) | Out-String
-}
+
 # try {
 #     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
 #     Import-Module posh-git -ErrorAction Stop
@@ -656,6 +654,12 @@ function Show-NativeArgumentCompleters {
         }
     }
 }
+
+Register-LazyArgumentCompleter -CommandName 'chezmoi' -CompletionCodeFactory {
+    if (-not (Get-Command chezmoi.exe -ErrorAction SilentlyContinue)) { return }
+    return (& chezmoi completion powershell) | Out-String
+}
+
 function Invoke-Fnm {
     Remove-Alias -Name fnm -Scope Global
     if (which 'fnm.exe') {
@@ -715,6 +719,8 @@ Set-Alias -Name uvx -Value Invoke-Uvx -Scope Global
 
 Register-LazyArgumentCompleter -CommandName 'conda' -CompletionCodeFactory {
     if (-not (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe')) { return }
+    # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
+    Import-Module posh-git -ErrorAction Stop
     (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
     Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
     Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
@@ -723,6 +729,8 @@ Register-LazyArgumentCompleter -CommandName 'conda' -CompletionCodeFactory {
     return $null
 }
 function Invoke-Conda {
+    # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
+    Import-Module posh-git -ErrorAction Stop
     Remove-Alias -Name conda -Scope Global
     if (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
         (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
