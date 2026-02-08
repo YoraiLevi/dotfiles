@@ -482,36 +482,50 @@ Set-Alias -Name fnm -Value Invoke-Fnm -Scope Global
 Register-ArgumentCompleter -Native -CommandName uv -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
-    if (-not (which 'uv.exe')) {
-        return
+    if (-not (which 'uv.exe')) { return }
+
+    $completionCode = (& uv generate-shell-completion powershell) | Out-String
+
+    # Intercept Register-ArgumentCompleter to capture the real script block
+    $captured = $null
+    $origRegister = Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
+    function Register-ArgumentCompleter {
+        param([switch]$Native, [string[]]$CommandName, [scriptblock]$ScriptBlock)
+        Set-Variable -Name captured -Value $ScriptBlock -Scope 1
     }
+    Invoke-Expression $completionCode
 
-    # Load the real completer (replaces this lazy one)
-    (& uv generate-shell-completion powershell) | Out-String | Invoke-Expression
-
-    # Re-invoke completion with the now-registered real completer
-    $result = [System.Management.Automation.CommandCompletion]::CompleteInput(
-        $commandAst.ToString(), $cursorPosition, $null
-    )
-    $result.CompletionMatches
+    if ($captured) {
+        # Register the real completer for future Tab presses
+        & $origRegister -Native -CommandName uv -ScriptBlock $captured
+        # Invoke it directly for this first Tab press
+        & $captured $wordToComplete $commandAst $cursorPosition
+    }
 }
 
 # Lazy shell completion for uvx — only generated on first Tab press
 Register-ArgumentCompleter -Native -CommandName uvx -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
-    if (-not (which 'uv.exe')) {
-        return
+    if (-not (which 'uv.exe')) { return }
+
+    $completionCode = (& uvx --generate-shell-completion powershell) | Out-String
+
+    # Intercept Register-ArgumentCompleter to capture the real script block
+    $captured = $null
+    $origRegister = Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
+    function Register-ArgumentCompleter {
+        param([switch]$Native, [string[]]$CommandName, [scriptblock]$ScriptBlock)
+        Set-Variable -Name captured -Value $ScriptBlock -Scope 1
     }
+    Invoke-Expression $completionCode
 
-    # Load the real completer (replaces this lazy one)
-    (& uvx --generate-shell-completion powershell) | Out-String | Invoke-Expression
-
-    # Re-invoke completion with the now-registered real completer
-    $result = [System.Management.Automation.CommandCompletion]::CompleteInput(
-        $commandAst.ToString(), $cursorPosition, $null
-    )
-    $result.CompletionMatches
+    if ($captured) {
+        # Register the real completer for future Tab presses
+        & $origRegister -Native -CommandName uvx -ScriptBlock $captured
+        # Invoke it directly for this first Tab press
+        & $captured $wordToComplete $commandAst $cursorPosition
+    }
 }
 
 # I don't like the public oh my posh themes
@@ -521,18 +535,25 @@ Register-ArgumentCompleter -Native -CommandName uvx -ScriptBlock {
 Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
-    if (-not (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe')) {
-        return
+    if (-not (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe')) { return }
+
+    $completionCode = (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ }
+
+    # Intercept Register-ArgumentCompleter to capture the real script block
+    $captured = $null
+    $origRegister = Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
+    function Register-ArgumentCompleter {
+        param([switch]$Native, [string[]]$CommandName, [scriptblock]$ScriptBlock)
+        Set-Variable -Name captured -Value $ScriptBlock -Scope 1
     }
+    Invoke-Expression $completionCode
 
-    # Load the real conda hook and completer (replaces this lazy one)
-    (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
-
-    # Re-invoke completion with the now-registered real completer
-    $result = [System.Management.Automation.CommandCompletion]::CompleteInput(
-        $commandAst.ToString(), $cursorPosition, $null
-    )
-    $result.CompletionMatches
+    if ($captured) {
+        # Register the real completer for future Tab presses
+        & $origRegister -Native -CommandName conda -ScriptBlock $captured
+        # Invoke it directly for this first Tab press
+        & $captured $wordToComplete $commandAst $cursorPosition
+    }
 }
 
 if (Get-Module -ListAvailable -Name Pscx) {
