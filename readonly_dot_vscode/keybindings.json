@@ -1780,7 +1780,7 @@
     },
 
 
-    
+
     {
         "command": "-workbench.files.action.focusOpenEditorsView",
         "key": "ctrl+m e",
@@ -1920,6 +1920,10 @@
         "key": "ctrl+right",
         "command": "-cursorWordEndRight",
         "when": "textInputFocus && !accessibilityModeEnabled"
+    },
+    {
+        "key": "alt+n",
+        "command": "workbench.action.moveEditorToNewWindow"
     },
    
 
