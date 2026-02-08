@@ -267,11 +267,11 @@
 		"-s"
 	],
 	"githubPullRequests.pullBranch": "never",
-	"editor.inlineSuggest.edits.showCollapsed": true,
 	"editor.minimap.enabled": true,
 	"[markdown]": {
 		"editor.defaultFormatter": "yzhang.markdown-all-in-one"
 	},
 	"editor.bracketPairColorization.independentColorPoolPerBracketType": true,
 	"editor.guides.bracketPairs": true,
+	"editor.snippetSuggestions": "bottom",
 }
