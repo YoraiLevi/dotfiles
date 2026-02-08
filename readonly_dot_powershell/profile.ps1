@@ -465,6 +465,35 @@ function Get-Type {
 # https://www.reddit.com/r/PowerShell/comments/fsv3kt/comment/fm4fi89/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 # Set-ExecutionPolicy Bypass -Scope Process
 # Update-FormatData -PrependPath "$PSScriptRoot\Format.ps1xml"
+function Register-LazyArgumentCompleter {
+    param(
+        [Parameter(Mandatory)]
+        [string]$CommandName,
+
+        [Parameter(Mandatory)]
+        [scriptblock]$CompletionCodeFactory
+    )
+
+    Register-ArgumentCompleter -Native -CommandName $CommandName -ScriptBlock {
+        param($wordToComplete, $commandAst, $cursorPosition)
+
+        $completionCode = & $CompletionCodeFactory
+        if (-not $completionCode) { return }
+
+        # Register the real completer
+        Invoke-Expression $completionCode
+
+        # Retrieve it via reflection and invoke for this first Tab press
+        $bindingFlags = [Reflection.BindingFlags]'NonPublic,Instance'
+        $allFlags = [Reflection.BindingFlags]'Public,NonPublic,Instance'
+        $internalCtx = $ExecutionContext.GetType().GetField('_context', $bindingFlags).GetValue($ExecutionContext)
+        $realCompleter = $internalCtx.GetType().GetProperty('NativeArgumentCompleters', $allFlags).GetValue($internalCtx)[$CommandName]
+
+        if ($realCompleter) {
+            & $realCompleter $wordToComplete $commandAst $cursorPosition
+        }
+    }.GetNewClosure()
+}
 function Show-NativeArgumentCompleters {
     [CmdletBinding()]
     param(
@@ -621,56 +650,25 @@ function Invoke-Fnm {
 }
 Set-Alias -Name fnm -Value Invoke-Fnm -Scope Global
 
-# Lazy shell completion for uv — only generated on first Tab press
-Register-ArgumentCompleter -Native -CommandName uv -ScriptBlock {
-    param($wordToComplete, $commandAst, $cursorPosition)
 
-    if (-not (which 'uv.exe')) { return }
 
-    $completionCode = (& uv generate-shell-completion powershell) | Out-String
-
-    # Intercept Register-ArgumentCompleter to capture the real script block
-    $captured = $null
-    $origRegister = Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
-    function Register-ArgumentCompleter {
-        param([switch]$Native, [string[]]$CommandName, [scriptblock]$ScriptBlock)
-        Set-Variable -Name captured -Value $ScriptBlock -Scope 1
-    }
-    Invoke-Expression $completionCode
-
-    if ($captured) {
-        # Register the real completer for future Tab presses
-        & $origRegister -Native -CommandName uv -ScriptBlock $captured
-        # Invoke it directly for this first Tab press
-        & $captured $wordToComplete $commandAst $cursorPosition
-    }
+Register-LazyArgumentCompleter -CommandName 'uv' -CompletionCodeFactory {
+    if (-not (Get-Command 'uv.exe')) { return }
+    (& uv generate-shell-completion powershell) | Out-String
 }
 
-# Lazy shell completion for uvx — only generated on first Tab press
-Register-ArgumentCompleter -Native -CommandName uvx -ScriptBlock {
-    param($wordToComplete, $commandAst, $cursorPosition)
-
-    if (-not (which 'uv.exe')) { return }
-
-    $completionCode = (& uvx --generate-shell-completion powershell) | Out-String
-
-    # Intercept Register-ArgumentCompleter to capture the real script block
-    $captured = $null
-    $origRegister = Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
-    function Register-ArgumentCompleter {
-        param([switch]$Native, [string[]]$CommandName, [scriptblock]$ScriptBlock)
-        Set-Variable -Name captured -Value $ScriptBlock -Scope 1
-    }
-    Invoke-Expression $completionCode
-
-    if ($captured) {
-        # Register the real completer for future Tab presses
-        & $origRegister -Native -CommandName uvx -ScriptBlock $captured
-        # Invoke it directly for this first Tab press
-        & $captured $wordToComplete $commandAst $cursorPosition
-    }
+Register-LazyArgumentCompleter -CommandName 'uvx' -CompletionCodeFactory {
+    if (-not (Get-Command 'uv.exe')) { return }
+    (& uvx --generate-shell-completion powershell) | Out-String
 }
-
+Register-LazyArgumentCompleter -CommandName 'conda' -CompletionCodeFactory {
+    if (-not (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe')) { return }
+    (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
+    Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
+    Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
+        param($wordToComplete, $commandAst, $cursorPosition)
+    }    
+}
 # I don't like the public oh my posh themes
 # use oh my posh here
 function Invoke-Conda {
