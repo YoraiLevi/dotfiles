@@ -51,6 +51,11 @@ Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 
+function Benchmark-Profile {
+    $pwsh = (Get-Process -Id $PID).Path
+    & $pwsh -NoProfile -command 'Measure-Script -Top 10 $profile.CurrentUserAllHosts'
+}
+
 function Get-ChocoPackage {
     # https://stackoverflow.com/a/76556486/12603110
     param(
@@ -717,6 +722,7 @@ Set-Alias -Name uvx -Value Invoke-Uvx -Scope Global
 # I don't like the public oh my posh themes
 # use oh my posh here
 
+# Lazy init for conda — only generated on first Tab press
 Register-LazyArgumentCompleter -CommandName 'conda' -CompletionCodeFactory {
     if (-not (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe')) { return }
     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
@@ -738,16 +744,17 @@ function Invoke-Conda {
     conda @args
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
-# Lazy init for conda — only generated on first Tab press
 
-if (Get-Module -ListAvailable -Name Pscx) {
-    Import-Module Pscx -ErrorAction SilentlyContinue
-    $Pscx:Preferences['TextEditor'] = $(which $_EDITOR)
-    Set-Alias -Name touch -Value Touch-File # pscx has a touch alias
-    Set-Alias -Name Expand-Archive -Value Microsoft.PowerShell.Archive\Expand-Archive -Scope Global -Force # pscx has a Expand-Archive function
-}
-else {
-    Write-Error "Pscx isn't available on the system, execute:`nInstall-Module Pscx -Scope CurrentUser -Force"
+$null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
+    if (Get-Module -ListAvailable -Name Pscx) {
+        Import-Module Pscx -ErrorAction SilentlyContinue
+        $Pscx:Preferences['TextEditor'] = $(which $_EDITOR)
+        Set-Alias -Name touch -Value Touch-File # pscx has a touch alias
+        Set-Alias -Name Expand-Archive -Value Microsoft.PowerShell.Archive\Expand-Archive -Scope Global -Force # pscx has a Expand-Archive function
+    }
+    else {
+        Write-Error "Pscx isn't available on the system, execute:`nInstall-Module Pscx -Scope CurrentUser -Force"
+    }
 }
 
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
