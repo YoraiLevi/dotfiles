@@ -773,4 +773,4 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
 #     $script:_lazyRunspace.Dispose()
 # }
 
-Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Select-Object Name, Value | Sort-Object Name | Write-Host -ForegroundColor Red # | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
+Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
