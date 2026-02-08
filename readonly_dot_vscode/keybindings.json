@@ -1913,4 +1913,14 @@
         "key": "alt+n",
         "command": "workbench.action.moveEditorToNewWindow"
     },
+    {
+        "key": "ctrl+i",
+        "command": "-editor.action.triggerSuggest",
+        "when": "editorHasCompletionItemProvider && textInputFocus && !editorReadonly && !suggestWidgetVisible"
+    },
+    {
+        "key": "ctrl+shift+space",
+        "command": "editor.action.inlineSuggest.triggerInlineEditExplicit"
+    },
+   
 ]
