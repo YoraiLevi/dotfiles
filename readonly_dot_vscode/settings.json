@@ -202,12 +202,12 @@
 			"minimap.findMatchHighlight": "#afaf0e65",
 			"minimap.selectionHighlight": "#c1c0c026",
 			"minimap.selectionOccurrenceHighlight": "#8d3e8da5", // Highlight in minimap for same content as selection  
-			"editorBracketHighlight.foreground1": "#ff6188",
-			"editorBracketHighlight.foreground2": "#fc9867",
-			"editorBracketHighlight.foreground3": "#ab9df2",
-			"editorBracketHighlight.foreground4": "#a9dc76",
-			"editorBracketHighlight.foreground5": "#ffd866",
-			"editorBracketHighlight.foreground6": "#78dce8",
+			// "editorBracketHighlight.foreground1": "#ff6188",
+			// "editorBracketHighlight.foreground2": "#fc9867",
+			// "editorBracketHighlight.foreground3": "#ab9df2",
+			// "editorBracketHighlight.foreground4": "#a9dc76",
+			// "editorBracketHighlight.foreground5": "#ffd866",
+			// "editorBracketHighlight.foreground6": "#78dce8",
 			"editorBracketHighlight.unexpectedBracket.foreground": "#db6165"
 		}
 	},
