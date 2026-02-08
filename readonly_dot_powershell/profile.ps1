@@ -9,7 +9,7 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
     try {
         # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
         Import-Module posh-git -ErrorAction Stop
-        
+        # https://github.com/dahlbyk/posh-git?tab=readme-ov-file#customizing-the-posh-git-prompt
         $GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
         
         $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "MM-dd HH:mm:ss") '
