@@ -188,7 +188,7 @@
 			"editor.hoverHighlightBackground": "#8a898a73", // After a period of hovering, highlights the text
 			"editor.wordHighlightBackground": "#afaf0e38", // Highlight of "word" at typing cursor and other occurances
 			"editor.wordHighlightBorder": "#afaf0e", // Highlight of "word" at typing cursor and other occurances
-			"editor.selectionHighlightBackground": "#8a898ad5", // Highlight for same content as selection 
+			"editor.selectionHighlightBackground": "#8a898a73", // Highlight for same content as selection 
 			"editor.selectionHighlightBorder": "#979797ad", // Border for same content as selection 
 			"editor.lineHighlightBackground": "#a0a0a020", // Current line highlight
 			"editor.rangeHighlightBackground": "#403e41", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
