@@ -656,21 +656,47 @@ Register-LazyArgumentCompleter -CommandName 'uv' -CompletionCodeFactory {
     if (-not (Get-Command 'uv.exe')) { return }
     (& uv generate-shell-completion powershell) | Out-String
 }
+function Invoke-Uv {
+    Remove-Alias -Name uv -Scope Global
+    if (which 'uv.exe') {
+        (& uv generate-shell-completion powershell) | Out-String | Invoke-Expression
+    }
+    else {
+        # powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+        Write-Error "uv isn't available on the system, execute:`npowershell -ExecutionPolicy ByPass -c `"irm https://astral.sh/uv/install.ps1 | iex`""
+    }
+    uv @args
+}
+Set-Alias -Name uv -Value Invoke-Uv -Scope Global
 
 Register-LazyArgumentCompleter -CommandName 'uvx' -CompletionCodeFactory {
-    if (-not (Get-Command 'uv.exe')) { return }
+    if (-not (Get-Command 'uvx.exe')) { return }
     (& uvx --generate-shell-completion powershell) | Out-String
 }
+function Invoke-Uvx {
+    Remove-Alias -Name uvx -Scope Global
+    if (which 'uv.exe') {
+        (& uvx --generate-shell-completion powershell) | Out-String | Invoke-Expression
+    }
+    else {
+        # powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+        Write-Error "uv isn't available on the system, execute:`npowershell -ExecutionPolicy ByPass -c `"irm https://astral.sh/uv/install.ps1 | iex`""
+    }
+    uvx @args
+}
+Set-Alias -Name uvx -Value Invoke-Uvx -Scope Global
+# I don't like the public oh my posh themes
+# use oh my posh here
+
 Register-LazyArgumentCompleter -CommandName 'conda' -CompletionCodeFactory {
     if (-not (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe')) { return }
     (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
     Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
     Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
         param($wordToComplete, $commandAst, $cursorPosition)
-    }    
+    }    return $null
+    return $null
 }
-# I don't like the public oh my posh themes
-# use oh my posh here
 function Invoke-Conda {
     Remove-Alias -Name conda -Scope Global
     if (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
@@ -680,30 +706,6 @@ function Invoke-Conda {
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 # Lazy init for conda — only generated on first Tab press
-Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
-    param($wordToComplete, $commandAst, $cursorPosition)
-
-    Remove-Alias -Name conda -Scope Global
-    if (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
-        (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
-    }
-
-    # Intercept Register-ArgumentCompleter to capture the real script block
-    $captured = $null
-    $origRegister = Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
-    function Register-ArgumentCompleter {
-        param([switch]$Native, [string[]]$CommandName, [scriptblock]$ScriptBlock)
-        Set-Variable -Name captured -Value $ScriptBlock -Scope 1
-    }
-    Invoke-Expression $completionCode
-
-    if ($captured) {
-        # Register the real completer for future Tab presses
-        & $origRegister -Native -CommandName uvx -ScriptBlock $captured
-        # Invoke it directly for this first Tab press
-        & $captured $wordToComplete $commandAst $cursorPosition
-    }
-}
 
 if (Get-Module -ListAvailable -Name Pscx) {
     Import-Module Pscx -ErrorAction SilentlyContinue
