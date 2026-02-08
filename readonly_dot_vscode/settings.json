@@ -278,5 +278,4 @@
 	"editor.suggest.snippetsPreventQuickSuggestions": true,
 	"editor.suggest.shareSuggestSelections": true,
 	"editor.suggest.preview": true,
-	"editor.suggest.localityBonus": true,
 }
