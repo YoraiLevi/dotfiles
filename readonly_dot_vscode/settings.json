@@ -1,7 +1,6 @@
 {
 	"update.showReleaseNotes": true,
 	"update.enableWindowsBackgroundUpdates": false,
-	"update.mode": "none",
 	"cursor.cpp.enablePartialAccepts": true,
 	"cursor.diffs.useCharacterLevelDiffs": true,
 	"cursor.terminal.usePreviewBox": true,
