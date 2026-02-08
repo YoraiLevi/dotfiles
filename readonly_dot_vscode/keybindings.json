@@ -1950,7 +1950,11 @@
         "command": "cursorai.action.cancelGenerateInTerminal",
         "when": "terminalFocus && terminalHasBeenCreated || terminalProcessSupported && @terminal.canCancelGeneration"
     },
-
+    {
+        "key": "ctrl+backspace",
+        "command": "-cursorai.action.cancelGenerateInTerminal",
+        "when": "terminalFocus && terminalHasBeenCreated || terminalProcessSupported && @terminal.canCancelGeneration"
+    },
    
 
 ]
