@@ -517,6 +517,11 @@
     // VSCODE
     //Remove all chord keys
     {
+        "key": "ctrl+m ctrl+k",
+        "command": "-editor.action.defineKeybinding",
+        "when": "resource == 'vscode-userdata:/c%3A/Users/devic/AppData/Roaming/Cursor/User/keybindings.json'"
+    },
+    {
         "command": "-aiFeedback.action.open",
         "key": "ctrl+m ctrl+g"
     },
@@ -1707,6 +1712,75 @@
         "key": "ctrl+k e",
         "when": "workbench.explorer.openEditorsView.active"
     },
+    
+
+    {
+        "key": "ctrl+k ctrl+shift+l",
+        "command": "-editor.toggleFoldRecursively",
+        "when": "editorTextFocus && foldingEnabled"
+    },
+    {
+        "key": "ctrl+k o",
+        "command": "-workbench.action.copyEditorToNewWindow",
+        "when": "activeEditor"
+    },
+    {
+        "key": "ctrl+k ctrl+m",
+        "command": "-workbench.action.toggleMaximizeEditorGroup",
+        "when": "editorPartMaximizedEditorGroup || editorPartMultipleEditorGroups"
+    },
+    {
+        "key": "ctrl+k i",
+        "command": "-inlineChat.startWithCurrentLine",
+        "when": "inlineChatHasProvider && !editorReadonly && !inlineChatVisible"
+    },
+    {
+        "key": "ctrl+k ctrl+i",
+        "command": "-list.showHover",
+        "when": "listFocus && !inputFocus && !treestickyScrollFocused"
+    },
+    {
+        "key": "ctrl+k i",
+        "command": "-notebook.cell.chat.start",
+        "when": "config.notebook.experimental.cellChat && notebookChatAgentRegistered && notebookEditable && notebookEditorFocused && !inputFocus || config.notebook.experimental.generate && notebookChatAgentRegistered && notebookEditable && notebookEditorFocused && !inputFocus"
+    },
+    {
+        "key": "ctrl+k ctrl+f12",
+        "command": "-editor.action.revealDefinitionAside",
+        "when": "false"
+    },
+    {
+        "key": "ctrl+k ctrl+shift+n",
+        "command": "-notifications.showList"
+    },
+    {
+        "key": "ctrl+k ctrl+alt+up",
+        "command": "-editor.action.previousCommentingRange",
+        "when": "accessibilityModeEnabled && commentFocused || accessibilityModeEnabled && editorFocus || accessibilityHelpIsShown && accessibilityModeEnabled && accessibleViewCurrentProviderId == 'comments'"
+    },
+    {
+        "key": "ctrl+k ctrl+alt+down",
+        "command": "-editor.action.nextCommentingRange",
+        "when": "accessibilityModeEnabled && commentFocused || accessibilityModeEnabled && editorFocus || accessibilityHelpIsShown && accessibilityModeEnabled && accessibleViewCurrentProviderId == 'comments'"
+    },
+    {
+        "key": "ctrl+k ctrl+alt+c",
+        "command": "-workbench.action.addComment",
+        "when": "activeCursorHasCommentingRange"
+    },
+    {
+        "key": "ctrl+k m",
+        "command": "-pr.makeSuggestion",
+        "when": "commentEditorFocused"
+    },
+    {
+        "key": "ctrl+k v",
+        "command": "-markdown.extension.closePreview",
+        "when": "activeWebviewPanelId == 'markdown.preview'"
+    },
+
+
+    
     {
         "command": "-workbench.files.action.focusOpenEditorsView",
         "key": "ctrl+m e",
@@ -1839,8 +1913,14 @@
     },
     {
         "key": "ctrl+right",
+        "command": "cursorWordEndRight",
+        "when": "!(cppSuggestion && !editorReadonly || inlineSuggestionVisible && !editorReadonly) && (textInputFocus && !accessibilityModeEnabled)"
+    },
+    {
+        "key": "ctrl+right",
         "command": "-cursorWordEndRight",
         "when": "textInputFocus && !accessibilityModeEnabled"
     },
+   
 
 ]
