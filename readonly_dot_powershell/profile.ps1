@@ -517,7 +517,7 @@ function Invoke-Conda {
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 
 if (Get-Module -ListAvailable -Name Pscx) {
-    Import-Module Pscx -Prefix Pscx -ErrorAction SilentlyContinue
+    Import-Module Pscx -ErrorAction SilentlyContinue
     $Pscx:Preferences['TextEditor'] = $(which $_EDITOR)
     Set-Alias -Name touch -Value Touch-File # pscx has a touch alias
 
