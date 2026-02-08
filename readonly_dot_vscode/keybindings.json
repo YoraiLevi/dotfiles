@@ -1842,5 +1842,10 @@
         "key": "ctrl+right",
         "command": "-cursorWordEndRight",
         "when": "textInputFocus && !accessibilityModeEnabled"
-    }
-]
+    },
+//     {
+//         "key": "ctrl+right",
+//         "command": "-editor.action.inlineSuggest.acceptNextWord",
+//         "when": "cppSuggestion && !editorReadonly || inlineSuggestionVisible && !editorReadonly"
+//     }
+// ]
