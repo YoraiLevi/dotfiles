@@ -208,6 +208,7 @@
 			"editorBracketHighlight.foreground4": "#4fb1bc",
 			"editorBracketHighlight.foreground5": "#97c26c",
 			"editorBracketHighlight.foreground6": "#abb2c0",
+			
 		}
 	},
 	"editor.tokenColorCustomizations": {
