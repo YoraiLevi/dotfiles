@@ -4,34 +4,35 @@ if (($ENV:CHEZMOI -eq 1)) {
     # why would you edit with chezmoi active anyway?
     return
 }
-# Register a one-shot idle event to load posh-git after the first prompt renders
-$null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
+
+function Set-PoshGitPrompt {
     try {
-        # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
         Import-Module posh-git -ErrorAction Stop
+        # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
         # https://github.com/dahlbyk/posh-git?tab=readme-ov-file#customizing-the-posh-git-prompt
-        # $GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
+        $Global:GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
+        function global:PromptWriteErrorInfo() {
+            if ($global:GitPromptValues.DollarQuestion) { return }
         
-
-        # function global:PromptWriteErrorInfo() {
-        #     if ($global:GitPromptValues.DollarQuestion) { return }
-        
-        #     if ($global:GitPromptValues.LastExitCode) {
-        #         "`e[31m(" + $global:GitPromptValues.LastExitCode + ") `e[0m"
-        #     }
-        #     else {
-        #         "`e[31m!!! `e[0m"
-        #     }
-        # }
-
-        # $GitPromptSettings.DefaultPromptWriteStatusFirst = $true
-        # $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n$(PromptWriteErrorInfo)$([DateTime]::now.ToString("MM-dd HH:mm:ss"))'
-        # $GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = 0x808080
-        # $GitPromptSettings.DefaultPromptSuffix = ' $((Get-History -Count 1).id + 1)$(">" * ($nestedPromptLevel + 1)) '
+            if ($global:GitPromptValues.LastExitCode) {
+                "`e[31m(ERROR:" + $global:GitPromptValues.LastExitCode + ") `e[0m"
+            }
+            else {
+                "`e[31m!!! `e[0m"
+            }
+        }
+        $Global:GitPromptSettings.DefaultPromptWriteStatusFirst = $true
+        $Global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n$(PromptWriteErrorInfo)$([DateTime]::now.ToString("MM-dd HH:mm:ss"))'
+        $Global:GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = 0x808080
+        $Global:GitPromptSettings.DefaultPromptSuffix = ' $((Get-History -Count 1).id + 1)$(">" * ($nestedPromptLevel + 1)) '
     }
     catch {
         Write-Error "posh-git isn't available"
     }
+}
+# Register a one-shot idle event to load posh-git after the first prompt renders
+$null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
+    Set-PoshGitPrompt
 }
 $existingVariables = Get-Variable # Some setup may not work if the variables are not removed, keep that in mind
 
@@ -730,7 +731,7 @@ Set-Alias -Name uvx -Value Invoke-Uvx -Scope Global
 Register-LazyArgumentCompleter -CommandName 'conda' -CompletionCodeFactory {
     if (-not (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe')) { return }
     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
-    Import-Module posh-git -ErrorAction Stop
+    Set-PoshGitPrompt
     (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
     Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
     Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
@@ -740,7 +741,7 @@ Register-LazyArgumentCompleter -CommandName 'conda' -CompletionCodeFactory {
 }
 function Invoke-Conda {
     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
-    Import-Module posh-git -ErrorAction Stop
+    Set-PoshGitPrompt
     Remove-Alias -Name conda -Scope Global
     if (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
         (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
