@@ -12,7 +12,7 @@ function Set-PoshGitPrompt {
         # https://github.com/dahlbyk/posh-git?tab=readme-ov-file#customizing-the-posh-git-prompt
         $Global:GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
         function global:PromptWriteErrorInfo() {
-            if ($global:GitPromptValues.DollarQuestion) { return }
+            if ($global:GitPromptValues.DollarQuestion) { return "`e[32mOK `e[0m" }
         
             if ($global:GitPromptValues.LastExitCode) {
                 "`e[31m(ERROR: " + $global:GitPromptValues.LastExitCode + ") `e[0m"
