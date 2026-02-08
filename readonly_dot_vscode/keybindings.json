@@ -418,11 +418,6 @@
         "when": "composerFocused"
     },
     {
-        "key": "escape",
-        "command": "composer.cancelComposerStep",
-        "when": "composerFocused"
-    },
-    {
         "key": "ctrl+backspace",
         "command": "-composer.cancelComposerStep",
         "when": "composerFocused"
@@ -1924,6 +1919,16 @@
     {
         "key": "alt+n",
         "command": "workbench.action.moveEditorToNewWindow"
+    },
+    {
+        "key": "escape",
+        "command": "composer.cancelComposerStep",
+        "when": "composerFocused || focusedView =~ /^workbench.panel.aichat.view/"
+    },
+    {
+        "key": "escape",
+        "command": "composer.cancelComposerStepInputFocused",
+        "when": "composerFocused || focusedView =~ /^workbench.panel.aichat.view/"
     },
    
 
