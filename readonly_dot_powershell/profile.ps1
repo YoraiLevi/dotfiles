@@ -245,6 +245,11 @@ Set-Alias -Name '....' -Value Up3
 
 # Enhanced Listing
 $PSDefaultParameterValues = @{'Format-Table:Autosize' = $true }
+$ExecutionContext.InvokeCommand.LocationChangedAction = {
+    # this is called when the location changes
+    param($sender, $eventArgs)
+    Get-ChildItem | Out-Default
+}
 function ll { param($Path = '') Get-ChildItem -Path $Path -Force }
 
 # https://www.reddit.com/r/PowerShell/comments/fsv3kt/comment/fm4va8o/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
@@ -649,8 +654,6 @@ function Invoke-Fnm {
     fnm @args
 }
 Set-Alias -Name fnm -Value Invoke-Fnm -Scope Global
-
-
 
 Register-LazyArgumentCompleter -CommandName 'uv' -CompletionCodeFactory {
     if (-not (Get-Command 'uv.exe')) { return }
