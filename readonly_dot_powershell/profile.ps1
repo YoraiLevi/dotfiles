@@ -15,7 +15,7 @@ function Set-PoshGitPrompt {
             if ($global:GitPromptValues.DollarQuestion) { return }
         
             if ($global:GitPromptValues.LastExitCode) {
-                "`e[31m(ERROR:" + $global:GitPromptValues.LastExitCode + ") `e[0m"
+                "`e[31m(ERROR: " + $global:GitPromptValues.LastExitCode + ") `e[0m"
             }
             else {
                 "`e[31m!!! `e[0m"
