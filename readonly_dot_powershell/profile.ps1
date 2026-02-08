@@ -491,18 +491,23 @@ function Invoke-Uv {
 }
 Set-Alias -Name uv -Value Invoke-Uv -Scope Global
 
-function Invoke-Uvx {
-    Remove-Alias -Name uvx -Scope Global
-    if (which 'uv.exe') {
-        (& uvx --generate-shell-completion powershell) | Out-String | Invoke-Expression
+# Lazy shell completion for uvx — only generated on first Tab press
+Register-ArgumentCompleter -Native -CommandName uvx -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+
+    if (-not (which 'uv.exe')) {
+        return
     }
-    else {
-        # powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-        Write-Error "uv isn't available on the system, execute:`npowershell -ExecutionPolicy ByPass -c `"irm https://astral.sh/uv/install.ps1 | iex`""
-    }
-    uvx @args
+
+    # Load the real completer (replaces this lazy one)
+    (& uvx --generate-shell-completion powershell) | Out-String | Invoke-Expression
+
+    # Re-invoke completion with the now-registered real completer
+    $result = [System.Management.Automation.CommandCompletion]::CompleteInput(
+        $commandAst.ToString(), $cursorPosition, $null
+    )
+    $result.CompletionMatches
 }
-Set-Alias -Name uvx -Value Invoke-Uvx -Scope Global
 
 # I don't like the public oh my posh themes
 # use oh my posh here
