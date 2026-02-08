@@ -685,9 +685,10 @@ Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
-    if (-not (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe')) { return }
-
-    $completionCode = (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ }
+    Remove-Alias -Name conda -Scope Global
+    if (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
+        (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
+    }
 
     # Intercept Register-ArgumentCompleter to capture the real script block
     $captured = $null
@@ -697,9 +698,10 @@ Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
         Set-Variable -Name captured -Value $ScriptBlock -Scope 1
     }
     Invoke-Expression $completionCode
+
     if ($captured) {
         # Register the real completer for future Tab presses
-        & $origRegister -Native -CommandName conda -ScriptBlock $captured
+        & $origRegister -Native -CommandName uvx -ScriptBlock $captured
         # Invoke it directly for this first Tab press
         & $captured $wordToComplete $commandAst $cursorPosition
     }
