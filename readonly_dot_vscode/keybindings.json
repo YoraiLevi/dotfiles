@@ -1837,45 +1837,10 @@
         "command": "-editor.action.acceptCursorTabSuggestion",
         "when": "cpp.shouldAcceptTab"
     },
-
-    // {
-    //     "key": "tab",
-    //     "command": "-editor.action.acceptCursorTabSuggestion",
-    //     "when": "cpp.shouldAcceptTab && !(editorTextFocus && hasSnippetCompletions && !editorTabMovesFocus && !inSnippetMode) && !(hasNextTabstop && inSnippetMode && textInputFocus)"
-    // },
-    // {
-    //     "key": "tab",
-    //     "command": "-editor.action.inlineSuggest.commit",
-    //     "when": "inlineEditIsVisible && tabShouldAcceptInlineEdit && !editorHoverFocused && !editorTabMovesFocus && !suggestWidgetVisible || inlineSuggestionHasIndentationLessThanTabSize && inlineSuggestionVisible && !editorHoverFocused && !editorTabMovesFocus && !suggestWidgetVisible || inlineEditIsVisible && inlineSuggestionHasIndentationLessThanTabSize && inlineSuggestionVisible && !editorHoverFocused && !editorTabMovesFocus && !suggestWidgetVisible || inlineEditIsVisible && inlineSuggestionVisible && tabShouldAcceptInlineEdit && !editorHoverFocused && !editorTabMovesFocus && !suggestWidgetVisible"
-    // },
-    // {
-    //     "key": "tab",
-    //     "command": "-editor.action.inlineSuggest.commit",
-    //     "when": "inInlineEditsPreviewEditor"
-    // },
-    // {
-    //     "key": "tab",
-    //     "command": "-editor.emmet.action.expandAbbreviation",
-    //     "when": "config.emmet.triggerExpansionOnTab && editorTextFocus && !editorReadonly && !editorTabMovesFocus"
-    // },
-    // {
-    //     "key": "tab",
-    //     "command": "-editor.action.inlineSuggest.jump",
-    //     "when": "inlineEditIsVisible && tabShouldJumpToInlineEdit && !editorHoverFocused && !editorTabMovesFocus && !suggestWidgetVisible"
-    // },
-    // {
-    //     "key": "tab",
-    //     "command": "-acceptSelectedSuggestion",
-    //     "when": "suggestWidgetHasFocusedSuggestion && suggestWidgetVisible && textInputFocus"
-    // },
-    // {
-    //     "key": "tab",
-    //     "command": "-insertBestCompletion",
-    //     "when": "atEndOfWord && textInputFocus && !hasOtherSuggestions && !inSnippetMode && !suggestWidgetVisible && config.editor.tabCompletion == 'on'"
-    // },
-    // {
-    //     "key": "tab",
-    //     "command": "-insertNextSuggestion",
-    //     "when": "hasOtherSuggestions && textInputFocus && !inSnippetMode && !suggestWidgetVisible && config.editor.tabCompletion == 'on'"
-    // },
+    
+    {
+        "key": "ctrl+right",
+        "command": "-cursorWordEndRight",
+        "when": "textInputFocus && !accessibilityModeEnabled"
+    }
 ]
