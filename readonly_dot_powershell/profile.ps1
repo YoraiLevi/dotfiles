@@ -465,7 +465,150 @@ function Get-Type {
 # https://www.reddit.com/r/PowerShell/comments/fsv3kt/comment/fm4fi89/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
 # Set-ExecutionPolicy Bypass -Scope Process
 # Update-FormatData -PrependPath "$PSScriptRoot\Format.ps1xml"
+function Show-NativeArgumentCompleters {
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 0)]
+        [string[]]$Key,
 
+        [switch]$ShowScriptBlock,
+        [switch]$InvokeAndPrintResults
+    )
+    begin {
+        $bindingFlags = [Reflection.BindingFlags]'NonPublic,Instance'
+        $allFlags = [Reflection.BindingFlags]'Public,NonPublic,Instance'
+        $internalCtx = $ExecutionContext.GetType().GetField('_context', $bindingFlags).GetValue($ExecutionContext)
+        $completers = $internalCtx.GetType().GetProperty('NativeArgumentCompleters', $allFlags).GetValue($internalCtx)
+
+        if (-not $completers) {
+            Write-Warning "No native argument completers found."
+            return
+        }
+
+        # Build lookups for matching keys if given
+        $keySet = @{}
+        if ($Key) {
+            foreach ($k in $Key) {
+                if ($null -ne $k -and $k -ne '') {
+                    $keySet[$k] = $true
+                }
+            }
+        }
+        $enumerator = $completers.GetEnumerator()
+        $completerEntries = @()
+        while ($enumerator.MoveNext()) {
+            $completerEntries += [PSCustomObject]@{ Key = $enumerator.Key; Value = $enumerator.Value }
+        }
+    }
+    process {
+        # Accepts Key from pipeline and merges them to $keySet
+        if ($PSBoundParameters.ContainsKey('Key')) {
+            foreach ($k in $Key) {
+                if ($null -ne $k -and $k -ne '') {
+                    $keySet[$k] = $true
+                }
+            }
+        }
+    }
+    end {
+        $filteredEntries = if ($keySet.Count -gt 0) {
+            $completerEntries | Where-Object { $keySet.ContainsKey($_.Key) }
+        }
+        else {
+            $completerEntries
+        }
+
+        if (-not $filteredEntries -or $filteredEntries.Count -eq 0) {
+            Write-Warning "No (matching) native argument completers found."
+            return
+        }
+
+        foreach ($entry in $filteredEntries) {
+            $key = $entry.Key
+            $value = $entry.Value
+
+            Write-Host "`n-----------------------------"
+            Write-Host "Key          : $key"
+            Write-Host "Type         : $($value.GetType().Name)"
+
+            if ($ShowScriptBlock) {
+                Write-Host "ScriptBlock  :"
+                try {
+                    if ($value -is [Delegate]) {
+                        Write-Host ("  [Delegate] Target:      {0}" -f ($value.Target))
+                        Write-Host ("  [Delegate] Method:      {0}" -f ($value.Method))
+                        # Show Method Body if possible
+                        if ($null -ne $value.Method) {
+                            $methodScript = $value.Method.ToString()
+                            Write-Host ("  [Delegate] MethodInfo:  {0}" -f $methodScript)
+                        }
+                    }
+                    elseif ($value -is [ScriptBlock]) {
+                        Write-Host ("  {0}" -f $value.ToString())
+                    }
+                    else {
+                        Write-Host ("  <Not a ScriptBlock or Delegate>")
+                    }
+                }
+                catch {
+                    Write-Warning "Error printing script block or delegate: $_"
+                }
+            }
+
+            if ($InvokeAndPrintResults) {
+                # Invocation & pretty print results
+                if ($null -eq $value) {
+                    Write-Host "Value        : <null>"
+                }
+                else {
+                    Write-Host "Value        : <exists>"
+                    try {
+                        $results = $null
+                        # Note: these variables need to exist or can default here
+                        $safeWord = if ($null -ne $wordToComplete) { $wordToComplete } else { "" }
+                        $safeAst = if ($null -ne $commandAst) { $commandAst } else { $null }
+                        $safePos = if ($null -ne $cursorPosition) { $cursorPosition } else { 0 }
+                        if ($value -is [Delegate]) {
+                            $results = $value.DynamicInvoke($safeWord, $safeAst, $safePos)
+                        }
+                        elseif ($value -is [ScriptBlock]) {
+                            $results = & $value $safeWord $safeAst $safePos
+                        }
+                        else {
+                            Write-Warning "Value is not invokable directly."
+                        }
+                        if ($null -ne $results) {
+                            $results = @($results)
+                            Write-Host "Result(s):"
+                            foreach ($r in $results) {
+                                if ($null -eq $r) {
+                                    Write-Host "  <null>"
+                                }
+                                elseif ($r -is [System.Management.Automation.CompletionResult]) {
+                                    Write-Host ("  Text     : {0}" -f $r.CompletionText)
+                                    Write-Host ("  ListItem : {0}" -f $r.ListItemText)
+                                    Write-Host ("  ResultTy : {0}" -f $r.ResultType)
+                                    Write-Host ("  ToolTip  : {0}" -f $r.ToolTip)
+                                    Write-Host "  ---"
+                                }
+                                else {
+                                    Write-Host "  $r"
+                                }
+                            }
+                        }
+                        else {
+                            Write-Host "Result       : <null or not invokable>"
+                        }
+                    }
+                    catch {
+                        Write-Warning "Exception occurred during invocation: $_"
+                    }
+                }
+            }
+            Write-Host "-----------------------------`n"
+        }
+    }
+}
 function Invoke-Fnm {
     Remove-Alias -Name fnm -Scope Global
     if (which 'fnm.exe') {
