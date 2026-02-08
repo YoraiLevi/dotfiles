@@ -1920,41 +1920,5 @@
         "key": "alt+n",
         "command": "workbench.action.moveEditorToNewWindow"
     },
-    {
-        "key": "escape",
-        "command": "composer.cancelComposerStep",
-        "when": "composerFocused || focusedView =~ /^workbench.panel.aichat.view/"
-    },
-    {
-        "key": "escape",
-        "command": "composer.cancelComposerStepInputFocused",
-        "when": "composerFocused || focusedView =~ /^workbench.panel.aichat.view/"
-    },
-    {
-        "key": "ctrl+shift+backspace",
-        "command": "-composer.cancelComposerStep",
-        "when": "composerFocused || focusedView =~ /^workbench.panel.aichat.view/"
-    },
-    {
-        "key": "ctrl+shift+backspace",
-        "command": "-composer.cancelComposerStepInputFocused",
-        "when": "composerFocused || focusedView =~ /^workbench.panel.aichat.view/"
-    },
-    {
-        "key": "ctrl+shift+backspace",
-        "command": "-editor.action.inlineDiffs.cancelEdits",
-        "when": "editorTextFocus && hasActivelyGeneratingDiff"
-    },
-    {
-        "key": "escape",
-        "command": "cursorai.action.cancelGenerateInTerminal",
-        "when": "terminalFocus && terminalHasBeenCreated || terminalProcessSupported && @terminal.canCancelGeneration"
-    },
-    {
-        "key": "ctrl+backspace",
-        "command": "-cursorai.action.cancelGenerateInTerminal",
-        "when": "terminalFocus && terminalHasBeenCreated || terminalProcessSupported && @terminal.canCancelGeneration"
-    },
-   
 
 ]
