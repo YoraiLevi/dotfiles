@@ -274,5 +274,4 @@
 	},
 	"editor.bracketPairColorization.independentColorPoolPerBracketType": true,
 	"editor.guides.bracketPairs": true,
-	"editor.acceptSuggestionOnEnter": "smart",
 }
