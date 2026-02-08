@@ -478,18 +478,23 @@ function Invoke-Fnm {
 }
 Set-Alias -Name fnm -Value Invoke-Fnm -Scope Global
 
-function Invoke-Uv {
-    Remove-Alias -Name uv -Scope Global
-    if (which 'uv.exe') {
-        (& uv generate-shell-completion powershell) | Out-String | Invoke-Expression
+# Lazy shell completion for uv — only generated on first Tab press
+Register-ArgumentCompleter -Native -CommandName uv -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+
+    if (-not (which 'uv.exe')) {
+        return
     }
-    else {
-        # powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-        Write-Error "uv isn't available on the system, execute:`npowershell -ExecutionPolicy ByPass -c `"irm https://astral.sh/uv/install.ps1 | iex`""
-    }
-    uv @args
+
+    # Load the real completer (replaces this lazy one)
+    (& uv generate-shell-completion powershell) | Out-String | Invoke-Expression
+
+    # Re-invoke completion with the now-registered real completer
+    $result = [System.Management.Automation.CommandCompletion]::CompleteInput(
+        $commandAst.ToString(), $cursorPosition, $null
+    )
+    $result.CompletionMatches
 }
-Set-Alias -Name uv -Value Invoke-Uv -Scope Global
 
 # Lazy shell completion for uvx — only generated on first Tab press
 Register-ArgumentCompleter -Native -CommandName uvx -ScriptBlock {
@@ -512,14 +517,23 @@ Register-ArgumentCompleter -Native -CommandName uvx -ScriptBlock {
 # I don't like the public oh my posh themes
 # use oh my posh here
 
-function Invoke-Conda {
-    Remove-Alias -Name conda -Scope Global
-    if (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
-        (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
+# Lazy init for conda — only generated on first Tab press
+Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+
+    if (-not (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe')) {
+        return
     }
-    conda @args
+
+    # Load the real conda hook and completer (replaces this lazy one)
+    (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
+
+    # Re-invoke completion with the now-registered real completer
+    $result = [System.Management.Automation.CommandCompletion]::CompleteInput(
+        $commandAst.ToString(), $cursorPosition, $null
+    )
+    $result.CompletionMatches
 }
-Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 
 if (Get-Module -ListAvailable -Name Pscx) {
     Import-Module Pscx -ErrorAction SilentlyContinue
