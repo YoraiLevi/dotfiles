@@ -759,4 +759,34 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
     }
 }
 
+# https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
+# the printout is partial compared to the original process because the speed output is in stderr
+# --- Background runspace pre-loads module assemblies ---
+# $script:_lazyRunspace = [RunspaceFactory]::CreateRunspace()
+# $script:_lazyPwsh = [PowerShell]::Create()
+# $script:_lazyPwsh.Runspace = $script:_lazyRunspace
+# $script:_lazyRunspace.Open()
+
+# [void]$script:_lazyPwsh.AddScript({
+#     Import-Module posh-git
+#     Import-Module Pscx
+# })
+# [void]$script:_lazyPwsh.BeginInvoke()
+
+# $null = Register-ObjectEvent -InputObject $script:_lazyPwsh -EventName InvocationStateChanged -Action {
+#     # Only act when background work completes
+#     if ($script:_lazyPwsh.InvocationStateInfo.State -ne 'Completed') { return }
+
+#     # These are fast now — assemblies already cached in the AppDomain
+#     try {
+#         Import-Module ???
+#     } catch {
+#     }
+
+#     # Cleanup
+#     $script:_lazyPwsh.Dispose()
+#     $script:_lazyRunspace.Close()
+#     $script:_lazyRunspace.Dispose()
+# }
+
 Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
