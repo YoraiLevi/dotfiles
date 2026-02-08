@@ -211,20 +211,6 @@
 			"editorBracketHighlight.foreground5": "#ffd866",
 			"editorBracketHighlight.foreground6": "#ab9df2",
 			"editorBracketHighlight.unexpectedBracket.foreground": "#db6165",
-
-			
-			"editorBracketPairGuide.background1": "#fac9289E",
-			"editorBracketPairGuide.background2": "#c122e99E",
-			"editorBracketPairGuide.background3": "#057aff9E",
-			"editorBracketPairGuide.background4": "#00e74d9E",
-			"editorBracketPairGuide.background5": "#f513849E",
-			"editorBracketPairGuide.background6": "#19f9d89E",
-			"editorBracketPairGuide.activeBackground1": "#FAC9289E",
-			"editorBracketPairGuide.activeBackground2": "#C122E99E",
-			"editorBracketPairGuide.activeBackground3": "#057AFF9E",
-			"editorBracketPairGuide.activeBackground4": "#00E7499E",
-			"editorBracketPairGuide.activeBackground5": "#F513849E",
-			"editorBracketPairGuide.activeBackground6": "#19F9D89E"
 		}
 	},
 	"editor.tokenColorCustomizations": {
@@ -286,4 +272,6 @@
 	"[markdown]": {
 		"editor.defaultFormatter": "yzhang.markdown-all-in-one"
 	},
+	"editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+	"editor.guides.bracketPairs": "active",
 }
