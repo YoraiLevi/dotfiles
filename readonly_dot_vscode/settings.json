@@ -274,4 +274,9 @@
 	"editor.bracketPairColorization.independentColorPoolPerBracketType": true,
 	"editor.guides.bracketPairs": true,
 	"editor.snippetSuggestions": "bottom",
+	"editor.suggestSelection": "recentlyUsedByPrefix",
+	"editor.suggest.snippetsPreventQuickSuggestions": true,
+	"editor.suggest.shareSuggestSelections": true,
+	"editor.suggest.preview": true,
+	"editor.suggest.localityBonus": true,
 }
