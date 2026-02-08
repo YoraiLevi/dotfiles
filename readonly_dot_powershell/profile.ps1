@@ -745,10 +745,12 @@ function Invoke-Conda {
 }
 Set-Alias -Name conda -Value Invoke-Conda -Scope Global
 
+# Capture the value of $_EDITOR at registration time so the event handler uses its value statically
 $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
     if (Get-Module -ListAvailable -Name Pscx) {
         Import-Module Pscx -ErrorAction SilentlyContinue
-        $Pscx:Preferences['TextEditor'] = $(which $_EDITOR)
+        $EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+        $Pscx:Preferences['TextEditor'] = $(which $EDITOR)
         Set-Alias -Name touch -Value Touch-File # pscx has a touch alias
         Set-Alias -Name Expand-Archive -Value Microsoft.PowerShell.Archive\Expand-Archive -Scope Global -Force # pscx has a Expand-Archive function
     }
@@ -757,32 +759,4 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
     }
 }
 
-# https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
-# the printout is partial compared to the original process because the speed output is in stderr
-# $c = $chezmoi_process.StandardOutput.Read()
-# if ($null -ne $c -and $c -ne -1 ) {
-#     do {
-#         write-host "$([char]$c)" -NoNewline
-#         $c = $chezmoi_process.StandardOutput.Read()
-#     } while ($null -ne $c -and $c -ne -1)
-#     $chezmoi_process | Wait-Process
-# }
-
-# $LazyLoadProfileRunspace = [RunspaceFactory]::CreateRunspace()
-# $LazyLoadProfile = [PowerShell]::Create()
-# $LazyLoadProfile.Runspace = $LazyLoadProfileRunspace
-# $LazyLoadProfileRunspace.Open()
-# [void]$LazyLoadProfile.AddScript({Import-Module posh-git}) # (1)
-# [void]$LazyLoadProfile.BeginInvoke()
-# $null = Register-ObjectEvent -InputObject $LazyLoadProfile -EventName InvocationStateChanged -Action {
-#     Import-Module -Name posh-git # (2)
-#     $global:GitPromptSettings.DefaultPromptPrefix.Text = 'PS '
-#     $global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
-#     $LazyLoadProfile.Dispose()
-#     $LazyLoadProfileRunspace.Close()
-#     $LazyLoadProfileRunspace.Dispose()
-# }
-
-# Remove-Variable -Name chezmoi_process
-# Remove-Variable -Name _EDITOR
 Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
