@@ -1839,10 +1839,13 @@
     },
     {
         "key": "ctrl+right",
-        "command": "-cursorWordEndRight",
-        "when": "textInputFocus && !accessibilityModeEnabled"
+        "command": "quickInput.acceptInBackground",
+        "when": " !inlineSuggestionVisible && (cursorAtEndOfQuickInputBox && inQuickInput && quickInputType == 'quickPick' || inQuickInput && !inputFocus && quickInputType == 'quickPick') "
     },
-    
-    
+    {
+        "key": "ctrl+right",
+        "command": "-quickInput.acceptInBackground",
+        "when": "cursorAtEndOfQuickInputBox && inQuickInput && quickInputType == 'quickPick' || inQuickInput && !inputFocus && quickInputType == 'quickPick'"
+    },
 
 ]
