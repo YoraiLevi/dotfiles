@@ -12,9 +12,22 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
         # https://github.com/dahlbyk/posh-git?tab=readme-ov-file#customizing-the-posh-git-prompt
         $GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
         
-        $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "MM-dd HH:mm:ss") '
-        $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = [ConsoleColor]::Magenta
 
+        function global:PromptWriteErrorInfo() {
+            if ($global:GitPromptValues.DollarQuestion) { return }
+        
+            if ($global:GitPromptValues.LastExitCode) {
+                "`e[31m(" + $global:GitPromptValues.LastExitCode + ") `e[0m"
+            }
+            else {
+                "`e[31m!!! `e[0m"
+            }
+        }
+
+        $GitPromptSettings.DefaultPromptWriteStatusFirst = $true
+        $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n$(PromptWriteErrorInfo)$([DateTime]::now.ToString("MM-dd HH:mm:ss"))'
+        $GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = 0x808080
+        $GitPromptSettings.DefaultPromptSuffix = ' $((Get-History -Count 1).id + 1)$(">" * ($nestedPromptLevel + 1)) '
     }
     catch {
         Write-Error "posh-git isn't available"
