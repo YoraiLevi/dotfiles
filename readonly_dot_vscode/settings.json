@@ -183,9 +183,10 @@
 			//"terminal.findMatchHighlightBorder": null,
 			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
 			"editor.stackFrameHighlightBackground": "#0000ff", // This is related to Debug?
-			"editor.findMatchHighlightBackground": "#afaf0e65", // "Search result" ctrl+f, ctrl+shift+f
+			"editor.findMatchHighlightBackground": "#afaf0e38", // "Search result" ctrl+f, ctrl+shift+f
+			"editor.findMatchHighlightBorder": "#afaf0e", // "Search result" ctrl+f, ctrl+shift+f
 			"editor.findRangeHighlightBackground": "#b1f78915", // "Find in selection" area selected color"
-			"editor.hoverHighlightBackground": "#8a898a54", // After a period of hovering, highlights the text
+			"editor.hoverHighlightBackground": "#8a898a73", // After a period of hovering, highlights the text
 			"editor.wordHighlightBackground": "#afaf0e38", // Highlight of "word" at typing cursor and other occurances
 			"editor.wordHighlightBorder": "#afaf0e", // Highlight of "word" at typing cursor and other occurances
 			"editor.selectionHighlightBackground": "#8a898a73", // Highlight for same content as selection 
@@ -195,13 +196,13 @@
 			"editor.snippetTabstopHighlightBackground": "#ffa9ff41", // The snipping manual fill fields
 			"editor.snippetFinalTabstopHighlightBackground": "#ff0000",
 			"editor.symbolHighlightBackground": "#0000ff", // Doesn't seem to do anything?
-			"terminal.findMatchHighlightBackground": "#afaf0e65", // Ctrl+f matches in terminal
+			"terminal.findMatchHighlightBackground": "#afaf0e38", // Ctrl+f matches in terminal
 			"terminal.findMatchHighlightBorder": "#afaf0e", // Ctrl+f matches in terminal
 			"terminal.hoverHighlightBackground": "#8d3e8d49",
 			"minimap.infoHighlight": "#78dce8a5",
 			"minimap.warningHighlight": "#fc9867a5",
 			"minimap.errorHighlight": "#ff6188a5",
-			"minimap.findMatchHighlight": "#afaf0e65",
+			"minimap.findMatchHighlight": "#afaf0e38",
 			"minimap.selectionHighlight": "#c1c0c026",
 			"minimap.selectionOccurrenceHighlight": "#8d3e8da5", // Highlight in minimap for same content as selection  
 			"editorBracketHighlight.foreground1": "#ff6188",
