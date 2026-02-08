@@ -1707,8 +1707,6 @@
         "key": "ctrl+k e",
         "when": "workbench.explorer.openEditorsView.active"
     },
-    
-
     {
         "key": "ctrl+k ctrl+shift+l",
         "command": "-editor.toggleFoldRecursively",
@@ -1773,9 +1771,6 @@
         "command": "-markdown.extension.closePreview",
         "when": "activeWebviewPanelId == 'markdown.preview'"
     },
-
-
-
     {
         "command": "-workbench.files.action.focusOpenEditorsView",
         "key": "ctrl+m e",
@@ -1870,7 +1865,6 @@
         "key": "ctrl+shift+w",
         "command": "-workbench.action.closeWindow"
     },
-    
     {
         "key": "ctrl+e",
         "command": "workbench.action.focusSideBar",
@@ -1895,10 +1889,9 @@
         "command": "-editor.action.toggleScreenReaderAccessibilityMode",
         "when": "accessibilityHelpIsShown"
     },
-
     {
         "key": "tab",
-        "command": "editor.action.acceptCursorTabSuggestion", 
+        "command": "editor.action.acceptCursorTabSuggestion",
         "when": "cpp.shouldAcceptTab && !(editorTextFocus && hasSnippetCompletions && !editorTabMovesFocus && !inSnippetMode) && !(hasNextTabstop && inSnippetMode && textInputFocus)"
     },
     {
@@ -1920,5 +1913,4 @@
         "key": "alt+n",
         "command": "workbench.action.moveEditorToNewWindow"
     },
-
 ]
