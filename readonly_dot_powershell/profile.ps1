@@ -540,14 +540,13 @@ Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
     $completionCode = (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ }
 
     # Intercept Register-ArgumentCompleter to capture the real script block
-    $captured = $null
     $origRegister = Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
     function Register-ArgumentCompleter {
         param([switch]$Native, [string[]]$CommandName, [scriptblock]$ScriptBlock)
         Set-Variable -Name captured -Value $ScriptBlock -Scope 1
     }
+    write-host "Hello from completion code captured: $captured"
     Invoke-Expression $completionCode
-
     if ($captured) {
         # Register the real completer for future Tab presses
         & $origRegister -Native -CommandName conda -ScriptBlock $captured
