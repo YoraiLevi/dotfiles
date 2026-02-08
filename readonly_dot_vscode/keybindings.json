@@ -1827,25 +1827,22 @@
         "when": "accessibilityHelpIsShown"
     },
 
-    // {
-    //     "key": "tab",
-    //     "command": "editor.action.acceptCursorTabSuggestion", 
-    //     "when": "cpp.shouldAcceptTab && !(editorTextFocus && hasSnippetCompletions && !editorTabMovesFocus && !inSnippetMode) && !(hasNextTabstop && inSnippetMode && textInputFocus)"
-    // },
+    {
+        "key": "tab",
+        "command": "editor.action.acceptCursorTabSuggestion", 
+        "when": "cpp.shouldAcceptTab && !(editorTextFocus && hasSnippetCompletions && !editorTabMovesFocus && !inSnippetMode) && !(hasNextTabstop && inSnippetMode && textInputFocus)"
+    },
     {
         "key": "tab",
         "command": "-editor.action.acceptCursorTabSuggestion",
         "when": "cpp.shouldAcceptTab"
     },
-    
     {
         "key": "ctrl+right",
         "command": "-cursorWordEndRight",
         "when": "textInputFocus && !accessibilityModeEnabled"
     },
-//     {
-//         "key": "ctrl+right",
-//         "command": "-editor.action.inlineSuggest.acceptNextWord",
-//         "when": "cppSuggestion && !editorReadonly || inlineSuggestionVisible && !editorReadonly"
-//     }
-// ]
+    
+    
+
+]
