@@ -175,6 +175,8 @@
 			//"editor.symbolHighlightBorder": null,
 			//"peekViewEditor.matchHighlightBorder": null,
 			//"terminal.findMatchHighlightBorder": null,
+			"foreground": "#ffffff",
+			"editor.foreground":"#ffffff",
 			"editor.selectionBackground": "#acacac44", // Selection color
 			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
 			"editor.stackFrameHighlightBackground": "#0000ff", // This is related to Debug?
