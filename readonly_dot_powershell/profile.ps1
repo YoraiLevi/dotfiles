@@ -671,6 +671,15 @@ function Invoke-Uv {
     uv @args
 }
 Set-Alias -Name uv -Value Invoke-Uv -Scope Global
+function Update-Uv {
+    Remove-Alias -Name uv -Scope Global
+    if (which 'uv.exe') {
+        & uv self update
+    }
+    else {
+        Write-Error "uv isn't available on the system, execute:`npowershell -ExecutionPolicy ByPass -c `"irm https://astral.sh/uv/install.ps1 | iex`""
+    }
+}
 
 Register-LazyArgumentCompleter -CommandName 'uvx' -CompletionCodeFactory {
     if (-not (Get-Command 'uvx.exe')) { return }
@@ -697,7 +706,7 @@ Register-LazyArgumentCompleter -CommandName 'conda' -CompletionCodeFactory {
     Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
     Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
         param($wordToComplete, $commandAst, $cursorPosition)
-    }    return $null
+    } return $null
     return $null
 }
 function Invoke-Conda {
