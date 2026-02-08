@@ -487,14 +487,12 @@ Register-ArgumentCompleter -Native -CommandName uv -ScriptBlock {
     $completionCode = (& uv generate-shell-completion powershell) | Out-String
 
     # Intercept Register-ArgumentCompleter to capture the real script block
-    $captured = $null
     $origRegister = Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
     function Register-ArgumentCompleter {
         param([switch]$Native, [string[]]$CommandName, [scriptblock]$ScriptBlock)
         Set-Variable -Name captured -Value $ScriptBlock -Scope 1
     }
     Invoke-Expression $completionCode
-
     if ($captured) {
         # Register the real completer for future Tab presses
         & $origRegister -Native -CommandName uv -ScriptBlock $captured
@@ -507,18 +505,18 @@ Register-ArgumentCompleter -Native -CommandName uv -ScriptBlock {
 Register-ArgumentCompleter -Native -CommandName uvx -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
-    if (-not (which 'uv.exe')) { return }
+    if (-not (which 'uvx.exe')) { return }
 
     $completionCode = (& uvx --generate-shell-completion powershell) | Out-String
 
     # Intercept Register-ArgumentCompleter to capture the real script block
-    $captured = $null
     $origRegister = Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
     function Register-ArgumentCompleter {
         param([switch]$Native, [string[]]$CommandName, [scriptblock]$ScriptBlock)
         Set-Variable -Name captured -Value $ScriptBlock -Scope 1
     }
     Invoke-Expression $completionCode
+    Write-Host "Hello from completion code captured: $($null -eq $captured)"
 
     if ($captured) {
         # Register the real completer for future Tab presses
@@ -545,7 +543,6 @@ Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
         param([switch]$Native, [string[]]$CommandName, [scriptblock]$ScriptBlock)
         Set-Variable -Name captured -Value $ScriptBlock -Scope 1
     }
-    write-host "Hello from completion code captured: $captured"
     Invoke-Expression $completionCode
     if ($captured) {
         # Register the real completer for future Tab presses
