@@ -1826,27 +1826,17 @@
         "command": "-editor.action.toggleScreenReaderAccessibilityMode",
         "when": "accessibilityHelpIsShown"
     },
-    {
-        "key": "tab",
-        "command": "editor.action.acceptCursorTabSuggestion",
-        "when": "cpp.shouldAcceptTab && !(editorTextFocus && hasSnippetCompletions && !editorTabMovesFocus && !inSnippetMode) && !(hasNextTabstop && inSnippetMode && textInputFocus)"
-    },
+
+    // {
+    //     "key": "tab",
+    //     "command": "editor.action.acceptCursorTabSuggestion", 
+    //     "when": "cpp.shouldAcceptTab && !(editorTextFocus && hasSnippetCompletions && !editorTabMovesFocus && !inSnippetMode) && !(hasNextTabstop && inSnippetMode && textInputFocus)"
+    // },
     {
         "key": "tab",
         "command": "-editor.action.acceptCursorTabSuggestion",
         "when": "cpp.shouldAcceptTab"
     },
-    // {
-    //     "key": "tab",
-    //     "command": "acceptSelectedSuggestion",
-    //     "when": "!cpp.shouldAcceptTab && acceptSuggestionOnEnter && suggestWidgetHasFocusedSuggestion && suggestWidgetVisible && textInputFocus"
-    // },
-    // {
-    //     "key": "tab",
-    //     "command": "-acceptSelectedSuggestion",
-    //     "when": "suggestWidgetHasFocusedSuggestion && suggestWidgetVisible && textInputFocus"
-    // },
-
 
     // {
     //     "key": "tab",
