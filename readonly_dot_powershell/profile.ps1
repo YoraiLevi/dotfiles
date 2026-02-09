@@ -4,8 +4,15 @@ if (($ENV:CHEZMOI -eq 1)) {
     # why would you edit with chezmoi active anyway?
     return
 }
-
-function Set-MyPrompt {
+# try {
+#     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
+#     Import-Module posh-git -ErrorAction Stop
+# }
+# catch {
+#     Write-Error "posh-git isn't available on the system, execute:"
+#     Write-Error 'PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force'
+# }
+function global:Set-MyPrompt {
     try {
         Import-Module posh-git -ErrorAction Stop
         # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
@@ -39,7 +46,7 @@ function Set-MyPrompt {
 }
 # Register a one-shot idle event to load posh-git after the first prompt renders
 $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
-    Set-MyPrompt
+    global:Set-MyPrompt
 }
 $existingVariables = Get-Variable # Some setup may not work if the variables are not removed, keep that in mind
 
