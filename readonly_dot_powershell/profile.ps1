@@ -1,3 +1,4 @@
+params()
 # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
 if (($ENV:CHEZMOI -eq 1)) {
     # don't load the profile if chezmoi is active
@@ -46,6 +47,7 @@ function global:Set-MyPrompt {
 }
 # Register a one-shot idle event to load posh-git after the first prompt renders
 $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
+    # https://learn-powershell.net/2013/01/30/powershell-and-events-engine-events/
     global:Set-MyPrompt
 }
 $existingVariables = Get-Variable # Some setup may not work if the variables are not removed, keep that in mind
