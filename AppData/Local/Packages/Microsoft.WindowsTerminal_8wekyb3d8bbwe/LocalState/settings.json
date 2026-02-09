@@ -4,6 +4,10 @@
     "actions": 
     [
         {
+            "command": "experimental.openScratchpad",
+            "id": "User.experimental.openScratchpad"
+        },
+        {
             "command": 
             {
                 "action": "moveTab",
@@ -107,6 +111,10 @@
             "keys": "ctrl+shift+period"
         },
         {
+            "id": null,
+            "keys": "ctrl+shift+space"
+        },
+        {
             "id": "User.splitPane.FEF0D40B",
             "keys": "ctrl+\\"
         },
@@ -119,7 +127,7 @@
             "keys": "ctrl+`"
         },
         {
-            "id": "Terminal.OpenNewTab",
+            "id": "User.duplicateTab",
             "keys": "ctrl+t"
         },
         {
@@ -133,6 +141,10 @@
         {
             "id": null,
             "keys": "ctrl+shift+n"
+        },
+        {
+            "id": "Terminal.OpenNewTabDropdown",
+            "keys": "ctrl+shift+`"
         }
     ],
     "newTabMenu": 
