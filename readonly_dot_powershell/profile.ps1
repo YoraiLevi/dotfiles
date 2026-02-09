@@ -151,12 +151,12 @@ function Invoke-YesNoPrompt {
     }
 }
 
-# Auto-pair brackets — paste-safe via console buffer check
-# Note: Ctrl+V paste always works (bypasses key handlers entirely).
-# This guard also handles right-click / terminal paste-by-keystrokes.
+# Auto-pair brackets (from PSReadLine SamplePSReadLineProfile.ps1)
+# Paste with Ctrl+V to bypass key handlers. Right-click paste in Windows Terminal
+# uses bracketed paste (PSReadLine 2.2+) which also bypasses handlers.
 Set-PSReadLineKeyHandler -Key '(', '{', '[' `
     -BriefDescription InsertPairedBraces `
-    -LongDescription "Insert matching braces, skip auto-pair during paste" `
+    -LongDescription "Insert matching braces" `
     -ScriptBlock {
     param($key, $arg)
 
@@ -166,27 +166,22 @@ Set-PSReadLineKeyHandler -Key '(', '{', '[' `
         '[' { ']'; break }
     }
 
-    # If more keys are buffered in the console, it's likely a paste — don't auto-pair
-    if ([Console]::KeyAvailable) {
-        [Microsoft.PowerShell.PSConsoleReadLine]::Insert($key.KeyChar)
-        return
-    }
-
-    # If text is selected, wrap it in brackets
     $selectionStart = $null; $selectionLength = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$selectionStart, [ref]$selectionLength)
-    if ($selectionStart -ne -1) {
-        $line = $null; $cursor = $null
-        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
-        [Microsoft.PowerShell.PSConsoleReadLine]::Replace($selectionStart, $selectionLength, "$($key.KeyChar)$($line.Substring($selectionStart, $selectionLength))$closeChar")
-        [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($selectionStart + $selectionLength + 2)
-        return
-    }
 
-    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("$($key.KeyChar)$closeChar")
     $line = $null; $cursor = $null
     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
-    [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor - 1)
+
+    if ($selectionStart -ne -1) {
+        # Wrap selected text in brackets
+        [Microsoft.PowerShell.PSConsoleReadLine]::Replace($selectionStart, $selectionLength, "$($key.KeyChar)$($line.Substring($selectionStart, $selectionLength))$closeChar")
+        [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($selectionStart + $selectionLength + 2)
+    }
+    else {
+        # Insert pair and place cursor between them
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert("$($key.KeyChar)$closeChar")
+        [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor + 1)
+    }
 }
 
 Set-PSReadLineKeyHandler -Key ')', ']', '}' `
