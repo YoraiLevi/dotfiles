@@ -72,6 +72,7 @@
   <package id="vscode-insiders" />
   <package id="vscode-insiders.install" />
   <package id="Wget" />
+  <package id="windows-adk" />
   <package id="winmerge" />
   <package id="wireguard" />
   <package id="wiztree" />
