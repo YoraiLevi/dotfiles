@@ -43,6 +43,7 @@ ms-toolsai.vscode-jupyter-slideshow
 ms-vscode.powershell
 ms-vscode.test-adapter-converter
 njpwerner.autodocstring
+opentofu.vscode-opentofu
 paragdiwan.gitpatch
 qux-bbb.text-utils
 randomfractalsinc.snippets-viewer
