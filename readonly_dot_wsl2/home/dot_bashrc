@@ -191,6 +191,20 @@ up () {
     cd $d
 }
 
+# Set IDE alias to the first available editor (cursor > code-insiders)
+_editor=""
+for _cmd in cursor code-insiders; do
+    if command -v "$_cmd" >/dev/null 2>&1; then
+        _editor="$_cmd"
+        break
+    fi
+done
+if [ -n "$_editor" ]; then
+    alias code="$_editor"
+    alias vscode="$_editor"
+fi
+unset _editor _cmd
+
 extract () {
     for archive in $*; do
         if [ -f $archive ] ; then
