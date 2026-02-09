@@ -275,7 +275,10 @@ $PSDefaultParameterValues = @{'Format-Table:Autosize' = $true }
 $ExecutionContext.InvokeCommand.LocationChangedAction = {
     # this is called when the location changes
     param($sender, $eventArgs)
-    Get-ChildItem | Out-Default
+    $items = Get-ChildItem
+    if ($items.Count -lt 15) {
+        $items | Out-Default
+    }
 }
 function ll { param($Path = '') Get-ChildItem -Path $Path -Force }
 
@@ -801,3 +804,4 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
 # }
 
 Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
+sleep 0.1
