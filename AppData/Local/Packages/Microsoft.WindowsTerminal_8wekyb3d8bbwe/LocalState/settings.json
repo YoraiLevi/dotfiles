@@ -197,6 +197,7 @@
                 "source": "Windows.Terminal.Wsl"
             },
             {
+                "closeOnExit": "automatic",
                 "guid": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
                 "hidden": false,
                 "name": "Ubuntu 24.04.1 LTS",
