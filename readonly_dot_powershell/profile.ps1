@@ -151,44 +151,82 @@ function Invoke-YesNoPrompt {
     }
 }
 
-# # PSReadLine option to add a matching closing bracket for (, [ and { - cannot copy paste it adds brackets in terminal
-# # https://www.reddit.com/r/PowerShell/comments/fsv3kt/comment/fm44e6i/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-# Set-PSReadLineKeyHandler -Key '(', '{', '[' `
-#     -BriefDescription InsertPairedBraces `
-#     -LongDescription "Insert matching braces" `
-#     -ScriptBlock {
-#     param($key, $arg)
+# Auto-pair brackets — paste-safe via console buffer check
+# Note: Ctrl+V paste always works (bypasses key handlers entirely).
+# This guard also handles right-click / terminal paste-by-keystrokes.
+Set-PSReadLineKeyHandler -Key '(', '{', '[' `
+    -BriefDescription InsertPairedBraces `
+    -LongDescription "Insert matching braces, skip auto-pair during paste" `
+    -ScriptBlock {
+    param($key, $arg)
 
-#     $closeChar = switch ($key.KeyChar) {
-#         '(' { [char]')'; break }
-#         '{' { [char]'}'; break }
-#         '[' { [char]']'; break }
-#     }
+    $closeChar = switch ($key.KeyChar) {
+        '(' { ')'; break }
+        '{' { '}'; break }
+        '[' { ']'; break }
+    }
 
-#     [Microsoft.PowerShell.PSConsoleReadLine]::Insert("$($key.KeyChar)$closeChar")
-#     $line = $null
-#     $cursor = $null
-#     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
-#     [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor - 1)
-# }
+    # If more keys are buffered in the console, it's likely a paste — don't auto-pair
+    if ([Console]::KeyAvailable) {
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert($key.KeyChar)
+        return
+    }
 
-# Set-PSReadLineKeyHandler -Key ')', ']', '}' `
-#     -BriefDescription SmartCloseBraces `
-#     -LongDescription "Insert closing brace or skip" `
-#     -ScriptBlock {
-#     param($key, $arg)
+    # If text is selected, wrap it in brackets
+    $selectionStart = $null; $selectionLength = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$selectionStart, [ref]$selectionLength)
+    if ($selectionStart -ne -1) {
+        $line = $null; $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+        [Microsoft.PowerShell.PSConsoleReadLine]::Replace($selectionStart, $selectionLength, "$($key.KeyChar)$($line.Substring($selectionStart, $selectionLength))$closeChar")
+        [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($selectionStart + $selectionLength + 2)
+        return
+    }
 
-#     $line = $null
-#     $cursor = $null
-#     [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("$($key.KeyChar)$closeChar")
+    $line = $null; $cursor = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+    [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor - 1)
+}
 
-#     if ($line[$cursor] -eq $key.KeyChar) {
-#         [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor + 1)
-#     }
-#     else {
-#         [Microsoft.PowerShell.PSConsoleReadLine]::Insert("$($key.KeyChar)")
-#     }
-# }
+Set-PSReadLineKeyHandler -Key ')', ']', '}' `
+    -BriefDescription SmartCloseBraces `
+    -LongDescription "Insert closing brace or skip past existing one" `
+    -ScriptBlock {
+    param($key, $arg)
+
+    $line = $null; $cursor = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+
+    if ($cursor -lt $line.Length -and $line[$cursor] -eq $key.KeyChar) {
+        # Closing bracket already present — just skip past it
+        [Microsoft.PowerShell.PSConsoleReadLine]::SetCursorPosition($cursor + 1)
+    }
+    else {
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert($key.KeyChar)
+    }
+}
+
+# Backspace deletes both brackets when cursor is between an empty pair
+Set-PSReadLineKeyHandler -Key Backspace `
+    -BriefDescription SmartBackspace `
+    -LongDescription "Delete both brackets when inside an empty pair" `
+    -ScriptBlock {
+    param($key, $arg)
+
+    $line = $null; $cursor = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$line, [ref]$cursor)
+
+    if ($cursor -gt 0 -and $cursor -lt $line.Length) {
+        $pair = $line.Substring($cursor - 1, 2)
+        if ($pair -in '()', '[]', '{}') {
+            [Microsoft.PowerShell.PSConsoleReadLine]::Delete($cursor - 1, 2)
+            return
+        }
+    }
+
+    [Microsoft.PowerShell.PSConsoleReadLine]::BackwardDeleteChar($key, $arg)
+}
 
 
 
