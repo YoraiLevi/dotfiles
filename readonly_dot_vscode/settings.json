@@ -266,7 +266,7 @@
 	"githubPullRequests.pullBranch": "never",
 	"editor.minimap.enabled": true,
 	"[markdown]": {
-		"editor.defaultFormatter": "yzhang.markdown-all-in-one"
+		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
 	},
 	"editor.bracketPairColorization.independentColorPoolPerBracketType": true,
 	"editor.guides.bracketPairs": true,
