@@ -141,6 +141,9 @@ PROMPT_COMMAND="history -w; $PROMPT_COMMAND"
 # https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c
 stty -ixon
 
+if [ -f "$HOME/.local/bin/env" ] ; then
+    . "$HOME/.local/bin/env"
+fi
 
 # Ignore case on auto-completion
 bind "set completion-ignore-case on"
