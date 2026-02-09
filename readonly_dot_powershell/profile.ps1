@@ -1,4 +1,3 @@
-params()
 # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
 if (($ENV:CHEZMOI -eq 1)) {
     # don't load the profile if chezmoi is active
