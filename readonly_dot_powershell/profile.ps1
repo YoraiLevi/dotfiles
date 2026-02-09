@@ -5,7 +5,7 @@ if (($ENV:CHEZMOI -eq 1)) {
     return
 }
 
-function Set-Prompt {
+function Set-MyPrompt {
     try {
         Import-Module posh-git -ErrorAction Stop
         # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
@@ -39,7 +39,7 @@ function Set-Prompt {
 }
 # Register a one-shot idle event to load posh-git after the first prompt renders
 $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
-    Set-Prompt
+    Set-MyPrompt
 }
 $existingVariables = Get-Variable # Some setup may not work if the variables are not removed, keep that in mind
 
@@ -275,6 +275,7 @@ $PSDefaultParameterValues = @{'Format-Table:Autosize' = $true }
 $ExecutionContext.InvokeCommand.LocationChangedAction = {
     # this is called when the location changes
     param($sender, $eventArgs)
+    Set-MyPrompt
     $items = Get-ChildItem
     if ($items.Count -lt 15) {
         $items | Out-Default
@@ -741,7 +742,7 @@ Set-Alias -Name uvx -Value Invoke-Uvx -Scope Global
 Register-LazyArgumentCompleter -CommandName 'conda' -CompletionCodeFactory {
     if (-not (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe')) { return }
     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
-    Set-Prompt
+    Set-MyPrompt
     (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
     Get-Command -Name Register-ArgumentCompleter -CommandType Cmdlet
     Register-ArgumentCompleter -Native -CommandName conda -ScriptBlock {
@@ -751,7 +752,7 @@ Register-LazyArgumentCompleter -CommandName 'conda' -CompletionCodeFactory {
 }
 function Invoke-Conda {
     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
-    Set-Prompt
+    Set-MyPrompt
     Remove-Alias -Name conda -Scope Global
     if (Test-Path 'C:\tools\miniforge3\Scripts\conda.exe') {
         (& 'C:\tools\miniforge3\Scripts\conda.exe' 'shell.powershell' 'hook') | Out-String | Where-Object { $_ } | Invoke-Expression
@@ -804,4 +805,3 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
 # }
 
 Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
-sleep 0.1
