@@ -117,7 +117,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-. "$HOME/.local/bin/env"
+# . "$HOME/.local/bin/env" # no idea what this is used for, uv?
 ``
 # https://stackoverflow.com/a/40158199/12603110
 function rescue_history {
