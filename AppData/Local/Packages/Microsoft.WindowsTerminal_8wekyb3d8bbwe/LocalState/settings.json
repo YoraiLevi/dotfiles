@@ -12,6 +12,10 @@
             "id": "User.moveTab.EA39957B"
         },
         {
+            "command": "selectAll",
+            "id": "User.selectAll"
+        },
+        {
             "command": "tabSearch",
             "id": "User.tabSearch"
         },
@@ -23,6 +27,26 @@
                 "splitMode": "duplicate"
             },
             "id": "User.splitPane.FEF0D40B"
+        },
+        {
+            "command": 
+            {
+                "action": "splitPane",
+                "split": "auto",
+                "splitMode": "duplicate"
+            },
+            "id": "User.splitPane.A6751878"
+        },
+        {
+            "command": "duplicateTab",
+            "id": "User.duplicateTab"
+        },
+        {
+            "command": 
+            {
+                "action": "nextTab"
+            },
+            "id": "User.nextTab.0"
         }
     ],
     "copyFormatting": "none",
@@ -55,12 +79,16 @@
             "keys": "alt+shift+d"
         },
         {
-            "id": null,
-            "keys": "ctrl+shift+m"
+            "id": "User.selectAll",
+            "keys": "ctrl+a"
         },
         {
             "id": null,
             "keys": "ctrl+shift+comma"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+m"
         },
         {
             "id": null,
@@ -84,7 +112,27 @@
         },
         {
             "id": "User.tabSearch",
-            "keys": "alt+p"
+            "keys": "ctrl+shift+a"
+        },
+        {
+            "id": "User.duplicateTab",
+            "keys": "ctrl+`"
+        },
+        {
+            "id": "Terminal.OpenNewTab",
+            "keys": "ctrl+t"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+t"
+        },
+        {
+            "id": "Terminal.OpenNewWindow",
+            "keys": "ctrl+n"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+n"
         }
     ],
     "newTabMenu": 
