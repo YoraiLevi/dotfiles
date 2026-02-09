@@ -88,6 +88,18 @@
         },
         {
             "id": null,
+            "keys": "ctrl+shift+3"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+5"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+2"
+        },
+        {
+            "id": null,
             "keys": "ctrl+shift+comma"
         },
         {
@@ -132,6 +144,10 @@
         },
         {
             "id": null,
+            "keys": "ctrl+shift+4"
+        },
+        {
+            "id": null,
             "keys": "ctrl+shift+t"
         },
         {
@@ -145,20 +161,42 @@
         {
             "id": "Terminal.OpenNewTabDropdown",
             "keys": "ctrl+shift+`"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+1"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+6"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+7"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+8"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+9"
         }
     ],
     "newTabMenu": 
     [
         {
-            "commandline": null,
-            "name": "Ubuntu",
-            "source": null,
-            "type": "matchProfiles"
+            "icon": null,
+            "profile": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
+            "type": "profile"
         },
         {
             "icon": null,
             "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
             "type": "profile"
+        },
+        {
+            "type": "separator"
         },
         {
             "type": "remainingProfiles"
