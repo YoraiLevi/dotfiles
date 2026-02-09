@@ -4,14 +4,7 @@ if (($ENV:CHEZMOI -eq 1)) {
     # why would you edit with chezmoi active anyway?
     return
 }
-# try {
-#     # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
-#     Import-Module posh-git -ErrorAction Stop
-# }
-# catch {
-#     Write-Error "posh-git isn't available on the system, execute:"
-#     Write-Error 'PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force'
-# }
+
 function global:Set-MyPrompt {
     try {
         Import-Module posh-git -ErrorAction Stop
@@ -45,9 +38,16 @@ function global:Set-MyPrompt {
     }
 }
 # Register a one-shot idle event to load posh-git after the first prompt renders
-$null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
-    # https://learn-powershell.net/2013/01/30/powershell-and-events-engine-events/
-    global:Set-MyPrompt
+if ((Get-Process -Id $PID).CommandLine -match '\s-(Command|File|EncodedCommand|NoProfile)\b') {
+    # cursor ide fucks up the prompt if it's lazy loaded
+    Set-MyPrompt
+}
+else {
+
+    $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
+        # https://learn-powershell.net/2013/01/30/powershell-and-events-engine-events/
+        Set-MyPrompt
+    }
 }
 $existingVariables = Get-Variable # Some setup may not work if the variables are not removed, keep that in mind
 
@@ -283,7 +283,6 @@ $PSDefaultParameterValues = @{'Format-Table:Autosize' = $true }
 $ExecutionContext.InvokeCommand.LocationChangedAction = {
     # this is called when the location changes
     param($sender, $eventArgs)
-    Set-MyPrompt
     $items = Get-ChildItem
     if ($items.Count -lt 15) {
         $items | Out-Default
