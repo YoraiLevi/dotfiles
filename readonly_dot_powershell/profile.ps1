@@ -4,7 +4,6 @@ if (($ENV:CHEZMOI -eq 1)) {
     # why would you edit with chezmoi active anyway?
     return
 }
-
 function global:Set-MyPrompt {
     try {
         Import-Module posh-git -ErrorAction Stop
@@ -190,20 +189,6 @@ function Invoke-YesNoPrompt {
 #     }
 # }
 
-# Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1 # refreshenv
-
-# function Edit-Setup([switch]$PromptApplyChanges = $false) {
-#     chezmoi edit
-#     if ($PromptApplyChanges) {
-#         Invoke-YesNoPrompt -Prompt 'Apply changes?' -Action { 
-#             chezmoi update --init --apply &
-#         }
-#     }
-#     else {
-#         chezmoi update --init --apply &
-#     }
-# }
-# Set-Alias -Name eds -Value Edit-Setup
 
 
 
@@ -781,6 +766,16 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
         Write-Error "Pscx isn't available on the system, execute:`nInstall-Module Pscx -Scope CurrentUser -Force"
     }
 }
+
+$null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
+    if (Test-Path $env:ChocolateyInstall\helpers\chocolateyProfile.psm1) {
+        Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1 # refreshenv
+    }
+    else {
+        Write-Error "Chocolatey isn't available on the system, execute:`nInstall-Module Chocolatey -Scope CurrentUser -Force"
+    }
+}
+
 
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
 # the printout is partial compared to the original process because the speed output is in stderr
