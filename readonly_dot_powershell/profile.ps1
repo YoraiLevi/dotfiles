@@ -767,14 +767,12 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
     }
 }
 
-$null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCount 1 -Action {
-    if (Test-Path $env:ChocolateyInstall\helpers\chocolateyProfile.psm1) {
-        Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1 # refreshenv
-    }
-    else {
-        Write-Error "Chocolatey isn't available on the system, execute:`nInstall-Module Chocolatey -Scope CurrentUser -Force"
-    }
+function Reset-Env {
+    Remove-Alias -Name refreshenv -Scope Global
+    Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1" -ErrorAction Stop
+    & (Get-Command -Name refreshenv -Module chocolateyProfile)
 }
+Set-Alias -Name refreshenv -Value Reset-ChocolateyEnv -Scope Global
 
 
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
