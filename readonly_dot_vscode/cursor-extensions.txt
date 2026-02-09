@@ -18,6 +18,8 @@ gitcommitpeek.git-commit-peek
 github.vscode-github-actions
 github.vscode-pull-request-github
 gitworktrees.git-worktrees
+hashicorp.hcl
+hashicorp.terraform
 hbenl.vscode-test-explorer
 humao.rest-client
 ibm.output-colorizer
