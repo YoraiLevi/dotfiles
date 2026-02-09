@@ -12,25 +12,25 @@ function Set-PoshGitPrompt {
         # https://github.com/dahlbyk/posh-git?tab=readme-ov-file#customizing-the-posh-git-prompt
         $Global:GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
         function global:PromptWriteErrorInfo() {
-            $status = if ($global:GitPromptValues.DollarQuestion) { return "`e[32mOK `e[0m" } else {
-
-            
+            $status = if ($global:GitPromptValues.DollarQuestion) {
+                "`e[32mOK`e[0m" 
+            }
+            else {
                 if ($global:GitPromptValues.LastExitCode) {
-                    "`e[31mERROR: " + $global:GitPromptValues.LastExitCode + " `e[0m"
+                    "`e[31mERROR: " + $global:GitPromptValues.LastExitCode + "`e[0m"
                 }
                 else {
                     "`e[31m!!! `e[0m"
                 }
-                $durationInfo = if ($he = Get-History -Count 1) {
-                    # Use a '0.00s' format: duration in *seconds*, with two decimal places.
-                    ' {0:N2}s' -f $he.Duration.TotalSeconds
-                }
+            }
+            $durationInfo = if ($he = Get-History -Count 1) {
+                # Use a '0.00s' format: duration in *seconds*, with two decimal places.
+                ' {0:N2}s' -f $he.Duration.TotalSeconds
             }
             return "[$status$durationInfo]"
         }
         $Global:GitPromptSettings.DefaultPromptWriteStatusFirst = $true
-        $Global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n$(PromptWriteErrorInfo)$([DateTime]::now.ToString("MM-dd HH:mm:ss"))'
-        $Global:GitPromptSettings.DefaultPromptBeforeSuffix.ForegroundColor = 0x808080
+        $Global:GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n$(PromptWriteErrorInfo)`e[90m$([DateTime]::now.ToString("MM-dd HH:mm:ss"))`e[0m'
         $Global:GitPromptSettings.DefaultPromptSuffix = ' $((Get-History -Count 1).id + 1)$(">" * ($nestedPromptLevel + 1)) '
     }
     catch {
