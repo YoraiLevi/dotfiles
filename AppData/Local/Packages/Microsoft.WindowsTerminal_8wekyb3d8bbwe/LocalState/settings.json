@@ -63,28 +63,28 @@
             "keys": "ctrl+c"
         },
         {
-            "id": "Terminal.FindText",
-            "keys": "ctrl+f"
+            "id": "Terminal.PasteFromClipboard",
+            "keys": "ctrl+v"
         },
         {
             "id": null,
             "keys": "ctrl+comma"
         },
         {
-            "id": "Terminal.PasteFromClipboard",
-            "keys": "ctrl+v"
+            "id": "Terminal.FindText",
+            "keys": "ctrl+f"
         },
         {
-            "id": "User.moveTab.EA39957B",
-            "keys": "alt+n"
+            "id": "User.selectAll",
+            "keys": "ctrl+a"
         },
         {
             "id": "Terminal.DuplicatePaneAuto",
             "keys": "alt+shift+d"
         },
         {
-            "id": "User.selectAll",
-            "keys": "ctrl+a"
+            "id": "User.moveTab.EA39957B",
+            "keys": "alt+n"
         },
         {
             "id": null,
@@ -149,6 +149,17 @@
     ],
     "newTabMenu": 
     [
+        {
+            "commandline": null,
+            "name": "Ubuntu",
+            "source": null,
+            "type": "matchProfiles"
+        },
+        {
+            "icon": null,
+            "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+            "type": "profile"
+        },
         {
             "type": "remainingProfiles"
         }
