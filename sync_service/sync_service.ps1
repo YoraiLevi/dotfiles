@@ -172,7 +172,7 @@ param(
 # FUNCTION DEFINITIONS
 # ============================================================================
 
-$VERSION = "v20260206"
+$VERSION = "v20260209"
 $ConfigFileName = "config.json"
 
 # Function to write log entries, now supports pipeline input for $Message
@@ -433,6 +433,7 @@ function Invoke-ChezmoiSync {
         if (-not (Test-Path $ChezmoiPath -ErrorAction Stop)) {
             Write-Log "ERROR: chezmoi.exe not found at $ChezmoiPath" "ERROR"
         }
+        $null = choco export "$(Join-Path $ENV:USERPROFILE ".choco" "packages.config")"
         $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions | Out-File $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
         $null = (Get-InstalledModule).Name | Out-File $(Join-Path $ENV:USERPROFILE ".powershell" "pwsh-modules.txt")
         # Execute chezmoi re-add before update
