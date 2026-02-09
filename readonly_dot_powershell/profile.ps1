@@ -74,6 +74,7 @@ function Benchmark-Profile {
     & $pwsh -NoProfile -command 'Measure-Script -Top 10 $profile.CurrentUserAllHosts'
 }
 
+
 function Get-ChocoPackage {
     # https://stackoverflow.com/a/76556486/12603110
     param(
@@ -191,6 +192,12 @@ function Invoke-YesNoPrompt {
 
 
 
+function Refresh-Env {
+    Remove-Alias -Name refreshenv -Scope Global
+    Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1" -ErrorAction Stop
+    refreshenv
+}
+Set-Alias -Name refreshenv -Value Refresh-Env -Scope Global
 
 function Find-Command {
     [CmdletBinding()]
@@ -767,12 +774,6 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
     }
 }
 
-function Reset-Env {
-    Remove-Alias -Name refreshenv -Scope Global
-    Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1" -ErrorAction Stop
-    & (Get-Command -Name refreshenv -Module chocolateyProfile)
-}
-Set-Alias -Name refreshenv -Value Reset-ChocolateyEnv -Scope Global
 
 
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
