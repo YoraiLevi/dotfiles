@@ -766,7 +766,7 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
         Import-Module Pscx -ErrorAction SilentlyContinue
         $EDITOR = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
         $Pscx:Preferences['TextEditor'] = $(which $EDITOR)
-        Set-Alias -Name touch -Value Touch-File # pscx has a touch alias
+        Set-Alias -Name touch -Value Touch-File -Scope Global -Force # pscx has a touch alias
         Set-Alias -Name Expand-Archive -Value Microsoft.PowerShell.Archive\Expand-Archive -Scope Global -Force # pscx has a Expand-Archive function
     }
     else {
