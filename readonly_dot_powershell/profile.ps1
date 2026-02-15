@@ -279,6 +279,8 @@ $ExecutionContext.InvokeCommand.LocationChangedAction = {
     if ($items.Count -lt 15) {
         $items | Out-Default
     }
+    Set-Alias -Name touch -Value Touch-File -Scope Global -Force # pscx has a touch alias
+    Set-Alias -Name Expand-Archive -Value Microsoft.PowerShell.Archive\Expand-Archive -Scope Global -Force # pscx has a Expand-Archive function
 }
 function ll { param($Path = '') Get-ChildItem -Path $Path -Force }
 
@@ -305,7 +307,7 @@ function Touch-File {
         Write-Output -InputObject $null > $file
     }
 }
-Set-Alias -Name touch -Value Touch-File
+Set-Alias -Name touch -Value Touch-File -Scope Global -Force # pscx has a touch alias
 
 function Restart-WSL {
     wsl --shutdown && wsl exit
@@ -773,7 +775,6 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
         Write-Error "Pscx isn't available on the system, execute:`nInstall-Module Pscx -Scope CurrentUser -Force"
     }
 }
-
 
 
 # https://stackoverflow.com/a/38882348/12603110 capture process stdout and stderr in the correct ordering
