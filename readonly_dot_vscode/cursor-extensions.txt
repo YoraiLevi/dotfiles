@@ -29,6 +29,7 @@ jebbs.markdown-extended
 kevinrose.vsc-python-indent
 lang2hong.githd
 mark-wiemer.vscode-autohotkey-plus-plus
+mindaro-dev.file-downloader
 monokai.theme-monokai-pro-vscode
 ms-azuretools.vscode-containers
 ms-azuretools.vscode-docker
@@ -52,6 +53,7 @@ ryuta46.multi-command
 smcpeak.default-keys-windows
 stateful.runme
 tamasfe.even-better-toml
+twiking.vscode-hcl-format
 tyriar.sort-lines
 vscjava.vscode-gradle
 wholroyd.jinja
