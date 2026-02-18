@@ -281,4 +281,7 @@
 	"editor.snippetSuggestions": "top",
 	"window.zoomLevel": 0.4,
 	"terraform.experimentalFeatures.validateOnSave": true,
+	"[xml]": {
+		"editor.defaultFormatter": "redhat.vscode-xml"
+	},
 }
