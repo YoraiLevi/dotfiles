@@ -127,7 +127,7 @@
             "keys": "ctrl+shift+space"
         },
         {
-            "id": "User.splitPane.FEF0D40B",
+            "id": "User.splitPane.A6751878",
             "keys": "ctrl+\\"
         },
         {
@@ -238,12 +238,6 @@
                 "hidden": false,
                 "name": "PowerShell",
                 "source": "Windows.Terminal.PowershellCore"
-            },
-            {
-                "guid": "{963ff2f7-6aed-5ce3-9d91-90d99571f53a}",
-                "hidden": true,
-                "name": "Ubuntu-24.04",
-                "source": "Windows.Terminal.Wsl"
             },
             {
                 "closeOnExit": "automatic",
