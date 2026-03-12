@@ -1,4 +1,4 @@
-Host *
+ Host *
   # If configured in ~/.ssh/config, add `#!!` prefix to be compatible with openssh.
   # https://github.com/trzsz/trzsz-ssh/blob/main/README.en.md#custom-configuration
   #!! EnableZmodem Yes
@@ -10,7 +10,7 @@ Host calc1
   HostName 192.168.2.230
   User yorai
   Port 4142
-  IdentityFile ~/.ssh/yorai_at_calc1-104003_c3b1ba_id_ed25519
+  IdentityFile ~/.ssh/yorai_at_calc1-104003_ca1bf0_id_ed25519
   ServerAliveInterval 60
 
 # Configuration for the Target Host
@@ -18,5 +18,5 @@ Host calc2
   HostName 192.168.2.230
   User yorai
   Port 4143
-  IdentityFile ~/.ssh/yorai_at_calc1-104003_c3b1ba_id_ed25519
+  IdentityFile ~/.ssh/yorai_at_calc1-104003_ca1bf0_id_ed25519
   ProxyJump calc1
