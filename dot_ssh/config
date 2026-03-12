@@ -5,21 +5,19 @@
   #!! DefaultDownloadPath = ~/Downloads
   #!! DefaultUploadPath = ~/Downloads
 
-# Configuration for the Jump Host
 Host calc1-104003
-  HostName 192.168.2.230
+  HostName <proxy-host>
   User yorai
   Port 4142
-  IdentityFile ~/.ssh/yorai_at_calc1-104003_ced99c_id_ed25519
+  IdentityFile ~/.ssh/<path-to-private-key>
   ServerAliveInterval 60
   StrictHostKeyChecking accept-new
 
-# Configuration for the Target Host
 Host calc2-104004
   HostName 192.168.200.11
   User yorai
   Port 22
-  IdentityFile ~/.ssh/yorai_at_calc1-104003_ced99c_id_ed25519
+  IdentityFile ~/.ssh/<path-to-private-key>
   ProxyJump calc1-104003
   ServerAliveInterval 60
   StrictHostKeyChecking accept-new
