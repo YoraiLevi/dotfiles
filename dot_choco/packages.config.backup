@@ -63,6 +63,7 @@
   <package id="servy" />
   <package id="spice-agent" />
   <package id="sysinternals" />
+  <package id="trzsz" />
   <package id="vagrant" />
   <package id="vcredist140" />
   <package id="vcredist2015" />
