@@ -5,26 +5,6 @@
   #!! DefaultDownloadPath = ~/Downloads
   #!! DefaultUploadPath = ~/Downloads
 
-
-# If the local IP is reachable, override the HostName for calc1
-
-# WINDOWS CHECK (Uses cmd.exe syntax: > NUL)
-Match host calc1-104003 exec "ping -n 1 -w 500 192.168.2.210 > NUL"
-    HostName 192.168.2.210
-    Port 22
-Match host calc1-104003 exec "ping -n 1 -w 500 192.168.2.230 > NUL"
-    HostName 192.168.2.230
-    Port 4142
-
-# LINUX/MACOS CHECK (Uses bash syntax: > /dev/null)
-Match host calc1-104003 exec "ping -c 1 -W 1 192.168.2.210 > /dev/null 2>&1"
-    HostName 192.168.2.210
-    Port 22
-Match host calc1-104003 exec "ping -c 1 -W 1 192.168.2.230 > /dev/null 2>&1"
-    HostName 192.168.2.230
-    Port 4142
-
-
 Host calc1-104003
   HostName ct105.tail366b93.ts.net
   Port 4142
