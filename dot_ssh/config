@@ -8,22 +8,36 @@
 
 # If the local IP is reachable, override the HostName for calc1
 
-
 # WINDOWS CHECK (Uses cmd.exe syntax: > NUL)
- 1. THE FAIL-SAFE OVERRIDE
-# If the ping fails OR the output doesn't contain "TTL=", this block is skipped.
-Match Host calc1-104003 exec "cmd /c \"ping -n 1 -w 200 10.255.255.255 | find \"TTL=\"\""
-    HostName 10.255.255.255
+Match host calc1-104003 exec "ping -n 1 -w 500 192.168.2.210 > NUL"
+    HostName 192.168.2.210
     Port 22
-
-# 2. SHARED SETTINGS
-Host calc1-104003
-    User yorai
-    IdentityFile ~/.ssh/yorai_at_calc1-104003_ced99c_id_ed25519
-    ServerAliveInterval 60
-    StrictHostKeyChecking accept-new
-
-# 3. THE FALLBACK
-Match originalhost calc1-104003
-    HostName ct105.tail366b93.ts.net
+Match host calc1-104003 exec "ping -n 1 -w 500 192.168.2.230 > NUL"
+    HostName 192.168.2.230
     Port 4142
+
+# LINUX/MACOS CHECK (Uses bash syntax: > /dev/null)
+Match host calc1-104003 exec "ping -c 1 -W 1 192.168.2.210 > /dev/null 2>&1"
+    HostName 192.168.2.210
+    Port 22
+Match host calc1-104003 exec "ping -c 1 -W 1 192.168.2.230 > /dev/null 2>&1"
+    HostName 192.168.2.230
+    Port 4142
+
+
+Host calc1-104003
+  HostName ct105.tail366b93.ts.net
+  Port 4142
+  User yorai
+  IdentityFile ~/.ssh/yorai_at_calc1-104003_ced99c_id_ed25519
+  ServerAliveInterval 60
+  StrictHostKeyChecking accept-new
+
+Host calc2-104004
+  HostName 192.168.200.11
+  Port 22
+  User yorai
+  IdentityFile ~/.ssh/yorai_at_calc1-104003_ced99c_id_ed25519
+  ProxyJump calc1-104003
+  ServerAliveInterval 60
+  StrictHostKeyChecking accept-new
