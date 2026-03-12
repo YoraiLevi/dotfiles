@@ -51,6 +51,8 @@ software:
     - name: audacity-ffmpeg
     
     - name: servy
+    - name: trzsz
+    - name: tssh
 
     # - name: office365business
     #   params: /productid:O365HomePremRetail /exclude:Access Groove Lync OneDrive OneNote Outlook Publisher /updates:TRUE /eula:TRUE
