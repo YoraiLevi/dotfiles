@@ -1,5 +1,6 @@
 Host *
   # If configured in ~/.ssh/config, add `#!!` prefix to be compatible with openssh.
-  EnableZmodem Yes
-  DefaultDownloadPath = ~/Downloads
-  DefaultUploadPath = ~/Downloads
+  # https://github.com/trzsz/trzsz-ssh/blob/main/README.en.md#custom-configuration
+  #!! EnableZmodem Yes
+  #!! DefaultDownloadPath = ~/Downloads
+  #!! DefaultUploadPath = ~/Downloads
