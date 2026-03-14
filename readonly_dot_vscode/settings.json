@@ -284,4 +284,7 @@
 	"[xml]": {
 		"editor.defaultFormatter": "redhat.vscode-xml"
 	},
+	"remote.SSH.remotePlatform": {
+		"calc1-104003": "linux"
+	},
 }
