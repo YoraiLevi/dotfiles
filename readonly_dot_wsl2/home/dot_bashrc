@@ -145,6 +145,9 @@ if [ -f "$HOME/.local/bin/env" ] ; then
     . "$HOME/.local/bin/env"
 fi
 
+# Prevent accidental pip install into system Python
+export PIP_REQUIRE_VIRTUALENV=true
+
 # Ignore case on auto-completion
 bind "set completion-ignore-case on"
 # Show auto-completion list automatically, without double tab
