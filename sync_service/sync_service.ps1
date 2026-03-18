@@ -501,6 +501,55 @@ Chezmoi path: $ChezmoiPath
     }
 }
 
+# Function to clear chezmoi persistent state lock (kills processes, optionally removes state file)
+function Clear-ChezmoiLock {
+    [CmdletBinding()]
+    param(
+        [switch]$RemoveStateFile  # Only use before execution to clear stale lock
+    )
+
+    $stateFilePath = Join-Path $env:USERPROFILE ".config" "chezmoi" "chezmoistate.boltdb"
+
+    # 1. Get chezmoi processes (chezmoi, chezmoi.exe)
+    $processes = Get-Process -Name "chezmoi*" -ErrorAction SilentlyContinue
+    if (-not $processes) {
+        Write-Log "No chezmoi processes found" "INFO"
+    }
+    else {
+        $count = @($processes).Count
+        Write-Log "Stopping $count chezmoi process(es) to release lock..." "INFO"
+        foreach ($proc in $processes) {
+            try {
+                Stop-Process -Id $proc.Id -Force -ErrorAction Stop
+                Write-Log "Stopped process $($proc.Id) ($($proc.ProcessName))" "INFO"
+            }
+            catch {
+                Write-Log "Failed to stop process $($proc.Id): $_" "WARN"
+            }
+        }
+
+        # 2. Wait for processes to exit (5s timeout)
+        $exited = Wait-ForPredicate -Predicate {
+            -not (Get-Process -Name "chezmoi*" -ErrorAction SilentlyContinue)
+        } -TimeoutSeconds 5 -IntervalSeconds 0.2
+
+        if (-not $exited) {
+            Write-Log "Some chezmoi processes may still be running after timeout" "WARN"
+        }
+    }
+
+    # 3. Optionally remove state file to clear stale lock (before run only)
+    if ($RemoveStateFile -and (Test-Path $stateFilePath)) {
+        try {
+            Remove-Item -Path $stateFilePath -Force -ErrorAction Stop
+            Write-Log "Removed chezmoi state file to clear stale lock: $stateFilePath" "INFO"
+        }
+        catch {
+            Write-Log "Failed to remove state file (may still be in use): $_" "WARN"
+        }
+    }
+}
+
 function Remove-ServyServiceAndWait {
     [CmdletBinding()]
     param (
@@ -982,6 +1031,7 @@ if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "Run
         }
     }
     else {
+        Clear-ChezmoiLock -RemoveStateFile
         try {
             Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
             Write-Log "Run finished" "INFO"
@@ -989,6 +1039,9 @@ if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "Run
         catch {
             Write-Log "Stack trace: $($_.ScriptStackTrace | Out-String)" "ERROR"
             throw
+        }
+        finally {
+            Clear-ChezmoiLock
         }
     }
 }
