@@ -442,10 +442,11 @@ function Invoke-ChezmoiSync {
         $postHookPath = Join-Path $chezmoiSourceDir ".chezmoihooks" "re-add" "post.ps1"
         if (Test-Path $postHookPath) {
             $env:CHEZMOI_SOURCE_DIR = $chezmoiSourceDir
+            $env:CHEZMOI_DEST_DIR = $env:USERPROFILE
             $env:CHEZMOI_EXECUTABLE = $ChezmoiPath
             $env:CHEZMOI_ARGS = "$ChezmoiPath re-add"
             & $postHookPath 2>&1 | Out-String | Write-Log
-            Remove-Item env:CHEZMOI_SOURCE_DIR, env:CHEZMOI_EXECUTABLE, env:CHEZMOI_ARGS -ErrorAction SilentlyContinue
+            Remove-Item env:CHEZMOI_SOURCE_DIR, env:CHEZMOI_DEST_DIR, env:CHEZMOI_EXECUTABLE, env:CHEZMOI_ARGS -ErrorAction SilentlyContinue
         }
         Write-Log "Running chezmoi re-add..." "INFO"
         $prevSyncService = $env:CHEZMOI_SYNC_SERVICE
