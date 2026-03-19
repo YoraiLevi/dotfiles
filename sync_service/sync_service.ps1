@@ -5,10 +5,11 @@
 .DESCRIPTION
     A unified script that can run the chezmoi sync service, install it as a Windows Service, or uninstall it.
     
-    Three modes of operation:
+    Four modes of operation:
     - RUN MODE (default): Executes the service loop, running chezmoi sync every 5 minutes
     - INSTALL MODE: Installs the service as a Windows Service (requires Administrator privileges)
     - UNINSTALL MODE: Uninstalls the Windows Service (requires Administrator privileges)
+    - NOTIFY MODE: Sends a toast notification only (no sync)
     
     The service periodically runs chezmoi to apply dotfiles every 5 minutes.
     Installation and uninstallation prefer the Servy PowerShell module but can fall back to standard Windows service commands.
@@ -28,6 +29,11 @@
 .EXAMPLE
     # Uninstall mode
     .\install_sync_service.ps1 -Uninstall -ServiceName "ChezmoiSync"
+
+.EXAMPLE
+    # Notify mode - send a toast
+    .\sync_service.ps1 -Notify
+    .\sync_service.ps1 -Notify -Message "Custom message" -Title "Custom Title"
 #>
 
 [CmdletBinding(DefaultParameterSetName = "Run")]
@@ -39,6 +45,16 @@ param(
     # Uninstall switch - uninstalls the service
     [Parameter(ParameterSetName = "Uninstall", Mandatory = $true)]
     [switch]$Uninstall,
+
+    # Notify switch - send a toast notification only (no sync)
+    [Parameter(ParameterSetName = "Notify", Mandatory = $true)]
+    [switch]$Notify,
+
+    [Parameter(ParameterSetName = "Notify")]
+    [string]$Message = "Test notification",
+
+    [Parameter(ParameterSetName = "Notify")]
+    [string]$Title = "Chezmoi Sync Service",
     
     [Parameter(ParameterSetName = "Run")]
     [Parameter(ParameterSetName = "RunLoop")]
@@ -312,20 +328,24 @@ function Show-ToastNotification {
     )
     
     # Only works on Windows 10+
-    if ([Environment]::OSVersion.Version.Major -lt 10) {
+    if ([Environment]::OSVersion.Version.Major -lt 10s) {
         return
     }
     # Try using BurntToast module first (if available)
     if (Get-Module -ListAvailable -Name BurntToast) {
         try {
             Import-Module BurntToast -ErrorAction Stop
-            $btn = New-BTButton -Content "View Log" -Arguments $((Resolve-Path $LogFilePath).Path)
+            $resolvedLogPath = (Resolve-Path $LogFilePath).Path
+            $global:BurntToastLogPath = $resolvedLogPath
+            $btn = New-BTButton -Content "View Log" -Arguments $resolvedLogPath
+            $openLogAction = { Start-Process $global:BurntToastLogPath }
             New-BurntToastNotification -Text $Title, $Message `
                 -AppLogo $null `
                 -ExpirationTime $((Get-Date).AddHours(8)) `
                 -Silent `
                 -Urgent `
                 -Button $btn `
+                -ActivatedAction $openLogAction `
                 -ErrorAction Stop
             return
         }
@@ -526,7 +546,7 @@ Chezmoi path: $ChezmoiPath
     }
 }
 
-# Function to clear chezmoi persistent state lock (kills processes, optionally removes state file)
+# Function to clear chezmoi persistent state lock (does NOT kill processes - only removes stale state file when safe)
 function Clear-ChezmoiLock {
     [CmdletBinding()]
     param(
@@ -535,35 +555,17 @@ function Clear-ChezmoiLock {
 
     $stateFilePath = Join-Path $env:USERPROFILE ".config" "chezmoi" "chezmoistate.boltdb"
 
-    # 1. Get chezmoi processes (chezmoi, chezmoi.exe)
+    # 1. Check for chezmoi processes - do NOT kill (user may be running edit, apply, etc.)
     $processes = Get-Process -Name "chezmoi*" -ErrorAction SilentlyContinue
-    if (-not $processes) {
-        Write-Log "No chezmoi processes found" "INFO"
-    }
-    else {
+    if ($processes) {
         $count = @($processes).Count
-        Write-Log "Stopping $count chezmoi process(es) to release lock..." "INFO"
-        foreach ($proc in $processes) {
-            try {
-                Stop-Process -Id $proc.Id -Force -ErrorAction Stop
-                Write-Log "Stopped process $($proc.Id) ($($proc.ProcessName))" "INFO"
-            }
-            catch {
-                Write-Log "Failed to stop process $($proc.Id): $_" "WARN"
-            }
-        }
-
-        # 2. Wait for processes to exit (5s timeout)
-        $exited = Wait-ForPredicate -Predicate {
-            -not (Get-Process -Name "chezmoi*" -ErrorAction SilentlyContinue)
-        } -TimeoutSeconds 5 -IntervalSeconds 0.2
-
-        if (-not $exited) {
-            Write-Log "Some chezmoi processes may still be running after timeout" "WARN"
-        }
+        Write-Log "Chezmoi is running ($count process(es)) - skipping lock cleanup to avoid interrupting user" "INFO"
+        return
     }
 
-    # 3. Optionally remove state file to clear stale lock (before run only)
+    Write-Log "No chezmoi processes found" "INFO"
+
+    # 2. Optionally remove state file to clear stale lock (only when no processes - e.g. after crash)
     if ($RemoveStateFile -and (Test-Path $stateFilePath)) {
         try {
             Remove-Item -Path $stateFilePath -Force -ErrorAction Stop
@@ -573,6 +575,12 @@ function Clear-ChezmoiLock {
             Write-Log "Failed to remove state file (may still be in use): $_" "WARN"
         }
     }
+}
+
+# Returns $true if sync can proceed (no other chezmoi running), $false to skip
+function Test-ChezmoiIdle {
+    $processes = Get-Process -Name "chezmoi*" -ErrorAction SilentlyContinue
+    return -not $processes
 }
 
 function Remove-ServyServiceAndWait {
@@ -939,6 +947,11 @@ elseif ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq 
     $ServiceLogDir = Join-Path $ServiceDir "logs"
     $ServiceLogFile = Join-Path $ServiceLogDir $LogFileName
 }
+elseif ($PSCmdlet.ParameterSetName -eq "Notify") {
+    $ServiceDir = $PSScriptRoot
+    $ServiceLogDir = Join-Path $ServiceDir "logs"
+    $ServiceLogFile = Join-Path $ServiceLogDir ($LogFileName ?? "sync-service.log")
+}
 
 # ============================================================================
 # MAIN EXECUTION LOGIC - Credentials and Administrator privileges
@@ -997,7 +1010,18 @@ Write-Log "#########################################################" "ALWAYS"
 Write-Log "############### Chezmoi Sync Service #####################" "ALWAYS"
 Write-Log "#########################################################" "ALWAYS"
 Write-Log "Version: $VERSION" "ALWAYS"
-if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
+if ($PSCmdlet.ParameterSetName -eq "Notify") {
+    # Notify mode - send toast only
+    if (-not (Test-Path $ServiceLogDir)) {
+        $null = New-Item -ItemType Directory -Path $ServiceLogDir -Force -ErrorAction SilentlyContinue
+    }
+    if (-not (Test-Path $ServiceLogFile)) {
+        $null = New-Item -ItemType File -Path $ServiceLogFile -Force -ErrorAction SilentlyContinue
+    }
+    Show-ToastNotification -Message $Message -LogFilePath $ServiceLogFile -Title $Title
+    Write-Log "Notification sent" "INFO"
+}
+elseif ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "RunLoop") {
     # ========================================================================
     # RUN MODE - Execute the service loop
     # ========================================================================
@@ -1056,17 +1080,23 @@ if ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq "Run
         }
     }
     else {
-        Clear-ChezmoiLock -RemoveStateFile
-        try {
-            Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
-            Write-Log "Run finished" "INFO"
+        if (-not (Test-ChezmoiIdle)) {
+            Write-Log "Chezmoi is running - skipping this sync cycle to avoid interrupting user" "INFO"
+            Show-ToastNotification -Message "Sync skipped: chezmoi is running" -LogFilePath $ServiceLogFile -Title "Chezmoi Sync Skipped"
         }
-        catch {
-            Write-Log "Stack trace: $($_.ScriptStackTrace | Out-String)" "ERROR"
-            throw
-        }
-        finally {
-            Clear-ChezmoiLock
+        else {
+            Clear-ChezmoiLock -RemoveStateFile
+            try {
+                Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
+                Write-Log "Run finished" "INFO"
+            }
+            catch {
+                Write-Log "Stack trace: $($_.ScriptStackTrace | Out-String)" "ERROR"
+                throw
+            }
+            finally {
+                Clear-ChezmoiLock
+            }
         }
     }
 }
