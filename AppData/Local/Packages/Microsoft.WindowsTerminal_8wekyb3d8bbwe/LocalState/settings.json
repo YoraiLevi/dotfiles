@@ -4,16 +4,16 @@
     "actions": 
     [
         {
+            "command": "experimental.openScratchpad",
+            "id": "User.experimental.openScratchpad"
+        },
+        {
             "command": 
             {
                 "action": "moveTab",
                 "window": "new"
             },
             "id": "User.moveTab.EA39957B"
-        },
-        {
-            "command": "experimental.openScratchpad",
-            "id": "User.experimental.openScratchpad"
         },
         {
             "command": "selectAll",
@@ -59,7 +59,7 @@
     ],
     "alwaysOnTop": false,
     "copyFormatting": "none",
-    "copyOnSelect": false,
+    "copyOnSelect": true,
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
     "keybindings": 
     [
@@ -68,28 +68,28 @@
             "keys": "ctrl+c"
         },
         {
-            "id": "Terminal.FindText",
-            "keys": "ctrl+f"
-        },
-        {
             "id": null,
             "keys": "ctrl+comma"
         },
         {
-            "id": null,
-            "keys": "ctrl+shift+3"
+            "id": "Terminal.FindText",
+            "keys": "ctrl+f"
         },
         {
-            "id": "User.moveTab.EA39957B",
-            "keys": "alt+n"
+            "id": "User.selectAll",
+            "keys": "ctrl+a"
         },
         {
             "id": "Terminal.DuplicatePaneAuto",
             "keys": "alt+shift+d"
         },
         {
-            "id": "User.selectAll",
-            "keys": "ctrl+a"
+            "id": "User.moveTab.EA39957B",
+            "keys": "alt+n"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+3"
         },
         {
             "id": null,
