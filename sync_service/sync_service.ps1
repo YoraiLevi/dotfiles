@@ -436,9 +436,9 @@ function Invoke-ChezmoiSync {
         $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions | Out-File $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
         $null = (Get-InstalledModule).Name | Out-File $(Join-Path $ENV:USERPROFILE ".powershell" "pwsh-modules.txt")
         $null = choco export "$(Join-Path $ENV:USERPROFILE ".choco" "packages.config")"
-        # Execute chezmoi re-add before update
+        # Execute chezmoi re-add before update (temp state file avoids lock conflict with post hook)
         Write-Log "Running chezmoi re-add..." "INFO"
-        & $ChezmoiPath re-add 2>&1 | Out-String | Write-Log
+        & $ChezmoiPath re-add --persistent-state (Join-Path $env:TEMP "chezmoistate-$([guid]::NewGuid()).boltdb") 2>&1 | Out-String | Write-Log
         $reAddExitCode = $LASTEXITCODE
 
         if ($reAddExitCode -eq 0) {
