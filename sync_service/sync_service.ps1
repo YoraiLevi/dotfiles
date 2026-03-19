@@ -439,10 +439,16 @@ function Invoke-ChezmoiSync {
         # Run post hook logic standalone first (avoids nested chezmoi lock), then re-add with hook skipped
         $chezmoiSourceDir = ( (& $ChezmoiPath source-path 2>$null) | Out-String).Trim()
         if (-not $chezmoiSourceDir) { $chezmoiSourceDir = Split-Path $PSScriptRoot -Parent }
+        $targetPathOutput = & $ChezmoiPath target-path 2>&1
+        $chezmoiDestDir = ($targetPathOutput | Out-String).Trim()
+        if ($LASTEXITCODE -ne 0 -or -not $chezmoiDestDir) {
+            Write-Log "ERROR: chezmoi target-path failed (exit $LASTEXITCODE): $targetPathOutput" "ERROR"
+            throw "chezmoi target-path failed - cannot determine CHEZMOI_DEST_DIR"
+        }
         $postHookPath = Join-Path $chezmoiSourceDir ".chezmoihooks" "re-add" "post.ps1"
         if (Test-Path $postHookPath) {
             $env:CHEZMOI_SOURCE_DIR = $chezmoiSourceDir
-            $env:CHEZMOI_DEST_DIR = $env:USERPROFILE
+            $env:CHEZMOI_DEST_DIR = $chezmoiDestDir
             $env:CHEZMOI_EXECUTABLE = $ChezmoiPath
             $env:CHEZMOI_ARGS = "$ChezmoiPath re-add"
             & $postHookPath 2>&1 | Out-String | Write-Log
