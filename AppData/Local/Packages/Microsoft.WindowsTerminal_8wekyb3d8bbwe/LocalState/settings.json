@@ -4,16 +4,16 @@
     "actions": 
     [
         {
-            "command": "experimental.openScratchpad",
-            "id": "User.experimental.openScratchpad"
-        },
-        {
             "command": 
             {
                 "action": "moveTab",
                 "window": "new"
             },
             "id": "User.moveTab.EA39957B"
+        },
+        {
+            "command": "experimental.openScratchpad",
+            "id": "User.experimental.openScratchpad"
         },
         {
             "command": "selectAll",
@@ -51,6 +51,10 @@
                 "action": "nextTab"
             },
             "id": "User.nextTab.0"
+        },
+        {
+            "command": "paste",
+            "id": "User.paste"
         }
     ],
     "alwaysOnTop": false,
@@ -70,10 +74,6 @@
         {
             "id": null,
             "keys": "ctrl+comma"
-        },
-        {
-            "id": "Terminal.PasteFromClipboard",
-            "keys": "ctrl+v"
         },
         {
             "id": null,
@@ -134,6 +134,10 @@
         {
             "id": "User.tabSearch",
             "keys": "ctrl+shift+a"
+        },
+        {
+            "id": null,
+            "keys": "shift+insert"
         },
         {
             "id": "User.duplicateTab",
