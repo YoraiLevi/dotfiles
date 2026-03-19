@@ -172,7 +172,7 @@ param(
 # FUNCTION DEFINITIONS
 # ============================================================================
 
-$VERSION = "v20260209"
+$VERSION = "v20260319"
 $ConfigFileName = "config.json"
 
 # Function to write log entries, now supports pipeline input for $Message
