@@ -1,0 +1,9 @@
+{{ if eq .chezmoi.os "windows" -}}
+["./.local/bin/lemonade.exe"]
+    type = "archive-file"
+    url = {{ gitHubLatestReleaseAssetURL "lemonade-command/lemonade" "lemonade_windows_amd64.zip" | quote }}
+    path = "lemonade.exe"
+    refreshPeriod = "168h"
+    executable = true
+{{- end -}}
+
