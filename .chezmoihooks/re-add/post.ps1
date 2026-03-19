@@ -1,4 +1,6 @@
 param()
+$DebugPreference = "Continue"
+$WarningPreference = "Continue"
 Write-Host $PSCommandPath -ForegroundColor Green
 
 Import-Module (Join-Path $ENV:CHEZMOI_SOURCE_DIR .chezmoilib\ConvertTo-LocalPath.psm1)
