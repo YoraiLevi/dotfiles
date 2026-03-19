@@ -12,6 +12,7 @@ Host calc1-104003
   IdentityFile ~/.ssh/yorai_at_calc1-104003_ced99c_id_ed25519
   ServerAliveInterval 60
   StrictHostKeyChecking accept-new
+  RemoteForward 2489 127.0.0.1:2489
 
 Host calc2-104004
   HostName 192.168.200.11
@@ -21,3 +22,4 @@ Host calc2-104004
   ProxyJump calc1-104003
   ServerAliveInterval 60
   StrictHostKeyChecking accept-new
+  RemoteForward 2489 127.0.0.1:2489
