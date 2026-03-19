@@ -3,6 +3,9 @@ param()
 # $WarningPreference = "Continue"
 Write-Host $PSCommandPath -ForegroundColor Green
 
+# When sync service runs: post logic already ran standalone; skip to avoid nested chezmoi lock
+if ($env:CHEZMOI_SYNC_SERVICE -eq "1") { return }
+
 Import-Module (Join-Path $ENV:CHEZMOI_SOURCE_DIR .chezmoilib\ConvertTo-LocalPath.psm1)
 
 # Uncomment to assist with debugging

@@ -436,10 +436,28 @@ function Invoke-ChezmoiSync {
         $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions | Out-File $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
         $null = (Get-InstalledModule).Name | Out-File $(Join-Path $ENV:USERPROFILE ".powershell" "pwsh-modules.txt")
         $null = choco export "$(Join-Path $ENV:USERPROFILE ".choco" "packages.config")"
-        # Execute chezmoi re-add before update (temp state file avoids lock conflict with post hook)
+        # Run post hook logic standalone first (avoids nested chezmoi lock), then re-add with hook skipped
+        $chezmoiSourceDir = ( (& $ChezmoiPath source-path 2>$null) | Out-String).Trim()
+        if (-not $chezmoiSourceDir) { $chezmoiSourceDir = Split-Path $PSScriptRoot -Parent }
+        $postHookPath = Join-Path $chezmoiSourceDir ".chezmoihooks" "re-add" "post.ps1"
+        if (Test-Path $postHookPath) {
+            $env:CHEZMOI_SOURCE_DIR = $chezmoiSourceDir
+            $env:CHEZMOI_EXECUTABLE = $ChezmoiPath
+            $env:CHEZMOI_ARGS = "$ChezmoiPath re-add"
+            & $postHookPath 2>&1 | Out-String | Write-Log
+            Remove-Item env:CHEZMOI_SOURCE_DIR, env:CHEZMOI_EXECUTABLE, env:CHEZMOI_ARGS -ErrorAction SilentlyContinue
+        }
         Write-Log "Running chezmoi re-add..." "INFO"
-        & $ChezmoiPath re-add --persistent-state (Join-Path $env:TEMP "chezmoistate-$([guid]::NewGuid()).boltdb") 2>&1 | Out-String | Write-Log
-        $reAddExitCode = $LASTEXITCODE
+        $prevSyncService = $env:CHEZMOI_SYNC_SERVICE
+        try {
+            $env:CHEZMOI_SYNC_SERVICE = "1"
+            & $ChezmoiPath re-add 2>&1 | Out-String | Write-Log
+            $reAddExitCode = $LASTEXITCODE
+        }
+        finally {
+            if ($null -eq $prevSyncService) { Remove-Item env:CHEZMOI_SYNC_SERVICE -ErrorAction SilentlyContinue }
+            else { $env:CHEZMOI_SYNC_SERVICE = $prevSyncService }
+        }
 
         if ($reAddExitCode -eq 0) {
             Write-Log "chezmoi re-add completed successfully" "INFO"
