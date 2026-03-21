@@ -806,6 +806,12 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
 #     $script:_lazyRunspace.Dispose()
 # }
 
-Set-Alias -Name ssh -Value tssh -Scope Global
+function ssh {
+    param($Target)
+    tssh $Target
+    # Command to run after exit
+    Write-Host "Back on local machine: $(Get-Date)" -ForegroundColor Red -BackgroundColor Cyan -NoNewline
+}
+# Set-Alias -Name ssh -Value tssh -Scope Global
 
 Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
