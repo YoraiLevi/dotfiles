@@ -287,4 +287,5 @@
 	"remote.SSH.remotePlatform": {
 		"calc1-104003": "linux"
 	},
+	"search.useIgnoreFiles": false,
 }
