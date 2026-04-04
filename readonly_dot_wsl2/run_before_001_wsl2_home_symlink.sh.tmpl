@@ -2,11 +2,15 @@
 echo "== {{ .chezmoi.sourceFile | trim }} =="
 home="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")/.wsl2/home/"
 
-for file in "$home"/*; do
+if [ -d "$home" ]; then
+  find "$home" -mindepth 1 -maxdepth 1 -print | while read -r file; do
+   echo "$file"
     # Only link if not already a symlink
-    if [ ! -L "$file" ]; then
-        target=~/"$(basename "$file")"
-        echo mv -f "$target" "$target.bak"
-        echo ln -sf "$file" "$target"              # create symlink
+    target=~/"$(basename "$file")"
+    if [ ! -L "$target" ]; then
+        mv -f "$target" "$target.bak"
+        ln -sf "$file" "$target"              # create symlink
     fi
-done
+  done
+fi
+
