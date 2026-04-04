@@ -7,8 +7,18 @@ if [ -d "$home" ]; then
     rel="${file#$home}"
     target="$HOME/$rel"
     echo "$rel"
+
+    # Replace any parent directory symlinks (from old runs) with real directories
+    current="$HOME"
+    IFS='/' read -ra segs <<< "$(dirname "$rel")"
+    for seg in "${segs[@]}"; do
+      [ -z "$seg" ] && continue
+      current="$current/$seg"
+      [ -L "$current" ] && rm "$current"
+    done
+    mkdir -p "$(dirname "$target")"
+
     if [ ! -L "$target" ]; then
-      mkdir -p "$(dirname "$target")"
       [ -e "$target" ] && mv -f "$target" "$target.bak"
       ln -sf "$file" "$target"
     fi
