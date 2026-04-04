@@ -4,16 +4,16 @@
     "actions": 
     [
         {
-            "command": "experimental.openScratchpad",
-            "id": "User.experimental.openScratchpad"
-        },
-        {
             "command": 
             {
                 "action": "moveTab",
                 "window": "new"
             },
             "id": "User.moveTab.EA39957B"
+        },
+        {
+            "command": "experimental.openScratchpad",
+            "id": "User.experimental.openScratchpad"
         },
         {
             "command": "selectAll",
@@ -68,28 +68,28 @@
             "keys": "ctrl+c"
         },
         {
-            "id": null,
-            "keys": "ctrl+comma"
-        },
-        {
             "id": "Terminal.FindText",
             "keys": "ctrl+f"
         },
         {
-            "id": "User.selectAll",
-            "keys": "ctrl+a"
+            "id": null,
+            "keys": "ctrl+comma"
         },
         {
-            "id": "Terminal.DuplicatePaneAuto",
-            "keys": "alt+shift+d"
+            "id": null,
+            "keys": "ctrl+shift+3"
         },
         {
             "id": "User.moveTab.EA39957B",
             "keys": "alt+n"
         },
         {
-            "id": null,
-            "keys": "ctrl+shift+3"
+            "id": "Terminal.DuplicatePaneAuto",
+            "keys": "alt+shift+d"
+        },
+        {
+            "id": "User.selectAll",
+            "keys": "ctrl+a"
         },
         {
             "id": null,
