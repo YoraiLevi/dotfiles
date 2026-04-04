@@ -26,7 +26,7 @@ default_mode "locked"
 // supports OSC 52 (most modern ones do: iTerm2, WezTerm, Alacritty,
 // Windows Terminal, GNOME Terminal 3.46+, ghostty, foot).
 mouse_mode true
-copy_on_select false
+copy_on_select true
 copy_clipboard "system"
 
 // ── Scrollback ─────────────────────────────────────────────

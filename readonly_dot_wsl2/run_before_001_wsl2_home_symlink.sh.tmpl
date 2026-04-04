@@ -3,25 +3,12 @@ echo "== {{ .chezmoi.sourceFile | trim }} =="
 home="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")/.wsl2/home/"
 
 if [ -d "$home" ]; then
-  find "$home" -type f ! -name '*.bak' ! -name '*.swp' | while read -r file; do
-    rel="${file#$home}"
-    target="$HOME/$rel"
-    echo "$rel"
-
-    # Replace any parent directory symlinks (from old runs) with real directories
-    current="$HOME"
-    IFS='/' read -ra segs <<< "$(dirname "$rel")"
-    for seg in "${segs[@]}"; do
-      [ -z "$seg" ] && continue
-      current="$current/$seg"
-      [ -L "$current" ] && rm "$current"
-    done
-    mkdir -p "$(dirname "$target")"
-
+  find "$home" -mindepth 1 -maxdepth 1 -print | while read -r file; do
+   echo "$file"
+    target=~/"$(basename "$file")"
     if [ ! -L "$target" ]; then
-      [ -e "$target" ] && mv -f "$target" "$target.bak"
-      ln -sf "$file" "$target"
+        [ -e "$target" ] && mv -f "$target" "$target.bak"
+        ln -sf "$file" "$target"
     fi
   done
 fi
-
