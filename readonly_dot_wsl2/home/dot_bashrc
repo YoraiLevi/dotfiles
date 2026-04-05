@@ -197,17 +197,26 @@ up () {
     cd $d
 }
 
-# Set IDE alias to the first available editor (cursor > code-insiders)
+# Set IDE alias to the first available editor (cursor > code-insiders > code)
 _editor=""
-for _cmd in cursor code-insiders; do
+for _cmd in cursor code-insiders code nano; do
     if command -v "$_cmd" >/dev/null 2>&1; then
         _editor="$_cmd"
         break
     fi
 done
 if [ -n "$_editor" ]; then
-    alias code="$_editor"
-    alias vscode="$_editor"
+    if [ "$_editor" != "code" ]; then
+        alias code="$_editor"
+        alias vscode="$_editor"
+    fi
+    if [ "$_editor" = "nano" ]; then
+        export EDITOR="$_editor"
+        export VISUAL="$_editor"
+    else
+        export EDITOR="$_editor -w -n"
+        export VISUAL="$_editor -w -n"
+    fi
 fi
 unset _editor _cmd
 
