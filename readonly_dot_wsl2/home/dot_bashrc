@@ -242,3 +242,8 @@ extract () {
         fi
     done
 }
+
+
+if [[ -z "$ZELLIJ" ]]; then
+    zellij attach main -c
+fi
