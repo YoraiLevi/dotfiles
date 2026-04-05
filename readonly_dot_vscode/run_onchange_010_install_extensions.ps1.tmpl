@@ -2,9 +2,19 @@
 # {{ range glob (joinPath (.chezmoi.destDir | toString) "*-extensions.txt") }}{{ include . | sha256sum }} {{ end }}
 
 
-@('cursor', 'code-insiders', 'code') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | foreach {
-    $_EDITOR = $_; cat "$ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt" -ErrorAction Continue | foreach { 
-        $extension = $_
-        &$_EDITOR --install-extension $extension 
+@('cursor', 'code-insiders', 'code') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | ForEach-Object {
+    $_EDITOR = $_
+    $installed = @{}
+    & $_EDITOR --list-extensions 2>$null | ForEach-Object { $installed[$_.ToLower()] = $true }
+
+    Get-Content "$ENV:USERPROFILE\.vscode\$_EDITOR-extensions.txt" -ErrorAction Continue | ForEach-Object {
+        $extension = $_.Trim()
+        if (-not $extension) { return }
+        if ($installed.ContainsKey($extension.ToLower())) {
+            Write-Host "  [skip] $extension (already installed)"
+        } else {
+            Write-Host "  [install] $extension"
+            & $_EDITOR --install-extension $extension
+        }
     }
 }
