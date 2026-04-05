@@ -1,0 +1,45 @@
+# ~/.inputrc — readline configuration
+# Managed by devenv (symlinked from ~/devenv/dotfiles/inputrc)
+
+# ── Completion ──────────────────────────────────────────────
+# Case-insensitive completion
+set completion-ignore-case on
+
+# Show all completions on first Tab if ambiguous (no bell)
+set show-all-if-ambiguous on
+
+# Append / for directories, * for executables, etc.
+set visible-stats on
+
+# Color completions by file type (like ls --color)
+set colored-stats on
+
+# Don't duplicate the common prefix when completing
+set colored-completion-prefix on
+
+# Treat hyphens and underscores as equivalent for completion
+set completion-map-case on
+
+# ── Editing ─────────────────────────────────────────────────
+# Allow UTF-8 input and output
+set input-meta on
+set output-meta on
+set convert-meta off
+
+# ── Key bindings ────────────────────────────────────────────
+# Up/Down arrow search through history matching current prefix
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+# Ctrl-Left / Ctrl-Right for word navigation
+"\e[1;5D": backward-word
+"\e[1;5C": forward-word
+
+# Home / End
+"\e[H": beginning-of-line
+"\eOH": beginning-of-line
+"\e[F": end-of-line
+"\eOF": end-of-line
+
+# Delete key
+"\e[3~": delete-char
