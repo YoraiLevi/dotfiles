@@ -243,6 +243,7 @@ extract () {
     done
 }
 
+export PATH="$HOME/.cargo/bin:$PATH"
 
 if [[ -z "$ZELLIJ" ]]; then
     zellij attach main -c
