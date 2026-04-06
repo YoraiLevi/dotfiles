@@ -243,8 +243,7 @@ extract () {
     done
 }
 
-export PATH="$HOME/.cargo/bin:$PATH"
-
+. "$HOME/.cargo/env"
 if [[ -z "$ZELLIJ" ]]; then
     zellij attach main -c
 fi
