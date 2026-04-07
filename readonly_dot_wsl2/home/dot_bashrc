@@ -148,11 +148,6 @@ fi
 # Prevent accidental pip install into system Python
 export PIP_REQUIRE_VIRTUALENV=true
 
-# Ignore case on auto-completion
-bind "set completion-ignore-case on"
-# Show auto-completion list automatically, without double tab
-bind "set show-all-if-ambiguous On"
-
 # Load pyenv automatically by appending
 # the following to
 # ~/.bash_profile if it exists, otherwise ~/.profile (for login shells)
