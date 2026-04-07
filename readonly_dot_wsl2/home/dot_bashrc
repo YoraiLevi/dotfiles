@@ -260,4 +260,12 @@ fi
 . "$HOME/.cargo/env"
 if [[ -z "$ZELLIJ" ]]; then
     zellij attach main -c
+elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then
+    local_motd="/tmp/.motd-shown-$(id -u)"
+    today=$(date +%Y-%m-%d)
+    if [[ ! -f "$local_motd" || "$(cat "$local_motd")" != "$today" ]]; then
+        run-parts /etc/update-motd.d/ 2>/dev/null
+        echo "$today" > "$local_motd"
+    fi
+    unset local_motd today
 fi
