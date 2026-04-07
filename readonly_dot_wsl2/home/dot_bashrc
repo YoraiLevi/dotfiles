@@ -243,6 +243,25 @@ extract () {
     done
 }
 
+# fzf (history search)
+# git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+# ~/.fzf/install --no-bash --no-zsh --no-fish --bin
+export PATH="$HOME/.fzf/bin:$PATH"
+if command -v fzf >/dev/null 2>&1; then
+    __fzf_history() {
+        local selected
+        selected=$(cat "$HISTFILE" 2>/dev/null | sed 's/^#[0-9]*$//' | grep -v '^$' | tac | awk '!seen[$0]++' | fzf --height=40% --reverse --no-sort --query="$READLINE_LINE")
+        if [ -n "$selected" ]; then
+            READLINE_LINE="$selected"
+            READLINE_POINT=${#selected}
+        fi
+    }
+    bind -x '"\C-r": __fzf_history'
+fi
+
+# zellij
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && . "$HOME/.cargo/env"
+# cargo install --locked zellij
 . "$HOME/.cargo/env"
 if [[ -z "$ZELLIJ" ]]; then
     zellij attach main -c
