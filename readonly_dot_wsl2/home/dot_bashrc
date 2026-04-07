@@ -254,6 +254,16 @@ if command -v fzf >/dev/null 2>&1; then
     bind -x '"\C-r": __fzf_history'
 fi
 
+# Source credential env files (skip .json and other data files)
+if [ -d "$HOME/.auth" ]; then
+    for f in "$HOME/.auth"/*; do
+        case "$f" in *.json) continue ;; esac
+        [ -f "$f" ] && . "$f" 2>/dev/null
+    done
+fi
+
+
+
 # zellij
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && . "$HOME/.cargo/env"
 # cargo install --locked zellij
