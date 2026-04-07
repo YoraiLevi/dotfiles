@@ -136,7 +136,7 @@ export HISTTIMEFORMAT="[%F %T] "
 export HISTFILE=~/.bash_eternal_history
 # Force prompt to write history after every command.
 # http://superuser.com/questions/20900/bash-history-loss
-PROMPT_COMMAND="history -w; $PROMPT_COMMAND"
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
 # https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c
 stty -ixon
