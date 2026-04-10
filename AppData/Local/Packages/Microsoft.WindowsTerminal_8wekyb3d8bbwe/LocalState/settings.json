@@ -61,10 +61,7 @@
             "id": "Terminal.CopyToClipboard",
             "keys": "ctrl+shift+c"
         },
-        {
-            "id": null,
-            "keys": "ctrl+c"
-        },
+        { "id": "Terminal.CopyToClipboard", "keys": "ctrl+c" },
         {
             "id": null,
             "keys": "ctrl+f"
