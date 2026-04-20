@@ -58,7 +58,6 @@
   <package id="R.Project" />
   <package id="r.studio" />
   <package id="recuva" />
-  <package id="rust" />
   <package id="scrcpy" />
   <package id="servy" />
   <package id="spice-agent" />
