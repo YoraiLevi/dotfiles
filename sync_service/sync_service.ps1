@@ -502,14 +502,48 @@ function Invoke-ChezmoiSync {
         $null = (Get-InstalledModule).Name | Out-File $(Join-Path $ENV:USERPROFILE ".powershell" "pwsh-modules.txt")
         $null = choco export "$(Join-Path $ENV:USERPROFILE ".choco" "packages.config")"
 
-        # The forget/add logic runs as a chezmoi re-add.pre hook. pre-hooks run
-        # before chezmoi acquires the BoltDB persistent-state lock, so they can
-        # safely shell out to nested chezmoi commands. The previous two-phase
-        # workaround (invoke post.ps1 standalone, then re-add with
-        # CHEZMOI_SYNC_SERVICE=1 to suppress the hook) is no longer needed.
+        # IMPORTANT: run the forget/add sweep as TOP-LEVEL chezmoi commands here,
+        # BEFORE invoking chezmoi re-add. Doing the same work from the chezmoi
+        # re-add.pre hook requires nested chezmoi invocations (chezmoi forget and
+        # chezmoi add as children of a running chezmoi re-add), which chezmoi
+        # does not guarantee will work: chezmoi opens its BoltDB persistent-state
+        # lock lazily, and once the parent re-add has touched state the nested
+        # children race it and produce
+        #   "chezmoi: timeout obtaining persistent state lock, is another instance
+        #    of chezmoi running?"
+        # See https://github.com/twpayne/chezmoi/issues/433 and
+        # https://chezmoi.io/user-guide/frequently-asked-questions/troubleshooting/.
+        # Running the sweep here keeps each chezmoi invocation top-level, each
+        # acquires and releases the lock cleanly, and the subsequent chezmoi
+        # re-add has no nested work to do.
+        $chezmoiSourceDir = (& $ChezmoiPath source-path | Out-String).Trim()
+        $sweepScript = Join-Path $chezmoiSourceDir '.chezmoilib\Invoke-ChezmoiReAddSweep.ps1'
+        if (Test-Path -LiteralPath $sweepScript) {
+            Write-Log "Running re-add sweep (top-level chezmoi forget/add from $sweepScript)..." "INFO"
+            try {
+                & $sweepScript -ChezmoiPath $ChezmoiPath 2>&1 | Out-String | Write-Log
+                Write-Log "re-add sweep finished" "INFO"
+            }
+            catch {
+                Write-Log "WARN: re-add sweep raised: $_ (continuing with chezmoi re-add anyway)" "WARN"
+            }
+        }
+        else {
+            Write-Log "WARN: re-add sweep script not found at $sweepScript; relying on chezmoi re-add alone" "WARN"
+        }
+
+        # Tell the chezmoi re-add pre-hook that the sweep has already been done.
+        # The hook reads this and becomes a no-op (plus its guardrail), so we
+        # don't do the same work a second time and don't hit nested-lock issues.
+        $ENV:CHEZMOI_SYNC_SERVICE = '1'
         Write-Log "Running chezmoi re-add..." "INFO"
-        & $ChezmoiPath re-add 2>&1 | Out-String | Write-Log
-        $reAddExitCode = $LASTEXITCODE
+        try {
+            & $ChezmoiPath re-add 2>&1 | Out-String | Write-Log
+            $reAddExitCode = $LASTEXITCODE
+        }
+        finally {
+            Remove-Item Env:\CHEZMOI_SYNC_SERVICE -ErrorAction SilentlyContinue
+        }
 
         if ($reAddExitCode -eq 0) {
             Write-Log "chezmoi re-add completed successfully" "INFO"

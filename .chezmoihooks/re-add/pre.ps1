@@ -1,50 +1,50 @@
 param()
-# Why is the forget/add logic in re-add.pre instead of re-add.post:
+# re-add.pre runs before chezmoi runs the `re-add` command.
 #
-#   chezmoi acquires its BoltDB persistent-state lock between the pre and post
-#   hooks. Anything that shells out to `chezmoi forget`/`chezmoi add` from the
-#   post hook will race the parent and time out with:
-#     "chezmoi: timeout obtaining persistent state lock, is another instance of
-#      chezmoi running?"
-#   The pre hook runs before the lock is taken, so nested chezmoi calls are
-#   safe. Do not move this back to post.ps1.
+# Two responsibilities:
+#
+#   1. Always enforce the canonical chezmoi attribute-ordering guardrail. This is
+#      cheap and catches the class of bug that previously produced phantom
+#      ~/.readonly_powershell and doubled source directories.
+#
+#   2. For INTERACTIVE users only, run the re-add sweep (forget files that vanished
+#      from the destination, add new files that appeared in marker directories).
+#      The sweep shells out to chezmoi forget/add, which are top-level chezmoi
+#      processes and therefore contend with the parent chezmoi re-add's BoltDB
+#      persistent-state lock. chezmoi opens the lock lazily, so interactive
+#      invocations happen to work, but the ChezmoiSync background service
+#      consistently raced the parent and produced:
+#        "chezmoi: timeout obtaining persistent state lock, is another instance of
+#         chezmoi running?"
+#      Because the service now runs the sweep itself BEFORE calling chezmoi re-add
+#      (as top-level, non-nested chezmoi calls), it exports CHEZMOI_SYNC_SERVICE=1
+#      before invoking chezmoi re-add and we skip the sweep here to avoid the
+#      duplicate, lock-contending work.
+#
+# Do NOT move this work to re-add.post: chezmoi holds the state lock between pre
+# and post hooks, and post-hook nested chezmoi calls always fail.
 Write-Host $PSCommandPath -ForegroundColor Green
 $ErrorActionPreference = 'Stop'
 
-Import-Module (Join-Path $ENV:CHEZMOI_SOURCE_DIR .chezmoilib\ConvertTo-LocalPath.psm1)
-
-# $ENV:CHEZMOI_ARGS is a single space-joined string (System.String), not an
-# array. Splitting on whitespace and using -contains is the only way to
-# reliably detect flags like --dry-run. The previous "-in $ENV:CHEZMOI_ARGS"
-# check was a silent no-op because -in treats the string as a single element.
+# $ENV:CHEZMOI_ARGS is a single space-joined string, not an array. Split and use
+# -contains to reliably detect flags like --dry-run. A prior "-in $ENV:CHEZMOI_ARGS"
+# check silently no-op'd because -in treats the string as a single element.
 $chezmoiArgv = @()
 if ($ENV:CHEZMOI_ARGS) {
     $chezmoiArgv = $ENV:CHEZMOI_ARGS -split '\s+' | Where-Object { $_ }
 }
-
-$params = @()
-if (($chezmoiArgv -contains '--debug') -or ($chezmoiArgv -contains '-d')) {
-    $params += '--debug'
-}
-if (($chezmoiArgv -contains '--verbose') -or ($chezmoiArgv -contains '-v')) {
-    $params += '--verbose'
-}
 $IsDryRun = ($chezmoiArgv -contains '--dry-run') -or ($chezmoiArgv -contains '-n')
-if ($IsDryRun) {
-    $params += '--dry-run'
-}
 
-# Guardrail: fail fast if the source tree contains a directory or file whose
-# chezmoi attribute prefixes are in non-canonical order. See:
+# Guardrail (always runs): fail fast if the source tree contains a directory or
+# file whose chezmoi attribute prefixes are in non-canonical order. See:
 #   https://www.chezmoi.io/reference/source-state-attributes/
-# The canonical order is
+# Canonical order is:
 #   encrypted_ / private_ / readonly_ / empty_ / executable_ / remove_ /
 #   create_ / modify_ / run_ / symlink_ / dot_ / literal_
-# so a name that begins with `dot_<one of those other prefixes>_` means the
-# user (or a previous tool) rearranged the prefixes and chezmoi is now
-# silently managing a bogus target. An earlier incident of this in this
-# repository produced phantom ~/.readonly_powershell, ~/.readonly_vscode, and
-# ~/.readonly_wsl2 directories and doubled source dirs.
+# Any entry that begins with `dot_<one of those other prefixes>_` has prefixes
+# rearranged, and chezmoi would silently manage a bogus target. Kept here
+# (duplicate with the sweep script) so interactive users get the check even
+# when CHEZMOI_SYNC_SERVICE=1 suppresses the sweep.
 $badOrderPattern = '^dot_(?:encrypted|private|readonly|empty|executable|remove|create|modify|run|symlink)_'
 $badOrder = Get-ChildItem -Path $ENV:CHEZMOI_SOURCE_DIR -Recurse -Force -ErrorAction SilentlyContinue |
     Where-Object { $_.Name -match $badOrderPattern }
@@ -56,117 +56,23 @@ if ($badOrder) {
     throw "Refusing to run re-add hook: rename the above entries so prefixes are in canonical order (e.g. readonly_dot_powershell, not dot_readonly_powershell)."
 }
 
-$SPECIAL_FILE_NAME_REGEX = '.chezmoi-re-add*'
-$FORGET_PROPERTY_REGEX = '*.forget*'
-$FORGET_RECURSIVE_PROPERTY_REGEX = '*.recursive-forget*'
-$RECURSIVE_PROPERTY_REGEX = '*.recursive-add*'
-
-# We batch every forget/add target across all markers into at most three
-# nested chezmoi invocations (one forget, one recursive add, one non-recursive
-# add) instead of one per file. Every nested chezmoi call re-parses
-# .chezmoiexternals/*.toml.tmpl, which evaluates each gitHubLatestReleaseAssetURL
-# against the GitHub REST API. With gitHub.refreshPeriod still occasionally
-# racing network/cache transitions, minimizing the call count is what keeps
-# this hook below the 60 req/h anonymous rate limit on shared NAT IPs. It also
-# massively cuts the end-to-end runtime of the hook.
-$filesToForget = [System.Collections.Generic.List[string]]::new()
-$dirsToAddRecursive = [System.Collections.Generic.List[string]]::new()
-$dirsToAddNonRecursive = [System.Collections.Generic.List[string]]::new()
-
-$recursiveFiles = Get-ChildItem -Path "$ENV:CHEZMOI_SOURCE_DIR" -Filter $SPECIAL_FILE_NAME_REGEX -Recurse -Force -File
-foreach ($recursiveFile in $recursiveFiles) {
-    $chezmoiTrackedDir = $recursiveFile.Directory
-    # Skip if the target dir does not exist on this machine.
-    try {
-        $localDirPath = ConvertTo-LocalPath $chezmoiTrackedDir.FullName -ErrorAction Stop
-        $null = Get-Item -Path $localDirPath -ErrorAction Stop
-    }
-    catch {
-        Write-Debug "Skipping $($chezmoiTrackedDir.FullName): local dir not found"
-        continue
-    }
-
-    $do_recursive_forget = $recursiveFile.Name -like $FORGET_RECURSIVE_PROPERTY_REGEX
-    $do_forget = ($recursiveFile.Name -like $FORGET_PROPERTY_REGEX) -or $do_recursive_forget
-    $do_recursive_add = $recursiveFile.Name -like $RECURSIVE_PROPERTY_REGEX
-
-    if ($do_forget) {
-        $chezmoiManagedFiles = Get-ChildItem -Path $chezmoiTrackedDir -Force -Recurse:$do_recursive_forget
-        # Skip source-only metadata that never maps to a chezmoi target:
-        #   * zero-byte placeholders (e.g. .keep)
-        #   * template fragments (*.tmpl have no 1:1 destination)
-        #   * our own .chezmoi-re-add.* markers
-        #   * literal-dotfile metadata such as .gitignore/.gitattributes - all
-        #     target-mapped entries use attribute prefixes (dot_, private_dot_,
-        #     etc.), so any source entry that starts with `.` is always
-        #     source-only and would just produce "not managed" warnings from
-        #     chezmoi forget.
-        $filteredManagedFiles = $chezmoiManagedFiles | Where-Object {
-            $_.Length -gt 0 -and
-            -not $_.Name.EndsWith('.tmpl') -and
-            -not ($_.Name -like $SPECIAL_FILE_NAME_REGEX) -and
-            -not $_.Name.StartsWith('.')
-        }
-        Write-Debug "Found $($filteredManagedFiles.Count) managed files under $($chezmoiTrackedDir.FullName)"
-        foreach ($managedFile in $filteredManagedFiles) {
-            try {
-                $localFilePath = ConvertTo-LocalPath $managedFile.FullName -ErrorAction Stop
-            }
-            catch {
-                Write-Debug "Failed to convert $($managedFile.FullName) to a local path; skipping"
-                Write-Warning $_
-                continue
-            }
-            if (Test-Path -LiteralPath $localFilePath) {
-                Write-Debug "Keep: $localFilePath still exists"
-                continue
-            }
-            Write-Debug "Forget: $localFilePath no longer exists"
-            $filesToForget.Add($localFilePath)
-        }
-    }
-
-    if ($do_recursive_add) {
-        $dirsToAddRecursive.Add($localDirPath)
-    }
-    else {
-        # Adds the directory entry only (not its children). This preserves the
-        # chezmoi-managed directory metadata without pulling in new files
-        # (important for dirs like ~/.local/bin where we explicitly do *not*
-        # want auto-add -- see also .chezmoiignore.tmpl for externals).
-        $dirsToAddNonRecursive.Add($localDirPath)
-    }
+if ($ENV:CHEZMOI_SYNC_SERVICE -eq '1') {
+    Write-Host "re-add pre-hook: CHEZMOI_SYNC_SERVICE=1, sweep already performed by the service - skipping" -ForegroundColor DarkGray
+    return
 }
 
-# Execute the batched operations. Each block is guarded so a failure in one
-# (e.g. GitHub API rate limit on a nested chezmoi call) does not prevent the
-# others from running, and none of them blocks the parent re-add.
-if ($filesToForget.Count -gt 0) {
-    Write-Debug "chezmoi forget ($($filesToForget.Count) files) $($params -join ' ') --force"
-    try {
-        & $ENV:CHEZMOI_EXECUTABLE forget @filesToForget @params --force
-    }
-    catch {
-        Write-Warning $_
-    }
+# Interactive path: run the shared sweep. It shells out to chezmoi forget/add,
+# which nest inside this chezmoi re-add. Documented to be unreliable (see header)
+# but observed to work in interactive shells because of lazy lock acquisition.
+# The service path does not go through here.
+$sweepScript = Join-Path $ENV:CHEZMOI_SOURCE_DIR '.chezmoilib\Invoke-ChezmoiReAddSweep.ps1'
+if (-not (Test-Path -LiteralPath $sweepScript)) {
+    Write-Warning "Sweep script not found at $sweepScript; skipping auto forget/add."
+    return
 }
-
-if ($dirsToAddRecursive.Count -gt 0) {
-    Write-Debug "chezmoi add --recursive=true ($($dirsToAddRecursive.Count) dirs) $($params -join ' ')"
-    try {
-        & $ENV:CHEZMOI_EXECUTABLE add @dirsToAddRecursive @params --recursive=true
-    }
-    catch {
-        Write-Warning $_
-    }
+try {
+    & $sweepScript -ChezmoiPath $ENV:CHEZMOI_EXECUTABLE -SourceDir $ENV:CHEZMOI_SOURCE_DIR -DestDir $ENV:CHEZMOI_DEST_DIR -DryRun:$IsDryRun
 }
-
-if ($dirsToAddNonRecursive.Count -gt 0) {
-    Write-Debug "chezmoi add --recursive=false ($($dirsToAddNonRecursive.Count) dirs) $($params -join ' ')"
-    try {
-        & $ENV:CHEZMOI_EXECUTABLE add @dirsToAddNonRecursive @params --recursive=false
-    }
-    catch {
-        Write-Warning $_
-    }
+catch {
+    Write-Warning "re-add sweep failed from pre-hook (non-fatal, main re-add will continue): $_"
 }
