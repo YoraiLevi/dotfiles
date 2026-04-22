@@ -1,27 +1,3 @@
-# Pre-warm $ENV:GITHUB_TOKEN from the gh CLI so any chezmoi invocation launched
-# from this shell inherits an authenticated GitHub token. Without it, the 60
-# req/hour anonymous limit on the shared NAT IP is exhausted almost instantly
-# and `.chezmoiexternals/*.toml.tmpl` templates that call
-# gitHubLatestReleaseAssetURL fail with "API rate limit exceeded". chezmoi
-# recognises $GITHUB_TOKEN / $GITHUB_ACCESS_TOKEN / $CHEZMOI_GITHUB_ACCESS_TOKEN.
-# See https://chezmoi.io/reference/templates/github-functions/.
-# Runs BEFORE the $ENV:CHEZMOI guard so chezmoi-spawned shells also export it
-# to any deeper subprocesses, and skips when an outer process already set one.
-if (-not $ENV:GITHUB_TOKEN) {
-    $__ghPath = (Get-Command gh.exe -ErrorAction SilentlyContinue).Source
-    if (-not $__ghPath -and (Test-Path -LiteralPath 'C:/Program Files/GitHub CLI/gh.exe')) {
-        $__ghPath = 'C:/Program Files/GitHub CLI/gh.exe'
-    }
-    if ($__ghPath) {
-        try {
-            $__ghToken = (& $__ghPath auth token 2>$null | Out-String).Trim()
-            if ($__ghToken) { $ENV:GITHUB_TOKEN = $__ghToken }
-        } catch { }
-        Remove-Variable -Name __ghToken -ErrorAction SilentlyContinue
-    }
-    Remove-Variable -Name __ghPath -ErrorAction SilentlyContinue
-}
-
 # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
 if (($ENV:CHEZMOI -eq 1)) {
     # don't load the profile if chezmoi is active
