@@ -1,9 +1,0 @@
-[wsl2]
-memory=16GB
-processors=4
-swap=100GB
-vmIdleTimeout=180
-[experimental]
-sparseVhd=true
-[wsl2]
-guiApplications=false
