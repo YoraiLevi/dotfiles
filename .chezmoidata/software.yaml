@@ -63,6 +63,8 @@ software:
       source: msstore
     - name: Anysphere.Cursor # winget.exe install --id "Anysphere.Cursor" --exact --source winget --accept-source-agreements --disable-interactivity --silent --accept-package-agreements --force
       source: winget
+    - name: GitHub.cli # winget install --id GitHub.cli
+      source: winget
 python:
   pip:
     - name: virtualenv

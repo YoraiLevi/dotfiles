@@ -61,6 +61,18 @@ $FORGET_PROPERTY_REGEX = '*.forget*'
 $FORGET_RECURSIVE_PROPERTY_REGEX = '*.recursive-forget*'
 $RECURSIVE_PROPERTY_REGEX = '*.recursive-add*'
 
+# We batch every forget/add target across all markers into at most three
+# nested chezmoi invocations (one forget, one recursive add, one non-recursive
+# add) instead of one per file. Every nested chezmoi call re-parses
+# .chezmoiexternals/*.toml.tmpl, which evaluates each gitHubLatestReleaseAssetURL
+# against the GitHub REST API. With gitHub.refreshPeriod still occasionally
+# racing network/cache transitions, minimizing the call count is what keeps
+# this hook below the 60 req/h anonymous rate limit on shared NAT IPs. It also
+# massively cuts the end-to-end runtime of the hook.
+$filesToForget = [System.Collections.Generic.List[string]]::new()
+$dirsToAddRecursive = [System.Collections.Generic.List[string]]::new()
+$dirsToAddNonRecursive = [System.Collections.Generic.List[string]]::new()
+
 $recursiveFiles = Get-ChildItem -Path "$ENV:CHEZMOI_SOURCE_DIR" -Filter $SPECIAL_FILE_NAME_REGEX -Recurse -Force -File
 foreach ($recursiveFile in $recursiveFiles) {
     $chezmoiTrackedDir = $recursiveFile.Directory
@@ -79,7 +91,6 @@ foreach ($recursiveFile in $recursiveFiles) {
     $do_recursive_add = $recursiveFile.Name -like $RECURSIVE_PROPERTY_REGEX
 
     if ($do_forget) {
-        $forget_params = $params.Clone()
         $chezmoiManagedFiles = Get-ChildItem -Path $chezmoiTrackedDir -Force -Recurse:$do_recursive_forget
         # Skip source-only metadata that never maps to a chezmoi target:
         #   * zero-byte placeholders (e.g. .keep)
@@ -111,25 +122,49 @@ foreach ($recursiveFile in $recursiveFiles) {
                 continue
             }
             Write-Debug "Forget: $localFilePath no longer exists"
-            & $ENV:CHEZMOI_EXECUTABLE forget $localFilePath @forget_params --force
+            $filesToForget.Add($localFilePath)
         }
     }
 
-    $add_params = $params.Clone()
     if ($do_recursive_add) {
-        $add_params += '--recursive=true'
+        $dirsToAddRecursive.Add($localDirPath)
     }
     else {
         # Adds the directory entry only (not its children). This preserves the
         # chezmoi-managed directory metadata without pulling in new files
         # (important for dirs like ~/.local/bin where we explicitly do *not*
         # want auto-add -- see also .chezmoiignore.tmpl for externals).
-        $add_params += '--recursive=false'
+        $dirsToAddNonRecursive.Add($localDirPath)
     }
+}
 
+# Execute the batched operations. Each block is guarded so a failure in one
+# (e.g. GitHub API rate limit on a nested chezmoi call) does not prevent the
+# others from running, and none of them blocks the parent re-add.
+if ($filesToForget.Count -gt 0) {
+    Write-Debug "chezmoi forget ($($filesToForget.Count) files) $($params -join ' ') --force"
     try {
-        Write-Debug "chezmoi add $localDirPath $($add_params -join ' ')"
-        & $ENV:CHEZMOI_EXECUTABLE add $localDirPath @add_params
+        & $ENV:CHEZMOI_EXECUTABLE forget @filesToForget @params --force
+    }
+    catch {
+        Write-Warning $_
+    }
+}
+
+if ($dirsToAddRecursive.Count -gt 0) {
+    Write-Debug "chezmoi add --recursive=true ($($dirsToAddRecursive.Count) dirs) $($params -join ' ')"
+    try {
+        & $ENV:CHEZMOI_EXECUTABLE add @dirsToAddRecursive @params --recursive=true
+    }
+    catch {
+        Write-Warning $_
+    }
+}
+
+if ($dirsToAddNonRecursive.Count -gt 0) {
+    Write-Debug "chezmoi add --recursive=false ($($dirsToAddNonRecursive.Count) dirs) $($params -join ' ')"
+    try {
+        & $ENV:CHEZMOI_EXECUTABLE add @dirsToAddNonRecursive @params --recursive=false
     }
     catch {
         Write-Warning $_

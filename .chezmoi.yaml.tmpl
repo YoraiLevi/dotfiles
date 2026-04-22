@@ -3,6 +3,18 @@ git:
   autoPush : true
   autoAdd: true
 
+# Cache GitHub API responses for a week instead of the chezmoi default of 1
+# minute. Without this, every nested `chezmoi forget`/`chezmoi add` call from
+# .chezmoihooks/re-add/pre.ps1 re-evaluates `.chezmoiexternals/*.toml.tmpl`,
+# which revalidates each `gitHubLatestReleaseAssetURL` against the GitHub REST
+# API. The anonymous quota is 60 requests/hour per source IP, so on a shared
+# NAT that is exhausted almost instantly. 168h matches the externals' own
+# `refreshPeriod`, so a stale cache entry never outlives a refreshed external.
+# See https://chezmoi.io/reference/templates/github-functions/ and
+# https://github.com/twpayne/chezmoi/issues/3895.
+gitHub:
+  refreshPeriod: "168h"
+
 # merge:
 #    command : "pwsh"
 #    args : ["-Command", "cp {{ `{{ .Target }}` }} {{ `{{ .Target }}` }}.base && code --wait --new-window --merge {{ `{{ .Destination }}` }} {{ `{{ .Target  }}` }} {{ `{{ .Target }}` }}.base {{ `{{ .Source }}` }}"]
