@@ -177,35 +177,62 @@ if ($DryRun) { $commonArgs += '--dry-run' }
 if ($PSBoundParameters.ContainsKey('Debug')) { $commonArgs += '--debug' }
 if ($PSBoundParameters.ContainsKey('Verbose')) { $commonArgs += '--verbose' }
 
+# Invoke a top-level chezmoi command with a small retry loop. BoltDB occasionally
+# reports "timeout obtaining persistent state lock" on Windows because the lock file
+# is briefly held by a stale chezmoi process, an AV scanner, or a filesystem indexer.
+# Retrying is safe here because every chezmoi operation in this sweep (forget / add)
+# is idempotent with respect to the destination state: if the first attempt partially
+# succeeded, a retry re-checks the destination and only does what is still needed.
+function Invoke-ChezmoiWithRetry {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$Label,
+        [Parameter(Mandatory)][scriptblock]$Action,
+        [int]$MaxAttempts = 3,
+        [int]$InitialDelaySeconds = 2
+    )
+    for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+        $output = & $Action 2>&1
+        $exitCode = $LASTEXITCODE
+        $outputText = ($output | Out-String)
+        if ($outputText) { Write-Host $outputText.TrimEnd() }
+        $isLockTimeout = $outputText -match 'timeout obtaining persistent state lock'
+        if ($exitCode -eq 0 -and -not $isLockTimeout) {
+            return
+        }
+        if ($attempt -lt $MaxAttempts -and $isLockTimeout) {
+            $delay = $InitialDelaySeconds * [math]::Pow(2, $attempt - 1)
+            Write-Warning ("{0}: lock contention on attempt {1}/{2}; retrying in {3}s" -f $Label, $attempt, $MaxAttempts, $delay)
+            Start-Sleep -Seconds $delay
+            continue
+        }
+        if ($exitCode -ne 0) {
+            Write-Warning ("{0}: chezmoi exited with code {1} after {2} attempt(s)" -f $Label, $exitCode, $attempt)
+        }
+        return
+    }
+}
+
 # Execute the batched operations. Each block is guarded so a failure in one (e.g. a
 # transient lock contention from some other chezmoi invocation) does not prevent the
 # others from running.
 if ($filesToForget.Count -gt 0) {
     Write-Host ("Invoke-ChezmoiReAddSweep: forget {0} file(s)" -f $filesToForget.Count) -ForegroundColor Cyan
-    try {
+    Invoke-ChezmoiWithRetry -Label 'chezmoi forget' -Action {
         & $ChezmoiPath forget @filesToForget @commonArgs --force
-    }
-    catch {
-        Write-Warning "chezmoi forget failed: $_"
     }
 }
 
 if ($dirsToAddRecursive.Count -gt 0) {
     Write-Host ("Invoke-ChezmoiReAddSweep: add --recursive=true {0} dir(s)" -f $dirsToAddRecursive.Count) -ForegroundColor Cyan
-    try {
+    Invoke-ChezmoiWithRetry -Label 'chezmoi add --recursive=true' -Action {
         & $ChezmoiPath add @dirsToAddRecursive @commonArgs --recursive=true
-    }
-    catch {
-        Write-Warning "chezmoi add --recursive=true failed: $_"
     }
 }
 
 if ($dirsToAddNonRecursive.Count -gt 0) {
     Write-Host ("Invoke-ChezmoiReAddSweep: add --recursive=false {0} dir(s)" -f $dirsToAddNonRecursive.Count) -ForegroundColor Cyan
-    try {
+    Invoke-ChezmoiWithRetry -Label 'chezmoi add --recursive=false' -Action {
         & $ChezmoiPath add @dirsToAddNonRecursive @commonArgs --recursive=false
-    }
-    catch {
-        Write-Warning "chezmoi add --recursive=false failed: $_"
     }
 }
