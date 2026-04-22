@@ -440,6 +440,40 @@ function Get-ServiceConfig {
 }
 
 
+# Helper: populate $ENV:GITHUB_TOKEN from the gh CLI if the user is logged in.
+# chezmoi auto-detects GITHUB_TOKEN / GITHUB_ACCESS_TOKEN / CHEZMOI_GITHUB_ACCESS_TOKEN,
+# and authenticated requests have a 5000 req/hour budget vs 60 req/hour for
+# anonymous requests on a shared NAT IP. The sync service runs as the user
+# account, so it can read the user's gh keyring. No-op if gh is missing or a
+# token is already in the environment.
+function Set-GitHubTokenFromGh {
+    if ($ENV:GITHUB_TOKEN) {
+        Write-Log "GITHUB_TOKEN already set in environment (length: $($ENV:GITHUB_TOKEN.Length))" "INFO"
+        return
+    }
+    $ghPath = (Get-Command gh.exe -ErrorAction SilentlyContinue).Source
+    if (-not $ghPath -and (Test-Path -LiteralPath 'C:/Program Files/GitHub CLI/gh.exe')) {
+        $ghPath = 'C:/Program Files/GitHub CLI/gh.exe'
+    }
+    if (-not $ghPath) {
+        Write-Log "gh CLI not found; chezmoi will use the anonymous GitHub rate limit (60/hour)" "WARN"
+        return
+    }
+    try {
+        $token = (& $ghPath auth token 2>$null | Out-String).Trim()
+        if ($token) {
+            $ENV:GITHUB_TOKEN = $token
+            Write-Log "Populated `$ENV:GITHUB_TOKEN from gh (length: $($token.Length))" "INFO"
+        }
+        else {
+            Write-Log "gh returned empty token; is the user logged in? (run: gh auth login)" "WARN"
+        }
+    }
+    catch {
+        Write-Log "Failed to read token from gh CLI: $_" "WARN"
+    }
+}
+
 # Function to execute chezmoi command
 function Invoke-ChezmoiSync {
     param(
@@ -453,6 +487,12 @@ function Invoke-ChezmoiSync {
         if (-not (Test-Path $ChezmoiPath -ErrorAction Stop)) {
             Write-Log "ERROR: chezmoi.exe not found at $ChezmoiPath" "ERROR"
         }
+
+        # Authenticate to GitHub before any chezmoi call so externals templates
+        # that use gitHubLatestReleaseAssetURL use the 5000 req/hour authed
+        # budget instead of the 60 req/hour anonymous one.
+        Set-GitHubTokenFromGh
+
         # Gather system state into chezmoi-managed files so re-add has work to
         # do. These targets live under ~/.vscode, ~/.powershell, and ~/.choco,
         # each of which has a .chezmoi-re-add.recursive-forget.recursive-add
