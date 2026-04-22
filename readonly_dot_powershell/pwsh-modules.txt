@@ -1,0 +1,10 @@
+BurntToast
+newtonsoft.json
+PesterMatchHashtable
+posh-git
+powershell-yaml
+Pscx
+PsDownload
+PSProfiler
+PSScriptAnalyzer
+PSWindowsUpdate
