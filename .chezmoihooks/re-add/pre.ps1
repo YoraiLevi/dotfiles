@@ -81,10 +81,20 @@ foreach ($recursiveFile in $recursiveFiles) {
     if ($do_forget) {
         $forget_params = $params.Clone()
         $chezmoiManagedFiles = Get-ChildItem -Path $chezmoiTrackedDir -Force -Recurse:$do_recursive_forget
+        # Skip source-only metadata that never maps to a chezmoi target:
+        #   * zero-byte placeholders (e.g. .keep)
+        #   * template fragments (*.tmpl have no 1:1 destination)
+        #   * our own .chezmoi-re-add.* markers
+        #   * literal-dotfile metadata such as .gitignore/.gitattributes - all
+        #     target-mapped entries use attribute prefixes (dot_, private_dot_,
+        #     etc.), so any source entry that starts with `.` is always
+        #     source-only and would just produce "not managed" warnings from
+        #     chezmoi forget.
         $filteredManagedFiles = $chezmoiManagedFiles | Where-Object {
             $_.Length -gt 0 -and
             -not $_.Name.EndsWith('.tmpl') -and
-            -not ($_.Name -like $SPECIAL_FILE_NAME_REGEX)
+            -not ($_.Name -like $SPECIAL_FILE_NAME_REGEX) -and
+            -not $_.Name.StartsWith('.')
         }
         Write-Debug "Found $($filteredManagedFiles.Count) managed files under $($chezmoiTrackedDir.FullName)"
         foreach ($managedFile in $filteredManagedFiles) {
