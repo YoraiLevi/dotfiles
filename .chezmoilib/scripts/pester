@@ -1,0 +1,9 @@
+Write-Host '=== install Pester 5 via PowerShellGet (CurrentUser, -Force -SkipPublisherCheck) ==='; Install-Module -Name Pester -Force -SkipPublisherCheck -Scope CurrentUser -AllowClobber -MinimumVersion 5.0 2>&1; Write-Host ''; Write-Host '=== verify ==='; Get-Module -ListAvailable -Name Pester | Select-Object Name, Version, Path | Format-Table -AutoSize -Wrap
+=== install Pester 5 via PowerShellGet (CurrentUser, -Force -SkipPublisherCheck) ===
+
+=== verify ===
+
+Name   Version Path
+----   ------- ----
+Pester 5.7.1   C:\Users\devic\Documents\PowerShell\Modules\Pester\5.7.1\Pester.psd1
+Pester 3.4.0   C:\Program Files\WindowsPowerShell\Modules\Pester\3.4.0\Pester.psd1

@@ -76,22 +76,23 @@ if (-not (Test-Path -LiteralPath $ChezmoiPath -PathType Leaf)) {
     throw "ChezmoiPath '$ChezmoiPath' does not exist."
 }
 
-if (-not $SourceDir) {
+if (-not $SourceDir) { # TODO, don't use in script directly, used for intialization only
     $SourceDir = (& $ChezmoiPath source-path | Out-String).Trim()
 }
-if (-not $DestDir) {
-    $DestDir = $env:USERPROFILE
+if (-not $DestDir) { # TODO, don't use in script directly, used for intialization only
+    $DestDir = $env:USERPROFILE # TODO get from chezmoi
 }
+# ConvertTo-LocalPath reads these two env vars directly.
+# TODO, don't assign it if it's already set
+$ENV:CHEZMOI_SOURCE_DIR = $SourceDir
+$ENV:CHEZMOI_DEST_DIR = $DestDir
+
 if (-not (Test-Path -LiteralPath $SourceDir)) {
     throw "SourceDir '$SourceDir' does not exist."
 }
 if (-not (Test-Path -LiteralPath $DestDir)) {
     throw "DestDir '$DestDir' does not exist."
 }
-
-# ConvertTo-LocalPath reads these two env vars directly.
-$ENV:CHEZMOI_SOURCE_DIR = $SourceDir
-$ENV:CHEZMOI_DEST_DIR = $DestDir
 
 Import-Module (Join-Path $SourceDir '.chezmoilib\ConvertTo-LocalPath.psm1') -Force
 
