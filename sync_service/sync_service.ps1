@@ -188,7 +188,7 @@ param(
 # FUNCTION DEFINITIONS
 # ============================================================================
 
-$VERSION = "v20260319"
+$VERSION = "v20260422"
 $ConfigFileName = "config.json"
 
 # Function to write log entries, now supports pipeline input for $Message
@@ -453,38 +453,23 @@ function Invoke-ChezmoiSync {
         if (-not (Test-Path $ChezmoiPath -ErrorAction Stop)) {
             Write-Log "ERROR: chezmoi.exe not found at $ChezmoiPath" "ERROR"
         }
+        # Gather system state into chezmoi-managed files so re-add has work to
+        # do. These targets live under ~/.vscode, ~/.powershell, and ~/.choco,
+        # each of which has a .chezmoi-re-add.recursive-forget.recursive-add
+        # marker that tells the re-add pre-hook to forget files that disappear
+        # and auto-add any new ones.
         $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions | Out-File $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
         $null = (Get-InstalledModule).Name | Out-File $(Join-Path $ENV:USERPROFILE ".powershell" "pwsh-modules.txt")
         $null = choco export "$(Join-Path $ENV:USERPROFILE ".choco" "packages.config")"
-        # Run post hook logic standalone first (avoids nested chezmoi lock), then re-add with hook skipped
-        $chezmoiSourceDir = ( (& $ChezmoiPath source-path 2>$null) | Out-String).Trim()
-        if (-not $chezmoiSourceDir) { $chezmoiSourceDir = Split-Path $PSScriptRoot -Parent }
-        $targetPathOutput = & $ChezmoiPath target-path 2>&1
-        $chezmoiDestDir = ($targetPathOutput | Out-String).Trim()
-        if ($LASTEXITCODE -ne 0 -or -not $chezmoiDestDir) {
-            Write-Log "ERROR: chezmoi target-path failed (exit $LASTEXITCODE): $targetPathOutput" "ERROR"
-            throw "chezmoi target-path failed - cannot determine CHEZMOI_DEST_DIR"
-        }
-        $postHookPath = Join-Path $chezmoiSourceDir ".chezmoihooks" "re-add" "post.ps1"
-        if (Test-Path $postHookPath) {
-            $env:CHEZMOI_SOURCE_DIR = $chezmoiSourceDir
-            $env:CHEZMOI_DEST_DIR = $chezmoiDestDir
-            $env:CHEZMOI_EXECUTABLE = $ChezmoiPath
-            $env:CHEZMOI_ARGS = "$ChezmoiPath re-add"
-            & $postHookPath 2>&1 | Out-String | Write-Log
-            Remove-Item env:CHEZMOI_SOURCE_DIR, env:CHEZMOI_DEST_DIR, env:CHEZMOI_EXECUTABLE, env:CHEZMOI_ARGS -ErrorAction SilentlyContinue
-        }
+
+        # The forget/add logic runs as a chezmoi re-add.pre hook. pre-hooks run
+        # before chezmoi acquires the BoltDB persistent-state lock, so they can
+        # safely shell out to nested chezmoi commands. The previous two-phase
+        # workaround (invoke post.ps1 standalone, then re-add with
+        # CHEZMOI_SYNC_SERVICE=1 to suppress the hook) is no longer needed.
         Write-Log "Running chezmoi re-add..." "INFO"
-        $prevSyncService = $env:CHEZMOI_SYNC_SERVICE
-        try {
-            $env:CHEZMOI_SYNC_SERVICE = "1"
-            & $ChezmoiPath re-add 2>&1 | Out-String | Write-Log
-            $reAddExitCode = $LASTEXITCODE
-        }
-        finally {
-            if ($null -eq $prevSyncService) { Remove-Item env:CHEZMOI_SYNC_SERVICE -ErrorAction SilentlyContinue }
-            else { $env:CHEZMOI_SYNC_SERVICE = $prevSyncService }
-        }
+        & $ChezmoiPath re-add 2>&1 | Out-String | Write-Log
+        $reAddExitCode = $LASTEXITCODE
 
         if ($reAddExitCode -eq 0) {
             Write-Log "chezmoi re-add completed successfully" "INFO"
@@ -1037,9 +1022,18 @@ elseif ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq 
     $LogLevel = $config.LogLevel
     $EnableReAdd = $config.EnableReAdd
 
-    if (-not $(Test-Path $ChezmoiPath) -and -not $(Get-Command $ChezmoiPath)) {
-        Write-Log "Chezmoi path not found at: $ChezmoiPath" "ERROR"
-        throw "Chezmoi path not found at: $ChezmoiPath"
+    # Validate ChezmoiPath. If the configured file doesn't exist, try to
+    # discover chezmoi.exe on PATH instead of failing outright - this makes
+    # the service survive a machine where chezmoi moved (for example after
+    # switching from the Chocolatey package to a user-local install).
+    if (-not (Test-Path $ChezmoiPath -PathType Leaf)) {
+        $discovered = (Get-Command chezmoi.exe -ErrorAction SilentlyContinue).Source
+        if (-not $discovered) {
+            Write-Log "Chezmoi path not found at: $ChezmoiPath and chezmoi.exe is not on PATH" "ERROR"
+            throw "Chezmoi path not found at: $ChezmoiPath"
+        }
+        Write-Log "Configured ChezmoiPath '$ChezmoiPath' not found, falling back to '$discovered' from PATH. Re-run sync_service.ps1 -Install to persist this." "WARN"
+        $ChezmoiPath = $discovered
     }
 
     $script:LogLevel = $LogLevel ?? "INFO"
