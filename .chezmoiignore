@@ -5,3 +5,46 @@ my_start.bin
 .chezmoiinterpreters
 .chezmoihooks
 .chezmoilib
+
+# ============================================================================
+# External-managed targets - MUST stay out of chezmoi source state
+# ----------------------------------------------------------------------------
+# Every path below corresponds to a file that chezmoi materializes on
+# `chezmoi apply` via an entry in .chezmoiexternals/*.toml.tmpl. These files
+# belong in the destination only; they must never be round-tripped through
+# the source tree (otherwise `chezmoi re-add` - or an accidental
+# `chezmoi add ~/.local/bin/ProcessExplorer.exe` - keeps committing them to
+# git and the dotfile repo grows by megabytes every refresh).
+#
+# Adding an entry here is what actually enforces the rule: chezmoi will emit
+# `warning: ignoring <path>` and refuse to pull it into source state.
+#
+# When you add a new external under .chezmoiexternals/, mirror its target
+# path here under the matching OS/section.
+# ============================================================================
+{{- if eq .chezmoi.os "windows" }}
+
+# .chezmoiexternals/bin.toml.tmpl (Sysinternals)
+.local/bin/ProcessExplorer.exe
+.local/bin/PsExec64.exe
+
+# .chezmoiexternals/ahk.toml.tmpl
+.local/bin/temp/ahk_TTS.exe
+.local/bin/temp/ahk_REMAP.exe
+
+# .chezmoiexternals/lemonade.toml.tmpl
+.local/bin/lemonade.exe
+
+# .chezmoiexternals/trzsz.toml.tmpl
+.local/bin/rz.exe
+.local/bin/sz.exe
+.local/bin/msys-2.0.dll
+
+# .chezmoiexternals/winutil_cli.toml.tmpl
+.local/bin/winutil_cli.ps1
+
+# .chezmoiexternals/reg.toml.tmpl (generated from .chezmoidata/reg.yaml)
+{{- range .regedit }}
+Downloads/regedits/{{ .name }}
+{{- end }}
+{{- end }}
