@@ -29,23 +29,27 @@ BeforeAll {
     $script:SourceMarkerDir = Join-Path $script:SourceDir 'readonly_dot_powershell'
     if (-not (Test-Path -LiteralPath $script:DestMarkerDir))   { throw "Expected marker destination $script:DestMarkerDir to exist." }
     if (-not (Test-Path -LiteralPath $script:SourceMarkerDir)) { throw "Expected marker source $script:SourceMarkerDir to exist." }
-}
 
-function New-PesterFixture {
-    $ts   = Get-Date -Format 'yyyyMMddHHmmssfff'
-    $name = "_pester_${ts}.ps1"
-    [pscustomobject]@{
-        Name     = $name
-        DestPath = Join-Path $script:DestMarkerDir $name
-        SrcPath  = Join-Path $script:SourceMarkerDir $name
+    # Pester 5 scopes function definitions inside BeforeAll to the describe so
+    # they are reachable from It and AfterEach. Defining them at script-top
+    # level is NOT enough because Pester 5 re-parses the file in a fresh
+    # runspace per container.
+    function script:New-PesterFixture {
+        $ts   = Get-Date -Format 'yyyyMMddHHmmssfff'
+        $name = "_pester_${ts}.ps1"
+        [pscustomobject]@{
+            Name     = $name
+            DestPath = Join-Path $script:DestMarkerDir $name
+            SrcPath  = Join-Path $script:SourceMarkerDir $name
+        }
     }
-}
 
-function Remove-PesterLeftovers {
-    Get-ChildItem -LiteralPath $script:DestMarkerDir   -Filter '_pester_*.ps1' -File -ErrorAction SilentlyContinue |
-        Remove-Item -Force -ErrorAction SilentlyContinue
-    Get-ChildItem -LiteralPath $script:SourceMarkerDir -Filter '_pester_*.ps1' -File -ErrorAction SilentlyContinue |
-        Remove-Item -Force -ErrorAction SilentlyContinue
+    function script:Remove-PesterLeftovers {
+        Get-ChildItem -LiteralPath $script:DestMarkerDir   -Filter '_pester_*.ps1' -File -ErrorAction SilentlyContinue |
+            Remove-Item -Force -ErrorAction SilentlyContinue
+        Get-ChildItem -LiteralPath $script:SourceMarkerDir -Filter '_pester_*.ps1' -File -ErrorAction SilentlyContinue |
+            Remove-Item -Force -ErrorAction SilentlyContinue
+    }
 }
 
 Describe 'chezmoi re-add end-to-end' -Tag Integration {
