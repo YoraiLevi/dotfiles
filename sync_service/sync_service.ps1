@@ -542,6 +542,33 @@ function Set-GitHubTokenFromGh {
     }
 }
 
+# Detects and aborts a mid-rebase or mid-merge state left by a failed
+# chezmoi update. Returns $true if a broken state was found and aborted,
+# $false if the working tree was already clean.
+function Repair-ChezmoiGitState {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][string]$ChezmoiPath)
+
+    $sourceDir  = (& $ChezmoiPath source-path 2>$null | Out-String).Trim()
+    $gitDir     = Join-Path $sourceDir '.git'
+
+    $inRebase   = (Test-Path (Join-Path $gitDir 'rebase-merge')) -or
+                  (Test-Path (Join-Path $gitDir 'rebase-apply'))
+    $inMerge    = Test-Path (Join-Path $gitDir 'MERGE_HEAD')
+
+    if ($inRebase) {
+        Write-Log "Source repo is mid-rebase after conflict — aborting to restore clean state" 'WARN'
+        & $ChezmoiPath git -- rebase --abort 2>&1 | Write-SubprocessLog -Prefix 'git-rebase-abort'
+        return $true
+    }
+    if ($inMerge) {
+        Write-Log "Source repo is mid-merge after conflict — aborting to restore clean state" 'WARN'
+        & $ChezmoiPath git -- merge --abort 2>&1 | Write-SubprocessLog -Prefix 'git-merge-abort'
+        return $true
+    }
+    return $false
+}
+
 # One full sync cycle: validate, idle-guard, export state, re-add, pull, update.
 function Invoke-SyncCycle {
     param(
@@ -625,7 +652,13 @@ function Invoke-SyncCycle {
                     -Arguments @('update', '--init', '--apply', '--force') -LogPrefix 'update') {
                 ([ChezmoiResult]::Success) { Write-Log 'Chezmoi sync completed successfully' 'SUCCESS' }
                 ([ChezmoiResult]::Skipped) { return }
-                ([ChezmoiResult]::Failed)  { throw 'chezmoi update --init --apply --force failed' }
+                ([ChezmoiResult]::Failed)  {
+                    # A merge/rebase conflict leaves the source repo in a broken
+                    # state that blocks every subsequent cycle. Abort to restore a
+                    # clean working tree so the next cycle can retry.
+                    Repair-ChezmoiGitState -ChezmoiPath $ChezmoiPath
+                    throw 'chezmoi update --init --apply --force failed'
+                }
             }
         }
         else {
