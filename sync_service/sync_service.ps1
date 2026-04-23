@@ -191,12 +191,13 @@ param(
 $VERSION = "v20260423"
 $ConfigFileName = "config.json"
 
+enum ChezmoiResult { Success; Skipped; Failed }
+
 # Function to write log entries, now supports pipeline input for $Message
 function Write-SubprocessLog {
     # Pipeline helper: stream native-command output line by line, each with its
-    # own timestamp and level. Replaces the  2>&1 | Out-String | Write-Log
-    # pattern which stamped the entire run with one timestamp and hid per-line
-    # severity.
+    # own timestamp. Unwraps ErrorRecord objects (from 2>&1) to plain text and
+    # skips blank lines. Pure formatter — no domain knowledge.
     #
     # Usage:
     #   & some.exe --args 2>&1 | Write-SubprocessLog -Prefix 're-add'
@@ -217,17 +218,46 @@ function Write-SubprocessLog {
 
         if (-not $line -or $line -match '^\s*$') { return }
 
-        $level = 'INFO'
-        if ($line -match '(?i)timeout obtaining persistent state lock') {
-            $level = 'WARN'
-            $script:SubprocessHadLockTimeout = $true
-        }
-        elseif ($line -match '(?i)^chezmoi:\s+(error|fatal)') {
-            $level = 'ERROR'
-        }
-
-        Write-Log "  [$Prefix] $line" $level
+        Write-Log "  [$Prefix] $line" 'INFO'
     }
+}
+
+function Invoke-ChezmoiCommand {
+    # Runs a single chezmoi subcommand. Streams output through Write-SubprocessLog
+    # for per-line timestamps. Uses a ForEach-Object middleware stage to detect the
+    # BoltDB lock-timeout message without Write-SubprocessLog needing domain knowledge.
+    # Returns a ChezmoiResult enum value; callers use switch to branch on it.
+    [CmdletBinding()]
+    [OutputType([ChezmoiResult])]
+    param(
+        [Parameter(Mandatory)][string]$ChezmoiPath,
+        [Parameter(Mandatory)][string[]]$Arguments,
+        [string]$LogPrefix
+    )
+    if (-not $LogPrefix) { $LogPrefix = $Arguments[0] }
+
+    $lockTimeout = $false
+    Write-Log "Running chezmoi $($Arguments -join ' ')..." 'INFO'
+
+    # ForEach-Object middleware: scan each line for the lock-timeout message and
+    # set the local flag. Objects pass through unchanged to Write-SubprocessLog.
+    & $ChezmoiPath @Arguments 2>&1 | ForEach-Object {
+        $raw = if ($_ -is [System.Management.Automation.ErrorRecord]) { $_.Exception.Message } else { "$_" }
+        if ($raw -match '(?i)timeout obtaining persistent state lock') { $lockTimeout = $true }
+        $_
+    } | Write-SubprocessLog -Prefix $LogPrefix
+    $exitCode = $LASTEXITCODE
+
+    if ($exitCode -eq 0) {
+        Write-Log "chezmoi $LogPrefix completed successfully" 'INFO'
+        return [ChezmoiResult]::Success
+    }
+    if ($lockTimeout) {
+        Write-Log "chezmoi $LogPrefix skipped: BoltDB busy (another chezmoi is running); will retry next cycle" 'WARN'
+        return [ChezmoiResult]::Skipped
+    }
+    Write-Log "chezmoi $LogPrefix failed with exit code $exitCode" 'ERROR'
+    return [ChezmoiResult]::Failed
 }
 
 function Write-Log {
@@ -366,7 +396,7 @@ function Show-ToastNotification {
     )
     
     # Only works on Windows 10+
-    if ([Environment]::OSVersion.Version.Major -lt 10s) {
+    if ([Environment]::OSVersion.Version.Major -lt 10) {
         return
     }
     # Try using BurntToast module first (if available)
@@ -512,8 +542,8 @@ function Set-GitHubTokenFromGh {
     }
 }
 
-# Function to execute chezmoi command
-function Invoke-ChezmoiSync {
+# One full sync cycle: validate, idle-guard, export state, re-add, pull, update.
+function Invoke-SyncCycle {
     param(
         [string]$ChezmoiPath
     )
@@ -559,25 +589,10 @@ function Invoke-ChezmoiSync {
         }
 
         # --refresh-externals=never: see pre.ps1 comment for full rationale.
-        $script:SubprocessHadLockTimeout = $false
-        Write-Log "Running chezmoi re-add..." "INFO"
-        & $ChezmoiPath re-add --refresh-externals=never 2>&1 | Write-SubprocessLog -Prefix 're-add'
-        $reAddExitCode = $LASTEXITCODE
-
-        if ($reAddExitCode -eq 0) {
-            Write-Log "chezmoi re-add completed successfully" "INFO"
-        }
-        elseif ($script:SubprocessHadLockTimeout) {
-            # BoltDB was held by a concurrent chezmoi process — the authoritative
-            # race guard fired. This is not a service error; skip this cycle and
-            # let the next interval retry cleanly.
-            Write-Log "chezmoi re-add skipped: BoltDB busy (another chezmoi is running); will retry next cycle" "WARN"
-            return
-        }
-        else {
-            Write-Log "chezmoi re-add failed with exit code $reAddExitCode" "ERROR"
-            Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
-            throw "chezmoi re-add failed with exit code $reAddExitCode"
+        switch (Invoke-ChezmoiCommand -ChezmoiPath $ChezmoiPath `
+                -Arguments @('re-add', '--refresh-externals=never') -LogPrefix 're-add') {
+            ([ChezmoiResult]::Skipped) { return }
+            ([ChezmoiResult]::Failed)  { throw 'chezmoi re-add failed' }
         }
         $Chezmoi_diff = $(& $ChezmoiPath git pull -- --autostash --rebase) | Out-String
         $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
@@ -590,21 +605,11 @@ function Invoke-ChezmoiSync {
             (Get-Date).AddHours(6).AddMinutes((Get-Random -Minimum 0 -Maximum 361)).DateTime > "$PSScriptRoot/date.tmp"
             
             # Execute chezmoi update
-            $script:SubprocessHadLockTimeout = $false
-            & $ChezmoiPath update --init --apply --force 2>&1 | Write-SubprocessLog -Prefix 'update'
-            $exitCode = $LASTEXITCODE
-
-            if ($exitCode -eq 0) {
-                Write-Log "Chezmoi sync completed successfully" "SUCCESS"
-            }
-            elseif ($script:SubprocessHadLockTimeout) {
-                Write-Log "chezmoi update skipped: BoltDB busy (another chezmoi is running); will retry next cycle" "WARN"
-                return
-            }
-            else {
-                Write-Log "chezmoi update --init --apply --force failed with exit code $exitCode" "ERROR"
-                Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
-                throw "chezmoi update --init --apply --force failed with exit code $exitCode"
+            switch (Invoke-ChezmoiCommand -ChezmoiPath $ChezmoiPath `
+                    -Arguments @('update', '--init', '--apply', '--force') -LogPrefix 'update') {
+                ([ChezmoiResult]::Success) { Write-Log 'Chezmoi sync completed successfully' 'SUCCESS' }
+                ([ChezmoiResult]::Skipped) { return }
+                ([ChezmoiResult]::Failed)  { throw 'chezmoi update --init --apply --force failed' }
             }
         }
         else {
@@ -1137,7 +1142,7 @@ elseif ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq 
     }
     else {
         try {
-            Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
+            Invoke-SyncCycle -ChezmoiPath $ChezmoiPath
             Write-Log "Run finished" "INFO"
         }
         catch {
