@@ -123,7 +123,6 @@ $RECURSIVE_PROPERTY_REGEX = '*.recursive-add*'
 
 $filesToForget = [System.Collections.Generic.List[string]]::new()
 $dirsToAddRecursive = [System.Collections.Generic.List[string]]::new()
-$dirsToAddNonRecursive = [System.Collections.Generic.List[string]]::new()
 
 $recursiveFiles = Get-ChildItem -Path $SourceDir -Filter $SPECIAL_FILE_NAME_REGEX -Recurse -Force -File
 foreach ($recursiveFile in $recursiveFiles) {
@@ -173,9 +172,8 @@ foreach ($recursiveFile in $recursiveFiles) {
     if ($do_recursive_add) {
         $dirsToAddRecursive.Add($localDirPath)
     }
-    else {
-        $dirsToAddNonRecursive.Add($localDirPath)
-    }
+    # No else: a .recursive-forget (forget-only) marker has no add intent.
+    # Only an explicit .recursive-add suffix schedules a chezmoi add.
 }
 
 $commonArgs = @()
@@ -236,9 +234,3 @@ if ($dirsToAddRecursive.Count -gt 0) {
     }
 }
 
-if ($dirsToAddNonRecursive.Count -gt 0) {
-    Write-Host ("Invoke-ChezmoiReAddSweep: add --recursive=false {0} dir(s)" -f $dirsToAddNonRecursive.Count) -ForegroundColor Cyan
-    Invoke-ChezmoiWithRetry -Label 'chezmoi add --recursive=false' -Action {
-        & $ChezmoiPath add @dirsToAddNonRecursive @commonArgs --recursive=false
-    }
-}

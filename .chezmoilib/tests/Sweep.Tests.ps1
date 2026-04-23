@@ -83,20 +83,26 @@ Describe 'Invoke-ChezmoiReAddSweep' {
         }
     }
 
-    Context 'forget-only (non-recursive) marker' {
-        It 'routes the directory to the non-recursive add batch' {
-            $markerDir = Join-Path $script:tree.SourceDir 'readonly_dot_shallow'
+    Context 'forget-only marker (recursive-forget, no recursive-add)' {
+        It 'forgets missing files and does NOT queue any add for the directory' {
+            $markerDir = Join-Path $script:tree.SourceDir 'readonly_dot_forgetonly'
             New-Item -ItemType Directory -Path $markerDir -Force | Out-Null
-            Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.forget') -Value '' -NoNewline
+            Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.recursive-forget') -Value '' -NoNewline
+            'content' | Set-Content -LiteralPath (Join-Path $markerDir 'gone.txt')
 
-            New-Item -ItemType Directory -Path (Join-Path $script:tree.DestDir '.shallow') -Force | Out-Null
+            $destSub = Join-Path $script:tree.DestDir '.forgetonly'
+            New-Item -ItemType Directory -Path $destSub -Force | Out-Null
+            # gone.txt intentionally absent from destination - should be forgotten
 
             & $script:sweep -ChezmoiPath $script:mock.Path -SourceDir $script:tree.SourceDir -DestDir $script:tree.DestDir
 
-            $calls = & $script:mock.GetCalls
-            $adds  = @($calls | Where-Object { $_.command -eq 'add' })
-            $adds.Count | Should -Be 1
-            ($adds[0].argv -join ' ') | Should -Match '--recursive=false'
+            $calls   = & $script:mock.GetCalls
+            $forgets = @($calls | Where-Object { $_.command -eq 'forget' })
+            $adds    = @($calls | Where-Object { $_.command -eq 'add'    })
+
+            $forgets.Count | Should -Be 1 -Because 'the missing file must be forgotten'
+            ($forgets[0].argv -join ' ') | Should -Match 'gone\.txt'
+            $adds.Count | Should -Be 0 -Because 'a forget-only marker must never trigger a chezmoi add'
         }
     }
 
