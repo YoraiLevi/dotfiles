@@ -220,6 +220,7 @@ function Write-SubprocessLog {
         $level = 'INFO'
         if ($line -match '(?i)timeout obtaining persistent state lock') {
             $level = 'WARN'
+            $script:SubprocessHadLockTimeout = $true
         }
         elseif ($line -match '(?i)^chezmoi:\s+(error|fatal)') {
             $level = 'ERROR'
@@ -519,10 +520,19 @@ function Invoke-ChezmoiSync {
     
     try {
         Write-Log "Starting chezmoi sync..." "INFO"
-        
+
         # Check if chezmoi.exe exists
         if (-not (Test-Path $ChezmoiPath -ErrorAction Stop)) {
             Write-Log "ERROR: chezmoi.exe not found at $ChezmoiPath" "ERROR"
+        }
+
+        # Fast-path idle check: skip the expensive state exports if chezmoi is
+        # already running. The BoltDB lock is the authoritative gate (see below);
+        # this avoids wasting time on the cursor/choco/pwsh exports when we know
+        # chezmoi re-add would time out anyway.
+        if (-not (Test-ChezmoiIdle)) {
+            Write-Log "chezmoi is running — skipping this sync cycle" "WARN"
+            return
         }
 
         # Authenticate to GitHub before any chezmoi call so externals templates
@@ -539,12 +549,17 @@ function Invoke-ChezmoiSync {
         $null = (Get-InstalledModule).Name | Out-File $(Join-Path $ENV:USERPROFILE ".powershell" "pwsh-modules.txt")
         $null = choco export "$(Join-Path $ENV:USERPROFILE ".choco" "packages.config")"
 
-        # --refresh-externals=never prevents chezmoi from evaluating externals
-        # templates and writing to the BoltDB cache during startup. Without this
-        # flag the parent process can acquire the exclusive BoltDB lock before the
-        # pre-hook runs, starving the nested chezmoi forget/add calls in the sweep.
-        # With it, the nested calls get the lock first, do their work, and release
-        # before chezmoi re-add needs the lock for its own checksum writes.
+        # Second idle check immediately before exec. The window between the
+        # fast-path check above and here is small but non-zero (exports take a
+        # few seconds). Checking again collapses the TOCTOU window to near-zero.
+        # If we still lose the race, chezmoi's own BoltDB lock catches it below.
+        if (-not (Test-ChezmoiIdle)) {
+            Write-Log "chezmoi started since last check — skipping re-add this cycle" "WARN"
+            return
+        }
+
+        # --refresh-externals=never: see pre.ps1 comment for full rationale.
+        $script:SubprocessHadLockTimeout = $false
         Write-Log "Running chezmoi re-add..." "INFO"
         & $ChezmoiPath re-add --refresh-externals=never 2>&1 | Write-SubprocessLog -Prefix 're-add'
         $reAddExitCode = $LASTEXITCODE
@@ -552,16 +567,15 @@ function Invoke-ChezmoiSync {
         if ($reAddExitCode -eq 0) {
             Write-Log "chezmoi re-add completed successfully" "INFO"
         }
+        elseif ($script:SubprocessHadLockTimeout) {
+            # BoltDB was held by a concurrent chezmoi process — the authoritative
+            # race guard fired. This is not a service error; skip this cycle and
+            # let the next interval retry cleanly.
+            Write-Log "chezmoi re-add skipped: BoltDB busy (another chezmoi is running); will retry next cycle" "WARN"
+            return
+        }
         else {
-            Write-Log "ERROR: chezmoi re-add failed with exit code $reAddExitCode" "ERROR"
-
-            $message = @"
-chezmoi re-add failed.
-Please check your Chezmoi configuration or the sync log for details.
-
-Chezmoi path: $ChezmoiPath
-"@
-
+            Write-Log "chezmoi re-add failed with exit code $reAddExitCode" "ERROR"
             Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
             throw "chezmoi re-add failed with exit code $reAddExitCode"
         }
@@ -576,22 +590,19 @@ Chezmoi path: $ChezmoiPath
             (Get-Date).AddHours(6).AddMinutes((Get-Random -Minimum 0 -Maximum 361)).DateTime > "$PSScriptRoot/date.tmp"
             
             # Execute chezmoi update
+            $script:SubprocessHadLockTimeout = $false
             & $ChezmoiPath update --init --apply --force 2>&1 | Write-SubprocessLog -Prefix 'update'
             $exitCode = $LASTEXITCODE
-            
+
             if ($exitCode -eq 0) {
                 Write-Log "Chezmoi sync completed successfully" "SUCCESS"
             }
+            elseif ($script:SubprocessHadLockTimeout) {
+                Write-Log "chezmoi update skipped: BoltDB busy (another chezmoi is running); will retry next cycle" "WARN"
+                return
+            }
             else {
-                Write-Log "ERROR: Chezmoi sync failed with exit code $exitCode" "ERROR"
-    
-                $message = @"
-chezmoi update --init --apply --force failed.
-Please check your Chezmoi configuration or the sync log for details.
-
-Chezmoi path: $ChezmoiPath
-"@
-    
+                Write-Log "chezmoi update --init --apply --force failed with exit code $exitCode" "ERROR"
                 Write-Log "Skipping this sync cycle, will retry on next interval" "WARN"
                 throw "chezmoi update --init --apply --force failed with exit code $exitCode"
             }
@@ -1125,19 +1136,13 @@ elseif ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq 
         }
     }
     else {
-        if (-not (Test-ChezmoiIdle)) {
-            Write-Log "Chezmoi is running - skipping this sync cycle to avoid interrupting user" "INFO"
-            Show-ToastNotification -Message "Sync skipped: chezmoi is running" -LogFilePath $ServiceLogFile -Title "Chezmoi Sync Skipped"
+        try {
+            Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
+            Write-Log "Run finished" "INFO"
         }
-        else {
-            try {
-                Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
-                Write-Log "Run finished" "INFO"
-            }
-            catch {
-                Write-Log "Stack trace: $($_.ScriptStackTrace | Out-String)" "ERROR"
-                throw
-            }
+        catch {
+            Write-Log "Stack trace: $($_.ScriptStackTrace | Out-String)" "ERROR"
+            throw
         }
     }
 }
