@@ -4,6 +4,7 @@
   #!! EnableZmodem Yes
   #!! DefaultDownloadPath = ~/Downloads
   #!! DefaultUploadPath = ~/Downloads
+  #!! DragFileUploadCommand = trz -y
 
 Host calc1-104003
   HostName ct105.tail366b93.ts.net
