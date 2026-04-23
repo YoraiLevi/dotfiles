@@ -604,11 +604,13 @@ function Invoke-SyncCycle {
             return
         }
 
-        # Compare local HEAD against its upstream ref. @{u} resolves to the
-        # upstream of the current branch without hardcoding the branch name.
-        $localHead  = (& $ChezmoiPath git -- rev-parse HEAD   2>$null | Out-String).Trim()
-        $remoteHead = (& $ChezmoiPath git -- rev-parse '@{u}' 2>$null | Out-String).Trim()
-        $hasRemoteChanges = $localHead -and $remoteHead -and ($localHead -ne $remoteHead)
+        # Count commits that exist in the upstream but not in local HEAD.
+        # HEAD..@{u} = "commits reachable from @{u} but not from HEAD" = what the
+        # remote has that we don't. Using a count rather than comparing raw SHAs
+        # avoids the false-positive where local is *ahead* of origin (unpushed
+        # commits make the SHAs differ even though there's nothing to pull).
+        $behindCount = (& $ChezmoiPath git -- rev-list 'HEAD..@{u}' --count 2>$null | Out-String).Trim()
+        $hasRemoteChanges = [int]$behindCount -gt 0
 
         $forceUpdate = ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date))
         if ($forceUpdate) {
