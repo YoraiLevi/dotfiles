@@ -1,5 +1,6 @@
 BurntToast
 newtonsoft.json
+Pester
 PesterMatchHashtable
 posh-git
 powershell-yaml
