@@ -594,16 +594,30 @@ function Invoke-SyncCycle {
             ([ChezmoiResult]::Skipped) { return }
             ([ChezmoiResult]::Failed)  { throw 'chezmoi re-add failed' }
         }
-        $Chezmoi_diff = $(& $ChezmoiPath git pull -- --autostash --rebase) | Out-String
-        $NoChanges = 'Current branch master is up to date.', 'Already up to date.'
+        # Fetch only — never modifies the working tree. A git pull --rebase
+        # could leave the source repo mid-rebase on conflict with no recovery path.
+        Write-Log "Fetching remote changes..." "INFO"
+        & $ChezmoiPath git -- fetch origin 2>&1 | Write-SubprocessLog -Prefix 'git-fetch'
+        $fetchExitCode = $LASTEXITCODE
+        if ($fetchExitCode -ne 0) {
+            Write-Log "git fetch failed (exit $fetchExitCode) — skipping update this cycle" "WARN"
+            return
+        }
+
+        # Compare local HEAD against its upstream ref. @{u} resolves to the
+        # upstream of the current branch without hardcoding the branch name.
+        $localHead  = (& $ChezmoiPath git -- rev-parse HEAD   2>$null | Out-String).Trim()
+        $remoteHead = (& $ChezmoiPath git -- rev-parse '@{u}' 2>$null | Out-String).Trim()
+        $hasRemoteChanges = $localHead -and $remoteHead -and ($localHead -ne $remoteHead)
+
         $forceUpdate = ($(try { Get-Date -Date (Get-Content "$PSScriptRoot/date.tmp" -ErrorAction SilentlyContinue) }catch {}) -lt $(Get-Date))
         if ($forceUpdate) {
             Write-Log "No new changes detected in a long while, refreshing anyway" "INFO"
         }
-        if ((-not (([string]$Chezmoi_diff).trim() -in $NoChanges)) -or $forceUpdate) {
+        if ($hasRemoteChanges -or $forceUpdate) {
             # Next force update time
             (Get-Date).AddHours(6).AddMinutes((Get-Random -Minimum 0 -Maximum 361)).DateTime > "$PSScriptRoot/date.tmp"
-            
+
             # Execute chezmoi update
             switch (Invoke-ChezmoiCommand -ChezmoiPath $ChezmoiPath `
                     -Arguments @('update', '--init', '--apply', '--force') -LogPrefix 'update') {
@@ -613,7 +627,7 @@ function Invoke-SyncCycle {
             }
         }
         else {
-            Write-Log "No changes detected from chezmoi git pull" "INFO"
+            Write-Log "No remote changes detected" "INFO"
         }
     }
     catch {
@@ -800,6 +814,8 @@ function Install-ServyServiceAndWait {
             -Stderr "$StderrLogFile" `
             -User $username `
             -Password $password `
+            -EnableSizeRotation `
+            -RotationSize 1048576 `
             -EnableDateRotation `
             -DateRotationType "Daily" `
             -MaxRotations 31 `
