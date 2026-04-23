@@ -32,7 +32,7 @@ BeforeAll {
     $script:TempRepo = Join-Path $env:TEMP "pester-restore-gitstate-$(New-Guid)"
     git init $script:TempRepo --quiet
     git -C $script:TempRepo config user.email 'pester@test.local'
-    git -C $script:TempRepo config user.name  'Pester'
+    git -C $script:TempRepo config user.name 'Pester'
 
     'base' | Set-Content (Join-Path $script:TempRepo 'file.txt')
     git -C $script:TempRepo add .
@@ -48,8 +48,6 @@ BeforeAll {
     git -C $script:TempRepo add .
     git -C $script:TempRepo commit -m 'local' --quiet
 
-    $script:ChezmoiExe = (Get-Command chezmoi.exe -ErrorAction SilentlyContinue).Source
-    if (-not $script:ChezmoiExe) { $script:ChezmoiExe = 'C:\Users\devic\.local\bin\chezmoi.exe' }
 }
 
 AfterAll {
@@ -61,7 +59,7 @@ Describe 'Restore-GitState' {
     BeforeEach {
         # Ensure no lingering git operation from a previous test
         git -C $script:TempRepo rebase --abort 2>$null | Out-Null
-        git -C $script:TempRepo merge  --abort 2>$null | Out-Null
+        git -C $script:TempRepo merge --abort 2>$null | Out-Null
     }
 
     It 'detects a mid-rebase state, aborts it, and returns $true' {
@@ -70,17 +68,17 @@ Describe 'Restore-GitState' {
 
         # Precondition — confirm the setup actually produced mid-rebase state
         (Test-Path (Join-Path $script:TempRepo '.git\rebase-merge')) |
-            Should -BeTrue -Because 'test setup must leave the repo mid-rebase'
+        Should -BeTrue -Because 'test setup must leave the repo mid-rebase'
 
         # Act
-        $result = Restore-GitState -ChezmoiPath $script:ChezmoiExe -SourceDir $script:TempRepo
+        $result = Restore-GitState -SourceDir $script:TempRepo
 
         # Assert side effects
         $result | Should -BeTrue
         (Test-Path (Join-Path $script:TempRepo '.git\rebase-merge')) |
-            Should -BeFalse -Because 'the abort should have removed the rebase-merge dir'
+        Should -BeFalse -Because 'the abort should have removed the rebase-merge dir'
         (git -C $script:TempRepo status 2>&1 | Out-String) |
-            Should -Not -Match 'rebase in progress' -Because 'repo must be usable after repair'
+        Should -Not -Match 'rebase in progress' -Because 'repo must be usable after repair'
     }
 
     It 'returns $false and touches nothing when the working tree is already clean' {
@@ -89,7 +87,7 @@ Describe 'Restore-GitState' {
         (Test-Path (Join-Path $script:TempRepo '.git\MERGE_HEAD'))   | Should -BeFalse
 
         # Act
-        $result = Restore-GitState -ChezmoiPath $script:ChezmoiExe -SourceDir $script:TempRepo
+        $result = Restore-GitState -SourceDir $script:TempRepo
 
         # Assert
         $result | Should -BeFalse -Because 'nothing was broken so nothing was repaired'

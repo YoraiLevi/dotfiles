@@ -550,13 +550,9 @@ function Set-GitHubTokenFromGh {
 function Restore-GitState {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)][string]$ChezmoiPath,
-        [string]$SourceDir = ''
+        [Parameter(Mandatory)][string]$SourceDir
     )
 
-    if (-not $SourceDir) {
-        $SourceDir = (& $ChezmoiPath source-path 2>$null | Out-String).Trim()
-    }
     $gitDir = Join-Path $SourceDir '.git'
 
     $inRebase = (Test-Path (Join-Path $gitDir 'rebase-merge')) -or
@@ -589,6 +585,10 @@ function Invoke-SyncCycle {
         if (-not (Test-Path $ChezmoiPath -ErrorAction Stop)) {
             Write-Log "ERROR: chezmoi.exe not found at $ChezmoiPath" "ERROR"
         }
+
+        # Resolve source dir once so callers (e.g. Restore-GitState) don't need
+        # to shell out to chezmoi again.
+        $SourceDir = (& $ChezmoiPath source-path 2>$null | Out-String).Trim()
 
         # Fast-path idle check: skip the expensive state exports if chezmoi is
         # already running. The BoltDB lock is the authoritative gate (see below);
@@ -663,7 +663,7 @@ function Invoke-SyncCycle {
                     # A merge/rebase conflict leaves the source repo in a broken
                     # state that blocks every subsequent cycle. Abort to restore a
                     # clean working tree so the next cycle can retry.
-                    Restore-GitState -ChezmoiPath $ChezmoiPath
+                    Restore-GitState -SourceDir $SourceDir
                     throw 'chezmoi update --init --apply --force failed'
                 }
             }
