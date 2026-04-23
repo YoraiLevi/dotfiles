@@ -188,7 +188,7 @@ param(
 # FUNCTION DEFINITIONS
 # ============================================================================
 
-$VERSION = "v20260422"
+$VERSION = "v20260423"
 $ConfigFileName = "config.json"
 
 # Function to write log entries, now supports pipeline input for $Message
@@ -778,6 +778,9 @@ function Install-ServyServiceAndWait {
             -Stderr "$StderrLogFile" `
             -User $username `
             -Password $password `
+            -EnableDateRotation `
+            -DateRotationType "Daily" `
+            -MaxRotations 31 `
             -Quiet
 
         # Wait for the service to appear in the service list (installed)
