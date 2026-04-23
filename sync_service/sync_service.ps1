@@ -545,25 +545,32 @@ function Set-GitHubTokenFromGh {
 # Detects and aborts a mid-rebase or mid-merge state left by a failed
 # chezmoi update. Returns $true if a broken state was found and aborted,
 # $false if the working tree was already clean.
-function Repair-ChezmoiGitState {
+# $SourceDir is optional: when supplied (e.g. in tests pointing at a temp
+# repo) the chezmoi source-path subprocess is skipped entirely.
+function Restore-GitState {
     [CmdletBinding()]
-    param([Parameter(Mandatory)][string]$ChezmoiPath)
+    param(
+        [Parameter(Mandatory)][string]$ChezmoiPath,
+        [string]$SourceDir = ''
+    )
 
-    $sourceDir  = (& $ChezmoiPath source-path 2>$null | Out-String).Trim()
-    $gitDir     = Join-Path $sourceDir '.git'
+    if (-not $SourceDir) {
+        $SourceDir = (& $ChezmoiPath source-path 2>$null | Out-String).Trim()
+    }
+    $gitDir = Join-Path $SourceDir '.git'
 
-    $inRebase   = (Test-Path (Join-Path $gitDir 'rebase-merge')) -or
-                  (Test-Path (Join-Path $gitDir 'rebase-apply'))
-    $inMerge    = Test-Path (Join-Path $gitDir 'MERGE_HEAD')
+    $inRebase = (Test-Path (Join-Path $gitDir 'rebase-merge')) -or
+                (Test-Path (Join-Path $gitDir 'rebase-apply'))
+    $inMerge  = Test-Path (Join-Path $gitDir 'MERGE_HEAD')
 
     if ($inRebase) {
         Write-Log "Source repo is mid-rebase after conflict — aborting to restore clean state" 'WARN'
-        & $ChezmoiPath git -- rebase --abort 2>&1 | Write-SubprocessLog -Prefix 'git-rebase-abort'
+        git -C $SourceDir rebase --abort 2>&1 | Write-SubprocessLog -Prefix 'git-rebase-abort'
         return $true
     }
     if ($inMerge) {
         Write-Log "Source repo is mid-merge after conflict — aborting to restore clean state" 'WARN'
-        & $ChezmoiPath git -- merge --abort 2>&1 | Write-SubprocessLog -Prefix 'git-merge-abort'
+        git -C $SourceDir merge --abort 2>&1 | Write-SubprocessLog -Prefix 'git-merge-abort'
         return $true
     }
     return $false
@@ -656,7 +663,7 @@ function Invoke-SyncCycle {
                     # A merge/rebase conflict leaves the source repo in a broken
                     # state that blocks every subsequent cycle. Abort to restore a
                     # clean working tree so the next cycle can retry.
-                    Repair-ChezmoiGitState -ChezmoiPath $ChezmoiPath
+                    Restore-GitState -ChezmoiPath $ChezmoiPath
                     throw 'chezmoi update --init --apply --force failed'
                 }
             }
