@@ -76,14 +76,19 @@ if (-not (Test-Path -LiteralPath $ChezmoiPath -PathType Leaf)) {
     throw "ChezmoiPath '$ChezmoiPath' does not exist."
 }
 
-if (-not $SourceDir) { # TODO, don't use in script directly, used for intialization only
+# Determine SourceDir if not provided.
+if (-not $SourceDir) {
     $SourceDir = (& $ChezmoiPath source-path | Out-String).Trim()
 }
-if (-not $DestDir) { # TODO, don't use in script directly, used for intialization only
-    $DestDir = $env:USERPROFILE # TODO get from chezmoi
+
+# Determine DestDir if not provided, using chezmoi's target-path command.
+if (-not $DestDir) {
+    $DestDir = (& $ChezmoiPath target-path | Out-String).Trim()
+    if (-not $DestDir) {
+        throw "Failed to determine Chezmoi destination directory via 'chezmoi target-path'."
+    }
 }
-# ConvertTo-LocalPath reads these two env vars directly.
-# TODO, don't assign it if it's already set
+
 $ENV:CHEZMOI_SOURCE_DIR = $SourceDir
 $ENV:CHEZMOI_DEST_DIR = $DestDir
 

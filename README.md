@@ -98,6 +98,13 @@ Debugging templates
 cat template.tmpl | chezmoi execute-template $_
 ```
 
+#### Testing
+
+```pwsh
+pwsh -NoProfile -File .\.chezmoilib\tests\Invoke-PesterSuite.ps1
+pwsh -NoProfile -File .\.chezmoilib\tests\Invoke-PesterSuite.ps1 -IncludeIntegration
+```
+
 #### Debugging
 
 Profiling pwsh profile performance
