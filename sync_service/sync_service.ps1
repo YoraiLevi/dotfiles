@@ -192,6 +192,43 @@ $VERSION = "v20260423"
 $ConfigFileName = "config.json"
 
 # Function to write log entries, now supports pipeline input for $Message
+function Write-SubprocessLog {
+    # Pipeline helper: stream native-command output line by line, each with its
+    # own timestamp and level. Replaces the  2>&1 | Out-String | Write-Log
+    # pattern which stamped the entire run with one timestamp and hid per-line
+    # severity.
+    #
+    # Usage:
+    #   & some.exe --args 2>&1 | Write-SubprocessLog -Prefix 're-add'
+    #   $exit = $LASTEXITCODE   # still accurate after the pipeline
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [object]$InputObject,
+
+        [string]$Prefix = 'subprocess'
+    )
+    process {
+        # 2>&1 wraps stderr lines as ErrorRecord objects; unwrap to plain text.
+        $line = if ($InputObject -is [System.Management.Automation.ErrorRecord]) {
+            $InputObject.Exception.Message
+        }
+        else { "$InputObject" }
+
+        if (-not $line -or $line -match '^\s*$') { return }
+
+        $level = 'INFO'
+        if ($line -match '(?i)timeout obtaining persistent state lock') {
+            $level = 'WARN'
+        }
+        elseif ($line -match '(?i)^chezmoi:\s+(error|fatal)') {
+            $level = 'ERROR'
+        }
+
+        Write-Log "  [$Prefix] $line" $level
+    }
+}
+
 function Write-Log {
     [CmdletBinding()]
     param(
@@ -498,19 +535,18 @@ function Invoke-ChezmoiSync {
         # each of which has a .chezmoi-re-add.recursive-forget.recursive-add
         # marker that tells the re-add pre-hook to forget files that disappear
         # and auto-add any new ones.
-        $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions | Out-File $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
+        $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions 2>$null | Out-File $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
         $null = (Get-InstalledModule).Name | Out-File $(Join-Path $ENV:USERPROFILE ".powershell" "pwsh-modules.txt")
         $null = choco export "$(Join-Path $ENV:USERPROFILE ".choco" "packages.config")"
 
-        # chezmoi re-add is the single entry point for the sync. The re-add.pre
-        # hook runs the forget/add sweep (see .chezmoihooks/re-add/pre.ps1 and
-        # .chezmoilib/Invoke-ChezmoiReAddSweep.ps1); the sweep wraps its nested
-        # chezmoi calls in a retry loop that tolerates transient BoltDB lock
-        # blips. Previously we ran the sweep here as top-level chezmoi commands
-        # and set CHEZMOI_SYNC_SERVICE=1 so the hook would no-op, because nested
-        # calls from the hook were unreliable before the retry wrapper existed.
+        # --refresh-externals=never prevents chezmoi from evaluating externals
+        # templates and writing to the BoltDB cache during startup. Without this
+        # flag the parent process can acquire the exclusive BoltDB lock before the
+        # pre-hook runs, starving the nested chezmoi forget/add calls in the sweep.
+        # With it, the nested calls get the lock first, do their work, and release
+        # before chezmoi re-add needs the lock for its own checksum writes.
         Write-Log "Running chezmoi re-add..." "INFO"
-        & $ChezmoiPath re-add 2>&1 | Out-String | Write-Log
+        & $ChezmoiPath re-add --refresh-externals=never 2>&1 | Write-SubprocessLog -Prefix 're-add'
         $reAddExitCode = $LASTEXITCODE
 
         if ($reAddExitCode -eq 0) {
@@ -540,7 +576,7 @@ Chezmoi path: $ChezmoiPath
             (Get-Date).AddHours(6).AddMinutes((Get-Random -Minimum 0 -Maximum 361)).DateTime > "$PSScriptRoot/date.tmp"
             
             # Execute chezmoi update
-            & $ChezmoiPath update --init --apply --force 2>&1 | Out-String | Write-Log
+            & $ChezmoiPath update --init --apply --force 2>&1 | Write-SubprocessLog -Prefix 'update'
             $exitCode = $LASTEXITCODE
             
             if ($exitCode -eq 0) {
@@ -573,36 +609,6 @@ Chezmoi path: $ChezmoiPath
     }
 }
 
-# Function to clear chezmoi persistent state lock (does NOT kill processes - only removes stale state file when safe)
-function Clear-ChezmoiLock {
-    [CmdletBinding()]
-    param(
-        [switch]$RemoveStateFile  # Only use before execution to clear stale lock
-    )
-
-    $stateFilePath = Join-Path $env:USERPROFILE ".config" "chezmoi" "chezmoistate.boltdb"
-
-    # 1. Check for chezmoi processes - do NOT kill (user may be running edit, apply, etc.)
-    $processes = Get-Process -Name "chezmoi*" -ErrorAction SilentlyContinue
-    if ($processes) {
-        $count = @($processes).Count
-        Write-Log "Chezmoi is running ($count process(es)) - skipping lock cleanup to avoid interrupting user" "INFO"
-        return
-    }
-
-    Write-Log "No chezmoi processes found" "INFO"
-
-    # 2. Optionally remove state file to clear stale lock (only when no processes - e.g. after crash)
-    if ($RemoveStateFile -and (Test-Path $stateFilePath)) {
-        try {
-            Remove-Item -Path $stateFilePath -Force -ErrorAction Stop
-            Write-Log "Removed chezmoi state file to clear stale lock: $stateFilePath" "INFO"
-        }
-        catch {
-            Write-Log "Failed to remove state file (may still be in use): $_" "WARN"
-        }
-    }
-}
 
 # Returns $true if sync can proceed (no other chezmoi running), $false to skip
 function Test-ChezmoiIdle {
@@ -1124,7 +1130,6 @@ elseif ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq 
             Show-ToastNotification -Message "Sync skipped: chezmoi is running" -LogFilePath $ServiceLogFile -Title "Chezmoi Sync Skipped"
         }
         else {
-            Clear-ChezmoiLock -RemoveStateFile
             try {
                 Invoke-ChezmoiSync -ChezmoiPath $ChezmoiPath
                 Write-Log "Run finished" "INFO"
@@ -1132,9 +1137,6 @@ elseif ($PSCmdlet.ParameterSetName -eq "Run" -or $PSCmdlet.ParameterSetName -eq 
             catch {
                 Write-Log "Stack trace: $($_.ScriptStackTrace | Out-String)" "ERROR"
                 throw
-            }
-            finally {
-                Clear-ChezmoiLock
             }
         }
     }

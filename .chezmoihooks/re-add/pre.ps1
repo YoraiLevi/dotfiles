@@ -10,18 +10,18 @@ param()
 #   2. Run the re-add sweep (forget files that vanished from the destination and
 #      add new files that appeared in marker directories). The sweep is in
 #      .chezmoilib/Invoke-ChezmoiReAddSweep.ps1 and shells out to chezmoi
-#      forget/add. Those nested chezmoi invocations contend with this parent
-#      chezmoi re-add's BoltDB persistent-state lock, but the sweep wraps each
-#      one in a retry loop that tolerates the transient
-#        "chezmoi: timeout obtaining persistent state lock, is another instance
-#         of chezmoi running?"
-#      chezmoi opens the lock lazily so the nested calls normally succeed on
-#      their first attempt; the retry is just insurance against AV scanners,
-#      filesystem indexers, or a slower-than-usual first invocation.
+#      forget/add.
 #
-#      This hook is the single place the sweep runs; the ChezmoiSync service
-#      simply calls `chezmoi re-add` and lets this hook do the work, rather than
-#      duplicating the sweep up-front.
+#      The nested chezmoi calls contend with the parent chezmoi re-add's BoltDB
+#      persistent-state lock. Two guards prevent contention in practice:
+#        a) The service preserves chezmoistate.boltdb between runs (warm state),
+#           so chezmoi skips DB writes during startup config evaluation.
+#        b) The service passes --refresh-externals=never so chezmoi also skips
+#           evaluating externals templates (another early lock-acquisition path).
+#      With both guards active, the nested calls get the lock first, do their
+#      work, and release before chezmoi re-add needs it for checksums. The retry
+#      wrapper in Invoke-ChezmoiReAddSweep.ps1 is insurance for any remaining
+#      transient contention (e.g. AV scanners or other tools touching the DB).
 #
 # Do NOT move this work to re-add.post: chezmoi holds the state lock between pre
 # and post hooks, and post-hook nested chezmoi calls always fail.
