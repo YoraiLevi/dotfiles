@@ -262,12 +262,9 @@ if [ -d "$HOME/.auth" ]; then
     done
 fi
 
-
-
 # zellij
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && . "$HOME/.cargo/env"
 # cargo install --locked zellij
-. "$HOME/.cargo/env"
 if [[ -z "$ZELLIJ" ]]; then
     zellij attach main -c
 elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then

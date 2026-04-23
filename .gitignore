@@ -2,3 +2,4 @@
 *.tmp
 sync_service/logs/*
 sync_service/*
+**/*/.cache
