@@ -1,47 +1,24 @@
 <#
     Unit tests for Restore-GitState (sync_service/sync_service.ps1).
 
-    These tests are fully self-contained: they create an isolated temp git repo,
-    put it in a mid-rebase state using real git commands, call Restore-GitState
-    with -SourceDir pointing at the temp repo, and assert the side effects.
+    These tests create an isolated temp git repo, put it in a mid-rebase state
+    using real git commands, call Restore-GitState with -SourceDir pointing at
+    the temp repo, and assert the side effects.
 
-    No network access, no real chezmoi source tree touched, no dot-sourcing of
-    the service script. Restore-GitState is defined inline in BeforeAll because
-    it has no service coupling — it is a pure git utility that only needs git.
+    The production function is loaded via Import-Module from the service script.
+    The library-mode guard in sync_service.ps1 (InvocationName check) ensures
+    Import-Module loads functions only — the service main body does not run.
 
+    No network access, no real chezmoi source tree touched.
     Safe to run in the default Invoke-PesterSuite.ps1 pass (no Integration tag).
 #>
 
 BeforeAll {
-    # -------------------------------------------------------------------------
-    # Function under test — exact body from sync_service.ps1, defined inline
-    # so this test has no coupling to the service script's main body.
-    # If the production function changes, update this copy and the test.
-    # -------------------------------------------------------------------------
-    function script:Restore-GitState {
-        [CmdletBinding()]
-        param(
-            [Parameter(Mandatory)][string]$ChezmoiPath,
-            [string]$SourceDir = ''
-        )
-        if (-not $SourceDir) {
-            $SourceDir = (& $ChezmoiPath source-path 2>$null | Out-String).Trim()
-        }
-        $gitDir   = Join-Path $SourceDir '.git'
-        $inRebase = (Test-Path (Join-Path $gitDir 'rebase-merge')) -or
-                    (Test-Path (Join-Path $gitDir 'rebase-apply'))
-        $inMerge  = Test-Path (Join-Path $gitDir 'MERGE_HEAD')
-
-        if ($inRebase) {
-            git -C $SourceDir rebase --abort 2>&1 | Out-Null
-            return $true
-        }
-        if ($inMerge) {
-            git -C $SourceDir merge --abort 2>&1 | Out-Null
-            return $true
-        }
-        return $false
-    }
+    # Load the real production functions from the service script.
+    # The InvocationName guard in sync_service.ps1 prevents the main body from
+    # running; only function definitions are imported into the global scope.
+    $ServiceScript = Join-Path $PSScriptRoot '..\..\sync_service\sync_service.ps1'
+    Import-Module $ServiceScript -Force -Global
 
     # -------------------------------------------------------------------------
     # Temp git repo with a guaranteed conflict:

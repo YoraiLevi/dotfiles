@@ -1021,6 +1021,19 @@ function Reset-FilePermissions {
     }
 }
 # ============================================================================
+# MAIN BODY — skipped when the script is dot-sourced or Import-Module'd so
+# that functions can be loaded as a library without side effects.
+#
+#   Normal execution (pwsh -File / Servy):  InvocationName = script path
+#   Import-Module sync_service.ps1:         InvocationName = '' (empty)
+#   . sync_service.ps1 (dot-source):        InvocationName = '.'
+#
+# Both the empty-string and '.' cases load functions only; no I/O, no service
+# loop, no parameter validation runs. This is the standard PS library pattern.
+# ============================================================================
+if ($MyInvocation.InvocationName -ne '.' -and $MyInvocation.InvocationName -ne '') {
+
+# ============================================================================
 # PARAMETER VALIDATION AND INITIALIZATION
 # ============================================================================
 
@@ -1359,3 +1372,5 @@ else {
     Write-Log "INTERNAL ERROR: Unknown parameter set '$($PSCmdlet.ParameterSetName)'. This should never happen." "ERROR"
     exit 1
 }
+
+} # end library-mode guard: if ($MyInvocation.InvocationName -ne '.' -and ...)
