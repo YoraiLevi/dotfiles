@@ -122,22 +122,105 @@ Describe 'Invoke-ChezmoiReAddSweep' {
     }
 
     Context 'retry on transient BoltDB lock timeout' {
-        It 'retries the add call once and succeeds when the second attempt is clean' {
+        It 'retries the add call exactly once and succeeds when the second attempt is clean' {
             $markerDir = Join-Path $script:tree.SourceDir 'readonly_dot_retry'
             New-Item -ItemType Directory -Path $markerDir -Force | Out-Null
-            Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.recursive-add') -Value '' -NoNewline
-            New-Item -ItemType Directory -Path (Join-Path $script:tree.DestDir '.retry') -Force | Out-Null
+            Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.recursive-forget.recursive-add') -Value '' -NoNewline
+            'pinned' | Set-Content -LiteralPath (Join-Path $markerDir 'kept.txt')
+            $destSub = Join-Path $script:tree.DestDir '.retry'
+            New-Item -ItemType Directory -Path $destSub -Force | Out-Null
+            'pinned' | Set-Content -LiteralPath (Join-Path $destSub 'kept.txt')
 
-            # Touch the file-based latch; the mock chezmoi will fail its next
-            # `add` with a BoltDB lock-timeout message and then delete the
-            # latch, so the sweep's second attempt succeeds.
             New-Item -ItemType File -Path $script:mock.FailPath -Force | Out-Null
 
             & $script:sweep -ChezmoiPath $script:mock.Path -SourceDir $script:tree.SourceDir -DestDir $script:tree.DestDir
 
             $calls = & $script:mock.GetCalls
             $adds  = @($calls | Where-Object { $_.command -eq 'add' })
-            $adds.Count | Should -BeGreaterOrEqual 2
+            $adds.Count | Should -Be 2 -Because 'lock-timeout consumes one attempt + one retry; further retries indicate a regression'
+        }
+    }
+
+    Context 'non-lock chezmoi failure' {
+        It 'throws so the sweep cycle aborts (no silent swallow)' {
+            $markerDir = Join-Path $script:tree.SourceDir 'readonly_dot_permfail'
+            New-Item -ItemType Directory -Path $markerDir -Force | Out-Null
+            Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.recursive-add') -Value '' -NoNewline
+            New-Item -ItemType Directory -Path (Join-Path $script:tree.DestDir '.permfail') -Force | Out-Null
+            New-Item -ItemType File -Path $script:mock.PermFailPath -Force | Out-Null
+
+            { & $script:sweep -ChezmoiPath $script:mock.Path -SourceDir $script:tree.SourceDir -DestDir $script:tree.DestDir } |
+                Should -Throw -ExpectedMessage '*non-lock failure*'
+
+            $calls = & $script:mock.GetCalls
+            @($calls | Where-Object { $_.command -eq 'add' }).Count | Should -Be 1 -Because 'no retry on a non-lock failure'
+        }
+    }
+
+    Context 'auto-detection' {
+        It 'falls back to chezmoi source-path/target-path when -SourceDir/-DestDir are omitted' {
+            $markerDir = Join-Path $script:tree.SourceDir 'readonly_dot_auto'
+            New-Item -ItemType Directory -Path $markerDir -Force | Out-Null
+            Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.recursive-add') -Value '' -NoNewline
+            New-Item -ItemType Directory -Path (Join-Path $script:tree.DestDir '.auto') -Force | Out-Null
+
+            $savedSource = $env:CHEZMOI_SOURCE_DIR
+            $savedDest = $env:CHEZMOI_DEST_DIR
+            $env:CHEZMOI_SOURCE_DIR = $script:tree.SourceDir
+            $env:CHEZMOI_DEST_DIR = $script:tree.DestDir
+            try {
+                & $script:sweep -ChezmoiPath $script:mock.Path
+            } finally {
+                $env:CHEZMOI_SOURCE_DIR = $savedSource
+                $env:CHEZMOI_DEST_DIR = $savedDest
+            }
+            $calls = & $script:mock.GetCalls
+            @($calls | Where-Object { $_.command -eq 'source-path' }).Count | Should -BeGreaterOrEqual 1
+            @($calls | Where-Object { $_.command -eq 'target-path' }).Count | Should -BeGreaterOrEqual 1
+            @($calls | Where-Object { $_.command -eq 'add' }).Count | Should -Be 1
+        }
+    }
+
+    Context 'retry backoff doubling' {
+        It 'sleeps 2s then 4s between lock-timeout retries' {
+            $markerDir = Join-Path $script:tree.SourceDir 'readonly_dot_backoff'
+            New-Item -ItemType Directory -Path $markerDir -Force | Out-Null
+            Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.recursive-forget.recursive-add') -Value '' -NoNewline
+            'x' | Set-Content -LiteralPath (Join-Path $markerDir 'kept.txt')
+            New-Item -ItemType Directory -Path (Join-Path $script:tree.DestDir '.backoff') -Force | Out-Null
+            'x' | Set-Content -LiteralPath (Join-Path $script:tree.DestDir '.backoff\kept.txt')
+
+            Set-Content -LiteralPath $script:mock.FailCountPath -Value '2'
+
+            $sleeps = New-Object System.Collections.Generic.List[double]
+            Mock Start-Sleep -MockWith { param([double]$Seconds) $null = $sleeps.Add($Seconds) }
+
+            & $script:sweep -ChezmoiPath $script:mock.Path -SourceDir $script:tree.SourceDir -DestDir $script:tree.DestDir
+
+            $sleeps.Count | Should -Be 2
+            $sleeps[0] | Should -Be 2
+            $sleeps[1] | Should -Be 4
+        }
+    }
+
+    Context 'canonical attribute-ordering guardrail (parametric)' {
+        $prefixCases = @(
+            @{ Prefix = 'encrypted' }
+            @{ Prefix = 'private' }
+            @{ Prefix = 'readonly' }
+            @{ Prefix = 'empty' }
+            @{ Prefix = 'executable' }
+            @{ Prefix = 'remove' }
+            @{ Prefix = 'create' }
+            @{ Prefix = 'modify' }
+            @{ Prefix = 'run' }
+            @{ Prefix = 'symlink' }
+        )
+        It 'throws when source contains invalid dot-prefix ordering (Prefix)' -TestCases $prefixCases {
+            param($Prefix)
+            New-Item -ItemType Directory -Path (Join-Path $script:tree.SourceDir "dot_${Prefix}_bogus") -Force | Out-Null
+            { & $script:sweep -ChezmoiPath $script:mock.Path -SourceDir $script:tree.SourceDir -DestDir $script:tree.DestDir } |
+                Should -Throw -ExpectedMessage '*canonical order*'
         }
     }
 

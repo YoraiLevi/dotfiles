@@ -544,16 +544,19 @@ function Set-GitHubTokenFromGh {
 
 # Detects and aborts a mid-rebase or mid-merge state left by a failed
 # chezmoi update. Returns $true if a broken state was found and aborted,
-# $false if the working tree was already clean.
-# $SourceDir is optional: when supplied (e.g. in tests pointing at a temp
-# repo) the chezmoi source-path subprocess is skipped entirely.
+# $false if the working tree was already clean, not a git repo, or abort failed.
 function Restore-GitState {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$SourceDir
     )
 
-    $gitDir = Join-Path $SourceDir '.git'
+    $gitDir = (& git -C $SourceDir rev-parse --git-dir 2>$null | Out-String).Trim()
+    if (-not $gitDir) {
+        Write-Log "Restore-GitState: '$SourceDir' is not a git repo" 'WARN'
+        return $false
+    }
+    if (-not [System.IO.Path]::IsPathRooted($gitDir)) { $gitDir = Join-Path $SourceDir $gitDir }
 
     $inRebase = (Test-Path (Join-Path $gitDir 'rebase-merge')) -or
                 (Test-Path (Join-Path $gitDir 'rebase-apply'))
@@ -562,11 +565,13 @@ function Restore-GitState {
     if ($inRebase) {
         Write-Log "Source repo is mid-rebase after conflict — aborting to restore clean state" 'WARN'
         git -C $SourceDir rebase --abort 2>&1 | Write-SubprocessLog -Prefix 'git-rebase-abort'
+        if ($LASTEXITCODE -ne 0) { Write-Log "git rebase --abort failed in '$SourceDir' (exit $LASTEXITCODE)" 'ERROR'; return $false }
         return $true
     }
     if ($inMerge) {
         Write-Log "Source repo is mid-merge after conflict — aborting to restore clean state" 'WARN'
         git -C $SourceDir merge --abort 2>&1 | Write-SubprocessLog -Prefix 'git-merge-abort'
+        if ($LASTEXITCODE -ne 0) { Write-Log "git merge --abort failed in '$SourceDir' (exit $LASTEXITCODE)" 'ERROR'; return $false }
         return $true
     }
     return $false
@@ -663,7 +668,9 @@ function Invoke-SyncCycle {
                     # A merge/rebase conflict leaves the source repo in a broken
                     # state that blocks every subsequent cycle. Abort to restore a
                     # clean working tree so the next cycle can retry.
-                    Restore-GitState -SourceDir $SourceDir
+                    if (Restore-GitState -SourceDir $SourceDir) {
+                        throw 'chezmoi update --init --apply --force failed; git in-progress state aborted, retry next cycle'
+                    }
                     throw 'chezmoi update --init --apply --force failed'
                 }
             }

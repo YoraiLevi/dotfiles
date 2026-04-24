@@ -9,16 +9,21 @@
         - FailPath : path that, when present, makes the next `add` invocation
                      fail with the BoltDB lock-timeout message and then deletes
                      itself. Tests can create it via `New-Item $mock.FailPath`.
+        - PermFailPath : path that, when present, makes every `add` exit 2 with a
+                         non-lock error (tests permanent failure).
+        - FailCountPath : path that, when present, holds an integer; each `add`
+                          decrements with lock-timeout exit 1 until zero, then succeeds.
         - GetCalls : scriptblock that returns every recorded invocation as an
                      array of objects (timestamp, command, argv, source, dest)
         - Reset    : scriptblock that clears the log
 
     The shim honours these commands:
         source-path  -> prints $ENV:CHEZMOI_SOURCE_DIR and exits 0
+        target-path  -> prints $ENV:CHEZMOI_DEST_DIR and exits 0
         forget       -> logs, prints a short message, exits 0
-        add          -> logs. If FailPath exists, emits the BoltDB lock-timeout
-                        stderr line, deletes FailPath, and exits 1 so the next
-                        attempt succeeds. Otherwise exits 0.
+        add          -> predicate order: PermFailPath (exit 2) > FailCountPath
+                        (lock-timeout retries) > FailPath (one-shot lock timeout)
+                        > success. Otherwise exits 0.
         anything else-> logs and exits 0
 
     A file-based latch (FailPath) is used instead of an environment variable
@@ -36,16 +41,20 @@ if (-not (Test-Path -LiteralPath $Root)) {
     New-Item -ItemType Directory -Path $Root -Force | Out-Null
 }
 
-$logPath  = Join-Path $Root 'mock-chezmoi.log'
-$failPath = Join-Path $Root 'fail-next-add.flag'
-$psPath   = Join-Path $Root 'chezmoi.ps1'
-$cmdPath  = Join-Path $Root 'chezmoi.cmd'
+$logPath       = Join-Path $Root 'mock-chezmoi.log'
+$failPath      = Join-Path $Root 'fail-next-add.flag'
+$permFailPath  = Join-Path $Root 'perm-fail-add.flag'
+$failCountPath = Join-Path $Root 'fail-add-count.txt'
+$psPath        = Join-Path $Root 'chezmoi.ps1'
+$cmdPath       = Join-Path $Root 'chezmoi.cmd'
 
 @"
 param([Parameter(ValueFromRemainingArguments = `$true)][string[]]`$Argv)
 `$ErrorActionPreference = 'Stop'
-`$logPath  = '$($logPath  -replace "'", "''")'
-`$failPath = '$($failPath -replace "'", "''")'
+`$logPath       = '$($logPath       -replace "'", "''")'
+`$failPath      = '$($failPath      -replace "'", "''")'
+`$permFailPath  = '$($permFailPath  -replace "'", "''")'
+`$failCountPath = '$($failCountPath -replace "'", "''")'
 `$cmd = if (`$Argv.Count -gt 0) { `$Argv[0] } else { '' }
 `$entry = [pscustomobject]@{
     timestamp = (Get-Date -Format o)
@@ -61,11 +70,27 @@ switch (`$cmd) {
         Write-Output `$ENV:CHEZMOI_SOURCE_DIR
         exit 0
     }
+    'target-path' {
+        Write-Output `$ENV:CHEZMOI_DEST_DIR
+        exit 0
+    }
     'forget' {
         Write-Output "mock chezmoi: forget `$(`$Argv.Count - 1) target(s)"
         exit 0
     }
     'add' {
+        if (Test-Path -LiteralPath `$permFailPath) {
+            [Console]::Error.WriteLine('chezmoi: synthetic permanent failure for tests')
+            exit 2
+        }
+        if (Test-Path -LiteralPath `$failCountPath) {
+            `$remaining = [int](Get-Content `$failCountPath)
+            if (`$remaining -gt 0) {
+                (`$remaining - 1) | Set-Content `$failCountPath
+                [Console]::Error.WriteLine('chezmoi: timeout obtaining persistent state lock, is another instance of chezmoi running?')
+                exit 1
+            }
+        }
         if (Test-Path -LiteralPath `$failPath) {
             Remove-Item -LiteralPath `$failPath -Force -ErrorAction SilentlyContinue
             [Console]::Error.WriteLine('chezmoi: timeout obtaining persistent state lock, is another instance of chezmoi running?')
@@ -87,11 +112,13 @@ $shim = "@echo off`r`n`"$pwshExe`" -NoProfile -NonInteractive -NoLogo -Execution
 Set-Content -LiteralPath $cmdPath -Value $shim -Encoding Ascii -NoNewline
 
 [pscustomobject]@{
-    Path     = $cmdPath
-    PsPath   = $psPath
-    LogPath  = $logPath
-    FailPath = $failPath
-    Reset    = { if (Test-Path -LiteralPath $logPath) { Remove-Item -LiteralPath $logPath -Force } }.GetNewClosure()
+    Path          = $cmdPath
+    PsPath        = $psPath
+    LogPath       = $logPath
+    FailPath      = $failPath
+    PermFailPath  = $permFailPath
+    FailCountPath = $failCountPath
+    Reset         = { if (Test-Path -LiteralPath $logPath) { Remove-Item -LiteralPath $logPath -Force } }.GetNewClosure()
     GetCalls = {
         if (-not (Test-Path -LiteralPath $logPath)) { return @() }
         Get-Content -LiteralPath $logPath | Where-Object { $_ } | ForEach-Object { $_ | ConvertFrom-Json }

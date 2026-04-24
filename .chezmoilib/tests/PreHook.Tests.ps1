@@ -91,6 +91,40 @@ Add-Content -LiteralPath '$($script:stubLog -replace "'", "''")' -Value (`$entry
         Test-Path -LiteralPath $script:stubLog | Should -BeFalse
     }
 
+    Context 'canonical attribute-ordering guardrail (parametric)' {
+        $prefixCases = @(
+            @{ Prefix = 'encrypted' }
+            @{ Prefix = 'private' }
+            @{ Prefix = 'readonly' }
+            @{ Prefix = 'empty' }
+            @{ Prefix = 'executable' }
+            @{ Prefix = 'remove' }
+            @{ Prefix = 'create' }
+            @{ Prefix = 'modify' }
+            @{ Prefix = 'run' }
+            @{ Prefix = 'symlink' }
+        )
+        It 'hook throws when source contains invalid dot-prefix ordering (Prefix)' -TestCases $prefixCases {
+            param($Prefix)
+            $ENV:CHEZMOI_SOURCE_DIR = $script:tree.SourceDir
+            $ENV:CHEZMOI_DEST_DIR = $script:tree.DestDir
+            $ENV:CHEZMOI_EXECUTABLE = 'C:\fake\chezmoi.exe'
+            $ENV:CHEZMOI_ARGS = 'chezmoi re-add'
+            New-Item -ItemType Directory -Path (Join-Path $script:tree.SourceDir "dot_${Prefix}_bogus") -Force | Out-Null
+            { & $script:RepoPreHook } | Should -Throw -ExpectedMessage '*canonical order*'
+        }
+    }
+
+    It 'warns and skips when CHEZMOI_SOURCE_DIR is unset and chezmoi is unreachable' {
+        Remove-Item Env:\CHEZMOI_SOURCE_DIR -ErrorAction SilentlyContinue
+        $ENV:CHEZMOI_DEST_DIR = $script:tree.DestDir
+        $ENV:CHEZMOI_EXECUTABLE = 'C:\does-not-exist\chezmoi.exe'
+        $ENV:CHEZMOI_ARGS = 'chezmoi re-add'
+
+        { & $script:RepoPreHook 3>&1 } | Should -Not -Throw
+        Test-Path -LiteralPath $script:stubLog | Should -BeFalse -Because 'sweep must not run when source dir is unknown'
+    }
+
     It 'warns (but does not throw) if the sweep script is missing' {
         $ENV:CHEZMOI_SOURCE_DIR = $script:tree.SourceDir
         $ENV:CHEZMOI_DEST_DIR   = $script:tree.DestDir

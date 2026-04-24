@@ -5,10 +5,10 @@
 .DESCRIPTION
     Discovers and runs the test files alongside this script.
 
-    By default only the unit tests (Sweep.Tests.ps1, PreHook.Tests.ps1) run
-    because they have zero side effects. Pass -IncludeIntegration to also run
-    Integration.Tests.ps1, which touches $HOME and produces git commits on
-    origin/master.
+    By default the unit tests (Sweep.Tests.ps1, PreHook.Tests.ps1,
+    GitRepair.Tests.ps1) run — no real chezmoi, isolated temp dirs / git fixtures.
+    Pass -IncludeIntegration to also run Integration.Tests.ps1, which touches
+    $HOME and produces git commits on origin/master.
 
 .PARAMETER IncludeIntegration
     Include the 'Integration' tag tests (real chezmoi, real git commits).

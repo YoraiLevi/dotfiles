@@ -200,18 +200,23 @@ function Invoke-ChezmoiWithRetry {
         $exitCode = $LASTEXITCODE
         $outputText = ($output | Out-String)
         if ($outputText) { Write-Host $outputText.TrimEnd() }
-        $isLockTimeout = $outputText -match 'timeout obtaining persistent state lock'
-        if ($exitCode -eq 0 -and -not $isLockTimeout) {
-            return
-        }
+        $isLockTimeout = $outputText -match '(?i)timeout obtaining persistent state lock'
+
+        if ($exitCode -eq 0 -and -not $isLockTimeout) { return }
+
         if ($attempt -lt $MaxAttempts -and $isLockTimeout) {
             $delay = $InitialDelaySeconds * [math]::Pow(2, $attempt - 1)
             Write-Warning ("{0}: lock contention on attempt {1}/{2}; retrying in {3}s" -f $Label, $attempt, $MaxAttempts, $delay)
             Start-Sleep -Seconds $delay
             continue
         }
+
         if ($exitCode -ne 0) {
-            Write-Warning ("{0}: chezmoi exited with code {1} after {2} attempt(s)" -f $Label, $exitCode, $attempt)
+            if ($isLockTimeout) {
+                Write-Warning ("{0}: lock contention persisted after {1} attempt(s); skipping" -f $Label, $attempt)
+                return
+            }
+            throw ("{0}: chezmoi exited with code {1} (non-lock failure)" -f $Label, $exitCode)
         }
         return
     }

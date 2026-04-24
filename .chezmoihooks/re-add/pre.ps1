@@ -37,6 +37,17 @@ if ($ENV:CHEZMOI_ARGS) {
 }
 $IsDryRun = ($chezmoiArgv -contains '--dry-run') -or ($chezmoiArgv -contains '-n')
 
+if (-not $ENV:CHEZMOI_SOURCE_DIR) {
+    Write-Warning "re-add pre-hook: CHEZMOI_SOURCE_DIR is unset; resolving via 'chezmoi source-path'."
+    if ($ENV:CHEZMOI_EXECUTABLE -and (Test-Path -LiteralPath $ENV:CHEZMOI_EXECUTABLE -PathType Leaf)) {
+        $ENV:CHEZMOI_SOURCE_DIR = (& $ENV:CHEZMOI_EXECUTABLE source-path | Out-String).Trim()
+    }
+    if (-not $ENV:CHEZMOI_SOURCE_DIR) {
+        Write-Warning "re-add pre-hook: cannot determine source dir; skipping guardrail and sweep."
+        return
+    }
+}
+
 # Guardrail: fail fast if the source tree contains a directory or file whose
 # chezmoi attribute prefixes are in non-canonical order. See
 #   https://www.chezmoi.io/reference/source-state-attributes/
