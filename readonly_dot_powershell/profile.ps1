@@ -840,6 +840,7 @@ function ssh {
 
 Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
 $ENV:SHELL = 'pwsh'
+$env:TERM = 'xterm-256color'
 if (-not $ENV:ZELLIJ) {
     zellij attach main -c
 }
