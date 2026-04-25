@@ -55,6 +55,7 @@ Describe 'Invoke-ChezmoiReAddSweep' {
 
             $adds.Count | Should -Be 1
             ($adds[0].argv -join ' ') | Should -Match '--recursive=true'
+            ($adds[0].argv -join ' ') | Should -Match '--exclude=templates'
             ($adds[0].argv -join ' ') | Should -Match '\.testdir'
         }
     }
@@ -80,6 +81,7 @@ Describe 'Invoke-ChezmoiReAddSweep' {
             $forgets.Count | Should -Be 0
             $adds.Count    | Should -Be 1
             ($adds[0].argv -join ' ') | Should -Match '--recursive=true'
+            ($adds[0].argv -join ' ') | Should -Match '--exclude=templates'
         }
     }
 
@@ -138,6 +140,7 @@ Describe 'Invoke-ChezmoiReAddSweep' {
             $calls = & $script:mock.GetCalls
             $adds  = @($calls | Where-Object { $_.command -eq 'add' })
             $adds.Count | Should -Be 2 -Because 'lock-timeout consumes one attempt + one retry; further retries indicate a regression'
+            $adds | ForEach-Object { ($_.argv -join ' ') | Should -Match '--exclude=templates' }
         }
     }
 

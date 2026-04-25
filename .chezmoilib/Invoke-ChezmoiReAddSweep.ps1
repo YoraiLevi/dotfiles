@@ -14,10 +14,13 @@
         .chezmoi-re-add.recursive-add                   -> add the directory recursively
         .chezmoi-re-add.recursive-forget.recursive-add  -> both (full two-way sync)
 
-    The sweep produces at most three top-level chezmoi invocations:
+    The sweep produces at most two top-level chezmoi invocations:
         chezmoi forget <missing-paths> --force
-        chezmoi add <dirs> --recursive=true
-        chezmoi add <dirs> --recursive=false
+        chezmoi add <dirs> --recursive=true --exclude=templates
+
+    Recursive add uses --exclude=templates so paths already managed as templates
+    (e.g. symlink_*.tmpl) are not re-captured from disk, which would strip the template
+    attribute and block or hang non-interactive runs.
 
     Because each invocation is top-level (not nested inside another chezmoi process), it
     acquires and releases the BoltDB persistent-state lock cleanly, avoiding the
@@ -233,9 +236,11 @@ if ($filesToForget.Count -gt 0) {
 }
 
 if ($dirsToAddRecursive.Count -gt 0) {
-    Write-Host ("Invoke-ChezmoiReAddSweep: add --recursive=true {0} dir(s)" -f $dirsToAddRecursive.Count) -ForegroundColor Cyan
+    Write-Host ("Invoke-ChezmoiReAddSweep: add --recursive=true --exclude=templates {0} dir(s)" -f $dirsToAddRecursive.Count) -ForegroundColor Cyan
     Invoke-ChezmoiWithRetry -Label 'chezmoi add --recursive=true' -Action {
-        & $ChezmoiPath add @dirsToAddRecursive @commonArgs --recursive=true
+        # Skip template-backed source entries: recursive add must not flatten .tmpl
+        # symlinks/files into literal captures (chezmoi would prompt or hang without a TTY).
+        & $ChezmoiPath add @dirsToAddRecursive @commonArgs --recursive=true --exclude=templates
     }
 }
 
