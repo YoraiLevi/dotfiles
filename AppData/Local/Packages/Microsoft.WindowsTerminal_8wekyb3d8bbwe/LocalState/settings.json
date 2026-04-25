@@ -1,9 +1,11 @@
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": [
+    "actions": 
+    [
         {
-            "command": {
+            "command": 
+            {
                 "action": "moveTab",
                 "window": "new"
             },
@@ -14,15 +16,8 @@
             "id": "User.experimental.openScratchpad"
         },
         {
-            "command": "selectAll",
-            "id": "User.selectAll"
-        },
-        {
-            "command": "tabSearch",
-            "id": "User.tabSearch"
-        },
-        {
-            "command": {
+            "command": 
+            {
                 "action": "splitPane",
                 "split": "right",
                 "splitMode": "duplicate"
@@ -30,7 +25,16 @@
             "id": "User.splitPane.FEF0D40B"
         },
         {
-            "command": {
+            "command": "tabSearch",
+            "id": "User.tabSearch"
+        },
+        {
+            "command": "selectAll",
+            "id": "User.selectAll"
+        },
+        {
+            "command": 
+            {
                 "action": "splitPane",
                 "split": "auto",
                 "splitMode": "duplicate"
@@ -42,7 +46,8 @@
             "id": "User.duplicateTab"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "nextTab"
             },
             "id": "User.nextTab.0"
@@ -56,31 +61,11 @@
     "copyFormatting": "none",
     "copyOnSelect": true,
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
-    "keybindings": [
+    "keybindings": 
+    [
         {
             "id": "Terminal.CopyToClipboard",
             "keys": "ctrl+shift+c"
-        },
-        { "id": "Terminal.CopyToClipboard", "keys": "ctrl+c" },
-        {
-            "id": null,
-            "keys": "ctrl+f"
-        },
-        {
-            "id": "Terminal.FindText",
-            "keys": "ctrl+shift+f"
-        },
-        {
-            "id": "User.paste",
-            "keys": "ctrl+shift+v"
-        },
-        {
-            "id": null,
-            "keys": "ctrl+v"
-        },
-        {
-            "id": null,
-            "keys": "ctrl+p"
         },
         {
             "id": null,
@@ -88,15 +73,51 @@
         },
         {
             "id": null,
+            "keys": "ctrl+p"
+        },
+        {
+            "id": "User.paste",
+            "keys": "ctrl+shift+v"
+        },
+        {
+            "id": "Terminal.CopyToClipboard",
+            "keys": "ctrl+c"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+comma"
+        },
+        {
+            "id": "Terminal.FindText",
+            "keys": "ctrl+shift+f"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+v"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+f"
+        },
+        {
+            "id": null,
             "keys": "ctrl+n"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+shift+space"
         },
         {
             "id": null,
             "keys": "ctrl+\\"
         },
         {
-            "id": null,
-            "keys": "ctrl+comma"
+            "id": "Terminal.DuplicatePaneAuto",
+            "keys": "alt+shift+d"
+        },
+        {
+            "id": "User.moveTab.EA39957B",
+            "keys": "alt+n"
         },
         {
             "id": null,
@@ -104,7 +125,7 @@
         },
         {
             "id": null,
-            "keys": "ctrl+shift+5"
+            "keys": "ctrl+shift+comma"
         },
         {
             "id": null,
@@ -112,7 +133,7 @@
         },
         {
             "id": null,
-            "keys": "ctrl+shift+comma"
+            "keys": "ctrl+shift+5"
         },
         {
             "id": null,
@@ -131,10 +152,6 @@
             "keys": "ctrl+shift+period"
         },
         {
-            "id": null,
-            "keys": "ctrl+shift+space"
-        },
-        {
             "id": "User.splitPane.A6751878",
             "keys": "ctrl+shift+\\"
         },
@@ -144,19 +161,19 @@
         },
         {
             "id": null,
-            "keys": "shift+insert"
-        },
-        {
-            "id": "User.duplicateTab",
-            "keys": "ctrl+shift+t"
-        },
-        {
-            "id": null,
             "keys": "ctrl+`"
         },
         {
             "id": null,
+            "keys": "shift+insert"
+        },
+        {
+            "id": null,
             "keys": "ctrl+shift+4"
+        },
+        {
+            "id": "User.duplicateTab",
+            "keys": "ctrl+shift+t"
         },
         {
             "id": "Terminal.OpenNewWindow",
@@ -185,17 +202,10 @@
         {
             "id": null,
             "keys": "ctrl+shift+9"
-        },
-        {
-            "id": "User.moveTab.EA39957B",
-            "keys": "alt+n"
-        },
-        {
-            "id": "Terminal.DuplicatePaneAuto",
-            "keys": "alt+shift+d"
         }
     ],
-    "newTabMenu": [
+    "newTabMenu": 
+    [
         {
             "icon": null,
             "profile": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
@@ -213,15 +223,19 @@
             "type": "remainingProfiles"
         }
     ],
-    "profiles": {
-        "defaults": {
+    "profiles": 
+    {
+        "defaults": 
+        {
             "elevate": false,
-            "font": {
+            "font": 
+            {
                 "face": "Consolas",
                 "weight": "normal"
             }
         },
-        "list": [
+        "list": 
+        [
             {
                 "commandline": "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
@@ -252,6 +266,18 @@
                 "hidden": false,
                 "name": "Ubuntu 24.04.1 LTS",
                 "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc"
+            },
+            {
+                "guid": "{4133d52f-ce95-5480-905a-7609ae31d5f9}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{4fae0d7f-f9e6-501f-9ea8-f2a669d98a5b}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
             }
         ]
     },
