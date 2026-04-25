@@ -141,10 +141,6 @@ PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 # https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c
 stty -ixon
 
-if [ -f "$HOME/.local/bin/env" ] ; then
-    . "$HOME/.local/bin/env"
-fi
-
 # Prevent accidental pip install into system Python
 export PIP_REQUIRE_VIRTUALENV=true
 
@@ -163,7 +159,14 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-export PATH="$HOME/.local/bin:$PATH"
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
 
 # https://www.youtube.com/watch?v=Wl7CDe9jsuo
 alias mv="mv -iv"
@@ -262,9 +265,19 @@ if [ -d "$HOME/.auth" ]; then
     done
 fi
 
+if [ -f "$HOME/.local/bin/env" ] ; then
+    . "$HOME/.local/bin/env"
+fi
+
+if [ -f "$HOME/.env" ] ; then
+    . "$HOME/.env"
+fi
+
 # zellij
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && . "$HOME/.cargo/env"
 # cargo install --locked zellij
+if [ -f "$HOME/.cargo/env" ] ; then
+    . "$HOME/.cargo/env"
 if [[ -z "$ZELLIJ" ]]; then
     zellij attach main -c
 elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then
@@ -275,4 +288,5 @@ elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then
         echo "$today" > "$local_motd"
     fi
     unset local_motd today
+fi
 fi
