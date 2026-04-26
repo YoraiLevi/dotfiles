@@ -84,12 +84,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# When the caller passes -Debug, opt out of the PS 5.1 "Inquire" prompt so that
-# every Write-Debug below just prints the path inline. PS 7+ already defaults to
-# Continue inside an advanced function, so this is a no-op there.
-if ($PSBoundParameters.ContainsKey('Debug')) {
-    $DebugPreference = 'Continue'
-}
+# All per-path tracing below is emitted on the Information stream (#6). It is
+# silent by default; pass -InformationAction Continue (or set
+# $InformationPreference = 'Continue') to see every path that is added /
+# forgotten / skipped. Tagged with [sweep][...] so it is greppable.
 
 if (-not (Test-Path -LiteralPath $ChezmoiPath -PathType Leaf)) {
     throw "ChezmoiPath '$ChezmoiPath' does not exist."
@@ -182,16 +180,16 @@ foreach ($recursiveFile in $recursiveFiles) {
                 continue
             }
             if (Test-Path -LiteralPath $localFilePath) {
-                Write-Debug "[sweep][forget:keep ] $localFilePath (still present in destination)"
+                Write-Information "[sweep][forget:keep ] $localFilePath (still present in destination)"
                 continue
             }
-            Write-Debug "[sweep][forget:queue] $localFilePath (vanished from destination)"
+            Write-Information "[sweep][forget:queue] $localFilePath (vanished from destination)"
             $filesToForget.Add($localFilePath)
         }
     }
 
     if ($do_recursive_add) {
-        Write-Debug "[sweep][marker:add  ] $localDirPath (from $($recursiveFile.FullName))"
+        Write-Information "[sweep][marker:add  ] $localDirPath (from $($recursiveFile.FullName))"
         $dirsToAddRecursive.Add($localDirPath)
     }
     # No else: a .recursive-forget (forget-only) marker has no add intent.
@@ -228,10 +226,10 @@ Get-ChildItem -Path $SourceDir -Recurse -Force -File -Filter '*.tmpl' -ErrorActi
             $normalized = $localPath
         }
         if ($templatedTargets.Add($normalized)) {
-            Write-Debug "[sweep][template     ] $normalized (from $($_.FullName))"
+            Write-Information "[sweep][template     ] $normalized (from $($_.FullName))"
         }
     }
-Write-Debug "[sweep][template     ] templated-target set size: $($templatedTargets.Count)"
+Write-Information "[sweep][template     ] templated-target set size: $($templatedTargets.Count)"
 
 $commonArgs = @()
 if ($DryRun) { $commonArgs += '--dry-run' }
@@ -289,7 +287,7 @@ function Invoke-ChezmoiWithRetry {
 # the service can never provide.
 if ($filesToForget.Count -gt 0) {
     Write-Host ("Invoke-ChezmoiReAddSweep: forget {0} file(s)" -f $filesToForget.Count) -ForegroundColor Cyan
-    foreach ($p in $filesToForget) { Write-Debug "[sweep][forget      ] $p" }
+    foreach ($p in $filesToForget) { Write-Information "[sweep][forget      ] $p" }
     Invoke-ChezmoiWithRetry -Label 'chezmoi forget' -Action {
         $null | & $ChezmoiPath forget @filesToForget @commonArgs --force
     }
@@ -303,7 +301,7 @@ if ($dirsToAddRecursive.Count -gt 0) {
     $pathsToAdd     = [System.Collections.Generic.List[string]]::new()
     $skippedAsTmpl  = [System.Collections.Generic.List[string]]::new()
     foreach ($dir in $dirsToAddRecursive) {
-        Write-Debug "[sweep][walk        ] $dir"
+        Write-Information "[sweep][walk        ] $dir"
         Get-ChildItem -LiteralPath $dir -Recurse -Force -File -ErrorAction SilentlyContinue |
             ForEach-Object {
                 try {
@@ -313,11 +311,11 @@ if ($dirsToAddRecursive.Count -gt 0) {
                     $normalized = $_.FullName
                 }
                 if ($templatedTargets.Contains($normalized)) {
-                    Write-Debug "[sweep][add:skip    ] $($_.FullName) (matches a *.tmpl source entry)"
+                    Write-Information "[sweep][add:skip    ] $($_.FullName) (matches a *.tmpl source entry)"
                     $skippedAsTmpl.Add($_.FullName)
                     return
                 }
-                Write-Debug "[sweep][add:queue   ] $($_.FullName)"
+                Write-Information "[sweep][add:queue   ] $($_.FullName)"
                 $pathsToAdd.Add($_.FullName)
             }
     }
@@ -325,15 +323,15 @@ if ($dirsToAddRecursive.Count -gt 0) {
     if ($pathsToAdd.Count -gt 0) {
         Write-Host ("Invoke-ChezmoiReAddSweep: add {0} non-templated path(s) under {1} marker dir(s) ({2} templated path(s) skipped)" -f `
             $pathsToAdd.Count, $dirsToAddRecursive.Count, $skippedAsTmpl.Count) -ForegroundColor Cyan
-        foreach ($p in $pathsToAdd)    { Write-Debug "[sweep][add         ] $p" }
-        foreach ($p in $skippedAsTmpl) { Write-Debug "[sweep][skip:templated] $p" }
+        foreach ($p in $pathsToAdd)    { Write-Information "[sweep][add         ] $p" }
+        foreach ($p in $skippedAsTmpl) { Write-Information "[sweep][skip:templated] $p" }
         Invoke-ChezmoiWithRetry -Label 'chezmoi add' -Action {
             $null | & $ChezmoiPath add @pathsToAdd @commonArgs --recursive=false
         }
     }
     elseif ($skippedAsTmpl.Count -gt 0) {
         Write-Host ("Invoke-ChezmoiReAddSweep: skipping recursive-add ({0} leaf(s) under marker dirs are all templated)" -f $skippedAsTmpl.Count) -ForegroundColor Yellow
-        foreach ($p in $skippedAsTmpl) { Write-Debug "[sweep][skip:templated] $p" }
+        foreach ($p in $skippedAsTmpl) { Write-Information "[sweep][skip:templated] $p" }
     }
     else {
         Write-Host "Invoke-ChezmoiReAddSweep: skipping recursive-add (marker dirs contain no leaf files)" -ForegroundColor Yellow
