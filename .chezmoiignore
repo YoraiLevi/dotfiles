@@ -6,6 +6,9 @@ my_start.bin
 .chezmoihooks
 .chezmoilib
 
+**/dot_auth/*
+**/.auth/*
+
 # ============================================================================
 # External-managed targets - MUST stay out of chezmoi source state
 # ----------------------------------------------------------------------------
