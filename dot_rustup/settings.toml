@@ -1,0 +1,5 @@
+version = "12"
+default_toolchain = "stable-x86_64-pc-windows-msvc"
+profile = "default"
+
+[overrides]
