@@ -281,11 +281,11 @@ if [ -f "$HOME/.cargo/env" ] ; then
 
 # If running in VSCode/Cursor terminal, exit bashrc early to avoid double-session (mirrors pwsh logic)
 if [[ "$TERM_PROGRAM" == "vscode" || "$VSCODE_INJECTION" == "1" ]]; then
-    echo "VSCode/Cursor terminal detected, exiting bashrc"
+    # echo "VSCode/Cursor terminal detected, exiting bashrc"
     return
 fi
 if [[ "$VSCODE_CLI" == "1" || "$CURSOR_AGENT" == "1" || -n "$VSCODE_PID" ]]; then
-    echo "VSCode/Cursor AI agent terminal detected, exiting bashrc"
+    # echo "VSCode/Cursor AI agent terminal detected, exiting bashrc"
     return
 fi
 

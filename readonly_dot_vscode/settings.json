@@ -285,43 +285,33 @@
 		"editor.defaultFormatter": "redhat.vscode-xml"
 	},
 	"remote.SSH.remotePlatform": {
-		"calc1-104003": "linux"
+		"calc1-104003": "linux",
+		"calc2-104004": "linux"
 	},
 	"search.useIgnoreFiles": false,
 	"terminal.integrated.profiles.linux": {
-		"agent-bash": {
+		"integrated-bash": {
 			"path": "/bin/bash",
 			"args": [
 				"-l"
 			],
 			"env": {
-				"AGENTSSS": "HELLO"
 			},
 			"icon": "terminal-bash"
 		},
 	},
-	"terminal.integrated.automationProfile.linux": {
-		"path": "/bin/bash",
-		"args": [
-			"-l"
-		],
-		"env": {
-			"AGENTSSS": "HELLO"
-		}
-	},
-	"terminal.integrated.defaultProfile.linux": "agent-bash",
+	"terminal.integrated.defaultProfile.linux": "integrated-bash",
 	"terminal.integrated.profiles.windows": {
-		"agent-pwsh": {
+		"integrated-pwsh": {
 			"path": "pwsh",
 			"args": [
 				"-NoLogo",
-				"-NoProfile"
 			],
 			"env": {
 			},
 			"icon": "terminal-powershell"
 		}
 	},
-	"terminal.integrated.defaultProfile.windows": "agent-pwsh"
+	"terminal.integrated.defaultProfile.windows": "integrated-pwsh"
 	
 }

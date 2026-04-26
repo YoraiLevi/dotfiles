@@ -3,7 +3,7 @@
 if [ -n "$BASH_VERSION" ]; then
     # include .bashrc if it exists
     if [ -f "$HOME/.agents/cursor/.bashrc" ]; then
-	. "$HOME/.agents/cursor/.bashrc"
+	[ -n "$CURSOR_AGENT" ] && . "$HOME/.agents/cursor/.bashrc"
     fi
 fi
 

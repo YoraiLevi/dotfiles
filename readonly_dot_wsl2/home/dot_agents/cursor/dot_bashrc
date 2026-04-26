@@ -1,8 +1,4 @@
-[ -n "$CURSOR_AGENT" ] || return 0
-
-# Everything below runs ONLY inside the Cursor agent shell.
-# Put your exports / aliases / PATH tweaks / tool inits here.
-# Example:
-# export FOO=bar
-# export PATH="$HOME/.local/bin:$PATH"
-# source ~/.bashrc   # if you really want the full interactive rc; usually avoid
+# this is a custom behavior to include the .bashrc file in the agent shell
+if [ -f "$HOME/.bashrc" ]; then
+	. "$HOME/.bashrc"
+fi
