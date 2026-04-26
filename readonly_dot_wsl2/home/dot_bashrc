@@ -290,3 +290,5 @@ elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then
     unset local_motd today
 fi
 fi
+
+echo 1
