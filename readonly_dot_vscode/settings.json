@@ -71,7 +71,6 @@
 	"search.decorations.badges": false,
 	"terminal.integrated.suggest.enabled": false, // The suggestions are annoying. keep them off
 	"terminal.integrated.scrollback": 90000,
-	
 	"vscode-default-keybindings.removeOSKeybindings": true,
 	"vscode-default-keybindings.windowsKeybindings": true,
 	"window.restoreWindows": "all", // important
@@ -176,7 +175,7 @@
 			//"peekViewEditor.matchHighlightBorder": null,
 			//"terminal.findMatchHighlightBorder": null,
 			"foreground": "#ffffff",
-			"editor.foreground":"#ffffff",
+			"editor.foreground": "#ffffff",
 			"editor.selectionBackground": "#acacac44", // Selection color
 			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
 			"editor.stackFrameHighlightBackground": "#0000ff", // This is related to Debug?
@@ -289,4 +288,40 @@
 		"calc1-104003": "linux"
 	},
 	"search.useIgnoreFiles": false,
+	"terminal.integrated.profiles.linux": {
+		"agent-bash": {
+			"path": "/bin/bash",
+			"args": [
+				"-l"
+			],
+			"env": {
+				"AGENTSSS": "HELLO"
+			},
+			"icon": "terminal-bash"
+		},
+	},
+	"terminal.integrated.automationProfile.linux": {
+		"path": "/bin/bash",
+		"args": [
+			"-l"
+		],
+		"env": {
+			"AGENTSSS": "HELLO"
+		}
+	},
+	"terminal.integrated.defaultProfile.linux": "agent-bash",
+	"terminal.integrated.profiles.windows": {
+		"agent-pwsh": {
+			"path": "pwsh",
+			"args": [
+				"-NoLogo",
+				"-NoProfile"
+			],
+			"env": {
+			},
+			"icon": "terminal-powershell"
+		}
+	},
+	"terminal.integrated.defaultProfile.windows": "agent-pwsh"
+	
 }

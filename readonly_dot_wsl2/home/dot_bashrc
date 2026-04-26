@@ -278,6 +278,18 @@ fi
 # cargo install --locked zellij
 if [ -f "$HOME/.cargo/env" ] ; then
     . "$HOME/.cargo/env"
+
+# If running in VSCode/Cursor terminal, exit bashrc early to avoid double-session (mirrors pwsh logic)
+if [[ "$TERM_PROGRAM" == "vscode" || "$VSCODE_INJECTION" == "1" ]]; then
+    echo "VSCode/Cursor terminal detected, exiting bashrc"
+    return
+fi
+if [[ "$VSCODE_CLI" == "1" || "$CURSOR_AGENT" == "1" || -n "$VSCODE_PID" ]]; then
+    echo "VSCode/Cursor AI agent terminal detected, exiting bashrc"
+    return
+fi
+
+
 if [[ -z "$ZELLIJ" ]]; then
     zellij attach main -c
 elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then
