@@ -16,11 +16,20 @@
 
     The sweep produces at most two top-level chezmoi invocations:
         chezmoi forget <missing-paths> --force
-        chezmoi add <dirs> --recursive=true --exclude=templates
+        chezmoi add <leaf-files-under-each-marker-dir> --recursive=false
 
-    Recursive add uses --exclude=templates so paths already managed as templates
-    (e.g. symlink_*.tmpl) are not re-captured from disk, which would strip the template
-    attribute and block or hang non-interactive runs.
+    "Recursive-add" markers are honoured by enumerating every leaf file under the
+    marker's destination directory ourselves (PowerShell side) and passing the
+    explicit, filtered list to chezmoi. Two paths are dropped before the call:
+      * any destination path whose source counterpart is a template (.tmpl): chezmoi
+        would otherwise prompt "adding X would remove template attribute, continue?"
+        and the prompt has no non-interactive bypass except --force, which silently
+        flattens the template (defeating its purpose).
+      * (implicit) the templated source files themselves -- they live in source, not
+        in the destination dir we walk.
+    Every chezmoi invocation also closes its stdin (`$null |`) so any unexpected
+    confirmation prompt under the service (no TTY) fails fast with EOF instead of
+    blocking the sweep until Ctrl+C.
 
     Because each invocation is top-level (not nested inside another chezmoi process), it
     acquires and releases the BoltDB persistent-state lock cleanly, avoiding the
@@ -179,6 +188,38 @@ foreach ($recursiveFile in $recursiveFiles) {
     # Only an explicit .recursive-add suffix schedules a chezmoi add.
 }
 
+# Build the templated-target exclusion set.
+#
+# We walk source for *.tmpl files and translate each to its destination path with
+# ConvertTo-LocalPath, then strip the trailing .tmpl (chezmoi's "this entry is a
+# template" marker; the actual destination filename has no .tmpl suffix). The
+# resulting set lets us skip any destination path whose source counterpart is a
+# template, so the recursive-add never prompts to "remove template attribute".
+$templatedTargets = [System.Collections.Generic.HashSet[string]]::new(
+    [System.StringComparer]::OrdinalIgnoreCase
+)
+Get-ChildItem -Path $SourceDir -Recurse -Force -File -Filter '*.tmpl' -ErrorAction SilentlyContinue |
+    ForEach-Object {
+        try {
+            $localPath = ConvertTo-LocalPath $_.FullName -ErrorAction Stop
+        }
+        catch {
+            Write-Verbose "Templated-target probe: failed to map $($_.FullName); skipping"
+            return
+        }
+        if (-not $localPath) { return }
+        if ($localPath.EndsWith('.tmpl', [System.StringComparison]::OrdinalIgnoreCase)) {
+            $localPath = $localPath.Substring(0, $localPath.Length - '.tmpl'.Length)
+        }
+        try {
+            $normalized = [System.IO.Path]::GetFullPath($localPath)
+        }
+        catch {
+            $normalized = $localPath
+        }
+        [void]$templatedTargets.Add($normalized)
+    }
+
 $commonArgs = @()
 if ($DryRun) { $commonArgs += '--dry-run' }
 if ($PSBoundParameters.ContainsKey('Debug')) { $commonArgs += '--debug' }
@@ -228,19 +269,53 @@ function Invoke-ChezmoiWithRetry {
 # Execute the batched operations. Each block is guarded so a failure in one (e.g. a
 # transient lock contention from some other chezmoi invocation) does not prevent the
 # others from running.
+#
+# Every chezmoi invocation pipes $null to stdin so that any unexpected confirmation
+# prompt (template/private/encrypted attribute removal, etc.) hits EOF and exits
+# non-zero instead of blocking the sweep forever waiting for a user response that
+# the service can never provide.
 if ($filesToForget.Count -gt 0) {
     Write-Host ("Invoke-ChezmoiReAddSweep: forget {0} file(s)" -f $filesToForget.Count) -ForegroundColor Cyan
     Invoke-ChezmoiWithRetry -Label 'chezmoi forget' -Action {
-        & $ChezmoiPath forget @filesToForget @commonArgs --force
+        $null | & $ChezmoiPath forget @filesToForget @commonArgs --force
     }
 }
 
 if ($dirsToAddRecursive.Count -gt 0) {
-    Write-Host ("Invoke-ChezmoiReAddSweep: add --recursive=true --exclude=templates {0} dir(s)" -f $dirsToAddRecursive.Count) -ForegroundColor Cyan
-    Invoke-ChezmoiWithRetry -Label 'chezmoi add --recursive=true' -Action {
-        # Skip template-backed source entries: recursive add must not flatten .tmpl
-        # symlinks/files into literal captures (chezmoi would prompt or hang without a TTY).
-        & $ChezmoiPath add @dirsToAddRecursive @commonArgs --recursive=true --exclude=templates
+    # Translate each "recursive-add" marker into an explicit, pre-filtered file list.
+    # We enumerate the marker's destination directory ourselves (skipping anything in
+    # the templated-target set) and pass --recursive=false so chezmoi never descends
+    # back into a templated subpath we just excluded.
+    $pathsToAdd = [System.Collections.Generic.List[string]]::new()
+    foreach ($dir in $dirsToAddRecursive) {
+        Get-ChildItem -LiteralPath $dir -Recurse -Force -File -ErrorAction SilentlyContinue |
+            ForEach-Object {
+                try {
+                    $normalized = [System.IO.Path]::GetFullPath($_.FullName)
+                }
+                catch {
+                    $normalized = $_.FullName
+                }
+                if ($templatedTargets.Contains($normalized)) {
+                    Write-Verbose "Skipping templated target: $($_.FullName)"
+                    return
+                }
+                $pathsToAdd.Add($_.FullName)
+            }
+    }
+
+    if ($pathsToAdd.Count -gt 0) {
+        Write-Host ("Invoke-ChezmoiReAddSweep: add {0} non-templated path(s) under {1} marker dir(s) ({2} templated path(s) skipped)" -f `
+            $pathsToAdd.Count, $dirsToAddRecursive.Count, $templatedTargets.Count) -ForegroundColor Cyan
+        Invoke-ChezmoiWithRetry -Label 'chezmoi add' -Action {
+            $null | & $ChezmoiPath add @pathsToAdd @commonArgs --recursive=false
+        }
+    }
+    elseif ($templatedTargets.Count -gt 0) {
+        Write-Host "Invoke-ChezmoiReAddSweep: skipping recursive-add (every leaf under marker dirs is templated)" -ForegroundColor Yellow
+    }
+    else {
+        Write-Host "Invoke-ChezmoiReAddSweep: skipping recursive-add (marker dirs contain no leaf files)" -ForegroundColor Yellow
     }
 }
 

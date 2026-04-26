@@ -71,6 +71,7 @@
 	"search.decorations.badges": false,
 	"terminal.integrated.suggest.enabled": false, // The suggestions are annoying. keep them off
 	"terminal.integrated.scrollback": 90000,
+	
 	"vscode-default-keybindings.removeOSKeybindings": true,
 	"vscode-default-keybindings.windowsKeybindings": true,
 	"window.restoreWindows": "all", // important

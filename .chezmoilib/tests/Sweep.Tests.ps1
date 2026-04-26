@@ -54,23 +54,22 @@ Describe 'Invoke-ChezmoiReAddSweep' {
             ($forgets[0].argv -join ' ') | Should -Not -Match 'keep\.txt'
 
             $adds.Count | Should -Be 1
-            ($adds[0].argv -join ' ') | Should -Match '--recursive=true'
-            ($adds[0].argv -join ' ') | Should -Match '--exclude=templates'
-            ($adds[0].argv -join ' ') | Should -Match '\.testdir'
+            ($adds[0].argv -join ' ') | Should -Match '--recursive=false'
+            ($adds[0].argv -join ' ') | Should -Match '\.testdir.*keep\.txt'
+            ($adds[0].argv -join ' ') | Should -Not -Match 'gone\.txt'
         }
     }
 
     Context 'recursive-add marker without forget' {
-        It 'does not forget anything, adds the dir recursively' {
+        It 'does not forget anything, adds enumerated leaf files (no recursion arg conflict)' {
             $markerDir = Join-Path $script:tree.SourceDir 'readonly_dot_addonly'
             New-Item -ItemType Directory -Path $markerDir -Force | Out-Null
             Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.recursive-add') -Value '' -NoNewline
             'x' | Set-Content -LiteralPath (Join-Path $markerDir 'x.txt')
 
-            New-Item -ItemType Directory -Path (Join-Path $script:tree.DestDir '.addonly') -Force | Out-Null
-            # no files in destination - should not forget anything because there is
-            # nothing in source that needs forgetting, and should still queue the
-            # dir for a recursive add so new files are detected.
+            $destSub = Join-Path $script:tree.DestDir '.addonly'
+            New-Item -ItemType Directory -Path $destSub -Force | Out-Null
+            'x' | Set-Content -LiteralPath (Join-Path $destSub 'x.txt')
 
             & $script:sweep -ChezmoiPath $script:mock.Path -SourceDir $script:tree.SourceDir -DestDir $script:tree.DestDir
 
@@ -80,8 +79,8 @@ Describe 'Invoke-ChezmoiReAddSweep' {
 
             $forgets.Count | Should -Be 0
             $adds.Count    | Should -Be 1
-            ($adds[0].argv -join ' ') | Should -Match '--recursive=true'
-            ($adds[0].argv -join ' ') | Should -Match '--exclude=templates'
+            ($adds[0].argv -join ' ') | Should -Match '--recursive=false'
+            ($adds[0].argv -join ' ') | Should -Match '\.addonly.*x\.txt'
         }
     }
 
@@ -140,7 +139,7 @@ Describe 'Invoke-ChezmoiReAddSweep' {
             $calls = & $script:mock.GetCalls
             $adds  = @($calls | Where-Object { $_.command -eq 'add' })
             $adds.Count | Should -Be 2 -Because 'lock-timeout consumes one attempt + one retry; further retries indicate a regression'
-            $adds | ForEach-Object { ($_.argv -join ' ') | Should -Match '--exclude=templates' }
+            $adds | ForEach-Object { ($_.argv -join ' ') | Should -Match '--recursive=false' }
         }
     }
 
@@ -149,7 +148,9 @@ Describe 'Invoke-ChezmoiReAddSweep' {
             $markerDir = Join-Path $script:tree.SourceDir 'readonly_dot_permfail'
             New-Item -ItemType Directory -Path $markerDir -Force | Out-Null
             Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.recursive-add') -Value '' -NoNewline
-            New-Item -ItemType Directory -Path (Join-Path $script:tree.DestDir '.permfail') -Force | Out-Null
+            $destSub = Join-Path $script:tree.DestDir '.permfail'
+            New-Item -ItemType Directory -Path $destSub -Force | Out-Null
+            'pinned' | Set-Content -LiteralPath (Join-Path $destSub 'kept.txt')
             New-Item -ItemType File -Path $script:mock.PermFailPath -Force | Out-Null
 
             { & $script:sweep -ChezmoiPath $script:mock.Path -SourceDir $script:tree.SourceDir -DestDir $script:tree.DestDir } |
@@ -165,7 +166,9 @@ Describe 'Invoke-ChezmoiReAddSweep' {
             $markerDir = Join-Path $script:tree.SourceDir 'readonly_dot_auto'
             New-Item -ItemType Directory -Path $markerDir -Force | Out-Null
             Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.recursive-add') -Value '' -NoNewline
-            New-Item -ItemType Directory -Path (Join-Path $script:tree.DestDir '.auto') -Force | Out-Null
+            $destSub = Join-Path $script:tree.DestDir '.auto'
+            New-Item -ItemType Directory -Path $destSub -Force | Out-Null
+            'pinned' | Set-Content -LiteralPath (Join-Path $destSub 'kept.txt')
 
             $savedSource = $env:CHEZMOI_SOURCE_DIR
             $savedDest = $env:CHEZMOI_DEST_DIR
@@ -181,6 +184,32 @@ Describe 'Invoke-ChezmoiReAddSweep' {
             @($calls | Where-Object { $_.command -eq 'source-path' }).Count | Should -BeGreaterOrEqual 1
             @($calls | Where-Object { $_.command -eq 'target-path' }).Count | Should -BeGreaterOrEqual 1
             @($calls | Where-Object { $_.command -eq 'add' }).Count | Should -Be 1
+        }
+    }
+
+    Context 'templated source entries are excluded from recursive add' {
+        It 'never passes a destination path whose source counterpart is a *.tmpl file' {
+            $markerDir = Join-Path $script:tree.SourceDir 'readonly_dot_templated'
+            New-Item -ItemType Directory -Path $markerDir -Force | Out-Null
+            Set-Content -LiteralPath (Join-Path $markerDir '.chezmoi-re-add.recursive-add') -Value '' -NoNewline
+            # Source: a templated symlink + a plain file. Both already exist on disk
+            # in the destination (so the recursive-add walk would otherwise visit them).
+            'symlink-template' | Set-Content -LiteralPath (Join-Path $markerDir 'symlink_link.tmpl')
+            'plain-source'     | Set-Content -LiteralPath (Join-Path $markerDir 'plain.txt')
+
+            $destSub = Join-Path $script:tree.DestDir '.templated'
+            New-Item -ItemType Directory -Path $destSub -Force | Out-Null
+            'in-dest' | Set-Content -LiteralPath (Join-Path $destSub 'link')
+            'in-dest' | Set-Content -LiteralPath (Join-Path $destSub 'plain.txt')
+
+            & $script:sweep -ChezmoiPath $script:mock.Path -SourceDir $script:tree.SourceDir -DestDir $script:tree.DestDir
+
+            $calls = & $script:mock.GetCalls
+            $adds  = @($calls | Where-Object { $_.command -eq 'add' })
+            $adds.Count | Should -Be 1
+            $argline = $adds[0].argv -join ' '
+            $argline | Should -Match 'plain\.txt'
+            $argline | Should -Not -Match '(?i)\\link($|[\\ ])' -Because 'the templated dest path must be excluded from recursive-add'
         }
     }
 

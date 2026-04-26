@@ -28,6 +28,8 @@ if (($ENV:CHEZMOI -eq 1)) {
     # why would you edit with chezmoi active anyway?
     return
 }
+
+
 function global:Set-MyPrompt {
     try {
         Import-Module posh-git -ErrorAction Stop
@@ -830,15 +832,20 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
 #     $script:_lazyRunspace.Dispose()
 # }
 
-function ssh {
-    param($Target)
-    tssh $Target
-    # Command to run after exit
-    Write-Host "Back on local machine: $(Get-Date)" -ForegroundColor Red -BackgroundColor Cyan -NoNewline
-}
-# Set-Alias -Name ssh -Value tssh -Scope Global
+Set-Alias -Name ssh -Value tssh -Scope Global
 
 Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
+
+if ($ENV:TERM_PROGRAM -eq "vscode" -or $ENV:VSCODE_INJECTION -eq 1){
+    # Cursor/VSCode terminal
+    return
+
+}
+if ($ENV:VSCODE_CLI -eq 1 -or $ENV:CURSOR_AGENT -eq 1 -or $ENV:VSCODE_PID -eq 1) {
+    # Cursor AI agent terminal
+    return
+}
+
 $ENV:SHELL = 'pwsh'
 $env:TERM = 'xterm-256color'
 if (-not $ENV:ZELLIJ) {
