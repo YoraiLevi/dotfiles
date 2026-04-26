@@ -1,2 +1,5 @@
 .auth/*
+!.auth/.keep
+
 dot_auth/*
+!dot_auth/.keep
