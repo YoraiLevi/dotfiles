@@ -242,11 +242,69 @@ if ($PSBoundParameters.ContainsKey('Verbose')) { $commonArgs += '--verbose' }
 # Retrying is safe here because every chezmoi operation in this sweep (forget / add)
 # is idempotent with respect to the destination state: if the first attempt partially
 # succeeded, a retry re-checks the destination and only does what is still needed.
+# Helpers for failure diagnostics. These fire whenever chezmoi returns a non-zero
+# exit code so that the caller can see *what we submitted* and *why chezmoi is
+# unhappy*, rather than a generic "exited with code 1" wrapped inside the
+# hook's already-generic "non-fatal" warning.
+function Write-SweepSubmittedList {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$Label,
+        [Parameter(Mandatory)][AllowEmptyCollection()][string[]]$Paths
+    )
+    if ($Paths.Count -eq 0) { return }
+    Write-Warning ("{0}: sweep submitted {1} path(s):" -f $Label, $Paths.Count)
+    foreach ($p in $Paths) { Write-Warning "    - $p" }
+}
+
+function Write-SweepChezmoiHint {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string]$Label,
+        [Parameter(Mandatory)][string]$Output
+    )
+    # "path: not managed" - we asked chezmoi to forget a target it never
+    # adopted. Typical root causes on Windows: an out-of-band file copy (e.g.
+    # '- Copy.gitignore', '* (2).txt'), or a source file without any attribute
+    # prefix (dot_, private_dot_, readonly_dot_, ...) whose literal filename
+    # does not round-trip to a real destination target.
+    $m = [regex]::Match($Output, '(?m)^chezmoi:\s*(?<path>.+?):\s*not managed\s*$')
+    if ($m.Success) {
+        $offender = $m.Groups['path'].Value.Trim()
+        Write-Warning ("{0}: chezmoi reports '{1}' as not managed." -f $Label, $offender)
+        Write-Warning "    hint: the source-tree entry for that path is either"
+        Write-Warning "            (a) missing a chezmoi attribute prefix (dot_, private_dot_, readonly_dot_, ...), or"
+        Write-Warning "            (b) an out-of-band copy/backup (e.g. '- Copy.*', '* (2).*', '~*', '.bak')."
+        Write-Warning "    fix:  inspect the source tree under `$CHEZMOI_SOURCE_DIR and rename or delete that file."
+    }
+
+    # "would remove template attribute" - pre-filter should have caught this.
+    # Either the template set was empty because the ConvertTo-LocalPath mapping
+    # failed, or a new *.tmpl landed in source after we built the set.
+    if ($Output -match '(?i)would remove\s+.+\s+attribute') {
+        Write-Warning ("{0}: chezmoi wanted to strip an attribute (template/private/encrypted) that the sweep pre-filter should have excluded." -f $Label)
+        Write-Warning "    hint: rerun with -InformationAction Continue to see the templated-target set and which path slipped through."
+    }
+
+    # "file: file does not exist in source state" etc.
+    if ($Output -match '(?i)does not exist in source state') {
+        Write-Warning ("{0}: one or more paths are absent from source state." -f $Label)
+        Write-Warning "    hint: the destination file is not (yet) chezmoi-managed; a forget or add should be rescheduled only after the source counterpart exists."
+    }
+}
+
+# Invoke a top-level chezmoi command with a small retry loop. BoltDB occasionally
+# reports "timeout obtaining persistent state lock" on Windows because the lock file
+# is briefly held by a stale chezmoi process, an AV scanner, or a filesystem indexer.
+# Retrying is safe here because every chezmoi operation in this sweep (forget / add)
+# is idempotent with respect to the destination state: if the first attempt partially
+# succeeded, a retry re-checks the destination and only does what is still needed.
 function Invoke-ChezmoiWithRetry {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Label,
         [Parameter(Mandatory)][scriptblock]$Action,
+        [AllowEmptyCollection()][string[]]$Paths = @(),
         [int]$MaxAttempts = 3,
         [int]$InitialDelaySeconds = 2
     )
@@ -269,8 +327,11 @@ function Invoke-ChezmoiWithRetry {
         if ($exitCode -ne 0) {
             if ($isLockTimeout) {
                 Write-Warning ("{0}: lock contention persisted after {1} attempt(s); skipping" -f $Label, $attempt)
+                Write-SweepSubmittedList -Label $Label -Paths $Paths
                 return
             }
+            Write-SweepSubmittedList -Label $Label -Paths $Paths
+            Write-SweepChezmoiHint     -Label $Label -Output $outputText
             throw ("{0}: chezmoi exited with code {1} (non-lock failure)" -f $Label, $exitCode)
         }
         return
@@ -288,7 +349,7 @@ function Invoke-ChezmoiWithRetry {
 if ($filesToForget.Count -gt 0) {
     Write-Host ("Invoke-ChezmoiReAddSweep: forget {0} file(s)" -f $filesToForget.Count) -ForegroundColor Cyan
     foreach ($p in $filesToForget) { Write-Information "[sweep][forget      ] $p" }
-    Invoke-ChezmoiWithRetry -Label 'chezmoi forget' -Action {
+    Invoke-ChezmoiWithRetry -Label 'chezmoi forget' -Paths $filesToForget -Action {
         $null | & $ChezmoiPath forget @filesToForget @commonArgs --force
     }
 }
@@ -325,7 +386,7 @@ if ($dirsToAddRecursive.Count -gt 0) {
             $pathsToAdd.Count, $dirsToAddRecursive.Count, $skippedAsTmpl.Count) -ForegroundColor Cyan
         foreach ($p in $pathsToAdd)    { Write-Information "[sweep][add         ] $p" }
         foreach ($p in $skippedAsTmpl) { Write-Information "[sweep][skip:templated] $p" }
-        Invoke-ChezmoiWithRetry -Label 'chezmoi add' -Action {
+        Invoke-ChezmoiWithRetry -Label 'chezmoi add' -Paths $pathsToAdd -Action {
             $null | & $ChezmoiPath add @pathsToAdd @commonArgs --recursive=false
         }
     }
