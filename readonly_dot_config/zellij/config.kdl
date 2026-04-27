@@ -8,7 +8,7 @@
 //   DIRECT ACTIONS (Ctrl+G → key):
 //     \   split right       -   split down
 //     arrows  focus pane    w   close pane        z   zoom/fullscreen
-//     f   toggle float      c   new tab           d   detach
+//     f   scrollback search c   new tab           d   detach
 //     [/] prev/next tab     e   edit scrollback in nano
 //     Tab toggle last tab   Ctrl+G  unlock inner (nested session)
 //
@@ -73,7 +73,7 @@ keybinds clear-defaults=true {
         // Pane management
         bind "w" { CloseFocus; SwitchToMode "locked"; }
         bind "z" { ToggleFocusFullscreen; SwitchToMode "locked"; }
-        bind "f" { ToggleFloatingPanes; SwitchToMode "locked"; }
+        bind "f" { SwitchToMode "entersearch"; SearchInput 0; }
         // Pane focus
         bind "left"  { MoveFocus "left"; SwitchToMode "locked"; }
         bind "down"  { MoveFocus "down"; SwitchToMode "locked"; }
