@@ -10,7 +10,7 @@
 //     arrows  focus pane    w   close pane        z   zoom/fullscreen
 //     f   toggle float      c   new tab           d   detach
 //     [/] prev/next tab     e   edit scrollback in nano
-//     Tab toggle last tab
+//     Tab toggle last tab   Ctrl+G  unlock inner (nested session)
 //
 //   PLUGINS (Ctrl+G → key):
 //     a   search tabs (room)         ?   keybind cheatsheet (forgot)
@@ -27,8 +27,8 @@
 
 // ── Behavior ───────────────────────────────────────────────
 default_mode "locked"
-on_force_close "detach"
-session_serialization true
+on_force_close "quit"
+session_serialization false
 serialize_pane_viewport true
 scrollback_lines_to_serialize 10000
 scroll_buffer_size 50000
@@ -63,6 +63,8 @@ keybinds clear-defaults=true {
     }
 
     normal {
+        // Forward Ctrl+G to inner session (double-tap: Ctrl+G → Ctrl+G)
+        bind "Ctrl g" { Write 7; SwitchToMode "locked"; }
         // Splits
         bind "\\" { NewPane "right"; SwitchToMode "locked"; }
         bind "-"  { NewPane "down"; SwitchToMode "locked"; }

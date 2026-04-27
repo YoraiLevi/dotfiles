@@ -241,6 +241,8 @@ extract () {
     done
 }
 
+nop() { return; }
+
 # fzf (history search)
 # git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 # ~/.fzf/install --no-bash --no-zsh --no-fish --bin
@@ -291,7 +293,8 @@ fi
 
 
 if [[ -z "$ZELLIJ" ]]; then
-    zellij
+    nop
+    #     zellij attach main -c
 elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then
     local_motd="/tmp/.motd-shown-$(id -u)"
     today=$(date +%Y-%m-%d)

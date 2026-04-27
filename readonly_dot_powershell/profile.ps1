@@ -841,13 +841,15 @@ if ($ENV:TERM_PROGRAM -eq "vscode" -or $ENV:VSCODE_INJECTION -eq 1){
     return
 
 }
+
 if ($ENV:VSCODE_CLI -eq 1 -or $ENV:CURSOR_AGENT -eq 1 -or $ENV:VSCODE_PID -ne $null) {
     # Cursor AI agent terminal
     return
 }
-
-$ENV:SHELL = 'pwsh'
-$env:TERM = 'xterm-256color'
-if (-not $ENV:ZELLIJ) {
-    zellij attach main -c
+if ($ENV:ZELLIJ) {
+    $env:TERM = 'xterm-256color'
+    $ENV:SHELL = 'pwsh'
 }
+# if (-not $ENV:ZELLIJ) {
+#     zellij
+# }
