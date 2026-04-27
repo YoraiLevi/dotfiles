@@ -4,16 +4,16 @@
     "actions": 
     [
         {
-            "command": "experimental.openScratchpad",
-            "id": "User.experimental.openScratchpad"
-        },
-        {
             "command": 
             {
                 "action": "moveTab",
                 "window": "new"
             },
             "id": "User.moveTab.EA39957B"
+        },
+        {
+            "command": "experimental.openScratchpad",
+            "id": "User.experimental.openScratchpad"
         },
         {
             "command": 
@@ -60,7 +60,7 @@
     "alwaysOnTop": false,
     "copyFormatting": "none",
     "copyOnSelect": true,
-    "defaultProfile": "{cc590fde-1eb2-4d1e-8b03-bca6db0bdf23}",
+    "defaultProfile": "{681405cc-6475-4a68-b6c7-3845db706f9b}",
     "keybindings": 
     [
         {
@@ -68,24 +68,24 @@
             "keys": "ctrl+shift+c"
         },
         {
-            "id": "Terminal.CopyToClipboard",
-            "keys": "ctrl+c"
-        },
-        {
-            "id": "User.paste",
-            "keys": "ctrl+shift+v"
+            "id": null,
+            "keys": "ctrl+t"
         },
         {
             "id": null,
             "keys": "ctrl+p"
         },
         {
-            "id": null,
-            "keys": "ctrl+t"
+            "id": "User.paste",
+            "keys": "ctrl+shift+v"
+        },
+        {
+            "id": "Terminal.CopyToClipboard",
+            "keys": "ctrl+c"
         },
         {
             "id": null,
-            "keys": "ctrl+v"
+            "keys": "ctrl+comma"
         },
         {
             "id": "Terminal.FindText",
@@ -93,7 +93,7 @@
         },
         {
             "id": null,
-            "keys": "ctrl+comma"
+            "keys": "ctrl+v"
         },
         {
             "id": null,
@@ -251,20 +251,22 @@
                 "startingDirectory": "%USERPROFILE%"
             },
             {
-                "name": "WSL2 (Zellij)",
-                "guid": "{681405cc-6475-4a68-b6c7-3845db706f9b}",
-                "commandline": "wsl ~/.cargo/bin/zellij",
                 "colorScheme": "Ubuntu-24.04-ColorScheme",
+                "commandline": "wsl ~/.cargo/bin/zellij",
                 "cursorShape": "filledBox",
-                "font": {
+                "environment": 
+                {
+                    "TERM": "xterm-256color"
+                },
+                "font": 
+                {
                     "size": 13
                 },
+                "guid": "{681405cc-6475-4a68-b6c7-3845db706f9b}",
                 "hidden": false,
                 "icon": "C:\\Users\\devic\\.wsl2\\wsl.ico",
-                "startingDirectory": "~",
-                "environment": {
-                    "TERM": "xterm-256color"
-                }
+                "name": "WSL2 (Zellij)",
+                "startingDirectory": "~"
             },
             {
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
@@ -309,10 +311,7 @@
                 "hidden": false,
                 "name": "Developer PowerShell for VS 2022",
                 "source": "Windows.Terminal.VisualStudio"
-            },
-          
-            
-            
+            }
         ]
     },
     "schemes": [],
