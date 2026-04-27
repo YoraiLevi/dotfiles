@@ -850,6 +850,8 @@ if ($ENV:ZELLIJ) {
     $env:TERM = 'xterm-256color'
     $ENV:SHELL = 'pwsh'
 }
-# if (-not $ENV:ZELLIJ) {
-#     zellij
-# }
+if (-not $ENV:ZELLIJ) {
+    if ($ENV:SSH_CONNECTION -ne $null) {
+        zellij attach main -c
+    }
+}

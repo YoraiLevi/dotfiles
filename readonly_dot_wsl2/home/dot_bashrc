@@ -296,14 +296,16 @@ if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; th
     # echo "Running inside WSL"
     alias explorer="explorer.exe"
     alias chezmoi="chezmoi.exe"
+    alias wsl="wsl.exe"
 else
     nop
     # echo "Running outside WSL"
 fi
 
 if [[ -z "$ZELLIJ" ]]; then
-    nop
-    #     zellij attach main -c
+    if [ -n "${SSH_CONNECTION:-}" ]; then
+        zellij attach main -c
+    fi
 elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then
     local_motd="/tmp/.motd-shown-$(id -u)"
     today=$(date +%Y-%m-%d)
