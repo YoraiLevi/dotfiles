@@ -291,6 +291,15 @@ if [[ "$VSCODE_CLI" == "1" || "$CURSOR_AGENT" == "1" || -n "$VSCODE_PID" ]]; the
     return
 fi
 
+# Detect if running inside WSL
+if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; then
+    # echo "Running inside WSL"
+    alias explorer="explorer.exe"
+    alias chezmoi="chezmoi.exe"
+else
+    nop
+    # echo "Running outside WSL"
+fi
 
 if [[ -z "$ZELLIJ" ]]; then
     nop
