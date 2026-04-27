@@ -619,6 +619,10 @@ function Invoke-SyncCycle {
         $null = choco export "$(Join-Path $ENV:USERPROFILE ".choco" "packages.config")"
         $null = wsl apt-mark showmanual | Out-File $(Join-Path $ENV:USERPROFILE ".wsl2" "apt-packages.txt")
         $null = wsl snap list | Out-File $(Join-Path $ENV:USERPROFILE ".wsl2" "snap-packages.txt")
+        # cat /etc/apt/sources.list /etc/apt/sources.list.d/*
+        # ppa backup/restore https://askubuntu.com/a/148968/1602862
+        $null = wsl apt-cache policy | Out-File $(Join-Path $ENV:USERPROFILE ".wsl2" "apt-cache-policy.txt")
+
 
         # Second idle check immediately before exec. The window between the
         # fast-path check above and here is small but non-zero (exports take a

@@ -11,6 +11,8 @@
 # Define WinWSL as the translated Windows %USERPROFILE% root in WSL
 WinWSL="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")"
 
+ln -sf -- "$WinWSL" "$HOME/WinHome"
+
 # Mirror USERPROFILE/.ssh into WSL ~/.ssh
 WinDotSSH="$WinWSL/.ssh/"
 
@@ -105,4 +107,13 @@ if [ -f "$WslConf" ]; then
   chown root:root -- /etc/wsl.conf
 else
   echo "Windows .wsl2/wsl.conf file not found" >&2
+fi
+
+# Ensure all files in ~/.local/bin are executable
+if [ -d "$HOME/.local/bin" ]; then
+  find "$HOME/.local/bin" -type f | while read -r f; do
+    if [ ! -x "$f" ]; then
+      chmod +x "$f"
+    fi
+  done
 fi
