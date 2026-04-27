@@ -60,7 +60,7 @@
     "alwaysOnTop": false,
     "copyFormatting": "none",
     "copyOnSelect": true,
-    "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+    "defaultProfile": "{cc590fde-1eb2-4d1e-8b03-bca6db0bdf23}",
     "keybindings": 
     [
         {
@@ -208,12 +208,12 @@
     [
         {
             "icon": null,
-            "profile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+            "profile": "{cc590fde-1eb2-4d1e-8b03-bca6db0bdf23}",
             "type": "profile"
         },
         {
             "icon": null,
-            "profile": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
+            "profile": "{681405cc-6475-4a68-b6c7-3845db706f9b}",
             "type": "profile"
         },
         {
@@ -236,6 +236,36 @@
         },
         "list": 
         [
+            {
+                "colorScheme": "Campbell",
+                "commandline": "zellij",
+                "environment": 
+                {
+                    "SHELL": "pwsh",
+                    "TERM": "xterm-256color"
+                },
+                "guid": "{cc590fde-1eb2-4d1e-8b03-bca6db0bdf23}",
+                "hidden": false,
+                "icon": "ms-appx:///ProfileIcons/pwsh.png",
+                "name": "PowerShell (zellij)",
+                "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "name": "WSL2 (Zellij)",
+                "guid": "{681405cc-6475-4a68-b6c7-3845db706f9b}",
+                "commandline": "wsl ~/.cargo/bin/zellij",
+                "colorScheme": "Ubuntu-24.04-ColorScheme",
+                "cursorShape": "filledBox",
+                "font": {
+                    "size": 13
+                },
+                "hidden": false,
+                "icon": "C:\\Users\\devic\\.wsl2\\wsl.ico",
+                "startingDirectory": "~",
+                "environment": {
+                    "TERM": "xterm-256color"
+                }
+            },
             {
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
@@ -279,7 +309,10 @@
                 "hidden": false,
                 "name": "Developer PowerShell for VS 2022",
                 "source": "Windows.Terminal.VisualStudio"
-            }
+            },
+          
+            
+            
         ]
     },
     "schemes": [],
