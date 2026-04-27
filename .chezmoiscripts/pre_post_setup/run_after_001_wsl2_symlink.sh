@@ -8,8 +8,11 @@
 #     permissions).
 # Drive metadata for chmod to stick is validated in run_before_001_wsl2.sh, not here.
 
+# Define WinWSL as the translated Windows %USERPROFILE% root in WSL
+WinWSL="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")"
+
 # Mirror USERPROFILE/.ssh into WSL ~/.ssh
-WinDotSSH="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")/.ssh/"
+WinDotSSH="$WinWSL/.ssh/"
 
 if [ -d "$WinDotSSH" ]; then
   find "$WinDotSSH" \( -type f -o -type l \) -print0 | while IFS= read -r -d '' file; do
@@ -59,7 +62,7 @@ if [ -d "$HOME/.ssh" ]; then
 fi
 
 # Mirror USERPROFILE/.wsl2/home into WSL $HOME
-WinHome="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")/.wsl2/home/"
+WinHome="$WinWSL/.wsl2/home/"
 
 if [ -d "$WinHome" ]; then
   find "$WinHome" \( -type f -o -type l \) | while read -r file; do
@@ -77,7 +80,7 @@ else
 fi
 
 # Mirror USERPROFILE/.wsl2/etc into WSL /etc (may require running chezmoi with sufficient privileges for /etc).
-WinEtc="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")/.wsl2/etc/"
+WinEtc="$WinWSL/.wsl2/etc/"
 
 if [ -d "$WinEtc" ]; then
   find "$WinEtc" \( -type f -o -type l \) | while read -r file; do
@@ -94,9 +97,12 @@ else
   echo "Windows .wsl2/etc directory not found" >&2
 fi
 
-if [ -L /etc/wsl.conf ]; then
-  real=$(readlink -f -- /etc/wsl.conf 2>/dev/null) || true
-  if [ -n "$real" ]; then
-    chmod 644 -- "$real"
-  fi
+WslConf="$WinWSL/.wsl2/wsl.conf" 
+if [ -f "$WslConf" ]; then
+  echo "$WslConf"
+  cp -f -- "$WslConf" /etc/wsl.conf
+  chmod 644 -- /etc/wsl.conf
+  chown root:root -- /etc/wsl.conf
+else
+  echo "Windows .wsl2/wsl.conf file not found" >&2
 fi

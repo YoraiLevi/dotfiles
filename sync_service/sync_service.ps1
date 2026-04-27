@@ -617,6 +617,8 @@ function Invoke-SyncCycle {
         $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions 2>$null | Out-File $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
         $null = (Get-InstalledModule).Name | Out-File $(Join-Path $ENV:USERPROFILE ".powershell" "pwsh-modules.txt")
         $null = choco export "$(Join-Path $ENV:USERPROFILE ".choco" "packages.config")"
+        $null = wsl apt-mark showmanual | Out-File $(Join-Path $ENV:USERPROFILE ".wsl2" "apt-packages.txt")
+        $null = wsl snap list | Out-File $(Join-Path $ENV:USERPROFILE ".wsl2" "snap-packages.txt")
 
         # Second idle check immediately before exec. The window between the
         # fast-path check above and here is small but non-zero (exports take a
