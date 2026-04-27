@@ -291,7 +291,7 @@ fi
 
 
 if [[ -z "$ZELLIJ" ]]; then
-    zellij attach main -c
+    zellij
 elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then
     local_motd="/tmp/.motd-shown-$(id -u)"
     today=$(date +%Y-%m-%d)
