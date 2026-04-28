@@ -300,6 +300,7 @@ if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; th
     alias pwsh="pwsh.exe"
     alias powershell="powershell.exe"
     alias cmd="cmd.exe"
+    
     # alias tssh="tssh.exe"
 else
     nop

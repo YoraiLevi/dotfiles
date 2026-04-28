@@ -103,6 +103,7 @@
 			"sideBarSectionHeader.foreground": "#ffffffc3",
 			"sideBarStickyScroll.border": "#ffffff7e",
 			"list.inactiveSelectionBackground": "#fcfcfa21",
+			"selection.background": "#acacac6e", // Text-selection bg in non-editor inputs: agent chat textbox, search fields, settings UI, etc. Higher opacity than the editor selection so it stays visible against the slightly different sidebar/input backgrounds.
 			"quickInput.foreground": "#a8a6a9",
 			"quickInput.background": "#2a292b",
 			"editorGutter.addedBackground": "#a3be8c",
@@ -176,7 +177,9 @@
 			//"terminal.findMatchHighlightBorder": null,
 			"foreground": "#ffffff",
 			"editor.foreground": "#ffffff",
-			"editor.selectionBackground": "#acacac44", // Selection color
+			"editor.selectionBackground": "#acacac44", // Selection color (focused editor)
+			"editor.inactiveSelectionBackground": "#acacac4e", // Selection color when editor loses focus (e.g., clicked into chat/sidebar). Slightly higher opacity than focused so it stays readable instead of fading to ~13%.
+			// "editor.selectionForeground": "#ffffff", // Uncomment to force a fixed text color inside selections if contrast is still poor
 			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
 			"editor.stackFrameHighlightBackground": "#0000ff", // This is related to Debug?
 			"editor.findMatchHighlightBackground": "#afaf0e38", // "Search result" ctrl+f, ctrl+shift+f
