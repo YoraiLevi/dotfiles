@@ -99,12 +99,33 @@
 	"workbench.colorTheme": "Monokai Pro (Filter Ristretto)",
 	"workbench.colorCustomizations": {
 		"[Monokai Pro (Filter Ristretto)]": {
-			"sideBarSectionHeader.border": "#ffffff7e",
-			"sideBarSectionHeader.foreground": "#ffffffc3",
-			"sideBarStickyScroll.border": "#ffffff7e",
-			"list.inactiveSelectionBackground": "#fcfcfa21",
+			// === Sidebar container & section headers (warm-tinted to match body cream) ===
+			"sideBar.foreground": "#d6c9c0", // Main sidebar text — file/folder names in Explorer, item text in Search/Source Control/Outline panels
+			"sideBarTitle.foreground": "#fff1f3", // Big sidebar title above section headers (project name) — slight emphasis
+			"sideBarSectionHeader.foreground": "#fff1f3c3", // Section headers (EXPLORER, SOURCE CONTROL, etc.) @ 76% — brighter than body so they read as headers
+			"sideBarSectionHeader.border": "#fff1f33e", // Warm subtle separator under section headers (was pure white at 49%)
+			"sideBarStickyScroll.border": "#fff1f33e", // Warm separator under sticky scroll (was pure white at 49%) — sticky scroll text inherits sideBar.foreground above
+
+			// === List item states (apply to Explorer, Search results, Source Control, Outline, References view, anywhere with a list) ===
+			"list.hoverBackground": "#3a322e", // Hovering an item — subtle warm tint, no jarring contrast
+			"list.hoverForeground": "#fff1f3", // Hover text — slightly brighter than body so the hover state registers
+			"list.activeSelectionBackground": "#564b45", // Selected item when sidebar has focus — clearly warm dark
+			"list.activeSelectionForeground": "#fff1f3", // Selected text when sidebar focused — max-emphasis warm white
+			"list.inactiveSelectionBackground": "#d6c9c01a", // Selected item when sidebar lost focus — warm cream @ ~10% (replaces the cool white-tint at 13%)
+			"list.inactiveSelectionForeground": "#d6c9c0", // Inactive selection text — body color (calm)
+			"list.focusBackground": "#564b4580", // Keyboard-navigated item bg — like active selection but more transparent
+			"list.focusForeground": "#fff1f3", // Keyboard-focused text
+			"list.focusOutline": "#fd6883", // Pink ring around the keyboard-focused item — strong visual cue for keyboard nav
+			"list.highlightForeground": "#fd6883", // Matching characters when you type to filter (Ctrl+P, search panel filter, etc.) — pink so they pop
+			"list.focusHighlightForeground": "#fd6883", // Same matching characters in the currently-focused item
+			"list.deemphasizedForeground": "#7a6e64", // Faded items (gitignored/deleted in git views) — warm dim
+			"list.errorForeground": "#fd6883", // Items in error state — Monokai pink (matches your bracket #1)
+			"list.warningForeground": "#f9cc6c", // Items in warning state — Ristretto warm yellow
+			"tree.indentGuidesStroke": "#fd6883", // *** TEMPORARY JARRING — BRIGHT PINK *** = ACTIVE folder path indent guides. Open Explorer (Ctrl+Shift+E), expand a deep folder, look for the bright pink vertical lines. Then tell me to dial back. (Subtle warm value was: "#564b45")
+			"tree.inactiveIndentGuidesStroke": "#78dce8", // *** TEMPORARY JARRING — BRIGHT CYAN *** = INACTIVE folder paths indent guides. The connectors of OTHER expanded folders that aren't on your selected path. Cyan vs pink makes the difference obvious. (Subtle warm value was: "#3a322e")
+
 			"selection.background": "#acacac6e", // Text-selection bg in non-editor inputs: agent chat textbox, search fields, settings UI, etc. Higher opacity than the editor selection so it stays visible against the slightly different sidebar/input backgrounds.
-			"quickInput.foreground": "#a8a6a9",
+			"quickInput.foreground": "#a8a6a9", // Quick Input main text (Ctrl+P, command palette) — kept your existing dim gray; see notes if you want to align to body
 			"quickInput.background": "#2a292b",
 			"editorGutter.addedBackground": "#a3be8c",
 			"editorGutter.deletedBackground": "#bf616a",
@@ -138,13 +159,70 @@
 			// "editorOverviewRuler.wordHighlightForeground": "#a0a0a0cc",
 			// "editorOverviewRuler.wordHighlightStrongForeground": "#c0a0c0cc",
 			// "editorOverviewRuler.wordHighlightTextForeground": "#a0a0a0cc",
-			"button.background": "#555357",
-			"button.foreground": "#fcfcfa",
-			// "button.hoverBackground": "#5b595c",
-			"button.secondaryBackground": "#555357",
-			"button.secondaryForeground": "#c1c0c0",
-			// "button.secondaryHoverBackground": "#5b595c",
-			// "button.separator": "#2d2a2e",
+			// === Buttons (Welcome view, "Initialize Repository", "Open Folder", dialog confirms — anything that's a clickable action button) ===
+			"button.background": "#564b45", // Was #555357 cool gray — now warm dark, matches list active-selection bg
+			"button.foreground": "#fff1f3", // Warm white text (was already this)
+			"button.hoverBackground": "#6a5d54", // Lighter warm on hover
+			"button.secondaryBackground": "#3a322e", // Secondary actions — darker, less prominent
+			"button.secondaryForeground": "#d6c9c0", // Was #c1c0c0 cool gray — now body cream
+			"button.secondaryHoverBackground": "#4a403c", // Lighter warm on hover
+			"button.border": "#564b4500", // Transparent — let bg define the button shape
+			"button.separator": "#3a322e", // Visual separator inside split buttons
+
+			// === Dropdowns (the "..." trigger buttons in panel headers, settings dropdowns, language picker bottom-right) ===
+			"dropdown.background": "#2a292b", // Match input box bg
+			"dropdown.foreground": "#d6c9c0", // Body cream text
+			"dropdown.border": "#3a322e", // Subtle warm border
+			"dropdown.listBackground": "#2a292b", // Background of the opened dropdown list
+
+			// === Context menus (right-click, "..." panel header → menu items) — THIS is where the gray-bg/white-text combo most likely comes from ===
+			"menu.background": "#2a292b", // Slightly different from main bg so menus visually pop forward
+			"menu.foreground": "#d6c9c0", // Body cream
+			"menu.selectionBackground": "#564b45", // Hovered/keyboard-focused menu item — matches list active selection
+			"menu.selectionForeground": "#fff1f3", // Hovered menu item text — warm white max emphasis
+			"menu.separatorBackground": "#3a322e", // Horizontal divider lines between menu sections
+			"menu.border": "#3a322e", // Outer menu border
+
+			// === Top menubar (File, Edit, View, etc. at top of window — only visible if you're not using merged title bar) ===
+			"menubar.selectionBackground": "#564b45", // Hovered top-menu item
+			"menubar.selectionForeground": "#fff1f3", // Hovered top-menu text
+
+			// === Toolbar (icon buttons in panel headers: "+", refresh, collapse-all, "..." trigger icons in Explorer/SCM/Search) ===
+			"toolbar.hoverBackground": "#3a322e", // Subtle warm hover on the icon buttons
+			"toolbar.activeBackground": "#564b45", // Active/pressed state — matches list active selection
+			"toolbar.hoverOutline": "#564b4500", // No outline on hover — bg change is enough
+
+			// === Status bar (bottom strip: branch name, errors/warnings counts, line/col, encoding, language picker, Cursor usage indicator) ===
+			"statusBar.foreground": "#d6c9c0", // Was a dim warm gray — now body cream for readability
+			"statusBar.background": "#3a322e", // Slightly darker warm than editor bg — gives the bar visual separation without being jarring
+			"statusBar.border": "#564b4540", // Subtle warm top edge separating bar from editor
+			"statusBarItem.hoverBackground": "#564b45", // Hovering a status bar item — warm dark
+			"statusBarItem.hoverForeground": "#fff1f3", // Hover text — warm white for clear feedback
+			"statusBarItem.activeBackground": "#6a5d54", // Pressed/clicked state
+			"statusBarItem.prominentBackground": "#564b45", // Prominent items (sync indicator, "Problems" toggle, lock indicator) — warm dark
+			"statusBarItem.prominentForeground": "#fff1f3", // Prominent text — warm white
+			"statusBarItem.prominentHoverBackground": "#6a5d54", // Prominent item on hover
+			"statusBarItem.focusBorder": "#fd688300", // Transparent — no ring on keyboard focus
+
+			// Error/warning count indicators — colored TEXT on bar bg, not colored slabs
+			"statusBarItem.errorBackground": "#3a322e", // Same as bar bg — blend in, let the text color do the talking
+			"statusBarItem.errorForeground": "#c4576f", // Muted pink text — clearly "error" without screaming
+			"statusBarItem.errorHoverBackground": "#564b45", // Standard warm hover
+			"statusBarItem.warningBackground": "#3a322e", // Same as bar bg
+			"statusBarItem.warningForeground": "#c9a84e", // Muted yellow text — clearly "warning" without glare
+			"statusBarItem.warningHoverBackground": "#564b45", // Standard warm hover
+
+			// Mode-specific — bar bg shifts subtly to a tinted dark so you can tell at a glance what state you're in. Text stays muted colored.
+			"statusBar.debuggingBackground": "#452e1e", // Dark orange-brown tint — noticeably warmer than normal bar
+			"statusBar.debuggingForeground": "#c4845a", // Muted orange text
+			"statusBar.debuggingBorder": "#c4845a60", // Orange top edge — the strongest "you're debugging" signal
+			"statusBar.noFolderBackground": "#332e2e", // Slightly cooler/darker than normal — feels "empty", subtly off
+			"statusBar.noFolderForeground": "#7a6e64", // Dim warm text
+			"statusBar.noFolderBorder": "#564b4540", // Warm edge
+			"statusBarItem.remoteBackground": "#1e3528", // Dark green tint — clearly "connected" without being a neon slab
+			"statusBarItem.remoteForeground": "#8ab393", // Muted green text — matches your comment color
+			"statusBarItem.remoteHoverBackground": "#2a4535", // Slightly lighter green-dark on hover
+
 			// "debugView.valueChangedHighlight": "#ffd866",
 			// "editor.findMatchHighlightBorder": "#00000000",
 			// "editor.findRangeHighlightBorder": "#00000000",
@@ -175,13 +253,57 @@
 			//"editor.symbolHighlightBorder": null,
 			//"peekViewEditor.matchHighlightBorder": null,
 			//"terminal.findMatchHighlightBorder": null,
-			"foreground": "#ffffff",
-			"editor.foreground": "#ffffff",
+			"foreground": "#d6c9c0", // UI body text — warm cream, ~9.5:1 contrast vs Ristretto bg
+			"editor.foreground": "#d6c9c0", // Editor body text (default/punctuation/operators) — same warm cream
+			"editorLineNumber.foreground": "#7a6e64", // Line numbers — warm dim, ~half brightness of body so they stay visible without competing
+			"editorLineNumber.activeForeground": "#d6c9c0", // Current line's number — matches body so the active line clearly pops
+			"editorWhitespace.foreground": "#564b45", // Whitespace markers (dots/arrows when render whitespace is on) — very subtle warm
+			"editorIndentGuide.background1": "#3a322e", // Indent guide vertical lines — barely visible warm
+			"editorIndentGuide.activeBackground1": "#564b45", // Current indent's guide — slightly brighter than the non-active ones
+			"terminal.foreground": "#d6c9c0", // Terminal text — match editor body so the terminal panel doesn't read as "white" against the warmer editor
+			"descriptionForeground": "#a39a92", // Secondary UI text (paths under filenames in Ctrl+P, descriptions in lists, settings hints) — warm mid-tone, secondary to body
+			
+			
+			"input.foreground": "#d6c9c0",            // Text you're typing — match body
+			"input.background": "#2a292b",            // Box background — slightly different from main bg, matches your existing quickInput.background
+			"input.border": "#3a322e",                // Border around the input
+			"input.placeholderForeground": "#7a6e64", // The faded "Plan, search, build anything..." prompt text — dim warm
+			"inputOption.activeForeground": "#d6c9c0",
+			"inputOption.activeBackground": "#564b45",
+			"inputOption.activeBorder": "#a39a92",
+
+			
 			"editor.selectionBackground": "#acacac44", // Selection color (focused editor)
 			"editor.inactiveSelectionBackground": "#acacac4e", // Selection color when editor loses focus (e.g., clicked into chat/sidebar). Slightly higher opacity than focused so it stays readable instead of fading to ~13%.
 			// "editor.selectionForeground": "#ffffff", // Uncomment to force a fixed text color inside selections if contrast is still poor
-			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug?
+			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug? What it is: The full-line highlight on the line where the debugger is currently paused in the active stack frame. You see it constantly when stepping through code with the debugger.
+			// Live trigger recipe:
+			// Open any script (Python, JS, whatever).
+			// Click in the gutter to set a breakpoint (or F9).
+			// F5 to start debugging.
+			// When execution pauses on the breakpoint, the line gets this highlight.
+			// With value at pure #0000ff you can't read the line you're debugging. That's the whole problem.
+			// Try these (the line should remain readable):
+			// "editor.focusedStackFrameHighlightBackground": "#ffd86640", // Monokai yellow @ 25% — classic "debugger is here"
+			// "editor.focusedStackFrameHighlightBackground": "#a9dc7640", // Monokai green @ 25% — leans into your green preference
+			// "editor.focusedStackFrameHighlightBackground": "#ff618844"  // Monokai pink @ 27% — leans into your pink preference
+
 			"editor.stackFrameHighlightBackground": "#0000ff", // This is related to Debug?
+			// What it is: Like above, but for other stack frames in the call stack. When the debugger is paused and you click a different frame in the Call Stack panel, the editor jumps to that line and highlights it with this color.
+			// Live trigger recipe:
+			// Same as #3 — start a debug session, hit a breakpoint inside a function that was called from another function.
+			// In the Run & Debug sidebar, the "Call Stack" view lists the frames.
+			// Click on a non-top frame — editor jumps to caller, line gets this highlight.
+			// Click back on the top frame — see #3's color again.
+			// Convention: This should be dimmer than the focused one to indicate "not the active execution point".
+			// Try these (pair with whichever you picked for #3):
+			// If you picked yellow for focused:
+			// "editor.stackFrameHighlightBackground": "#ffd86620", // half opacity of focused
+			// If you picked green for focused:
+			// "editor.stackFrameHighlightBackground": "#a9dc7620",
+			// If you picked pink for focused:
+			// "editor.stackFrameHighlightBackground": "#ff618822"
+
 			"editor.findMatchHighlightBackground": "#afaf0e38", // "Search result" ctrl+f, ctrl+shift+f
 			"editor.findMatchHighlightBorder": "#afaf0e", // "Search result" ctrl+f, ctrl+shift+f
 			"editor.findRangeHighlightBackground": "#b1f78915", // "Find in selection" area selected color"
@@ -191,10 +313,39 @@
 			"editor.selectionHighlightBackground": "#c3b7b826", // Highlight for same content as selection 
 			"editor.selectionHighlightBorder": "#979797ad", // Border for same content as selection 
 			"editor.lineHighlightBackground": "#a0a0a020", // Current line highlight
-			"editor.rangeHighlightBackground": "#403e41", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
+			"editor.rangeHighlightBackground": "#ff618825", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
 			"editor.snippetTabstopHighlightBackground": "#ffa9ff41", // The snipping manual fill fields
 			"editor.snippetFinalTabstopHighlightBackground": "#ff0000",
-			"editor.symbolHighlightBackground": "#0000ff", // Doesn't seem to do anything?
+			// What it is: Highlights the final tabstop ($0 in snippet syntax) of a snippet — the position your cursor lands at after Tab-ing through all the placeholder fields. Visible for as long as the snippet session is "active" (until you start typing or click away).
+			// Live trigger recipe:
+			// Open a Python file (you already have Python tooling configured).
+			// Type for and pick the for snippet from autocomplete.
+			// Tab through index, iterable placeholders.
+			// After the last Tab, your cursor lands on the $0 exit point — that's where this highlight appears.
+			// Currently #ff0000 opaque — the entire spot becomes a solid red square.
+			// Try these:
+			// "editor.snippetFinalTabstopHighlightBackground": "#ff618844", // Monokai pink, matches your bracket #1 color
+			// "editor.snippetFinalTabstopHighlightBackground": "#a9dc7644", // Monokai green
+			// "editor.snippetFinalTabstopHighlightBackground": "#ffd86640"  // Monokai yellow
+			// Optional matching border for extra visibility:
+			"editor.snippetFinalTabstopHighlightBorder": "#b68a95aa", // or whichever family color you picked
+
+			"editor.symbolHighlightBackground": "#0000ff", // Doesn't seem to do anything? Live trigger recipe:
+			// Open any source file with multiple functions/classes.
+			// Press Ctrl+Shift+O (Go to Symbol in File).
+			// Pick a symbol from the dropdown.
+			// The symbol's location flashes with this color. Currently pure opaque blue covers the symbol text completely. Change value, repeat the steps.
+			// Try these:
+			// "editor.symbolHighlightBackground": "#0000ff33", // your current blue but transparent (20%)
+			// "editor.symbolHighlightBackground": "#ffd86640", // Monokai yellow, gentle pulse
+			// "editor.symbolHighlightBackground": "#a9dc7640", // Monokai green, gentle pulse
+			// "editor.symbolHighlightBackground": "#ff618840"  // Monokai pink, gentle pulse
+
+			// Option A: Brighter version of your existing yellow (most consistent with what you already have)
+			"editor.findMatchBackground": "#8766ff0a",
+			"editor.findMatchBorder": "#8766ff",
+			"terminal.findMatchBackground": "#8766ff0a",
+			"terminal.findMatchBorder": "#8766ff",
 			"terminal.findMatchHighlightBackground": "#afaf0e38", // Ctrl+f matches in terminal
 			"terminal.findMatchHighlightBorder": "#afaf0e", // Ctrl+f matches in terminal
 			"terminal.hoverHighlightBackground": "#8d3e8d49",
@@ -214,28 +365,45 @@
 		}
 	},
 	"editor.tokenColorCustomizations": {
-		"textMateRules": [
-			{
-				"scope": [ // Cozy Color for comments
-					"comment",
-					"comment.block",
-					"comment.line",
-					"comment.block.documentation",
-					"punctuation.definition.comment",
-					"string.quoted.docstring.multi",
-					"comment.block.documentation source",
-					"string.quoted.docstring.multi.python",
-					"string.quoted.double.block.python punctuation.definition.string.end.python",
-					"string.quoted.double.block.python punctuation.definition.string.begin.python",
-					"string.quoted.double.block.python",
-					"punctuation.definition.string.begin.python",
-					"punctuation.definition.string.end.python"
-				],
-				"settings": {
-					"foreground": "#8ab393"
-				}
-			},
-		],
+		"[Monokai Pro (Filter Ristretto)]": {
+			"textMateRules": [
+				{
+					"scope": [ // Cozy Color for comments
+						"comment",
+						"comment.block",
+						"comment.line",
+						"comment.block.documentation",
+						"punctuation.definition.comment",
+						"string.quoted.docstring.multi",
+						"comment.block.documentation source",
+						"string.quoted.docstring.multi.python",
+						"string.quoted.double.block.python punctuation.definition.string.end.python",
+						"string.quoted.double.block.python punctuation.definition.string.begin.python",
+						"string.quoted.double.block.python",
+						"punctuation.definition.string.begin.python",
+						"punctuation.definition.string.end.python"
+					],
+					"settings": {
+						"foreground": "#8ab393"
+					}
+				},
+				{
+					// JSON property keys — fix for "the keys are pure white" issue.
+					// Active: Monokai pink (Ristretto-native, Monokai-friendly, fits pink-green preference).
+					// Swap by replacing the foreground value below with one of:
+					//   "#f9cc6c" — warm yellow (Ristretto)
+					//   "#adda78" — warm green (Ristretto)
+					//   "#d6c9c0" — body color (mutes keys to match body — calmer but loses key/value distinction)
+					"scope": [
+						"support.type.property-name.json",          // The key text itself (the property name)
+						"meta.structure.dictionary.key.json string.quoted.double.json" // The surrounding double quotes
+					],
+					"settings": {
+						"foreground": "#d6c9c0"
+					}
+				},
+			],
+		},
 	},
 	"[dockercompose]": {
 		"editor.insertSpaces": true,
