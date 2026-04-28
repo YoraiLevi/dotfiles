@@ -82,10 +82,13 @@ data:
     destDir: {{ .chezmoi.destDir }}
     username: {{ .chezmoi.username }}
     usernameWsl: {{ output "wsl" "whoami" | trim }}
-    homeDirWsl: {{ output "wsl" "wslpath" "~/" | trim }}
-    homedirWslWin: {{ output "wsl" "wslpath" "-w" "~/" | trim }}
-    destDirWsl: {{ output "wsl" "wslpath" "~/" | trim }}
-    destDirWslWin: {{ output "wsl" "wslpath" "-w" "~/" | trim }}
+    # wslpath (no -w) only accepts a Windows path; it fails on e.g. /root/ or /home/… when
+    # chezmoi.exe runs in WSL (root) or any non-Windows "home" string. Use $HOME inside the distro.
+    # In WSL, prefer a distro `chezmoi` (Linux build, os=linux); use this Windows block from pwsh / chezmoi.exe only.
+    homeDirWsl: {{ output "wsl" "sh" "-c" "printf %s $HOME" | trim }}
+    homedirWslWin: {{ output "wsl" "sh" "-c" "wslpath -w $HOME" | trim }}
+    destDirWsl: {{ output "wsl" "sh" "-c" "printf %s $HOME" | trim }}
+    destDirWslWin: {{ output "wsl" "sh" "-c" "wslpath -w $HOME" | trim }}
     {{- end }}
 
 #[edit]
