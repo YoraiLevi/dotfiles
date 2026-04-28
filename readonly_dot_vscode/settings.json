@@ -99,6 +99,7 @@
 	"workbench.colorTheme": "Monokai Pro (Filter Ristretto)",
 	"workbench.colorCustomizations": {
 		"[Monokai Pro (Filter Ristretto)]": {
+
 			// === Sidebar container & section headers (warm-tinted to match body cream) ===
 			"sideBar.foreground": "#d6c9c0", // Main sidebar text — file/folder names in Explorer, item text in Search/Source Control/Outline panels
 			"sideBarTitle.foreground": "#fff1f3", // Big sidebar title above section headers (project name) — slight emphasis
@@ -192,6 +193,29 @@
 			"toolbar.activeBackground": "#564b45", // Active/pressed state — matches list active selection
 			"toolbar.hoverOutline": "#564b4500", // No outline on hover — bg change is enough
 
+			// === Agent / Chat panel (the AI conversation sidebar — your messages, agent responses, code blocks) ===
+			"chat.requestBackground": "#332e2a", // Your message bubble bg — slightly warmer/darker than panel bg so your messages visually separate from the agent's
+			"chat.requestBorder": "#564b4540", // Subtle warm border around your message bubble
+			"chat.slashCommandBackground": "#564b45", // Slash command pills (/edit, /explain, etc.) — warm dark chip
+			"chat.slashCommandForeground": "#fd6883", // Slash command text — pink so they pop as actionable
+			"chat.avatarBackground": "#564b45", // Avatar circle bg — warm dark
+			"chat.avatarForeground": "#d6c9c0", // Avatar initials/icon — cream
+			"chat.editedFileForeground": "#8ab393", // Edited file names in "files changed" list — green = "modified, healthy"
+			"textLink.foreground": "#f9cc6c", // Links in markdown preview, extension READMEs, welcome pages — Ristretto standard yellow, matches warning/find-match accent family
+			"textLink.activeForeground": "#ffd866", // Same links when clicked/hovered — slightly brighter Monokai yellow
+
+			// === Inline Chat (Ctrl+K popup that appears inside the editor) ===
+			"inlineChat.background": "#2a292b", // Widget bg — matches input/quickInput bg
+			"inlineChat.foreground": "#d6c9c0", // Widget text — cream
+			"inlineChat.border": "#564b45", // Widget border — warm visible
+			"inlineChat.shadow": "#1a161480", // Drop shadow — warm dark, subtle
+			"inlineChatInput.background": "#332e2a", // Input field inside the inline chat — slightly warmer than widget bg
+			"inlineChatInput.border": "#564b45", // Input border
+			"inlineChatInput.focusBorder": "#fd6883", // Input border when typing — pink focus ring (matches list.focusOutline)
+			"inlineChatInput.placeholderForeground": "#7a6e64", // Placeholder "Ask Cursor..." text — dim warm
+			"inlineChatDiff.inserted": "#8ab39320", // Green tint for added code in inline diff — your comment green at 12%
+			"inlineChatDiff.removed": "#c4576f20", // Pink tint for removed code in inline diff — muted pink at 12%
+
 			// === Status bar (bottom strip: branch name, errors/warnings counts, line/col, encoding, language picker, Cursor usage indicator) ===
 			"statusBar.foreground": "#d6c9c0", // Was a dim warm gray — now body cream for readability
 			"statusBar.background": "#3a322e", // Slightly darker warm than editor bg — gives the bar visual separation without being jarring
@@ -261,7 +285,7 @@
 			"editorIndentGuide.background1": "#3a322e", // Indent guide vertical lines — barely visible warm
 			"editorIndentGuide.activeBackground1": "#564b45", // Current indent's guide — slightly brighter than the non-active ones
 			"terminal.foreground": "#d6c9c0", // Terminal text — match editor body so the terminal panel doesn't read as "white" against the warmer editor
-			"descriptionForeground": "#a39a92", // Secondary UI text (paths under filenames in Ctrl+P, descriptions in lists, settings hints) — warm mid-tone, secondary to body
+			"descriptionForeground": "#a39a92", // Secondary UI text (slash command descriptions, paths under filenames in Ctrl+P, settings hints) — bumped from #a39a92 for readability
 			
 			
 			"input.foreground": "#d6c9c0",            // Text you're typing — match body
@@ -288,21 +312,8 @@
 			// "editor.focusedStackFrameHighlightBackground": "#a9dc7640", // Monokai green @ 25% — leans into your green preference
 			// "editor.focusedStackFrameHighlightBackground": "#ff618844"  // Monokai pink @ 27% — leans into your pink preference
 
-			"editor.stackFrameHighlightBackground": "#0000ff", // This is related to Debug?
-			// What it is: Like above, but for other stack frames in the call stack. When the debugger is paused and you click a different frame in the Call Stack panel, the editor jumps to that line and highlights it with this color.
-			// Live trigger recipe:
-			// Same as #3 — start a debug session, hit a breakpoint inside a function that was called from another function.
-			// In the Run & Debug sidebar, the "Call Stack" view lists the frames.
-			// Click on a non-top frame — editor jumps to caller, line gets this highlight.
-			// Click back on the top frame — see #3's color again.
-			// Convention: This should be dimmer than the focused one to indicate "not the active execution point".
-			// Try these (pair with whichever you picked for #3):
-			// If you picked yellow for focused:
-			// "editor.stackFrameHighlightBackground": "#ffd86620", // half opacity of focused
-			// If you picked green for focused:
-			// "editor.stackFrameHighlightBackground": "#a9dc7620",
-			// If you picked pink for focused:
-			// "editor.stackFrameHighlightBackground": "#ff618822"
+			
+			"editor.stackFrameHighlightBackground": "#a9dc7620",
 
 			"editor.findMatchHighlightBackground": "#afaf0e38", // "Search result" ctrl+f, ctrl+shift+f
 			"editor.findMatchHighlightBorder": "#afaf0e", // "Search result" ctrl+f, ctrl+shift+f
@@ -430,6 +441,11 @@
 	"powershell.pester.useLegacyCodeLens": false,
 	"powershell.integratedConsole.startInBackground": true,
 	"cursor.composer.usageSummaryDisplay": "always",
+	"cursor.composer.textSizeScale": 1.25, // Chat panel text size multiplier. 1.0 = default, 1.3 = 30% larger (current). Known bug: doesn't apply on startup — open and Ctrl+S this file after launch to force it. No picker needed, edit the number directly.
+	"cursor.composer.planTextSizeScale": 1.15, // Plan panel text size multiplier. 1.0 = default, 1.3 = 30% larger (current).
+	"cursor.composer.renderPillsInsteadOfBlocks": true, // File references in chat show as compact inline chips instead of large expanded blocks — less visual noise when agent references many files
+
+
 	"python.testing.pytestArgs": [
 		"-vv",
 		"-s"
@@ -450,7 +466,10 @@
 	"editor.minimap.showSlider": "always",
 	"editor.minimap.side": "left",
 	"editor.snippetSuggestions": "top",
-	"window.zoomLevel": 0.4,
+	"window.zoomLevel": 0.55, // Overall UI zoom (~8% larger than default). Status bar, sidebar, chat panel, and ALL workbench text scales with this — no independent key exists for those.
+	"editor.fontSize": 13.5, // Code editor text only. Adjust this independently of zoom. Default: 14. Try 15 or 16 if you want code larger without changing overall UI scale.
+	"editor.lineHeight": 1.75, // Vertical line spacing multiplier. 1.5 = 50% extra breathing room between lines. Try 1.4–1.7 to taste.
+	"terminal.integrated.fontSize": 14.5, // Terminal panel text only. Independent of editor.fontSize.
 	"terraform.experimentalFeatures.validateOnSave": true,
 	"[xml]": {
 		"editor.defaultFormatter": "redhat.vscode-xml"
@@ -483,6 +502,7 @@
 			"icon": "terminal-powershell"
 		}
 	},
-	"terminal.integrated.defaultProfile.windows": "integrated-pwsh"
+	"terminal.integrated.defaultProfile.windows": "integrated-pwsh",
+	"cursor.composer.shouldChimeAfterChatFinishes": false
 	
 }
