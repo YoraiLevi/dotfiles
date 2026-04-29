@@ -851,7 +851,7 @@ if ($ENV:ZELLIJ) {
     $ENV:SHELL = 'pwsh'
 }
 if (-not $ENV:ZELLIJ) {
-    if (-not $ENV:SSH_CONNECTION) {
+    if ($ENV:SSH_CONNECTION) {
         zellij attach main -c
     }
 }

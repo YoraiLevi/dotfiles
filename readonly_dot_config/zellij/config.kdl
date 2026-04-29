@@ -16,6 +16,9 @@
 //     a   search tabs (room)         ?   keybind cheatsheet (forgot)
 //     o   session manager
 //
+//   GLOBAL (any mode):
+//     Ctrl+Shift+A   session manager
+//
 //   SUB-MODES (Ctrl+G → key, for full control):
 //     p  Pane      t  Tab       s  Scroll    r  Resize
 //     m  Move      x  Session
@@ -268,6 +271,13 @@ keybinds clear-defaults=true {
         bind "Alt -"             { Resize "Decrease"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
+        bind "Ctrl Shift a" {
+            LaunchOrFocusPlugin "session-manager" {
+                floating true
+                move_to_focused_tab true
+            }
+            SwitchToMode "locked"
+        }
     }
 }
 
