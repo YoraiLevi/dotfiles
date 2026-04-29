@@ -284,10 +284,8 @@ keybinds clear-defaults=true {
                 floating true
                 close_on_exit true
                 name "New Tab"
-                x "30%"
-                y "25%"
-                width 45
-                height 11
+                width "25%"
+                height "35%"
             }
             SwitchToMode "locked"
         }

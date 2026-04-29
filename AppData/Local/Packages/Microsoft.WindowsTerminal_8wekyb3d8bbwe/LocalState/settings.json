@@ -55,6 +55,22 @@
         {
             "command": "paste",
             "id": "User.paste"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[97;6u"
+            },
+            "id": "User.sendInput.BDF773C8"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[96;6u"
+            },
+            "id": "User.sendInput.1C7C136B"
         }
     ],
     "alwaysOnTop": false,
@@ -156,10 +172,6 @@
             "keys": "ctrl+shift+\\"
         },
         {
-            "id": "User.tabSearch",
-            "keys": "ctrl+shift+a"
-        },
-        {
             "id": null,
             "keys": "ctrl+`"
         },
@@ -180,7 +192,7 @@
             "keys": "ctrl+shift+n"
         },
         {
-            "id": "Terminal.OpenNewTabDropdown",
+            "id": "User.sendInput.1C7C136B",
             "keys": "ctrl+shift+`"
         },
         {
@@ -202,6 +214,10 @@
         {
             "id": null,
             "keys": "ctrl+shift+9"
+        },
+        {
+            "id": "User.sendInput.BDF773C8",
+            "keys": "ctrl+shift+a"
         }
     ],
     "newTabMenu": 
@@ -238,7 +254,7 @@
         [
             {
                 "colorScheme": "Campbell",
-                "commandline": "zellij",
+                "commandline": "zellij a -c main",
                 "environment": 
                 {
                     "SHELL": "pwsh",
@@ -252,10 +268,11 @@
             },
             {
                 "colorScheme": "Ubuntu-24.04-ColorScheme",
-                "commandline": "wsl ~/.cargo/bin/zellij",
+                "commandline": "zellij a -c main",
                 "cursorShape": "filledBox",
                 "environment": 
                 {
+                    "SHELL": "wsl",
                     "TERM": "xterm-256color"
                 },
                 "font": 
