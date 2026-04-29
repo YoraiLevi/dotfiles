@@ -310,6 +310,8 @@ fi
 
 export GTK_THEME=Adwaita:dark
 
+zellij da -y > /dev/null # delete dead sessions
+
 if [[ -z "$ZELLIJ" ]]; then
     if [ ! -z "$SSH_CONNECTION" ]; then
         zellij attach main -c

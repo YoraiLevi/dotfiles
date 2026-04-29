@@ -18,6 +18,7 @@
 //
 //   GLOBAL (any mode):
 //     Ctrl+Shift+A   session manager
+//     Ctrl+Shift+`   tab launcher
 //
 //   SUB-MODES (Ctrl+G → key, for full control):
 //     p  Pane      t  Tab       s  Scroll    r  Resize
@@ -275,6 +276,18 @@ keybinds clear-defaults=true {
             LaunchOrFocusPlugin "session-manager" {
                 floating true
                 move_to_focused_tab true
+            }
+            SwitchToMode "locked"
+        }
+        bind "Ctrl Shift `" {
+            Run "pwsh" "-NoProfile" "-Command" "& \"$HOME/.config/zellij/launcher.ps1\"" {
+                floating true
+                close_on_exit true
+                name "New Tab"
+                x "30%"
+                y "25%"
+                width 45
+                height 11
             }
             SwitchToMode "locked"
         }

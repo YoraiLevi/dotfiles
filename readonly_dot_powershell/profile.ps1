@@ -850,6 +850,9 @@ if ($ENV:ZELLIJ) {
     $env:TERM = 'xterm-256color'
     $ENV:SHELL = 'pwsh'
 }
+
+$null = zellij da -y # delete dead sessions
+
 if (-not $ENV:ZELLIJ) {
     if ($ENV:SSH_CONNECTION) {
         zellij attach main -c
