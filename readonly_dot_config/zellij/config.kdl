@@ -77,13 +77,7 @@ keybinds clear-defaults=true {
         // Pane management
         bind "w" { CloseFocus; SwitchToMode "locked"; }
         bind "z" { ToggleFocusFullscreen; SwitchToMode "locked"; }
-        bind "f" { SwitchToMode "entersearch"; SearchInput 0; }
-        bind "Ctrl Shift f" {
-            SwitchToMode "entersearch"; SearchInput 0; 
-        }
-        bind "Ctrl f" {
-            SwitchToMode "entersearch"; SearchInput 0; 
-        }
+       
         // Pane focus
         bind "left"  { MoveFocus "left"; SwitchToMode "locked"; }
         bind "down"  { MoveFocus "down"; SwitchToMode "locked"; }
@@ -188,136 +182,123 @@ keybinds clear-defaults=true {
     }
 
     scroll {
-        // Letter keys
-        bind "q" { EditScrollback; SwitchToMode "locked"; WriteChars "q"; }
-        bind "w" { EditScrollback; SwitchToMode "locked"; WriteChars "w"; }
-        bind "e" { EditScrollback; SwitchToMode "locked"; WriteChars "e"; }
-        bind "r" { EditScrollback; SwitchToMode "locked"; WriteChars "r"; }
-        bind "t" { EditScrollback; SwitchToMode "locked"; WriteChars "t"; }
-        bind "y" { EditScrollback; SwitchToMode "locked"; WriteChars "y"; }
-        bind "u" { EditScrollback; SwitchToMode "locked"; WriteChars "u"; }
-        bind "i" { EditScrollback; SwitchToMode "locked"; WriteChars "i"; }
-        bind "o" { EditScrollback; SwitchToMode "locked"; WriteChars "o"; }
-        bind "p" { EditScrollback; SwitchToMode "locked"; WriteChars "p"; }
-        bind "a" { EditScrollback; SwitchToMode "locked"; WriteChars "a"; }
-        bind "s" { EditScrollback; SwitchToMode "locked"; WriteChars "s"; }
-        bind "d" { EditScrollback; SwitchToMode "locked"; WriteChars "d"; }
-        bind "f" { EditScrollback; SwitchToMode "locked"; WriteChars "f"; }
-        bind "g" { EditScrollback; SwitchToMode "locked"; WriteChars "g"; }
-        bind "h" { EditScrollback; SwitchToMode "locked"; WriteChars "h"; }
-        bind "j" { EditScrollback; SwitchToMode "locked"; WriteChars "j"; }
-        bind "k" { EditScrollback; SwitchToMode "locked"; WriteChars "k"; }
-        bind "l" { EditScrollback; SwitchToMode "locked"; WriteChars "l"; }
-        bind "z" { EditScrollback; SwitchToMode "locked"; WriteChars "z"; }
-        bind "x" { EditScrollback; SwitchToMode "locked"; WriteChars "x"; }
-        bind "c" { EditScrollback; SwitchToMode "locked"; WriteChars "c"; }
-        bind "v" { EditScrollback; SwitchToMode "locked"; WriteChars "v"; }
-        bind "b" { EditScrollback; SwitchToMode "locked"; WriteChars "b"; }
-        bind "n" { EditScrollback; SwitchToMode "locked"; WriteChars "n"; }
-        bind "m" { EditScrollback; SwitchToMode "locked"; WriteChars "m"; }
-
-        // Number keys
-        bind "1" { EditScrollback; SwitchToMode "locked"; WriteChars "1"; }
-        bind "2" { EditScrollback; SwitchToMode "locked"; WriteChars "2"; }
-        bind "3" { EditScrollback; SwitchToMode "locked"; WriteChars "3"; }
-        bind "4" { EditScrollback; SwitchToMode "locked"; WriteChars "4"; }
-        bind "5" { EditScrollback; SwitchToMode "locked"; WriteChars "5"; }
-        bind "6" { EditScrollback; SwitchToMode "locked"; WriteChars "6"; }
-        bind "7" { EditScrollback; SwitchToMode "locked"; WriteChars "7"; }
-        bind "8" { EditScrollback; SwitchToMode "locked"; WriteChars "8"; }
-        bind "9" { EditScrollback; SwitchToMode "locked"; WriteChars "9"; }
-        bind "0" { EditScrollback; SwitchToMode "locked"; WriteChars "0"; }
-
-        // Symbol keys
-        bind "`"  { EditScrollback; SwitchToMode "locked"; WriteChars "`"; }
-        bind "-"  { EditScrollback; SwitchToMode "locked"; WriteChars "-"; }
-        bind "="  { EditScrollback; SwitchToMode "locked"; WriteChars "="; }
-        bind "["  { EditScrollback; SwitchToMode "locked"; WriteChars "["; }
-        bind "]"  { EditScrollback; SwitchToMode "locked"; WriteChars "]"; }
-        bind "\\" { EditScrollback; SwitchToMode "locked"; WriteChars "\\"; }
-        bind ";"  { EditScrollback; SwitchToMode "locked"; WriteChars ";"; }
-        bind "'"  { EditScrollback; SwitchToMode "locked"; WriteChars "'"; }
-        bind ","  { EditScrollback; SwitchToMode "locked"; WriteChars ","; }
-        bind "."  { EditScrollback; SwitchToMode "locked"; WriteChars "."; }
-        bind "/"  { EditScrollback; SwitchToMode "locked"; WriteChars "/"; }
-
-        // Modifier keys and whitespace
-        bind "enter"      { EditScrollback; SwitchToMode "locked"; Write 13; }
-        bind "backspace"  { EditScrollback; SwitchToMode "locked"; Write 8; }
-        bind "tab"        { EditScrollback; SwitchToMode "locked"; Write 9; }
-        bind "space"      { EditScrollback; SwitchToMode "locked"; WriteChars " "; }
-        bind "delete"     { EditScrollback; SwitchToMode "locked"; Write 127; }
-
-        // Arrow and navigation keys
-        bind "left"      { EditScrollback; SwitchToMode "locked"; Write 27; Write 91; Write 68; }
-        bind "right"     { EditScrollback; SwitchToMode "locked"; Write 27; Write 91; Write 67; }
-        bind "up"        { EditScrollback; SwitchToMode "locked"; Write 27; Write 91; Write 65; }
-        bind "down"      { EditScrollback; SwitchToMode "locked"; Write 27; Write 91; Write 66; }
-        bind "home"      { EditScrollback; SwitchToMode "locked"; Write 27; Write 91; Write 72; }
-        bind "end"       { EditScrollback; SwitchToMode "locked"; Write 27; Write 91; Write 70; }
-        bind "insert"    { EditScrollback; SwitchToMode "locked"; Write 27; Write 91; Write 50; Write 126; }
-        bind "PageUp"    { EditScrollback; SwitchToMode "locked"; Write 27; Write 91; Write 53; Write 126; }
-        bind "PageDown"  { EditScrollback; SwitchToMode "locked"; Write 27; Write 91; Write 54; Write 126; }
-        bind "esc"       { EditScrollback; SwitchToMode "locked"; Write 27; }
-
-        // Shifted symbol keys (US EN layout)
-        bind "!" { EditScrollback; SwitchToMode "locked"; WriteChars "!"; }
-        bind "@" { EditScrollback; SwitchToMode "locked"; WriteChars "@"; }
-        bind "#" { EditScrollback; SwitchToMode "locked"; WriteChars "#"; }
-        bind "$" { EditScrollback; SwitchToMode "locked"; WriteChars "$"; }
-        bind "%" { EditScrollback; SwitchToMode "locked"; WriteChars "%"; }
-        bind "^" { EditScrollback; SwitchToMode "locked"; WriteChars "^"; }
-        bind "&" { EditScrollback; SwitchToMode "locked"; WriteChars "&"; }
-        bind "*" { EditScrollback; SwitchToMode "locked"; WriteChars "*"; }
-        bind "(" { EditScrollback; SwitchToMode "locked"; WriteChars "("; }
-        bind ")" { EditScrollback; SwitchToMode "locked"; WriteChars ")"; }
-        bind "_" { EditScrollback; SwitchToMode "locked"; WriteChars "_"; }
-        bind "+" { EditScrollback; SwitchToMode "locked"; WriteChars "+"; }
-        bind "{" { EditScrollback; SwitchToMode "locked"; WriteChars "{"; }
-        bind "}" { EditScrollback; SwitchToMode "locked"; WriteChars "}"; }
-        bind "|" { EditScrollback; SwitchToMode "locked"; WriteChars "|"; }
-        bind ":" { EditScrollback; SwitchToMode "locked"; WriteChars ":"; }
-        bind "\"" { EditScrollback; SwitchToMode "locked"; WriteChars "\""; }
-        bind "<" { EditScrollback; SwitchToMode "locked"; WriteChars "<"; }
-        bind ">" { EditScrollback; SwitchToMode "locked"; WriteChars ">"; }
-        bind "?" { EditScrollback; SwitchToMode "locked"; WriteChars "?"; }
-
-        bind "Ctrl Shift f" {
-            SwitchToMode "entersearch"; SearchInput 0; 
-        }
-        bind "Ctrl f" {
-            SwitchToMode "entersearch"; SearchInput 0; 
-        }
+      
     }
 
     search {
-        bind "enter" { Search "down"; }
-        bind "shift enter" { Search "up"; }
-        bind "c" { SearchToggleOption "CaseSensitivity"; }
-        bind "w" { SearchToggleOption "Wrap"; }
-        bind "o" { SearchToggleOption "WholeWord"; }
-        
-        bind "Ctrl Shift f" {
-            SwitchToMode "entersearch"; SearchInput 0; 
-        }
-        bind "Ctrl f" {
-            SwitchToMode "entersearch"; SearchInput 0; 
+        // Letter keys
+        bind "q" { SearchInput 113; }
+        bind "w" { SearchInput 119; }
+        bind "e" { SearchInput 101; }
+        bind "r" { SearchInput 114; }
+        bind "t" { SearchInput 116; }
+        bind "y" { SearchInput 121; }
+        bind "u" { SearchInput 117; }
+        bind "i" { SearchInput 105; }
+        bind "o" { SearchInput 111; }
+        bind "p" { SearchInput 112; }
+        bind "a" { SearchInput 97; }
+        bind "s" { SearchInput 115; }
+        bind "d" { SearchInput 100; }
+        bind "f" { SearchInput 102; }
+        bind "g" { SearchInput 103; }
+        bind "h" { SearchInput 104; }
+        bind "j" { SearchInput 106; }
+        bind "k" { SearchInput 107; }
+        bind "l" { SearchInput 108; }
+        bind "z" { SearchInput 122; }
+        bind "x" { SearchInput 120; }
+        bind "c" { SearchInput 99; }
+        bind "v" { SearchInput 118; }
+        bind "b" { SearchInput 98; }
+        bind "n" { SearchInput 110; }
+        bind "m" { SearchInput 109; }
+
+        // Number keys
+        bind "1" { SearchInput 49; }
+        bind "2" { SearchInput 50; }
+        bind "3" { SearchInput 51; }
+        bind "4" { SearchInput 52; }
+        bind "5" { SearchInput 53; }
+        bind "6" { SearchInput 54; }
+        bind "7" { SearchInput 55; }
+        bind "8" { SearchInput 56; }
+        bind "9" { SearchInput 57; }
+        bind "0" { SearchInput 48; }
+
+        // Symbol keys
+        bind "`"  { SearchInput 96; }
+        bind "-"  { SearchInput 45; }
+        bind "="  { SearchInput 61; }
+        bind "["  { SearchInput 91; }
+        bind "]"  { SearchInput 93; }
+        bind "\\" { SearchInput 92; }
+        bind ";"  { SearchInput 59; }
+        bind "'"  { SearchInput 39; }
+        bind ","  { SearchInput 44; }
+        bind "."  { SearchInput 46; }
+        bind "/"  { SearchInput 47; }
+
+        // Modifier keys and whitespace
+        bind "backspace"  { SearchInput 8; }
+        // bind "tab"        { SearchInput 9; }
+        bind "space"      { SearchInput 32; }
+        bind "delete"     { SearchInput 127; }
+
+        // Arrow and navigation keys
+        bind "left"      { SearchInput 27 91 68; }
+        // bind "right"     { SearchInput 27 91 67; }
+        // bind "up"        { SearchInput 27 91 65; }
+        // bind "down"      { SearchInput 27 91 66; }
+        // bind "home"      { SearchInput 27 91 72; }
+        // bind "end"       { SearchInput 27 91 70; }
+        // bind "insert"    { SearchInput 27 91 50 126; }
+        // bind "PageUp"    { SearchInput 27 91 53 126; }
+        // bind "PageDown"  { SearchInput 27 91 54 126; }
+        // bind "esc"       { SearchInput 27; }
+
+        // Shifted symbol keys (US EN layout)
+        bind "!" { SearchInput 33; }
+        bind "@" { SearchInput 64; }
+        bind "#" { SearchInput 35; }
+        bind "$" { SearchInput 36; }
+        bind "%" { SearchInput 37; }
+        bind "^" { SearchInput 94; }
+        bind "&" { SearchInput 38; }
+        bind "*" { SearchInput 42; }
+        bind "(" { SearchInput 40; }
+        bind ")" { SearchInput 41; }
+        bind "_" { SearchInput 95; }
+        bind "+" { SearchInput 43; }
+        bind "{" { SearchInput 123; }
+        bind "}" { SearchInput 125; }
+        bind "|" { SearchInput 124; }
+        bind ":" { SearchInput 58; }
+        bind "\"" { SearchInput 34; }
+        bind "<" { SearchInput 60; }
+        bind ">" { SearchInput 62; }
+        bind "?" { SearchInput 63; }
+    }
+   shared_except "search" "entersearch" {
+        bind "Ctrl f" "Ctrl Shift f"{
+            SwitchToMode "search"; 
         }
     }
-
-    shared_among "scroll" "search" {
+    shared_among "scroll" "search" "entersearch" {
         bind "down"                          { ScrollDown; }
         bind "up"                            { ScrollUp; }
-        bind "left" "PageUp" "Ctrl b"        { PageScrollUp; }
-        bind "right" "PageDown" "Ctrl f"     { PageScrollDown; }
-        bind "d" { HalfPageScrollDown; }
-        bind "u" { HalfPageScrollUp; }
+        bind "PageUp"                        { PageScrollUp; }
+        bind "PageDown"                      { PageScrollDown; }
         bind "Ctrl c" { ScrollToBottom; SwitchToMode "locked"; }
     }
-
-    entersearch {
-        bind "Ctrl c" "esc" { SwitchToMode "locked"; }
-        bind "enter" { SwitchToMode "search"; }
+    shared_among "entersearch" "search" {
+        bind "alt c" { SearchToggleOption "CaseSensitivity"; }
+        bind "alt w" { SearchToggleOption "WholeWord"; }
+        bind "alt r" { SearchToggleOption "Wrap"; }
+        bind "enter" "Ctrl f" { SwitchToMode "search" ; Search "down"; }
+        bind "shift enter" "Ctrl Shift f" { SwitchToMode "search"; Search "up"; }
+        bind { SwitchToMode "search"; Search "up"; }
+        bind "esc" { SwitchToMode "search"; }
     }
 
     session {
@@ -366,7 +347,7 @@ keybinds clear-defaults=true {
         bind "Ctrl g" { SwitchToMode "locked"; }
         bind "Ctrl q" { Quit; }
     }
-    shared_except "locked" "entersearch" {
+    shared_except "locked" "entersearch" "search"  {
         bind "enter" { SwitchToMode "locked"; }
     }
     shared_except "locked" "entersearch" "renametab" "renamepane" {
@@ -412,12 +393,7 @@ keybinds clear-defaults=true {
         bind "Ctrl Shift \\" {
             NewPane;
         }
-        bind "Ctrl Shift f" {
-            SwitchToMode "entersearch"; SearchInput 0; 
-        }
-        bind "Ctrl f" {
-            SwitchToMode "entersearch"; SearchInput 0; 
-        }
+        
     }
 }
 
