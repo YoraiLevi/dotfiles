@@ -22,5 +22,5 @@ if (-not $selected) { exit 0 }
 
 $entry = $Entries | Where-Object { $_.Name -eq $selected } | Select-Object -First 1
 if ($entry) {
-    zellij action new-tab --close-on-exit -- $entry.Command
+    zellij --session $ENV:ZELLIJ_SESSION_NAME action new-tab --close-on-exit --cwd $PWD.Path -- $entry.Command > $null
 }

@@ -1,3 +1,13 @@
+[CmdletBinding()]
+param (
+    [Parameter(Mandatory = $false)]
+    [string]
+    $Shell,
+    [Parameter(Mandatory = $false)]
+    [string]
+    $SessionName
+    
+)
 # ~/.config/zellij/attach-main.ps1
 #
 # Launches Zellij, naming the session after the current project context:
@@ -7,35 +17,100 @@
 # Session behaviour:
 #   - Session exists  → open a new tab at $PWD inside it, then attach
 #   - Session missing → create it in the background, then attach
+$ErrorActionPreference = 'Stop'
+
+if (-not $ENV:TERM) {
+    $env:TERM = 'xterm-256color'
+}
 
 function Get-ZellijAutoName {
+    $MaxLen = 36
     $gitRoot = & git rev-parse --show-toplevel 2>$null
-    if ($LASTEXITCODE -eq 0 -and $gitRoot) {
-        # git returns unix-style paths on Windows; split on either separator
-        return ($gitRoot.Trim() -split '[/\\]')[-1]
-    }
-    return Split-Path -Leaf $PWD.Path
-}
-
-$sessionName = if ($ENV:_ZELLIJ_SESSION_NAME) {
-    $ENV:_ZELLIJ_SESSION_NAME
-} else {
-    Get-ZellijAutoName
-}
-
-$tabShell = if ($ENV:SHELL) { $ENV:SHELL } else { 'wsl' }
-
-$existingSessions = zellij ls 2>&1 | Out-String
-if ($existingSessions -match [regex]::Escape($sessionName)) {
-    Write-Host "Session '$sessionName' exists — opening new tab"
-    zellij --session $sessionName action new-tab --close-on-exit --cwd $PWD.Path -- $tabShell | Out-Null
-} else {
-    Write-Host "Session '$sessionName' not found — creating"
-    zellij attach --create-background $sessionName
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "Failed to create session '$sessionName'"
+        Write-Information "Failed to get git repository root. Using folder name."
     }
+    
+    if ($LASTEXITCODE -eq 0 -and $gitRoot) {
+        $name = ($gitRoot.Trim() -split '[/\\]')[-1]
+    }
+    else {
+        # Get path parts (ignoring empty strings from root slashes)
+        $parts = ($PWD.Path.replace($HOME, '~') -replace '[^a-zA-Z0-9/\\~\-_\.]', '') -split '[/\\]' | Where-Object { $_ }
+        
+        # Try 3 leaves, then 2, then 1
+        $name = ""
+        foreach ($count in 4, 3, 2, 1) {
+            if ($parts.Count -ge $count) {
+                $candidate = ($parts | Select-Object -Last $count) -join '-'
+                if ($candidate.Length -le $MaxLen) {
+                    $name = $candidate
+                    break
+                }
+            }
+        }
+        
+        # Fallback: If even 1 leaf is > 36, take the leaf and trim it
+        if (-not $name) {
+            $name = $parts[-1]
+        }
+    }
+
+    # Final hard-trim safety check
+    if ($name.Length -gt $MaxLen) {
+        return $name.Substring(0, $MaxLen)
+    }
+    return $name
 }
 
-Write-Host "Attaching to '$sessionName'"
-zellij attach $sessionName
+try {
+    if (-not $SHELL) {
+        throw "FAILED TO DETERMINE SHELL"
+    }
+    $sessionName = if ($SessionName) { $SessionName } else { Get-ZellijAutoName }
+    Write-Information "sessionName: $sessionName"
+    $zellijLsOutput = @()
+    $zellijLsOutput = & zellij ls --no-formatting --short 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        if (-not ($zellijLsOutput -like "*No active zellij sessions found.*")) {
+            throw "zellij ls failed with code $LASTEXITCODE. Output:`n$zellijLsOutput"
+        }
+    }
+    $zellijLsOutput = $zellijLsOutput | ForEach-Object { ($_ | Out-String).Trim() }
+    Write-Information "zellijLsOutput: $zellijLsOutput"
+    if ($zellijLsOutput | Where-Object { $_ -eq $sessionName }) {
+        & zellij --session $sessionName action new-tab --close-on-exit --cwd $PWD.Path -- $SHELL | Write-Information
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to open new tab in existing session '$sessionName' (exit $LASTEXITCODE)"
+        }
+    }
+    else {
+        $ENV:SHELL = $SHELL
+        & zellij attach --create-background $sessionName
+        Remove-Item Env:SHELL -ErrorAction SilentlyContinue
+   
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to create session '$sessionName' (exit $LASTEXITCODE)"
+        }
+    }
+
+    Write-Information "Attaching to '$sessionName'"
+    $null = zellij da -y # delete dead sessions
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to delete dead sessions (exit $LASTEXITCODE)"
+    }
+    if ($InformationPreference -eq "Continue") {
+        Pause
+    }
+    & zellij attach $sessionName
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to attach to session '$sessionName' (exit $LASTEXITCODE)"
+    }
+    if ($InformationPreference -eq "Continue") {
+        Pause
+    }
+    $null = zellij da -y # delete dead sessions
+}
+catch {
+    Write-Error "Error: $_"
+    Pause
+}
