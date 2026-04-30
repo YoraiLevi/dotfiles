@@ -186,7 +186,7 @@ keybinds clear-defaults=true {
     }
 
     search {
-        // Letter keys
+        // Lowercase letters
         bind "q" { SearchInput 113; }
         bind "w" { SearchInput 119; }
         bind "e" { SearchInput 101; }
@@ -214,6 +214,34 @@ keybinds clear-defaults=true {
         bind "n" { SearchInput 110; }
         bind "m" { SearchInput 109; }
 
+        // Uppercase letters
+        bind "Q" { SearchInput 81; }
+        bind "W" { SearchInput 87; }
+        bind "E" { SearchInput 69; }
+        bind "R" { SearchInput 82; }
+        bind "T" { SearchInput 84; }
+        bind "Y" { SearchInput 89; }
+        bind "U" { SearchInput 85; }
+        bind "I" { SearchInput 73; }
+        bind "O" { SearchInput 79; }
+        bind "P" { SearchInput 80; }
+        bind "A" { SearchInput 65; }
+        bind "S" { SearchInput 83; }
+        bind "D" { SearchInput 68; }
+        bind "F" { SearchInput 70; }
+        bind "G" { SearchInput 71; }
+        bind "H" { SearchInput 72; }
+        bind "J" { SearchInput 74; }
+        bind "K" { SearchInput 75; }
+        bind "L" { SearchInput 76; }
+        bind "Z" { SearchInput 90; }
+        bind "X" { SearchInput 88; }
+        bind "C" { SearchInput 67; }
+        bind "V" { SearchInput 86; }
+        bind "B" { SearchInput 66; }
+        bind "N" { SearchInput 78; }
+        bind "M" { SearchInput 77; }
+
         // Number keys
         bind "1" { SearchInput 49; }
         bind "2" { SearchInput 50; }
@@ -226,7 +254,7 @@ keybinds clear-defaults=true {
         bind "9" { SearchInput 57; }
         bind "0" { SearchInput 48; }
 
-        // Symbol keys
+        // Symbol keys (unshifted)
         bind "`"  { SearchInput 96; }
         bind "-"  { SearchInput 45; }
         bind "="  { SearchInput 61; }
@@ -257,7 +285,8 @@ keybinds clear-defaults=true {
         // bind "PageDown"  { SearchInput 27 91 54 126; }
         // bind "esc"       { SearchInput 27; }
 
-        // Shifted symbol keys (US EN layout)
+        // Symbol keys (shifted, US EN layout)
+        bind "~" { SearchInput 126; }
         bind "!" { SearchInput 33; }
         bind "@" { SearchInput 64; }
         bind "#" { SearchInput 35; }
