@@ -312,6 +312,45 @@ export GTK_THEME=Adwaita:dark
 
 zellij da -y > /dev/null # delete dead sessions
 
+# Derive a session name from context: git root basename > cwd basename
+_zellij_auto_name() {
+    local git_root
+    git_root=$(git rev-parse --show-toplevel 2>/dev/null)
+    if [[ -n "$git_root" ]]; then
+        basename "$git_root"
+    else
+        basename "$PWD"
+    fi
+}
+
+# Create or attach to a named Zellij session.
+# Usage: zs [name]   — omit name to auto-derive from git root / cwd
+# From outside Zellij: creates (or attaches to) a session in a new Zellij instance.
+# From inside Zellij:  switches to the named session, creating it if needed.
+zs() {
+    local name="${1:-$(_zellij_auto_name)}"
+    if [[ -n "$ZELLIJ" ]]; then
+        # Already inside a session — try to switch; create in background first if needed
+        zellij attach "$name" 2>/dev/null || {
+            zellij attach --create-background "$name" 2>/dev/null
+            zellij attach "$name" 2>/dev/null
+        }
+    else
+        zellij attach "$name" 2>/dev/null || zellij -s "$name"
+    fi
+}
+
+# Rename current tab to cwd on every prompt (session name stays stable)
+zellij_tab_name_update() {
+    [[ -z $ZELLIJ ]] && return
+    local current_dir="${PWD/#$HOME/\~}"
+    zellij action rename-tab "$current_dir" 2>/dev/null &
+}
+
+if [[ -n $ZELLIJ ]]; then
+    PROMPT_COMMAND="zellij_tab_name_update; $PROMPT_COMMAND"
+fi
+
 if [[ -z "$ZELLIJ" ]]; then
     if [ ! -z "$SSH_CONNECTION" ]; then
         zellij attach main -c
