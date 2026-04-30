@@ -185,7 +185,7 @@ keybinds clear-defaults=true {
       
     }
 
-    search {
+     search {
         // Lowercase letters
         bind "q" { SearchInput 113; }
         bind "w" { SearchInput 119; }
@@ -308,26 +308,27 @@ keybinds clear-defaults=true {
         bind ">" { SearchInput 62; }
         bind "?" { SearchInput 63; }
     }
-   shared_except "search" "entersearch" {
+
+   shared_except "search" {
         bind "Ctrl f" "Ctrl Shift f"{
             SwitchToMode "search"; 
         }
     }
-    shared_among "scroll" "search" "entersearch" {
+    shared_among "scroll" "search" {
         bind "down"                          { ScrollDown; }
         bind "up"                            { ScrollUp; }
         bind "PageUp"                        { PageScrollUp; }
         bind "PageDown"                      { PageScrollDown; }
         bind "Ctrl c" { ScrollToBottom; SwitchToMode "locked"; }
     }
-    shared_among "entersearch" "search" {
+    
+    shared_among "search" {
         bind "alt c" { SearchToggleOption "CaseSensitivity"; }
         bind "alt w" { SearchToggleOption "WholeWord"; }
         bind "alt r" { SearchToggleOption "Wrap"; }
         bind "enter" "Ctrl f" { SwitchToMode "search" ; Search "down"; }
         bind "shift enter" "Ctrl Shift f" { SwitchToMode "search"; Search "up"; }
         bind { SwitchToMode "search"; Search "up"; }
-        bind "esc" { SwitchToMode "search"; }
     }
 
     session {
@@ -376,10 +377,10 @@ keybinds clear-defaults=true {
         bind "Ctrl g" { SwitchToMode "locked"; }
         bind "Ctrl q" { Quit; }
     }
-    shared_except "locked" "entersearch" "search"  {
+    shared_except "locked" "search"  {
         bind "enter" { SwitchToMode "locked"; }
     }
-    shared_except "locked" "entersearch" "renametab" "renamepane" {
+    shared_except "locked" "renametab" "renamepane" {
         bind "esc" { SwitchToMode "locked"; }
     }
 

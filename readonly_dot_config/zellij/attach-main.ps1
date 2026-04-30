@@ -108,7 +108,6 @@ try {
     if ($InformationPreference -eq "Continue") {
         Pause
     }
-    $null = zellij da -y # delete dead sessions
 }
 catch {
     Write-Error "Error: $_"
