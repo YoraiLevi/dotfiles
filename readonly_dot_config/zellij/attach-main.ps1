@@ -71,7 +71,8 @@ function Get-ZellijClients {
         }
     }
 
-    # Parse Output (Skip header, match columns via regex). Always return an array at the call site.
+    # Parse Output (Skip header, match columns via regex). Always return an array so
+    # "zero clients" is not confused with "session missing" ($null) at the call site.
     $results = @(
         $zellijOutput | Select-Object -Skip 1 | ForEach-Object {
             if ($_ -match '^(?<ClientId>\d+)\s+(?<PaneId>\S+)\s+(?<Command>.+)$') {
@@ -98,35 +99,6 @@ function Test-ZellijSessionListed {
     }
     foreach ($line in $lines) {
         if (([string]$line).Trim() -eq $SessionName) {
-            return $true
-        }
-    }
-    return $false
-}
-function Test-ZellijSessionExited {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$SessionName
-    )
-    # Default `zellij ls` includes "(EXITED - attach to resurrect)" for dead sessions; those still
-    # appear in `ls --short` but cannot serve `action new-tab` / stable attach until removed or resurrected.
-    if ([string]::IsNullOrWhiteSpace($SessionName)) {
-        return $false
-    }
-    $lines = & zellij ls 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        return $false
-    }
-    foreach ($raw in $lines) {
-        $line = ([string]$raw).Trim()
-        if (-not $line) {
-            continue
-        }
-        if ($line -notmatch 'EXITED') {
-            continue
-        }
-        $first = ($line -split '\s+', 2)[0]
-        if ($first -eq $SessionName) {
             return $true
         }
     }
@@ -301,218 +273,27 @@ function Get-ZellijAutoName {
     return $name
 }
 
-# Invoked from finally and from PowerShell.Exiting; must be global so the engine event action can call it.
-function global:ZellijAttachMain_ExitCleanup {
-    param([string]$SessionName)
-    if ([string]::IsNullOrWhiteSpace($SessionName)) {
-        return
-    }
-    try {
-        $zellijOutput = & zellij --session $SessionName action list-clients 2>&1
-        if ($LASTEXITCODE -ne 0) {
-            return
-        }
-        $parsed = $zellijOutput | Select-Object -Skip 1 | ForEach-Object {
-            if ($_ -match '^(?<ClientId>\d+)\s+(?<PaneId>\S+)\s+(?<Command>.+)$') {
-                $_
-            }
-        }
-        if ($null -eq $parsed -or @($parsed).Count -eq 0) {
-            & zellij kill-session $SessionName 2>&1 | Out-Null
-        }
-    }
-    catch {
-        # Session gone or zellij unavailable — ignore
-    }
-}
-
-# Closing the console with X sends CTRL_CLOSE_EVENT; PowerShell often never reaches finally / PowerShell.Exiting.
-# Run cleanup from the Win32 handler (short-lived thread; keep work to Process-only, no PowerShell pipeline).
-if (-not $script:ZellijAttachMain_ConsoleCloseTypeLoaded) {
-    Add-Type -Namespace ZellijAttachMain -Name ConsoleCloseCleanup -ErrorAction Stop -MemberDefinition @'
-private delegate bool HandlerRoutine(uint dwCtrlType);
-
-private static HandlerRoutine _handler;
-private static readonly System.Text.RegularExpressions.Regex ClientLine =
-    new System.Text.RegularExpressions.Regex(
-        @"^(?<ClientId>\d+)\s+(?<PaneId>\S+)\s+(?<Command>.+)$",
-        System.Text.RegularExpressions.RegexOptions.Compiled);
-
-[System.Runtime.InteropServices.DllImport("Kernel32", SetLastError = true)]
-private static extern bool SetConsoleCtrlHandler(HandlerRoutine handler, bool add);
-
-private const uint CTRL_CLOSE_EVENT = 2;
-private const uint CTRL_LOGOFF_EVENT = 5;
-private const uint CTRL_SHUTDOWN_EVENT = 6;
-
-public static bool Register() {
-    _handler = OnNativeCtrl;
-    return SetConsoleCtrlHandler(_handler, true);
-}
-
-public static void Unregister() {
-    if (_handler != null) {
-        SetConsoleCtrlHandler(_handler, false);
-        _handler = null;
-    }
-}
-
-private static bool OnNativeCtrl(uint sig) {
-    if (sig != CTRL_CLOSE_EVENT && sig != CTRL_LOGOFF_EVENT && sig != CTRL_SHUTDOWN_EVENT) {
-        return false;
-    }
-    try {
-        RunCleanup();
-    }
-    catch {
-    }
-    return false;
-}
-
-private static void RunCleanup() {
-    string session = System.Environment.GetEnvironmentVariable(
-        "ZELLIJ_ATTACH_MAIN_CLEANUP_SESSION",
-        System.EnvironmentVariableTarget.Process);
-    if (string.IsNullOrWhiteSpace(session)) {
-        return;
-    }
-
-    var listPsi = new System.Diagnostics.ProcessStartInfo {
-        FileName = "zellij",
-        UseShellExecute = false,
-        RedirectStandardOutput = true,
-        RedirectStandardError = true,
-        CreateNoWindow = true,
-    };
-    listPsi.ArgumentList.Add("--session");
-    listPsi.ArgumentList.Add(session);
-    listPsi.ArgumentList.Add("action");
-    listPsi.ArgumentList.Add("list-clients");
-
-    string combined;
-    using (var p = System.Diagnostics.Process.Start(listPsi)) {
-        if (p == null) {
-            return;
-        }
-        combined = p.StandardOutput.ReadToEnd() + p.StandardError.ReadToEnd();
-        p.WaitForExit();
-        if (p.ExitCode != 0) {
-            return;
-        }
-    }
-
-    int clients = 0;
-    bool skipHeader = true;
-    foreach (var raw in combined.Split(new[] { '\r', '\n' }, System.StringSplitOptions.RemoveEmptyEntries)) {
-        var line = raw.TrimEnd();
-        if (skipHeader) {
-            skipHeader = false;
-            continue;
-        }
-        if (ClientLine.IsMatch(line)) {
-            clients++;
-        }
-    }
-    if (clients > 0) {
-        return;
-    }
-
-    var killPsi = new System.Diagnostics.ProcessStartInfo {
-        FileName = "zellij",
-        UseShellExecute = false,
-        CreateNoWindow = true,
-    };
-    killPsi.ArgumentList.Add("kill-session");
-    killPsi.ArgumentList.Add(session);
-    using (var p = System.Diagnostics.Process.Start(killPsi)) {
-        if (p != null) {
-            p.WaitForExit();
-        }
-    }
-}
-'@
-    $script:ZellijAttachMain_ConsoleCloseTypeLoaded = $true
-}
-
-# Covers host/process exit paths where try/finally may not run (e.g. closing the terminal).
-$script:ZellijAttachMain_ExitingJob = Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action {
-    $sn = [Environment]::GetEnvironmentVariable('ZELLIJ_ATTACH_MAIN_CLEANUP_SESSION', 'Process')
-    if ([string]::IsNullOrWhiteSpace($sn)) {
-        return
-    }
-    ZellijAttachMain_ExitCleanup -SessionName $sn
-}
-$script:ZellijAttachMain_ExitingSubscriptionId = @(
-    Get-EventSubscriber -SourceIdentifier PowerShell.Exiting -ErrorAction SilentlyContinue
-) | Sort-Object SubscriptionId -Descending | Select-Object -First 1 -ExpandProperty SubscriptionId
-
 try {
-    try {
-        $sessionName = if ($SessionName) { $SessionName } else { Get-ZellijAutoName }
-
-        if (Test-ZellijSessionExited -SessionName $sessionName) {
-            Write-Information "Zellij session '$sessionName' is EXITED; forcing delete before attach."
-            try {
-                Remove-ZellijSession -SessionName $sessionName -Force
-            }
-            catch [ZellijSessionNotFoundException] { }
-            catch [ZellijSessionInUseException] { }
-        }
-
-        Write-Information "Getting zellij clients for session '$sessionName'"
-        $clients = try {
-            Get-ZellijClients -SessionName $sessionName
-        }
-        catch [ZellijSessionNotFoundException] {
-            $null
-        }
-
-        $sessionListed = Test-ZellijSessionListed -SessionName $sessionName
-
-        if (-not $sessionListed) {
-            Write-Information "Removing zellij session '$sessionName' if it exists"
-            try { Remove-ZellijSession -SessionName $sessionName } catch [ZellijSessionNotFoundException] { } catch [ZellijSessionInUseException] { }
-            Write-Information "Starting zellij session '$sessionName'"
-            Start-ZellijSession -SessionName $sessionName -ShellPath $SHELL
-        }
-        elseif (@($clients).Count -gt 0) {
-            Write-Information "Session already exists with clients; creating a new tab in session '$sessionName'"
-            New-ZellijTab -SessionName $sessionName -ShellPath $SHELL -Cwd $PWD.Path
-        }
-
-        [Environment]::SetEnvironmentVariable('ZELLIJ_ATTACH_MAIN_CLEANUP_SESSION', $sessionName, 'Process')
-        $null = [ZellijAttachMain.ConsoleCloseCleanup]::Register()
-        Write-Information "Connecting to zellij session '$sessionName'"
-        Connect-ZellijSession -SessionName $sessionName
+    $sessionName = if ($SessionName) { $SessionName } else { Get-ZellijAutoName }
+    Write-Information "Getting zellij clients for session '$sessionName'"
+    $clients = try { Get-ZellijClients -SessionName $sessionName } catch [ZellijSessionNotFoundException] { $null }
+    if ($null -eq $clients) {
+        Write-Information "Removing zellij session '$sessionName' if it exists"
+        try { Remove-ZellijSession -SessionName $sessionName } catch [ZellijSessionNotFoundException] { } catch [ZellijSessionInUseException] { }
+        Write-Information "Starting zellij session '$sessionName'"
+        Start-ZellijSession -sessionName $sessionName -SHELL $SHELL
     }
-    catch [ZellijCommandException] {
-        throw "Zellij Error (Code $($_.Exception.ExitCode)): $($_.Exception.RawOutput)"
+    elseif ($clients.Count -gt 0) {
+        Write-Information "Session previously existed, creating a new tab in session '$sessionName'"
+        New-ZellijTab -SessionName $sessionName -ShellPath $SHELL -Cwd $PWD.Path | Write-Information
     }
-    catch {
-        Write-Error "Unexpected Error: $_"
-        Start-Sleep -Seconds 600
-    }
+    Write-Information "Connecting to zellij session '$sessionName'"
+    Connect-ZellijSession -SessionName $sessionName
 }
-finally {
-    $sn = [Environment]::GetEnvironmentVariable('ZELLIJ_ATTACH_MAIN_CLEANUP_SESSION', 'Process')
-    if (-not [string]::IsNullOrWhiteSpace($sn)) {
-        ZellijAttachMain_ExitCleanup -SessionName $sn
-    }
-    [Environment]::SetEnvironmentVariable('ZELLIJ_ATTACH_MAIN_CLEANUP_SESSION', $null, 'Process')
-    try {
-        [ZellijAttachMain.ConsoleCloseCleanup]::Unregister()
-    }
-    catch {
-        # Type not loaded (e.g. Add-Type failed) — ignore
-    }
-    if ($null -ne $script:ZellijAttachMain_ExitingSubscriptionId) {
-        Unregister-Event -SubscriptionId $script:ZellijAttachMain_ExitingSubscriptionId -ErrorAction SilentlyContinue
-        $script:ZellijAttachMain_ExitingSubscriptionId = $null
-    }
-    $job = $script:ZellijAttachMain_ExitingJob
-    if ($null -ne $job) {
-        Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
-        $script:ZellijAttachMain_ExitingJob = $null
-    }
-    Remove-Item Function:\ZellijAttachMain_ExitCleanup -ErrorAction SilentlyContinue
+catch [ZellijCommandException] {
+    throw "Zellij Error (Code $($_.Exception.ExitCode)): $($_.Exception.RawOutput)"
+}
+catch {
+    Write-Error "Unexpected Error: $_"
+    Start-Sleep -Seconds 600
 }

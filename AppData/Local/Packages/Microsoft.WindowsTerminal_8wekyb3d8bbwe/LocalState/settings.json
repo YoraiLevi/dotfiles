@@ -318,7 +318,8 @@
                 "cursorShape": "filledBox",
                 "environment": {
                     "TERM": "xterm-256color",
-                    "InformationPreference": "Continue"
+                    // "InformationPreference": "Continue"
+                    "InformationPreference": "SilentlyContinue"
                 },
                 "guid": "{cc590fde-1eb2-4d1e-8b03-bca6db0bdf23}",
                 "hidden": false,
@@ -332,7 +333,7 @@
                 "cursorShape": "filledBox",
                 "environment": {
                     "TERM": "xterm-256color",
-                    "InformationPreference": "Continue"
+                    "InformationPreference": "SilentlyContinue"
                 },
                 "font": {
                     "size": 13
