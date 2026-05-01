@@ -12,6 +12,7 @@
     # editor = code-insiders --wait
     autocrlf = input
     eol = lf
+	longpaths = true
 
 # ; https://stackoverflow.com/a/71192747/12603110
 # [diff]

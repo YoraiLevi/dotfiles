@@ -255,10 +255,10 @@
             "id": "User.sendInput.CtrlShiftW",
             "keys": "ctrl+shift+w"
         },
-        {
-            "id": "User.sendInput.ShiftEnter",
-            "keys": "shift+enter"
-        },
+        // {
+        //     "id": "User.sendInput.ShiftEnter",
+        //     "keys": "shift+enter"
+        // },
    
         {
             "id": null,

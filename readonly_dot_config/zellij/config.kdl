@@ -46,8 +46,8 @@ copy_clipboard "system"
 pane_frames true
 auto_layout true
 styled_underlines true
-show_startup_tips false
-show_release_notes false
+show_startup_tips true
+show_release_notes true
 
 // theme "nord"
 theme "catppuccin-macchiato"
