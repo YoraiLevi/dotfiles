@@ -2,6 +2,14 @@
 #
 # ── Customize entries here ──────────────────────────────────────────────────
 # @{ Name = "Display name"; Command = "command to run" }
+
+# Zellij bug workaround: after a floating pane closes (close_on_exit), the tab's
+# floating_panes_visible flag stays false. The next Run {floating true} creates
+# the pane but it's hidden. A brief yield lets Zellij finish registering the
+# floating state before we force-show it (otherwise show-floating-panes is a no-op).
+Start-Sleep -Milliseconds 150
+zellij action show-floating-panes 2>$null
+
 $Entries = @(
     @{ Name = "WSL";        Command = "wsl"  }
     @{ Name = "PowerShell"; Command = "pwsh" }

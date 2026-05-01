@@ -1,5 +1,6 @@
 *.log
 *.tmp
+*build*
 sync_service/logs/*
 sync_service/*
 **/*/.cache

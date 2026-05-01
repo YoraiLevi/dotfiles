@@ -44,3 +44,5 @@ rustc --version
 # rustup toolchain install stable-x86_64-pc-windows-gnu
 # rustup default stable-x86_64-pc-windows-gnu
 # cargo install --locked zellij
+# cargo install --git https://github.com/zellij-org/zellij.git --locked zellij 2>&1
+# cargo install --git https://github.com --locked zellij --target-dir ./zellij_build

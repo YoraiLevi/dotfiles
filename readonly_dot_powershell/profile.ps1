@@ -846,10 +846,10 @@ if ($ENV:VSCODE_CLI -eq 1 -or $ENV:CURSOR_AGENT -eq 1 -or $ENV:VSCODE_PID -ne $n
     # Cursor AI agent terminal
     return
 }
-$env:TERM = 'xterm-256color'
-$ENV:SHELL = 'pwsh'
 # $null = zellij da -y # delete dead sessions
+$ENV:SHELL = 'pwsh'
 if (-not $ENV:ZELLIJ) {
+    $env:TERM = 'xterm-256color'
     if ($ENV:SSH_CONNECTION) {
         zellij attach main -c
     }

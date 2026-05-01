@@ -416,6 +416,7 @@ keybinds clear-defaults=true {
         }
         bind "Ctrl Shift t" {
             NewTab;
+            SwitchToMode "locked";
         }
          bind "Ctrl t" {
             NewTab;
