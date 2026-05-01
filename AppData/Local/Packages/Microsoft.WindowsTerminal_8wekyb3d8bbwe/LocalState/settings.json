@@ -224,7 +224,7 @@
             "keys": "ctrl+shift+period"
         },
         {
-            "id": "User.sendInput.CtrlShiftT",
+            "id": "User.sendInput.CtrlShiftBackslash",
             "keys": "ctrl+shift+\\"
         },
         {
