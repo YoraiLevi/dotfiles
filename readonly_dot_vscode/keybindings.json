@@ -120,16 +120,7 @@
         "command": "-workbench.action.quickOpenNavigatePreviousInEditorPicker",
         "when": "inEditorsPicker && inQuickOpen"
     },
-    {
-        "key": "ctrl+tab",
-        "command": "workbench.action.nextEditor",
-        "when": "!activeEditorGroupEmpty"
-    },
-    {
-        "key": "ctrl+shift+tab",
-        "command": "workbench.action.previousEditor",
-        "when": "!activeEditorGroupEmpty"
-    },
+  
     {
         "key": "ctrl+shift+tab",
         "command": "-workbench.action.quickOpenLeastRecentlyUsedEditorInGroup",
@@ -258,10 +249,6 @@
         "command": "-aichat.newchataction"
     },
     {
-        "key": "ctrl+shift+l",
-        "command": "-aichat.insertselectionintochat"
-    },
-    {
         "key": "ctrl+l",
         "command": "-workbench.action.chat.newChat",
         "when": "chatIsEnabled && inChat"
@@ -325,14 +312,8 @@
         "command": "-workbench.action.newWindow"
     },
     {
-        "key": "ctrl+n",
-        "command": "extension.multiCommand.execute",
-        "args": {
-            "sequence": [
-                "workbench.action.newEmptyEditorWindow",
-                "workbench.action.files.newUntitledFile",
-            ]
-        }
+        "key": "alt+n",
+        "command": "workbench.action.moveEditorGroupToNewWindow"
     },
     {
         "key": "ctrl+n",
@@ -341,7 +322,7 @@
     },
     {
         "key": "ctrl+l",
-        "command": "workbench.action.gotoLine"
+        "command": "workbench.action.quickTextSearch"
     },
     {
         "key": "ctrl+p",
@@ -385,36 +366,6 @@
     {
         "key": "ctrl+w",
         "command": "-composer.closeComposerTab",
-        "when": "composerFocused"
-    },
-    {
-        "key": "ctrl+tab",
-        "command": "composer.nextChatTab",
-        "when": "composerFocused"
-    },
-    {
-        "key": "ctrl+]",
-        "command": "-composer.nextChatTab",
-        "when": "composerFocused"
-    },
-    {
-        "key": "ctrl+shift+tab",
-        "command": "composer.previousChatTab",
-        "when": "composerFocused"
-    },
-    {
-        "key": "ctrl+[",
-        "command": "-composer.previousChatTab",
-        "when": "composerFocused"
-    },
-    {
-        "key": "ctrl+p",
-        "command": "composer.openAddContextMenu",
-        "when": "composerFocused"
-    },
-    {
-        "key": "ctrl+alt+p",
-        "command": "-composer.openAddContextMenu",
         "when": "composerFocused"
     },
     {
@@ -485,14 +436,7 @@
         "key": "ctrl+b",
         "command": "-workbench.action.toggleSidebarVisibility"
     },
-    {
-        "key": "ctrl+i",
-        "command": "composerMode.agent"
-    },
-    {
-        "key": "ctrl+pagedown",
-        "command": "-workbench.action.nextEditor"
-    },
+  
     {
         "key": "ctrl+shift+v",
         "command": "-notebook.cell.pasteAbove",
@@ -1384,11 +1328,6 @@
         "when": "inDiffEditor"
     },
     {
-        "command": "-workbench.action.copyEditorToNewWindow",
-        "key": "ctrl+m o",
-        "when": "activeEditor"
-    },
-    {
         "command": "-workbench.action.editor.changeLanguageMode",
         "key": "ctrl+k m",
         "when": "!notebookEditorFocused"
@@ -1568,14 +1507,6 @@
         "when": "!activeEditorIsPinned"
     },
     {
-        "command": "-workbench.action.previousEditorInGroup",
-        "key": "ctrl+k ctrl+pageup"
-    },
-    {
-        "command": "-workbench.action.previousEditorInGroup",
-        "key": "ctrl+m ctrl+pageup"
-    },
-    {
         "command": "-workbench.action.selectTheme",
         "key": "ctrl+k ctrl+t"
     },
@@ -1711,11 +1642,6 @@
         "key": "ctrl+k ctrl+shift+l",
         "command": "-editor.toggleFoldRecursively",
         "when": "editorTextFocus && foldingEnabled"
-    },
-    {
-        "key": "ctrl+k o",
-        "command": "-workbench.action.copyEditorToNewWindow",
-        "when": "activeEditor"
     },
     {
         "key": "ctrl+k ctrl+m",
@@ -1865,30 +1791,28 @@
         "key": "ctrl+shift+w",
         "command": "-workbench.action.closeWindow"
     },
+   
     {
         "key": "ctrl+e",
-        "command": "workbench.action.focusSideBar",
+        "command": "cursor.composer.openEditorWindow",
+        "when": "cursor.appLayoutEnabled && cursor.appLayout == 'agent' && ((composerFocused || inChatInput || chatInputFocus) || (!editorFocus && !editorTextFocus))"
     },
     {
         "key": "ctrl+e",
-        "command": "workbench.action.focusActiveEditorGroup",
-        "when": "!editorFocus"
+        "command": "composer.focusComposer",
+        "when": "cursor.appLayoutEnabled && cursor.appLayout == 'agent' && editorFocus && !composerFocused && !inChatInput && !chatInputFocus"
     },
     {
         "key": "ctrl+e",
-        "command": "-cursor.composer.openAgentWindow",
-        "when": "cursor.appLayoutEnabled && cursor.appLayout != 'agent'"
+        "command": "composer.focusComposer",
+        "when": "(!cursor.appLayoutEnabled || cursor.appLayout != 'agent') && editorFocus"
     },
     {
         "key": "ctrl+e",
-        "command": "-cursor.composer.openEditorWindow",
-        "when": "cursor.appLayoutEnabled && cursor.appLayout == 'agent'"
+        "command": "workbench.action.focusFirstEditorGroup",
+        "when": "(!cursor.appLayoutEnabled || cursor.appLayout != 'agent') && !editorFocus"
     },
-    {
-        "key": "ctrl+e",
-        "command": "-editor.action.toggleScreenReaderAccessibilityMode",
-        "when": "accessibilityHelpIsShown"
-    },
+
     {
         "key": "tab",
         "command": "editor.action.acceptCursorTabSuggestion",
@@ -1910,8 +1834,15 @@
         "when": "textInputFocus && !accessibilityModeEnabled"
     },
     {
-        "key": "alt+n",
-        "command": "workbench.action.moveEditorToNewWindow"
+        "key": "ctrl+n",
+        "command": "extension.multiCommand.execute",
+        "when": "editorFocus",
+        "args": {
+            "sequence": [
+                "workbench.action.files.newUntitledFile",
+                "workbench.action.moveEditorToNewWindow"
+            ]
+        }
     },
     {
         "key": "ctrl+i",
@@ -1923,5 +1854,132 @@
         "command": "workbench.action.toggleUnifiedSidebarFromKeyboard",
         "when": "!isAuxiliaryWindowFocusedContext"
     },
-
+    {
+        "key": "ctrl+9",
+        "command": "-workbench.action.lastEditorInGroup"
+    },
+    {
+        "key": "ctrl+9",
+        "command": "-glass.goToTab9",
+        "when": "isGlassAgentWorkspace"
+    },
+    {
+        "key": "ctrl+9",
+        "command": "-glass.goToTab9",
+        "when": "isGlassAgentWorkspace && terminalFocusInAny"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "-cursor.toggleAgentWindowIDEUnification",
+        "when": "!isGlass && workbenchState != 'empty'"
+    },
+    {
+        "key": "ctrl+e",
+        "command": "-editor.action.toggleScreenReaderAccessibilityMode",
+        "when": "accessibilityHelpIsShown"
+    },
+    {
+        "key": "ctrl+shift+t",
+        "command": "-workbench.action.reopenClosedEditor",
+        "when": "composerFocused || focusedView =~ /^workbench.panel.aichat.view/ || view =~ /^workbench.panel.aichat.view/"
+    },
+    {
+        "key": "ctrl+shift+t",
+        "command": "composer.duplicateChat",
+        "when": "composerFocused || focusedView =~ /^workbench.panel.aichat.view/ || view =~ /^workbench.panel.aichat.view/"
+    },
+    {
+        "key": "ctrl+alt+win+n",
+        "command": "-welcome.showNewFileEntries"
+    },
+    {
+        "key": "ctrl+m o",
+        "command": "-workbench.action.copyEditorToNewWindow",
+        "when": "activeEditor && resourceScheme != 'cursor-browser'"
+    },
+    {
+        "key": "ctrl+k o",
+        "command": "-workbench.action.copyEditorToNewWindow",
+        "when": "activeEditor && resourceScheme != 'cursor-browser'"
+    },
+    {
+        "key": "ctrl+alt+n",
+        "command": "workbench.action.copyEditorGroupToNewWindow"
+    },
+    {
+        "key": "ctrl+shift+tab",
+        "command": "-workbench.action.quickOpenLeastRecentlyUsedAgent",
+        "when": "agentsPaneFocused && !cursor.chatEditorGroup.enabled && !isInBackgroundComposerWindow || composerFocused && !cursor.chatEditorGroup.enabled && !isInBackgroundComposerWindow"
+    },
+    {
+        "key": "ctrl+shift+tab",
+        "command": "-workbench.action.quickOpenLeastRecentlyUsedEditorInGroup",
+        "when": "activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !agentsPaneFocused && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !auxiliaryBarFocus && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !agentsPaneFocused && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !auxiliaryBarFocus && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !agentsPaneFocused && !auxiliaryBarFocus && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !agentsPaneFocused && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !auxiliaryBarFocus && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && !activeEditorGroupEmpty && !agentsPaneFocused && !auxiliaryBarFocus && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !agentsPaneFocused && !auxiliaryBarFocus && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !agentsPaneFocused && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !auxiliaryBarFocus && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || editorFocus && !activeEditorGroupEmpty && !agentsPaneFocused && !auxiliaryBarFocus && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus"
+    },
+    {
+        "key": "ctrl+tab",
+        "command": "-workbench.action.quickOpenPreviousRecentlyUsedAgent",
+        "when": "agentsPaneFocused && !cursor.chatEditorGroup.enabled && !isInBackgroundComposerWindow || composerFocused && !cursor.chatEditorGroup.enabled && !isInBackgroundComposerWindow"
+    },
+    {
+        "key": "ctrl+tab",
+        "command": "-workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup",
+        "when": "activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !agentsPaneFocused && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !auxiliaryBarFocus && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !agentsPaneFocused && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !auxiliaryBarFocus && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !agentsPaneFocused && !auxiliaryBarFocus && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !agentsPaneFocused && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && cursor.chatEditorGroup.enabled && !activeEditorGroupEmpty && !auxiliaryBarFocus && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || activeEditor && !activeEditorGroupEmpty && !agentsPaneFocused && !auxiliaryBarFocus && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !agentsPaneFocused && !auxiliaryBarFocus && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !agentsPaneFocused && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || cursor.chatEditorGroup.enabled && editorFocus && !activeEditorGroupEmpty && !auxiliaryBarFocus && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus || editorFocus && !activeEditorGroupEmpty && !agentsPaneFocused && !auxiliaryBarFocus && !composerFocused && !panelFocus && !sideBarFocus && !terminalFocus"
+    },
+    {
+        "key": "ctrl+shift+tab",
+        "command": "-workbench.action.quickOpenNavigatePreviousInAgentsPicker",
+        "when": "inAgentsMRUPicker && inQuickOpen"
+    },
+    {
+        "key": "ctrl+m ctrl+pageup",
+        "command": "-workbench.action.previousEditorInGroup"
+    },
+    {
+        "key": "ctrl+k ctrl+pageup",
+        "command": "-workbench.action.previousEditorInGroup"
+    },
+   
+    // {
+    //     "key": "ctrl+tab",
+    //     "command": "workbench.action.nextEditor",
+    // },
+    // {
+    //     "key": "ctrl+shift+tab",
+    //     "command": "workbench.action.previousEditor"
+    // },
+    {
+        "key": "ctrl+shift+tab",
+        "command": "composer.previousChatTab",
+    },
+       {
+        "key": "ctrl+tab",
+        "command": "composer.nextChatTab",
+    },
+    {
+        "key": "ctrl+pagedown",
+        "command": "-workbench.action.nextEditor"
+    },
+    {
+        "key": "ctrl+pageup",
+        "command": "-workbench.action.previousEditor"
+    },
+    {
+        "key": "ctrl+]",
+        "command": "-composer.nextChatTab",
+        "when": "composerFocused"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "-composer.previousChatTab",
+        "when": "composerFocused"
+    },
+    {
+        "key": "ctrl+shift+i",
+        "command": "-composer.newAgentChat"
+    },
+    {
+        "key": "ctrl+shift+l",
+        "command": "-composer.newAgentChat"
+    }
 ]

@@ -479,6 +479,7 @@
 		"calc2-104004": "linux"
 	},
 	"search.useIgnoreFiles": false,
+	"search.useGlobalIgnoreFiles": false,
 	"terminal.integrated.profiles.linux": {
 		"integrated-bash": {
 			"path": "/bin/bash",
@@ -503,6 +504,7 @@
 		}
 	},
 	"terminal.integrated.defaultProfile.windows": "integrated-pwsh",
-	"cursor.composer.shouldChimeAfterChatFinishes": false
+	"cursor.composer.shouldChimeAfterChatFinishes": false,
+	"search.quickOpen.includeHistory": false
 	
 }
