@@ -8,15 +8,6 @@ param (
     $SessionName
     
 )
-# ~/.config/zellij/attach-main.ps1
-#
-# Launches Zellij, naming the session after the current project context:
-#   - Respects $_ZELLIJ_SESSION_NAME if already set (explicit override)
-#   - Otherwise: git repo root basename if in a git repo, else cwd basename
-#
-# Session behaviour:
-#   - Session exists  → open a new tab at $PWD inside it, then attach
-#   - Session missing → create it in the background, then attach
 $ErrorActionPreference = 'Stop'
 
 if (-not $ENV:TERM) {
@@ -50,6 +41,7 @@ class ZellijCommandException : ZellijException {
         $this.RawOutput = $output
     }
 }
+# Define Zellij Functions
 function Get-ZellijClients {
     param (
         [Parameter(Mandatory = $true)]
@@ -63,7 +55,7 @@ function Get-ZellijClients {
     # Handle Errors
     if ($LASTEXITCODE -ne 0) {
         $errorString = $zellijOutput -join "`n"
-        if ($errorString -like "*There is no active session*") {
+        if ($errorString -like "*There is no active session*" -or $errorString -like "*not found. The following sessions are active*") {
             throw [ZellijSessionNotFoundException]::new($SessionName)
         }
         else {
@@ -272,8 +264,13 @@ function Get-ZellijAutoName {
     }
     return $name
 }
-
+# Main Script
 try {
+    if ($env:ZELLIJ) {
+        Write-Information "ZELLIJ is set, running: $Shell"
+        & $Shell
+        return
+    }
     $sessionName = if ($SessionName) { $SessionName } else { Get-ZellijAutoName }
     Write-Information "Getting zellij clients for session '$sessionName'"
     $clients = try { Get-ZellijClients -SessionName $sessionName } catch [ZellijSessionNotFoundException] { $null }
@@ -291,9 +288,65 @@ try {
     Connect-ZellijSession -SessionName $sessionName
 }
 catch [ZellijCommandException] {
-    throw "Zellij Error (Code $($_.Exception.ExitCode)): $($_.Exception.RawOutput)"
+    $ex = $_.Exception
+    $raw = if ($ex.RawOutput) { $ex.RawOutput.TrimEnd() } else { '' }
+    $diag = [System.Collections.Generic.List[string]]::new()
+    [void]$diag.Add('=== Zellij command failed ===')
+    [void]$diag.Add("Exit code: $($ex.ExitCode)")
+    [void]$diag.Add("Exception type: $($ex.GetType().FullName)")
+    if ($ex.Message) { [void]$diag.Add("Message: $($ex.Message)") }
+    if ($raw) {
+        [void]$diag.Add('')
+        [void]$diag.Add('--- Captured stdout/stderr ---')
+        [void]$diag.Add($raw)
+    }
+    else {
+        [void]$diag.Add('')
+        [void]$diag.Add('--- Captured stdout/stderr --- (none)')
+    }
+        [void]$diag.Add('')
+    [void]$diag.Add('--- Error record location ---')
+    [void]$diag.Add($_.InvocationInfo.PositionMessage.TrimEnd())
+    if ($_.ScriptStackTrace) {
+        [void]$diag.Add('')
+        [void]$diag.Add('--- Script stack trace ---')
+        [void]$diag.Add($_.ScriptStackTrace.TrimEnd())
+    }
+    $report = $diag -join [Environment]::NewLine
+    Write-Error -Message $report -Exception $ex -Category FromStdErr -ErrorId 'Zellij.CommandFailed'
+    exit 1
 }
 catch {
-    Write-Error "Unexpected Error: $_"
-    Start-Sleep -Seconds 600
+    $ex = $_.Exception
+    $diag = [System.Collections.Generic.List[string]]::new()
+    [void]$diag.Add('=== Unexpected error ===')
+    [void]$diag.Add("Exception type: $($ex.GetType().FullName)")
+    if ($ex.Message) { [void]$diag.Add("Message: $($ex.Message)") }
+    $inner = $ex.InnerException
+    while ($inner) {
+        [void]$diag.Add('')
+        [void]$diag.Add('--- Inner exception ---')
+        [void]$diag.Add("Type: $($inner.GetType().FullName)")
+        [void]$diag.Add("Message: $($inner.Message)")
+        $inner = $inner.InnerException
+    }
+    [void]$diag.Add('')
+    [void]$diag.Add('--- Error record location ---')
+    [void]$diag.Add($_.InvocationInfo.PositionMessage.TrimEnd())
+    if ($_.ScriptStackTrace) {
+        [void]$diag.Add('')
+        [void]$diag.Add('--- Script stack trace ---')
+        [void]$diag.Add($_.ScriptStackTrace.TrimEnd())
+    }
+    if ($_.CategoryInfo) {
+        [void]$diag.Add('')
+        [void]$diag.Add("--- Category --- $($_.CategoryInfo)")
+    }
+    if ($_.FullyQualifiedErrorId) {
+        [void]$diag.Add("FullyQualifiedErrorId: $($_.FullyQualifiedErrorId)")
+    }
+    $report = $diag -join [Environment]::NewLine
+    Write-Error -Message $report -Exception $ex -Category NotSpecified -ErrorId 'AttachMain.UnexpectedError'
+    exit 1
 }
+Write-Information "Script completed... Press Enter to continue..."

@@ -1,20 +1,27 @@
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": [
+    "actions": 
+    [
         {
             "command": "experimental.openScratchpad",
             "id": "User.experimental.openScratchpad"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "moveTab",
                 "window": "new"
             },
             "id": "User.moveTab.EA39957B"
         },
         {
-            "command": {
+            "command": "tabSearch",
+            "id": "User.tabSearch"
+        },
+        {
+            "command": 
+            {
                 "action": "splitPane",
                 "split": "right",
                 "splitMode": "duplicate"
@@ -22,15 +29,20 @@
             "id": "User.splitPane.FEF0D40B"
         },
         {
-            "command": "tabSearch",
-            "id": "User.tabSearch"
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[68;5u"
+            },
+            "id": "User.sendInput.AltShiftD"
         },
         {
             "command": "selectAll",
             "id": "User.selectAll"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "splitPane",
                 "split": "auto",
                 "splitMode": "duplicate"
@@ -42,89 +54,109 @@
             "id": "User.duplicateTab"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "nextTab"
             },
             "id": "User.nextTab.0"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[9;5u"
+            },
+            "id": "User.sendInput.CtrlTab"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[9;6u"
+            },
+            "id": "User.sendInput.CtrlShiftTab"
         },
         {
             "command": "paste",
             "id": "User.paste"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "sendInput",
-                "input": "\u001b[67;6u" // Ctrl+Shift+C
-            },
-            "id": "User.sendInput.CtrlShiftC"
-        },
-        {
-            "command": {
-                "action": "sendInput",
-                "input": "\u001b[86;6u" // Ctrl+Shift+V
-            },
-            "id": "User.sendInput.CtrlShiftV"
-        },
-        {
-            "command": {
-                "action": "sendInput",
-                "input": "\u001b[70;6u" // Ctrl+Shift+F
-            },
-            "id": "User.sendInput.CtrlShiftF"
-        },
-        {
-            "command": {
-                "action": "sendInput",
-                "input": "\u001b[68;5u" // Alt+Shift+D (note: Windows Terminal doesn't directly support Alt+Shift+D unicode; typically Alt=27, but this is a guess for many terminals)
-            },
-            "id": "User.sendInput.AltShiftD"
-        },
-        {
-            "command": {
-                "action": "sendInput",
-                "input": "\u001b[92;6u" // Ctrl+Shift+\
-            },
-            "id": "User.sendInput.CtrlShiftBackslash"
-        },
-        {
-            "command": {
-                "action": "sendInput",
-                "input": "\u001b[84;6u" // Ctrl+Shift+T
-            },
-            "id": "User.sendInput.CtrlShiftT"
-        },
-        {
-            "command": {
-                "action": "sendInput",
-                "input": "\u001b[78;6u" // Ctrl+Shift+N
+                "input": "\u001b[78;6u"
             },
             "id": "User.sendInput.CtrlShiftN"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "sendInput",
-                "input": "\u001b[96;6u" // Ctrl+Shift+`
+                "input": "\u001b[67;6u"
+            },
+            "id": "User.sendInput.CtrlShiftC"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[86;6u"
+            },
+            "id": "User.sendInput.CtrlShiftV"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[92;6u"
+            },
+            "id": "User.sendInput.CtrlShiftBackslash"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[70;6u"
+            },
+            "id": "User.sendInput.CtrlShiftF"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[96;6u"
             },
             "id": "User.sendInput.CtrlShiftBacktick"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "sendInput",
-                "input": "\u001b[87;6u" // Ctrl+Shift+W
+                "input": "\u001b[84;6u"
+            },
+            "id": "User.sendInput.CtrlShiftT"
+        },
+        {
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[87;6u"
             },
             "id": "User.sendInput.CtrlShiftW"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "sendInput",
-                "input": "\u001b[65;6u" // Ctrl+Shift+A
+                "input": "\u001b[65;6u"
             },
             "id": "User.sendInput.CtrlShiftA"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "sendInput",
-                "input": "\u001b[13;2u" // Shift+Enter
+                "input": "\u001b[13;2u"
             },
             "id": "User.sendInput.ShiftEnter"
         }
@@ -134,10 +166,15 @@
     "copyFormatting": "none",
     "copyOnSelect": true,
     "defaultProfile": "{cc590fde-1eb2-4d1e-8b03-bca6db0bdf23}",
-    "keybindings": [
+    "keybindings": 
+    [
         {
             "id": "Terminal.CopyToClipboard",
             "keys": "ctrl+shift+c"
+        },
+        {
+            "id": "User.sendInput.CtrlShiftTab",
+            "keys": "ctrl+shift+tab"
         },
         {
             "id": "Terminal.CopyToClipboard",
@@ -255,11 +292,6 @@
             "id": "User.sendInput.CtrlShiftW",
             "keys": "ctrl+shift+w"
         },
-        // {
-        //     "id": "User.sendInput.ShiftEnter",
-        //     "keys": "shift+enter"
-        // },
-   
         {
             "id": null,
             "keys": "ctrl+shift+1"
@@ -283,9 +315,14 @@
         {
             "id": "User.sendInput.CtrlShiftA",
             "keys": "ctrl+shift+a"
+        },
+        {
+            "id": "User.sendInput.CtrlTab",
+            "keys": "ctrl+tab"
         }
     ],
-    "newTabMenu": [
+    "newTabMenu": 
+    [
         {
             "icon": null,
             "profile": "{cc590fde-1eb2-4d1e-8b03-bca6db0bdf23}",
@@ -303,23 +340,27 @@
             "type": "remainingProfiles"
         }
     ],
-    "profiles": {
-        "defaults": {
+    "profiles": 
+    {
+        "defaults": 
+        {
             "elevate": false,
-            "font": {
+            "font": 
+            {
                 "face": "Consolas",
                 "weight": "normal"
             }
         },
-        "list": [
+        "list": 
+        [
             {
                 "colorScheme": "Campbell",
                 "commandline": "pwsh -NoProfile -Command \"$InformationPreference=$ENV:InformationPreference; & '%USERPROFILE%/.config/zellij/attach-main.ps1' 'pwsh'\"",
                 "cursorShape": "filledBox",
-                "environment": {
-                    "TERM": "xterm-256color",
-                    // "InformationPreference": "Continue"
-                    "InformationPreference": "SilentlyContinue"
+                "environment": 
+                {
+                    "InformationPreference": "Continue",
+                    "TERM": "xterm-256color"
                 },
                 "guid": "{cc590fde-1eb2-4d1e-8b03-bca6db0bdf23}",
                 "hidden": false,
@@ -331,11 +372,13 @@
                 "colorScheme": "Ubuntu-24.04-ColorScheme",
                 "commandline": "pwsh -NoProfile -Command \"$InformationPreference=$ENV:InformationPreference; & '%USERPROFILE%/.config/zellij/attach-main.ps1' 'wsl'\"",
                 "cursorShape": "filledBox",
-                "environment": {
-                    "TERM": "xterm-256color",
-                    "InformationPreference": "SilentlyContinue"
+                "environment": 
+                {
+                    "InformationPreference": "SilentlyContinue",
+                    "TERM": "xterm-256color"
                 },
-                "font": {
+                "font": 
+                {
                     "size": 13
                 },
                 "guid": "{681405cc-6475-4a68-b6c7-3845db706f9b}",

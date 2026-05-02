@@ -57,7 +57,7 @@ foreach ($kv in $wtEnv.GetEnumerator()) {
 [void]$lines.Add($expandedCmd)
 # OEM (CP437) is what cmd.exe expects for batch files on typical Windows installs.
 $lines | Set-Content -Path $cmdFile -Encoding OEM
-
+'if errorlevel 1 pause' | Out-File -FilePath $cmdFile -Append
 $zellij = (Get-Command zellij -ErrorAction SilentlyContinue).Source
 if (-not $zellij) { $zellij = 'zellij' }
 

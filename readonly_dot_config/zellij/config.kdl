@@ -1,33 +1,4 @@
 // ~/.config/zellij/config.kdl
-//
-// Zellij — Ctrl+G prefix, locked-by-default
-//
-// Quick reference:
-//   Ctrl+G         unlock → Normal mode, then:
-//
-//   DIRECT ACTIONS (Ctrl+G → key):
-//     \   split right       -   split down
-//     arrows  focus pane    w   close pane        z   zoom/fullscreen
-//     f   scrollback search c   new tab           d   detach
-//     [/] prev/next tab     e   edit scrollback in nano
-//     Tab toggle last tab   Ctrl+G  unlock inner (nested session)
-//
-//   PLUGINS (Ctrl+G → key):
-//     a   search tabs (room)         ?   keybind cheatsheet (forgot)
-//     o   session manager
-//
-//   GLOBAL (any mode):
-//     Ctrl+Shift+A   session manager
-//     Ctrl+Shift+`   tab launcher
-//
-//   SUB-MODES (Ctrl+G → key, for full control):
-//     p  Pane      t  Tab       s  Scroll    r  Resize
-//     m  Move      x  Session
-//
-//   Esc / Enter    return to Locked mode
-//
-//   COPY: select text with mouse → auto-copied to clipboard
-//   PASTE: Ctrl+Shift+V
 
 // ── Behavior ───────────────────────────────────────────────
 default_mode "locked"
@@ -62,6 +33,10 @@ ui {
 
 // ── Keybindings ────────────────────────────────────────────
 keybinds clear-defaults=true {
+    shared_except {
+        bind "Ctrl Tab"        { GoToNextTab; }
+        bind "Ctrl Shift Tab"  { GoToPreviousTab; }    
+    }
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
     }
