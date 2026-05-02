@@ -313,7 +313,7 @@
     },
     {
         "key": "alt+n",
-        "command": "workbench.action.moveEditorGroupToNewWindow"
+        "command": "workbench.action.moveEditorToNewWindow"
     },
     {
         "key": "ctrl+n",
@@ -1879,12 +1879,12 @@
         "when": "accessibilityHelpIsShown"
     },
     {
-        "key": "ctrl+shift+t",
+        "key": "ctrl+shift+\\",
         "command": "-workbench.action.reopenClosedEditor",
         "when": "composerFocused || focusedView =~ /^workbench.panel.aichat.view/ || view =~ /^workbench.panel.aichat.view/"
     },
     {
-        "key": "ctrl+shift+t",
+        "key": "ctrl+shift+\\",
         "command": "composer.duplicateChat",
         "when": "composerFocused || focusedView =~ /^workbench.panel.aichat.view/ || view =~ /^workbench.panel.aichat.view/"
     },
@@ -1981,5 +1981,41 @@
     {
         "key": "ctrl+shift+l",
         "command": "-composer.newAgentChat"
+    },
+    {
+        "key": "ctrl+=",
+        "command": "workbench.action.increaseViewSize"
+    },
+    {
+        "key": "ctrl+-",
+        "command": "workbench.action.decreaseViewSize"
+    },
+    {
+        "key": "shift+alt+i",
+        "command": "-editor.action.insertCursorAtEndOfEachLineSelected",
+        "when": "editorTextFocus"
+    },
+    // Toggle agents/composer chrome: branch on auxiliaryBarVisible (on-screen bar), then focus editor vs composer.
+    {
+        "key": "ctrl+i",
+        "command": "extension.multiCommand.execute",
+        "when": "auxiliaryBarVisible",
+        "args": {
+            "sequence": [
+                "workbench.action.toggleAgentsFromKeyboard",
+                "workbench.action.focusFirstEditorGroup"
+            ]
+        }
+    },
+    {
+        "key": "ctrl+i",
+        "command": "extension.multiCommand.execute",
+        "when": "!auxiliaryBarVisible",
+        "args": {
+            "sequence": [
+                "workbench.action.toggleAgentsFromKeyboard",
+                "composer.focusComposer"
+            ]
+        }
     }
 ]
