@@ -52,17 +52,7 @@ keybinds clear-defaults=true {
         // Pane management
         bind "w" { CloseFocus; SwitchToMode "locked"; }
         bind "z" { ToggleFocusFullscreen; SwitchToMode "locked"; }
-       
-        // Pane focus
-        bind "left"  { MoveFocus "left"; SwitchToMode "locked"; }
-        bind "down"  { MoveFocus "down"; SwitchToMode "locked"; }
-        bind "up"    { MoveFocus "up"; SwitchToMode "locked"; }
-        bind "right" { MoveFocus "right"; SwitchToMode "locked"; }
-        // Tabs
-        bind "c" { NewTab; SwitchToMode "locked"; }
-        bind "[" { GoToPreviousTab; }
-        bind "]" { GoToNextTab; }
-        bind "tab" { ToggleTab; SwitchToMode "locked"; }
+
         // Session
         bind "d" { Detach; }
         // Plugins
@@ -302,7 +292,7 @@ keybinds clear-defaults=true {
         bind "alt w" { SearchToggleOption "WholeWord"; }
         bind "alt r" { SearchToggleOption "Wrap"; }
         bind "enter" "Ctrl f" { SwitchToMode "search" ; Search "down"; }
-        bind "shift enter" "Ctrl Shift f" { SwitchToMode "search"; Search "up"; }
+        bind "Shift enter" "Ctrl Shift f" { SwitchToMode "search"; Search "up"; }
         bind { SwitchToMode "search"; Search "up"; }
     }
 
@@ -386,6 +376,8 @@ keybinds clear-defaults=true {
             }
             SwitchToMode "locked"
         }
+        bind "Ctrl w" { CloseFocus; }
+
         bind "Ctrl Shift w" {
             CloseTab;
         }

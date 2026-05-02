@@ -160,9 +160,9 @@
             },
             "id": "User.sendInput.ShiftEnter"
         }
-   
     ],
     "alwaysOnTop": false,
+    "alwaysShowTabs": true,
     "copyFormatting": "none",
     "copyOnSelect": true,
     "defaultProfile": "{cc590fde-1eb2-4d1e-8b03-bca6db0bdf23}",
@@ -319,7 +319,11 @@
         {
             "id": "User.sendInput.CtrlTab",
             "keys": "ctrl+tab"
-        }
+        },
+        {
+            "id": "User.sendInput.ShiftEnter",
+            "keys": "shift+enter"
+                }
     ],
     "newTabMenu": 
     [
@@ -434,6 +438,7 @@
         ]
     },
     "schemes": [],
+    "showTabsInTitlebar": true,
     "themes": [],
     "windowingBehavior": "useNew"
 }
