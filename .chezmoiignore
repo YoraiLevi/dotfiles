@@ -35,3 +35,6 @@ my_start.bin
 Downloads/regedits/{{ .name }}
 {{- end }}
 {{- end }}
+
+.cursor
+.claude
