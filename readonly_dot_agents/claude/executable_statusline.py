@@ -134,6 +134,8 @@ def _append_execution_log(
     run_at: datetime | None = None,
 ) -> None:
     """Append one run to EXECUTION_LOG_PATH; failures to write must not break the statusline."""
+    if not WRITE_LOG:
+        return
     at = run_at or datetime.now(timezone.utc)
     _write_stdin_archive(stdin_text, at)
     ts = at.isoformat()

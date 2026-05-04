@@ -9,6 +9,7 @@
     ],
     "defaultMode": "plan"
   },
+  "model": "haiku",
   "skillOverrides": {
     "Agent": "off",
     "EnterPlanMode": "off",
@@ -27,7 +28,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "uv run  C:/Users/devic/source/test/statusline.py"
+    "command": "uv run  ~/.claude/statusline.py"
   },
   "outputStyle": "Explanatory",
   "viewMode": "verbose",
@@ -37,6 +38,7 @@
   "autoMemoryEnabled": false,
   "showThinkingSummaries": true,
   "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
   "editorMode": "normal",
   "verbose": true,
   "autoCompactEnabled": false,
@@ -44,6 +46,5 @@
   "showTurnDuration": true,
   "showMessageTimestamps": true,
   "remoteControlAtStartup": true,
-  "agentPushNotifEnabled": true,
-  "model": "haiku"
+  "agentPushNotifEnabled": true
 }
