@@ -363,7 +363,8 @@
                 "cursorShape": "filledBox",
                 "environment": 
                 {
-                    "InformationPreference": "Continue",
+                    "InformationPreference": "SilentlyContinue",
+                    // "InformationPreference": "Continue",
                     "TERM": "xterm-256color"
                 },
                 "guid": "{cc590fde-1eb2-4d1e-8b03-bca6db0bdf23}",
