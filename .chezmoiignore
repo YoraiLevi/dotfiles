@@ -32,6 +32,9 @@ my_start.bin
 # ============================================================================
 {{- if eq .chezmoi.os "windows" }}
 
+# Optional layout/docs; run_after_002_win_symlink.ps1 uses %USERPROFILE%\.win\USERPROFILE\ for canonical files.
+readonly_dot_win
+
 # .chezmoiexternals/
 .local/bin/*
 
