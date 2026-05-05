@@ -360,9 +360,12 @@ keybinds clear-defaults=true {
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
         bind "Ctrl Shift a" {
-            LaunchOrFocusPlugin "session-manager" {
+            Run "pwsh" "-NoProfile" "-Command" "& \"$HOME/.config/zellij/session-switcher.ps1\"" {
                 floating true
-                move_to_focused_tab true
+                close_on_exit true
+                name "Switch Session"
+                width "70%"
+                height "40%"
             }
             SwitchToMode "locked"
         }
@@ -371,7 +374,7 @@ keybinds clear-defaults=true {
                 floating true
                 close_on_exit true
                 name "New Tab"
-                width "25%"
+                width "40%"
                 height "35%"
             }
             SwitchToMode "locked"
@@ -404,9 +407,6 @@ plugins {
     tab-bar location="zellij:tab-bar"
     strider location="zellij:strider"
     compact-bar location="zellij:compact-bar"
-    welcome-screen location="zellij:session-manager" {
-        welcome_screen true
-    }
 }
 
 load_plugins {

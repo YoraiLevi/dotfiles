@@ -42,6 +42,7 @@ class ZellijCommandException : ZellijException {
     }
 }
 # Define Zellij Functions
+
 function Get-ZellijClients {
     param (
         [Parameter(Mandatory = $true)]
@@ -78,71 +79,6 @@ function Get-ZellijClients {
     )
 
     return $results
-}
-function Test-ZellijSessionListed {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$SessionName
-    )
-    # Short, line-oriented output — safer to capture than attach/create commands.
-    $lines = & zellij ls --no-formatting --short 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        return $false
-    }
-    foreach ($line in $lines) {
-        if (([string]$line).Trim() -eq $SessionName) {
-            return $true
-        }
-    }
-    return $false
-}
-function Start-ZellijSession {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$SessionName,
-        [Parameter(Mandatory = $true)]
-        [string]$ShellPath
-    )
-
-    $oldShell = $env:SHELL
-    try {
-        $env:SHELL = $ShellPath
-
-        # Creates the session without attaching a client (avoids a second client when we `attach` below).
-        Write-Information "Starting zellij session '$SessionName' (zellij attach --create-background $SessionName)"
-        # Do not capture stdout/stderr here — redirection can block zellij indefinitely.
-        & zellij attach --create-background $SessionName
-        $createExit = $LASTEXITCODE
-
-        # create-background exits non-zero when the session already exists (e.g. delete-session was
-        # skipped because the session was still in use). If the session is listed, continue.
-        if ($createExit -ne 0) {
-            if (Test-ZellijSessionListed -SessionName $SessionName) {
-                Write-Information "Zellij session '$SessionName' already exists; continuing."
-            }
-            else {
-                throw [ZellijCommandException]::new(
-                    "Session failed to start (zellij attach --create-background exited with code $createExit).",
-                    $createExit,
-                    "")
-            }
-        }
-        elseif (-not (Test-ZellijSessionListed -SessionName $SessionName)) {
-            throw [ZellijCommandException]::new(
-                "Session failed to start after create-background (session not listed).",
-                1,
-                "")
-        }
-    }
-    finally {
-        if ($null -eq $oldShell) { 
-            Remove-Item Env:SHELL -ErrorAction SilentlyContinue 
-        }
-        else { 
-            $env:SHELL = $oldShell 
-        }
-    }
 }
 function New-ZellijTab {
     [CmdletBinding()]
@@ -207,22 +143,25 @@ function Remove-ZellijSession {
 
 function Connect-ZellijSession {
     [CmdletBinding()]
-    param([Parameter(Mandatory = $true)][string]$SessionName)
+    param(
+        [Parameter(Mandatory = $true)][string]$SessionName,
+        [switch]$Create
+    )
 
-    Write-Information "Attaching to zellij session '$SessionName' (zellij attach $SessionName)"
+    $attachArgs = if ($Create) { @('attach', '--create', $SessionName) } else { @('attach', $SessionName) }
+    Write-Information "Attaching to zellij session '$SessionName' (zellij $($attachArgs -join ' '))"
     # Run directly so the TUI can render. Do not capture output in a variable.
     if ($InformationPreference -eq "Continue") {
         Write-Information "Press Enter to continue..."
         Read-Host
     }
-    & zellij attach $SessionName
+    & zellij @attachArgs
     if ($InformationPreference -eq "Continue") {
         Write-Information "Press Enter to continue..."
         Read-Host
     }
 
     if ($LASTEXITCODE -ne 0) {
-        # Based on your trace, Exit Code 1 = Not Found / Failure
         throw [ZellijSessionNotFoundException]::new($SessionName)
     }
 }
@@ -273,19 +212,27 @@ try {
     }
     $sessionName = if ($SessionName) { $SessionName } else { Get-ZellijAutoName }
     Write-Information "Getting zellij clients for session '$sessionName'"
-    $clients = try { Get-ZellijClients -SessionName $sessionName } catch [ZellijSessionNotFoundException] { $null }
+    $clients = try {
+        Get-ZellijClients -SessionName $sessionName
+    } catch [ZellijSessionNotFoundException] {
+        $null
+    } catch [ZellijCommandException] {
+        $null
+    }
+    if ($Shell) { $env:SHELL = $Shell }
     if ($null -eq $clients) {
         Write-Information "Removing zellij session '$sessionName' if it exists"
-        try { Remove-ZellijSession -SessionName $sessionName } catch [ZellijSessionNotFoundException] { } catch [ZellijSessionInUseException] { }
-        Write-Information "Starting zellij session '$sessionName'"
-        Start-ZellijSession -sessionName $sessionName -SHELL $SHELL
+        try { Remove-ZellijSession -SessionName $sessionName } catch [ZellijSessionNotFoundException] { } catch [ZellijSessionInUseException] { } catch [ZellijCommandException] { }
+        Write-Information "Creating and connecting to zellij session '$sessionName'"
+        Connect-ZellijSession -SessionName $sessionName -Create
+    } else {
+        if ($clients.Count -gt 0) {
+            Write-Information "Session previously existed, creating a new tab in session '$sessionName'"
+            New-ZellijTab -SessionName $sessionName -ShellPath $SHELL -Cwd $PWD.Path | Write-Information
+        }
+        Write-Information "Connecting to zellij session '$sessionName'"
+        Connect-ZellijSession -SessionName $sessionName
     }
-    elseif ($clients.Count -gt 0) {
-        Write-Information "Session previously existed, creating a new tab in session '$sessionName'"
-        New-ZellijTab -SessionName $sessionName -ShellPath $SHELL -Cwd $PWD.Path | Write-Information
-    }
-    Write-Information "Connecting to zellij session '$sessionName'"
-    Connect-ZellijSession -SessionName $sessionName
 }
 catch [ZellijCommandException] {
     $ex = $_.Exception

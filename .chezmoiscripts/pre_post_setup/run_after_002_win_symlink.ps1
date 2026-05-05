@@ -51,6 +51,9 @@ function Invoke-WinSymlinkFromWinStore {
         $linkPath = Join-Path $SymlinkRoot $rel
         $linkTarget = $_.FullName
 
+        # Verbose line per file (same idea as echo "$rel" in run_after_001_wsl2_symlink.sh); use / for stable logs.
+        Write-Output ($rel -replace '\\', '/')
+
         $null = New-Item -ItemType Directory -Path ([IO.Path]::GetDirectoryName($linkPath)) -Force -ErrorAction SilentlyContinue
 
         if (Test-Path -LiteralPath $linkPath) {

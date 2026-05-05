@@ -11,7 +11,8 @@
 # Define WinWSL as the translated Windows %USERPROFILE% root in WSL
 WinWSL="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")"
 
-ln -sf -- "$WinWSL" "$HOME/WinHome"
+ln -sf -- "$WinWSL" "$HOME/winHome"
+ln -sf -- "$WinWSL" "$HOME/homeWin"
 
 # Mirror USERPROFILE/.ssh into WSL ~/.ssh
 WinDotSSH="$WinWSL/.ssh/"
