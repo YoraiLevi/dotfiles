@@ -10,6 +10,7 @@ subprocess (as the `ChezmoiSync` Windows service does).
 .chezmoilib/tests/
     Invoke-PesterSuite.ps1        # runner
     Sweep.Tests.ps1               # unit tests for Invoke-ChezmoiReAddSweep.ps1
+    DesktopIniAttributes.Tests.ps1 # DesktopIniAttributes.psm1 + run_after/before 010 smoke
     PreHook.Tests.ps1             # unit tests for .chezmoihooks/re-add/pre.ps1
     Integration.Tests.ps1         # end-to-end tests (real chezmoi, real git)
     helpers/
@@ -59,6 +60,7 @@ Invoke-Pester -Path .\Integration.Tests.ps1 -Tag Integration
 | File                   | Scope                                                      |
 |------------------------|------------------------------------------------------------|
 | `Sweep.Tests.ps1`      | `Invoke-ChezmoiReAddSweep.ps1` - the marker-file logic: forget missing files, add new files, routing to recursive vs non-recursive add, retry-on-lock-timeout, canonical attribute-ordering guardrail |
+| `DesktopIniAttributes.Tests.ps1` | `DesktopIniAttributes.psm1`, `run_after_010` / `run_before_010` — attrib + symlink dual-pass, chezmoi path validation, script smoke, unhappy paths (`Should -Throw`); skipped “deliberately red” block is inverted on purpose for local debugging |
 | `PreHook.Tests.ps1`    | `.chezmoihooks/re-add/pre.ps1` - guardrail, `--dry-run` propagation, sweep invocation with correct env-populated parameters |
 | `Integration.Tests.ps1`| Real `chezmoi re-add` round-trip (add + forget) in both the interactive shell and a service-style subprocess; idempotence (a second re-add with no changes produces no commits) |
 
