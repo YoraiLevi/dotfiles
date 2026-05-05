@@ -643,6 +643,16 @@
         "claude.ai Postman",
         "claude.ai Spotify"
       ]
+    },
+    "C:\\Users\\devic\\source\\test\\.claude\\worktrees\\elegant-hawking-3e63a9": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false
     }
   },
   "lastReleaseNotesSeen": "2.1.126",

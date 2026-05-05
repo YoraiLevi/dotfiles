@@ -312,6 +312,21 @@ export GTK_THEME=Adwaita:dark
 
 # zellij da -y > /dev/null # delete dead sessions
 
+if [ -n "$ZELLIJ_SESSION_NAME" ]; then
+    if [ -n "$USERPROFILE" ] && command -v wslpath >/dev/null 2>&1; then
+        _ZELLIJ_TIMEDIR="$(wslpath -u "$USERPROFILE" 2>/dev/null)/AppData/Local/Temp/zellij-session-times"
+    else
+        _ZELLIJ_TIMEDIR="/tmp/zellij-session-times"
+    fi
+    mkdir -p "$_ZELLIJ_TIMEDIR" 2>/dev/null
+    _zellij_update_timestamp() {
+        local ns
+        ns=$(date +%s%N 2>/dev/null)
+        printf '%s' "$(( ns / 100 + 621355968000000000 ))" > "$_ZELLIJ_TIMEDIR/$ZELLIJ_SESSION_NAME" 2>/dev/null
+    }
+    PROMPT_COMMAND="_zellij_update_timestamp${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
+
 if [[ -z "$ZELLIJ" ]]; then
     if [ ! -z "$SSH_CONNECTION" ]; then
         zellij attach main -c

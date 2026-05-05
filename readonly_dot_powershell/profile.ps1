@@ -22,6 +22,7 @@ if (-not $ENV:GITHUB_TOKEN) {
     Remove-Variable -Name __ghPath -ErrorAction SilentlyContinue
 }
 
+
 # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
 if (($ENV:CHEZMOI -eq 1)) {
     # don't load the profile if chezmoi is active
@@ -833,6 +834,16 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
 # }
 
 Set-Alias -Name ssh -Value tssh -Scope Global
+function Invoke-Claude {
+    param(
+        [Parameter(ValueFromRemainingArguments = $true)]
+        $Args
+    )
+    # Compose the claude command with required flags and pass all arguments
+    $ENV:CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE = -1
+    & claude.exe --enable-auto-mode --allow-dangerously-skip-permissions @Args
+}
+Set-Alias -Name claude -Value Invoke-Claude -Scope Global
 
 Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variable # Some setup may not work if the variables are not removed, keep that in mind
 
@@ -852,5 +863,18 @@ if (-not $ENV:ZELLIJ) {
     $env:TERM = 'xterm-256color'
     if ($ENV:SSH_CONNECTION) {
         zellij attach main -c
+    }
+}
+
+if ($env:ZELLIJ_SESSION_NAME) {
+    $null = New-Item -ItemType Directory -Force "$env:TEMP\zellij-session-times" -ErrorAction SilentlyContinue
+    Set-PSReadLineKeyHandler -Key Enter -ScriptBlock {
+        try {
+            [System.IO.File]::WriteAllText(
+                "$env:TEMP\zellij-session-times\$env:ZELLIJ_SESSION_NAME",
+                [DateTime]::UtcNow.Ticks.ToString()
+            )
+        } catch {}
+        [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
     }
 }
