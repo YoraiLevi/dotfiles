@@ -139,6 +139,8 @@ $FORGET_RECURSIVE_PROPERTY_REGEX = '*.recursive-forget*'
 $RECURSIVE_PROPERTY_REGEX = '*.recursive-add*'
 
 $filesToForget = [System.Collections.Generic.List[string]]::new()
+# Normalized destination path -> absolute source path under $SourceDir (for diagnostics when chezmoi forget fails).
+$forgetDestKeyToSource = @{}
 $dirsToAddRecursive = [System.Collections.Generic.List[string]]::new()
 
 $recursiveFiles = Get-ChildItem -Path $SourceDir -Filter $SPECIAL_FILE_NAME_REGEX -Recurse -Force -File
@@ -185,6 +187,13 @@ foreach ($recursiveFile in $recursiveFiles) {
             }
             Write-Information "[sweep][forget:queue] $localFilePath (vanished from destination)"
             $filesToForget.Add($localFilePath)
+            try {
+                $destKey = [System.IO.Path]::GetFullPath($localFilePath)
+            }
+            catch {
+                $destKey = $localFilePath
+            }
+            $forgetDestKeyToSource[$destKey] = $managedFile.FullName
         }
     }
 
@@ -257,25 +266,67 @@ function Write-SweepSubmittedList {
     foreach ($p in $Paths) { Write-Warning "    - $p" }
 }
 
+function Get-SweepForgetSourceForTarget {
+    param(
+        [Parameter(Mandatory)][string]$TargetPath,
+        [hashtable]$ForgetDestKeyToSource = @{}
+    )
+    if ($ForgetDestKeyToSource.Count -eq 0) { return $null }
+    try {
+        $norm = [System.IO.Path]::GetFullPath($TargetPath.Trim())
+    }
+    catch {
+        $norm = $TargetPath.Trim()
+    }
+    if ($ForgetDestKeyToSource.ContainsKey($norm)) {
+        return $ForgetDestKeyToSource[$norm]
+    }
+    foreach ($k in $ForgetDestKeyToSource.Keys) {
+        try {
+            if ([System.IO.Path]::GetFullPath($k) -eq $norm) {
+                return $ForgetDestKeyToSource[$k]
+            }
+        }
+        catch {
+            if ($k.Trim() -eq $norm) {
+                return $ForgetDestKeyToSource[$k]
+            }
+        }
+    }
+    return $null
+}
+
 function Write-SweepChezmoiHint {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)][string]$Label,
-        [Parameter(Mandatory)][string]$Output
+        [Parameter(Mandatory)][string]$Output,
+        [hashtable]$ForgetDestKeyToSource = @{},
+        [string]$SourceDirRoot = $null
     )
     # "path: not managed" - we asked chezmoi to forget a target it never
     # adopted. Typical root causes on Windows: an out-of-band file copy (e.g.
     # '- Copy.gitignore', '* (2).txt'), or a source file without any attribute
     # prefix (dot_, private_dot_, readonly_dot_, ...) whose literal filename
     # does not round-trip to a real destination target.
-    $m = [regex]::Match($Output, '(?m)^chezmoi:\s*(?<path>.+?):\s*not managed\s*$')
-    if ($m.Success) {
+    foreach ($m in [regex]::Matches($Output, '(?m)^chezmoi:\s*(?<path>.+):\s*not managed\s*$')) {
         $offender = $m.Groups['path'].Value.Trim()
-        Write-Warning ("{0}: chezmoi reports '{1}' as not managed." -f $Label, $offender)
-        Write-Warning "    hint: the source-tree entry for that path is either"
-        Write-Warning "            (a) missing a chezmoi attribute prefix (dot_, private_dot_, readonly_dot_, ...), or"
-        Write-Warning "            (b) an out-of-band copy/backup (e.g. '- Copy.*', '* (2).*', '~*', '.bak')."
-        Write-Warning "    fix:  inspect the source tree under `$CHEZMOI_SOURCE_DIR and rename or delete that file."
+        $srcPath = Get-SweepForgetSourceForTarget -TargetPath $offender -ForgetDestKeyToSource $ForgetDestKeyToSource
+        Write-Warning ("{0}: destination '{1}' is not managed — chezmoi never tracked this path, so forget cannot remove it." -f $Label, $offender)
+        if ($srcPath) {
+            Write-Warning ("    source file (repo path this sweep used): {0}" -f $srcPath)
+        }
+        else {
+            Write-Warning "    source file: (not mapped by this sweep — see chezmoi stderr above)"
+        }
+        if ($SourceDirRoot) {
+            Write-Warning ("    CHEZMOI_SOURCE_DIR: {0}" -f $SourceDirRoot)
+        }
+        Write-Warning "    hint: typical reasons:"
+        Write-Warning "            (a) source name missing/wrong attribute prefixes (dot_, private_dot_, readonly_dot_, ...);"
+        Write-Warning "            (b) backup-style filenames ('- Copy.*', '* (2).*', '~*', '.bak', '.old', ...);"
+        Write-Warning "            (c) path matches `.chezmoiignore` (e.g. '*.old') — the file may live in git but chezmoi excludes it from managed state (common for '.old' / '.bak')."
+        Write-Warning "    fix:  remove or rename the source file, or adjust `.chezmoiignore` / sweep filters so repo contents and chezmoi-managed targets stay aligned."
     }
 
     # "would remove template attribute" - pre-filter should have caught this.
@@ -306,7 +357,9 @@ function Invoke-ChezmoiWithRetry {
         [Parameter(Mandatory)][scriptblock]$Action,
         [AllowEmptyCollection()][string[]]$Paths = @(),
         [int]$MaxAttempts = 3,
-        [int]$InitialDelaySeconds = 2
+        [int]$InitialDelaySeconds = 2,
+        [hashtable]$ForgetDestKeyToSource = @{},
+        [string]$SourceDirRoot = $null
     )
     for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
         $output = & $Action 2>&1
@@ -331,7 +384,7 @@ function Invoke-ChezmoiWithRetry {
                 return
             }
             Write-SweepSubmittedList -Label $Label -Paths $Paths
-            Write-SweepChezmoiHint     -Label $Label -Output $outputText
+            Write-SweepChezmoiHint -Label $Label -Output $outputText -ForgetDestKeyToSource $ForgetDestKeyToSource -SourceDirRoot $SourceDirRoot
             throw ("{0}: chezmoi exited with code {1} (non-lock failure)" -f $Label, $exitCode)
         }
         return
@@ -349,7 +402,7 @@ function Invoke-ChezmoiWithRetry {
 if ($filesToForget.Count -gt 0) {
     Write-Host ("Invoke-ChezmoiReAddSweep: forget {0} file(s)" -f $filesToForget.Count) -ForegroundColor Cyan
     foreach ($p in $filesToForget) { Write-Information "[sweep][forget      ] $p" }
-    Invoke-ChezmoiWithRetry -Label 'chezmoi forget' -Paths $filesToForget -Action {
+    Invoke-ChezmoiWithRetry -Label 'chezmoi forget' -Paths $filesToForget -ForgetDestKeyToSource $forgetDestKeyToSource -SourceDirRoot $SourceDir -Action {
         $null | & $ChezmoiPath forget @filesToForget @commonArgs --force
     }
 }
