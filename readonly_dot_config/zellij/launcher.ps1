@@ -78,6 +78,7 @@ try {
         $v = ([string]$kv.Value) -replace '"', '""'
         [void]$lines.Add(('set "{0}={1}"' -f $kv.Key, $v))
     }
+    [void]$lines.Add('if not "%WSLENV%"=="" (call set "WSLENV=ZELLIJ_SESSION_NAME/u:ZELLIJ/u:ZELLIJ_PANE_ID/u:USERPROFILE/u:%%WSLENV%%") else (set "WSLENV=ZELLIJ_SESSION_NAME/u:ZELLIJ/u:ZELLIJ_PANE_ID/u:USERPROFILE/u")')
     [void]$lines.Add($expandedCmd)
     # OEM (CP437) is what cmd.exe expects for batch files on typical Windows installs.
     $lines | Set-Content -Path $cmdFile -Encoding OEM
