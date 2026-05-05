@@ -169,6 +169,7 @@ function Remove-DesktopIniAttributesAtLocalPath {
 }
 
 # Chezmoi source path: validate desktop.ini name, ConvertTo-LocalPath, then Remove-*AtLocalPath.
+# If the mapped destination file is missing (first apply, symlink not created yet), there is nothing to clear — no-op.
 function Remove-DesktopIniAttributes {
     [CmdletBinding()]
     param (
@@ -185,11 +186,18 @@ function Remove-DesktopIniAttributes {
             throw "File $chezmoiPath is not a desktop.ini file"
         }
         $localFilePath = ConvertTo-LocalPath $chezmoiPath
+        if ([string]::IsNullOrWhiteSpace($localFilePath)) {
+            return
+        }
+        if (-not (Test-Path -LiteralPath $localFilePath)) {
+            return
+        }
         Remove-DesktopIniAttributesAtLocalPath -DesktopIniPath $localFilePath
     }
 }
 
 # Chezmoi source path: validate desktop.ini name, ConvertTo-LocalPath, then Set-*AtLocalPath.
+# If the destination file is not on disk yet, skip (run_after_010 runs after materialization; Path A still sees source-only trees).
 function Set-DesktopIniAttributes {
     [CmdletBinding()]
     param (
@@ -206,6 +214,12 @@ function Set-DesktopIniAttributes {
             throw "File $chezmoiPath is not a desktop.ini file"
         }
         $localFilePath = ConvertTo-LocalPath $chezmoiPath
+        if ([string]::IsNullOrWhiteSpace($localFilePath)) {
+            return
+        }
+        if (-not (Test-Path -LiteralPath $localFilePath)) {
+            return
+        }
         Set-DesktopIniAttributesAtLocalPath -DesktopIniPath $localFilePath
     }
 }

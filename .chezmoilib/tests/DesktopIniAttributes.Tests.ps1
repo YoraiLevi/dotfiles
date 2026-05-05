@@ -343,6 +343,50 @@ Describe 'DesktopIniAttributes chezmoi-path entry points (Windows)' -Skip:(-not 
             $env:CHEZMOI_DEST_DIR = $savedDest
         }
     }
+
+    # Mirrors chezmoi apply pre-hook: source lists desktop.ini but dest is not materialized yet (no Get-Item).
+    It 'Remove-DesktopIniAttributes no-ops when mapped destination file is missing' {
+        $src = Join-Path ([IO.Path]::GetTempPath()) ('czm-rm-miss-' + [guid]::NewGuid().ToString('n'))
+        $dst = Join-Path ([IO.Path]::GetTempPath()) ('czm-rm-missd-' + [guid]::NewGuid().ToString('n'))
+        $savedSource = $env:CHEZMOI_SOURCE_DIR
+        $savedDest = $env:CHEZMOI_DEST_DIR
+        try {
+            New-Item -ItemType Directory -Path $src, $dst -Force | Out-Null
+            $srcIni = Join-Path $src 'desktop.ini'
+            Set-Content -LiteralPath $srcIni -Value '[]' -Encoding utf8
+            $env:CHEZMOI_SOURCE_DIR = $src
+            $env:CHEZMOI_DEST_DIR = $dst
+            { Remove-DesktopIniAttributes -chezmoiPath $srcIni -ErrorAction Stop } | Should -Not -Throw
+        }
+        finally {
+            Remove-TempIniFixture $src
+            Remove-TempIniFixture $dst
+            $env:CHEZMOI_SOURCE_DIR = $savedSource
+            $env:CHEZMOI_DEST_DIR = $savedDest
+        }
+    }
+
+    # Same bootstrap case for run_after Path A: skip attrib when dest file absent.
+    It 'Set-DesktopIniAttributes no-ops when mapped destination file is missing' {
+        $src = Join-Path ([IO.Path]::GetTempPath()) ('czm-set-miss-' + [guid]::NewGuid().ToString('n'))
+        $dst = Join-Path ([IO.Path]::GetTempPath()) ('czm-set-missd-' + [guid]::NewGuid().ToString('n'))
+        $savedSource = $env:CHEZMOI_SOURCE_DIR
+        $savedDest = $env:CHEZMOI_DEST_DIR
+        try {
+            New-Item -ItemType Directory -Path $src, $dst -Force | Out-Null
+            $srcIni = Join-Path $src 'desktop.ini'
+            Set-Content -LiteralPath $srcIni -Value '[]' -Encoding utf8
+            $env:CHEZMOI_SOURCE_DIR = $src
+            $env:CHEZMOI_DEST_DIR = $dst
+            { Set-DesktopIniAttributes -chezmoiPath $srcIni -ErrorAction Stop } | Should -Not -Throw
+        }
+        finally {
+            Remove-TempIniFixture $src
+            Remove-TempIniFixture $dst
+            $env:CHEZMOI_SOURCE_DIR = $savedSource
+            $env:CHEZMOI_DEST_DIR = $savedDest
+        }
+    }
 }
 
 # Script integration: imports module from $env:CHEZMOI_SOURCE_DIR\.chezmoilib; exercises Path A + env restore.
