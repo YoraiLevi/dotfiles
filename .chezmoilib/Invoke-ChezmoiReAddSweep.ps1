@@ -312,12 +312,12 @@ function Write-SweepChezmoiHint {
     foreach ($m in [regex]::Matches($Output, '(?m)^chezmoi:\s*(?<path>.+):\s*not managed\s*$')) {
         $offender = $m.Groups['path'].Value.Trim()
         $srcPath = Get-SweepForgetSourceForTarget -TargetPath $offender -ForgetDestKeyToSource $ForgetDestKeyToSource
-        Write-Warning ("{0}: destination '{1}' is not managed — chezmoi never tracked this path, so forget cannot remove it." -f $Label, $offender)
+        Write-Warning ("{0}: destination '{1}' is not managed - chezmoi never tracked this path, so forget cannot remove it." -f $Label, $offender)
         if ($srcPath) {
             Write-Warning ("    source file (repo path this sweep used): {0}" -f $srcPath)
         }
         else {
-            Write-Warning "    source file: (not mapped by this sweep — see chezmoi stderr above)"
+            Write-Warning "    source file: (not mapped by this sweep - see chezmoi stderr above)"
         }
         if ($SourceDirRoot) {
             Write-Warning ("    CHEZMOI_SOURCE_DIR: {0}" -f $SourceDirRoot)
@@ -325,8 +325,12 @@ function Write-SweepChezmoiHint {
         Write-Warning "    hint: typical reasons:"
         Write-Warning "            (a) source name missing/wrong attribute prefixes (dot_, private_dot_, readonly_dot_, ...);"
         Write-Warning "            (b) backup-style filenames ('- Copy.*', '* (2).*', '~*', '.bak', '.old', ...);"
-        Write-Warning "            (c) path matches `.chezmoiignore` (e.g. '*.old') — the file may live in git but chezmoi excludes it from managed state (common for '.old' / '.bak')."
-        Write-Warning "    fix:  remove or rename the source file, or adjust `.chezmoiignore` / sweep filters so repo contents and chezmoi-managed targets stay aligned."
+        Write-Warning "            (c) path matches `.chezmoiignore` (e.g. '*.old') - the file may live in git but chezmoi excludes it from managed state (common for '.old' / '.bak')."
+        Write-Warning "    resolve (do what matches your case):"
+        Write-Warning "            (a) Fix the source filename/prefixes under CHEZMOI_SOURCE_DIR, then run chezmoi apply and chezmoi add on the destination once the entry maps correctly."
+        Write-Warning "            (b) Remove leftover backup copies from the source tree (delete or rename), commit, and re-run re-add; avoid committing Explorer/editor duplicates."
+        Write-Warning "            (c) Usually delete the source file named above (typical for '*.old' / '*.bak'). Or edit .chezmoiignore to stop excluding it, then chezmoi add that destination path so chezmoi manages it before another sweep forget."
+        Write-Warning "    generic: If this path should not be swept, remove it from the marker directory or extend Invoke-ChezmoiReAddSweep.ps1 filters."
     }
 
     # "would remove template attribute" - pre-filter should have caught this.
