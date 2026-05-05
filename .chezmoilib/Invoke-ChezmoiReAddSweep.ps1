@@ -330,12 +330,40 @@ function Write-SweepChezmoiHint {
         Write-Warning '    - Sweep logic: .chezmoilib/Invoke-ChezmoiReAddSweep.ps1 (marker files .chezmoi-re-add*); hook: .chezmoihooks/re-add/pre.ps1'
         Write-Warning '    - Attribute prefixes: https://www.chezmoi.io/reference/source-state-attributes/'
         Write-Warning '  Wrong or missing chezmoi attribute prefixes on the source entry (dot_, private_dot_, readonly_dot_, ...).'
-        Write-Warning '    Rename or fix the file under CHEZMOI_SOURCE_DIR, run chezmoi apply, then chezmoi add on the destination once the name maps correctly.'
+        if ($srcPath) {
+            Write-Warning ("    Rename under CHEZMOI_SOURCE_DIR, then adopt the fixed mapping. pwsh: Rename-Item -LiteralPath '{0}' -NewName '<name-with-valid-prefixes-per-docs-above>'; chezmoi apply; chezmoi add '{1}'" -f $srcPath, $offender)
+        }
+        else {
+            Write-Warning "    Fix filenames under CHEZMOI_SOURCE_DIR, then adopt the destination. pwsh: chezmoi apply; chezmoi add '$offender'"
+        }
         Write-Warning '  Backup-style or duplicate filename (Explorer/editor copies: "- Copy.*", "* (2).*", ".old", ".bak", ...).'
-        Write-Warning '    Delete or rename the stray file in the source tree, commit, and run chezmoi re-add again.'
+        if ($srcPath) {
+            Write-Warning ("    Remove the stray repo file, then sync. pwsh: Remove-Item -LiteralPath '{0}' -Force; chezmoi re-add" -f $srcPath)
+        }
+        else {
+            Write-Warning "    Remove the stray file under CHEZMOI_SOURCE_DIR, then sync. pwsh: Remove-Item -LiteralPath '<path-from-stderr>' -Force; chezmoi re-add"
+        }
         Write-Warning '  Path matches .chezmoiignore (for example *.old) so the file may exist in git but chezmoi never tracks the destination.'
-        Write-Warning '    Usually delete the source file shown above; or edit .chezmoiignore and then chezmoi add the destination path so chezmoi adopts it before another sweep.'
-        Write-Warning 'Footer: This block is from the re-add pre-hook sweep (Invoke-ChezmoiReAddSweep); chezmoi re-add itself continues. After fixing the source tree, run chezmoi re-add again. To stop sweeping this path, remove it from under a .chezmoi-re-add* marker directory or extend filters in Invoke-ChezmoiReAddSweep.ps1.'
+        if ($srcPath) {
+            if ($SourceDirRoot) {
+                Write-Warning ("    Drop the ignored file or relax ignores, then let chezmoi own the destination. pwsh: Remove-Item -LiteralPath '{0}' -Force; chezmoi re-add   # or: notepad (Join-Path '{1}' '.chezmoiignore'); chezmoi apply; chezmoi add '{2}'" -f $srcPath, $SourceDirRoot, $offender)
+            }
+            else {
+                Write-Warning ("    Drop the ignored file or relax ignores, then let chezmoi own the destination. pwsh: Remove-Item -LiteralPath '{0}' -Force; chezmoi re-add   # or edit .chezmoiignore, then: chezmoi apply; chezmoi add '{1}'" -f $srcPath, $offender)
+            }
+        }
+        elseif ($SourceDirRoot) {
+            Write-Warning ("    Usually delete the ignored stray file, or edit ignores then adopt. pwsh: notepad (Join-Path '{0}' '.chezmoiignore'); chezmoi apply; chezmoi add '{1}'" -f $SourceDirRoot, $offender)
+        }
+        else {
+            Write-Warning "    Usually delete the ignored stray file, or edit .chezmoiignore, then: pwsh: chezmoi apply; chezmoi add '$offender'"
+        }
+        if ($srcPath) {
+            Write-Warning ("Footer: From the re-add pre-hook sweep (Invoke-ChezmoiReAddSweep). Main chezmoi re-add continues. pwsh: chezmoi re-add   # after edits; to drop only this source leaf: Remove-Item -LiteralPath '{0}' -Force" -f $srcPath)
+        }
+        else {
+            Write-Warning 'Footer: From the re-add pre-hook sweep (Invoke-ChezmoiReAddSweep). Main chezmoi re-add continues. pwsh: chezmoi re-add   # after fixing the repo; to exclude from sweep, move/delete under a .chezmoi-re-add* marker dir or extend Invoke-ChezmoiReAddSweep.ps1 filters.'
+        }
     }
 
     # "would remove template attribute" - pre-filter should have caught this.
