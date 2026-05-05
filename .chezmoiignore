@@ -6,6 +6,11 @@ my_start.bin
 .chezmoihooks
 .chezmoilib
 
+*.log
+*.tmp
+*.old
+*.bak
+
 **/dot_auth/*
 **/.auth/*
 

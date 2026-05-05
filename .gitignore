@@ -1,8 +1,14 @@
 *.log
 *.tmp
+*.old
+*.bak
 *build*
 sync_service/logs/*
 sync_service/*
 **/*/.cache
+
+**/dot_auth/*
+**/.auth/*
+
 .cursor
 .claude
