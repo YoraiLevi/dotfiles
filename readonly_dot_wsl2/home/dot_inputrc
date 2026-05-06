@@ -43,3 +43,9 @@ set convert-meta off
 
 # Delete key
 "\e[3~": delete-char
+
+TAB: menu-complete
+; "\e[Z": menu-complete-backward
+; set menu-complete-display-prefix on
+set skip-completed-text on
+set bell-style none

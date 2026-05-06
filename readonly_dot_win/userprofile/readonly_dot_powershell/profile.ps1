@@ -840,7 +840,7 @@ function Invoke-Claude {
         $Args
     )
     # Compose the claude command with required flags and pass all arguments
-    $ENV:CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE = -1
+    $ENV:CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE = 10*1024*1024
     & claude.exe --enable-auto-mode --allow-dangerously-skip-permissions @Args
 }
 Set-Alias -Name claude -Value Invoke-Claude -Scope Global

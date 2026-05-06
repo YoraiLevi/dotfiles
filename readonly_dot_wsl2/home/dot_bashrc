@@ -159,6 +159,25 @@ fi
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# uv / uvx — lazy-load shell completions on first invocation
+uv() {
+    unset -f uv uvx
+    if command -v uv >/dev/null 2>&1; then
+        eval "$(command uv generate-shell-completion bash 2>/dev/null)"
+        eval "$(command uvx --generate-shell-completion bash 2>/dev/null)"
+    fi
+    command uv "$@"
+}
+uvx() {
+    unset -f uv uvx
+    if command -v uv >/dev/null 2>&1; then
+        eval "$(command uv generate-shell-completion bash 2>/dev/null)"
+        eval "$(command uvx --generate-shell-completion bash 2>/dev/null)"
+    fi
+    command uvx "$@"
+}
+
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
@@ -193,6 +212,16 @@ up () {
         d=..
     fi
     cd $d
+}
+
+cd() {
+    builtin cd "$@" && {
+        local count
+        count=$(command ls -1A 2>/dev/null | wc -l)
+        if [ "$count" -lt 15 ]; then
+            ls --color=auto -F
+        fi
+    }
 }
 
 # Set IDE alias to the first available editor (cursor > code-insiders > code)
@@ -243,6 +272,10 @@ extract () {
 
 nop() { return; }
 
+claude() {
+    CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE=-1 command claude --enable-auto-mode --allow-dangerously-skip-permissions "$@"
+}
+
 # fzf (history search)
 # git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 # ~/.fzf/install --no-bash --no-zsh --no-fish --bin
@@ -257,6 +290,13 @@ if command -v fzf >/dev/null 2>&1; then
         fi
     }
     bind -x '"\C-r": __fzf_history'
+fi
+
+# Ghost.sh — fish-style inline history ghost text
+if [ -f "$HOME/.ghost.sh" ]; then
+    source "$HOME/.ghost.sh"
+    _ghost_history_file="${HISTFILE:-$HOME/.bash_history}"
+    _ghost_load_history
 fi
 
 # Source credential env files (skip .json and other data files)
@@ -301,7 +341,9 @@ if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; th
     alias powershell="powershell.exe"
     alias cmd="cmd.exe"
     alias zellij="zellij.exe"
-    export SHELL="wsl.exe"
+    command -v tssh >/dev/null 2>&1 && alias ssh='tssh'
+    # export SHELL="wsl.exe"
+    export BROWSER='/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'
     # alias tssh="tssh.exe"
 else
     # echo "Running outside WSL"
