@@ -1,5 +1,5 @@
 {
-  "numStartups": 9,
+  "numStartups": 10,
   "installMethod": "native",
   "autoUpdates": false,
   "tipsHistory": {
@@ -24,7 +24,8 @@
     "voice-mode": 4,
     "guest-passes": 9,
     "custom-agents": 6,
-    "feedback-command": 6
+    "feedback-command": 6,
+    "color-when-multi-clauding": 10
   },
   "cachedGrowthBookFeatures": {
     "tengu_amber_lynx": false,
@@ -499,7 +500,7 @@
       "projectOnboardingSeenCount": 1,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastHintSessionId": "ea8b295b-5a91-4621-b11e-04aa7fec8847",
       "lastSessionFirstPrompt": "i have an issue the the ~/.ghost.sh script, when a suggestion shows up and the user presses enter to submit the command and run it the ghost completion stays on screen and that behavior is unacceptabl",
       "lastSessionModified": 1778046846069,
@@ -507,7 +508,7 @@
       "lastAPIDuration": 0,
       "lastAPIDurationWithoutRetries": 0,
       "lastToolDuration": 0,
-      "lastDuration": 60840,
+      "lastDuration": 25373,
       "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
       "lastTotalInputTokens": 0,
@@ -515,10 +516,10 @@
       "lastTotalCacheCreationInputTokens": 0,
       "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 0.63,
-      "lastFpsLow1Pct": 46.66,
+      "lastFpsAverage": 4.99,
+      "lastFpsLow1Pct": 42.03,
       "lastModelUsage": {},
-      "lastSessionId": "febeeba8-4821-49e1-90b8-eeee432e18f1",
+      "lastSessionId": "5d88e969-d2c4-4cb7-ae1c-446f0c993ed4",
       "lastSessionMetrics": {
         "frame_duration_ms_count": 37,
         "frame_duration_ms_min": 0.3153999999994994,
@@ -566,7 +567,7 @@
         "amount_minor_units": null,
         "currency": null
       },
-      "timestamp": 1778046071369
+      "timestamp": 1778050573144
     }
   },
   "closedIssuesLastChecked": 1777986276562,
