@@ -42,6 +42,8 @@ keybinds clear-defaults=true {
     }
 
     normal {
+        // Ctrl passthrough mode
+        bind "g" { SwitchToMode "scroll"; }
         // Forward Ctrl+G to inner session (double-tap: Ctrl+G → Ctrl+G)
         bind "Ctrl g" { Write 7; SwitchToMode "locked"; }
         // Splits
@@ -147,7 +149,154 @@ keybinds clear-defaults=true {
     }
 
     scroll {
-      
+        // True passthrough mode — as if Zellij doesn't exist
+        // Letters
+        bind "a" { Write 97; }
+        bind "b" { Write 98; }
+        bind "c" { Write 99; }
+        bind "d" { Write 100; }
+        bind "e" { Write 101; }
+        bind "f" { Write 102; }
+        bind "g" { Write 103; }
+        bind "h" { Write 104; }
+        bind "i" { Write 105; }
+        bind "j" { Write 106; }
+        bind "k" { Write 107; }
+        bind "l" { Write 108; }
+        bind "m" { Write 109; }
+        bind "n" { Write 110; }
+        bind "o" { Write 111; }
+        bind "p" { Write 112; }
+        bind "q" { Write 113; }
+        bind "r" { Write 114; }
+        bind "s" { Write 115; }
+        bind "t" { Write 116; }
+        bind "u" { Write 117; }
+        bind "v" { Write 118; }
+        bind "w" { Write 119; }
+        bind "x" { Write 120; }
+        bind "y" { Write 121; }
+        bind "z" { Write 122; }
+        // Uppercase
+        bind "A" { Write 65; }
+        bind "B" { Write 66; }
+        bind "C" { Write 67; }
+        bind "D" { Write 68; }
+        bind "E" { Write 69; }
+        bind "F" { Write 70; }
+        bind "G" { Write 71; }
+        bind "H" { Write 72; }
+        bind "I" { Write 73; }
+        bind "J" { Write 74; }
+        bind "K" { Write 75; }
+        bind "L" { Write 76; }
+        bind "M" { Write 77; }
+        bind "N" { Write 78; }
+        bind "O" { Write 79; }
+        bind "P" { Write 80; }
+        bind "Q" { Write 81; }
+        bind "R" { Write 82; }
+        bind "S" { Write 83; }
+        bind "T" { Write 84; }
+        bind "U" { Write 85; }
+        bind "V" { Write 86; }
+        bind "W" { Write 87; }
+        bind "X" { Write 88; }
+        bind "Y" { Write 89; }
+        bind "Z" { Write 90; }
+        // Digits
+        bind "0" { Write 48; }
+        bind "1" { Write 49; }
+        bind "2" { Write 50; }
+        bind "3" { Write 51; }
+        bind "4" { Write 52; }
+        bind "5" { Write 53; }
+        bind "6" { Write 54; }
+        bind "7" { Write 55; }
+        bind "8" { Write 56; }
+        bind "9" { Write 57; }
+        // Symbols (unshifted)
+        bind "`" { Write 96; }
+        bind "-" { Write 45; }
+        bind "=" { Write 61; }
+        bind "[" { Write 91; }
+        bind "]" { Write 93; }
+        bind "\\" { Write 92; }
+        bind ";" { Write 59; }
+        bind "'" { Write 39; }
+        bind "," { Write 44; }
+        bind "." { Write 46; }
+        bind "/" { Write 47; }
+        // Symbols (shifted)
+        bind "~" { Write 126; }
+        bind "!" { Write 33; }
+        bind "@" { Write 64; }
+        bind "#" { Write 35; }
+        bind "$" { Write 36; }
+        bind "%" { Write 37; }
+        bind "^" { Write 94; }
+        bind "&" { Write 38; }
+        bind "*" { Write 42; }
+        bind "(" { Write 40; }
+        bind ")" { Write 41; }
+        bind "_" { Write 95; }
+        bind "+" { Write 43; }
+        bind "{" { Write 123; }
+        bind "}" { Write 125; }
+        bind "|" { Write 124; }
+        bind ":" { Write 58; }
+        bind "\"" { Write 34; }
+        bind "<" { Write 60; }
+        bind ">" { Write 62; }
+        bind "?" { Write 63; }
+        // Whitespace & special
+        bind "space" { Write 32; }
+        bind "tab" { Write 9; }
+        bind "Shift tab" { Write 27 91 90; }
+        bind "enter" { Write 13; }
+        bind "backspace" { Write 127; }
+        bind "delete" { Write 27 91 51 126; }
+        // Arrow keys
+        bind "left" { Write 27 91 68; }
+        bind "right" { Write 27 91 67; }
+        bind "up" { Write 27 91 65; }
+        bind "down" { Write 27 91 66; }
+        // More navigation
+        bind "home"      { Write 27 91 72; }
+        bind "end"       { Write 27 91 70; }
+        bind "Ctrl home" { Write 27 91 49 59 53 72; }
+        bind "Ctrl end"  { Write 27 91 49 59 53 70; }
+        bind "pageup"    { Write 27 91 53 126; }
+        bind "pagedown"  { Write 27 91 54 126; }
+        // Ctrl+letter (stays in mode)
+        bind "Ctrl a" { Write 1; }
+        bind "Ctrl b" { Write 2; }
+        bind "Ctrl c" { Write 3; }
+        bind "Ctrl d" { Write 4; }
+        bind "Ctrl e" { Write 5; }
+        bind "Ctrl f" { Write 6; }
+        bind "Ctrl g" { Write 7; }
+        bind "Ctrl h" { Write 8; }
+        bind "Ctrl i" { Write 9; }
+        bind "Ctrl j" { Write 10; }
+        bind "Ctrl k" { Write 11; }
+        bind "Ctrl l" { Write 12; }
+        bind "Ctrl m" { Write 13; }
+        bind "Ctrl n" { Write 14; }
+        bind "Ctrl o" { Write 15; }
+        bind "Ctrl p" { Write 16; }
+        bind "Ctrl q" { Write 17; }
+        bind "Ctrl r" { Write 18; }
+        bind "Ctrl s" { Write 19; }
+        bind "Ctrl t" { Write 20; }
+        bind "Ctrl u" { Write 21; }
+        bind "Ctrl v" { Write 22; }
+        bind "Ctrl w" { Write 23; }
+        bind "Ctrl x" { Write 24; }
+        bind "Ctrl y" { Write 25; }
+        bind "Ctrl z" { Write 26; }
+        // Exit
+        bind "esc" { SwitchToMode "locked"; }
     }
 
      search {

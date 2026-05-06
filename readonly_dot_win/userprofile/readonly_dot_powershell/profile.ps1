@@ -797,6 +797,7 @@ $null = Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -MaxTriggerCoun
         $Pscx:Preferences['TextEditor'] = $(which $EDITOR)
         Set-Alias -Name touch -Value Touch-File -Scope Global -Force # pscx has a touch alias
         Set-Alias -Name Expand-Archive -Value Microsoft.PowerShell.Archive\Expand-Archive -Scope Global -Force # pscx has a Expand-Archive function
+        SetAlias -Name edp -Value Edit-Profile -Scope Global
     }
     else {
         Write-Error "Pscx isn't available on the system, execute:`nInstall-Module Pscx -Scope CurrentUser -Force"

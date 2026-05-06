@@ -273,8 +273,13 @@ extract () {
 nop() { return; }
 
 claude() {
-    CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE=-1 command claude --enable-auto-mode --allow-dangerously-skip-permissions "$@"
+    IS_SANDBOX=1 CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE=10000000 command claude --enable-auto-mode --allow-dangerously-skip-permissions "$@"
 }
+
+edit-profile() {
+    ${EDITOR:-nano} ~/.bashrc
+}
+alias edp='edit-profile'
 
 # fzf (history search)
 # git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf

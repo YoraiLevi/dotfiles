@@ -5,6 +5,8 @@ _ghost_max_entries=10000
 _ghost_last_render=""
 _ghost_suggestion=""
 _ghost_suppress=""
+_ghost_last_prompt=""
+_ghost_last_line=""
 
 declare -A _ghost_index
 
@@ -52,6 +54,8 @@ _ghost_render() {
 
     local p="${PS1@P}"
     p="${p##*$'\n'}"
+    _ghost_last_prompt="$p"
+    _ghost_last_line="$READLINE_LINE"
     printf '\e[s\r\e[K%s%s' "$p" "$READLINE_LINE"
     [[ -n "$_ghost_suggestion" ]] && printf '\e[38;5;245m%s\e[0m' "$_ghost_suggestion"
     printf '\e[u'
@@ -65,6 +69,11 @@ _ghost_dismiss() {
     local p="${PS1@P}"
     p="${p##*$'\n'}"
     printf '\e[s\r\e[K%s%s\e[u' "$p" "$READLINE_LINE"
+}
+
+_ghost_ps0_cleanup() {
+    [[ -n "$_ghost_last_render" ]] && printf '\e[1A\r%s%s\e[K\e[1B\r' "$_ghost_last_prompt" "$_ghost_last_line"
+    _ghost_last_render=""
 }
 
 _ghost_insert() {
@@ -124,6 +133,8 @@ _ghost_bind_char() {
 
 _ghost_load_history
 
+PS0='$(_ghost_ps0_cleanup)'"${PS0}"
+
 bind -x '"\e[C":  _ghost_accept'   # Right Arrow
 bind -x '"\e[D":  _ghost_left'     # Left Arrow
 bind -x '"\eOD":  _ghost_left'     # Left Arrow (alt sequence)
@@ -146,4 +157,4 @@ for c in {a..z} {A..Z} {0..9} \
     _ghost_bind_char "$c"
 done
 
-echo "Ghost enabled - Right Arrow accepts suggestions"
+# echo "Ghost enabled - Right Arrow accepts suggestions"
