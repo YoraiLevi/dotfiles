@@ -149,6 +149,11 @@ bind -x '"\C-e":  _ghost_end'      # Ctrl+E
 bind -x '"\C-h":  _ghost_backspace'
 bind -x '"\C-?":  _ghost_backspace'
 bind -x '"\e":    _ghost_dismiss'  # Escape
+bind -x '"\C-x\C-g": _ghost_dismiss'  # internal: used by arrow-key macros below
+bind '"\e[A":  "\C-x\C-g\C-p"'        # Up arrow:   dismiss ghost + previous-history
+bind '"\e[B":  "\C-x\C-g\C-n"'        # Down arrow: dismiss ghost + next-history
+bind '"\eOA":  "\C-x\C-g\C-p"'        # Up arrow (alt sequence)
+bind '"\eOB":  "\C-x\C-g\C-n"'        # Down arrow (alt sequence)
 
 for c in {a..z} {A..Z} {0..9} \
          ' ' '-' '_' '/' '.' ',' '@' '=' '+' \
