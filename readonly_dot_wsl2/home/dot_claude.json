@@ -4,7 +4,7 @@
   "autoUpdates": false,
   "tipsHistory": {
     "new-user-warmup": 7,
-    "plan-mode-for-complex-tasks": 6,
+    "plan-mode-for-complex-tasks": 11,
     "terminal-setup": 2,
     "memory-command": 2,
     "theme-command": 2,
@@ -27,7 +27,8 @@
     "feedback-command": 6,
     "color-when-multi-clauding": 10,
     "permissions": 11,
-    "rename-conversation": 11
+    "rename-conversation": 11,
+    "custom-commands": 11
   },
   "cachedGrowthBookFeatures": {
     "tengu_1p_event_batch_config": {

@@ -82,6 +82,45 @@ else
   echo "Windows home directory not found" >&2
 fi
 
+
+# Mirror USERPROFILE/.agents/claude into WSL $HOME
+WinClaude="$WinWSL/.agents/claude/"
+
+# Define exclusion list (relative paths under WinClaude)
+exclude_list=(
+  ".claude.json"
+  # Add more paths as needed, relative to $WinClaude
+)
+
+if [ -d "$WinClaude" ]; then
+  find "$WinClaude" \( -type f -o -type l \) | while read -r file; do
+    rel="${file#"$WinClaude"}"
+    # Remove leading slash, if any
+    rel="${rel#/}"
+    skip=false
+    for excluded in "${exclude_list[@]}"; do
+      if [ "$rel" = "$excluded" ]; then
+        skip=true
+        break
+      fi
+    done
+    if $skip; then
+      echo "Skipping excluded: $rel"
+      continue
+    fi
+    target="$HOME/.claude/$rel"
+    echo "$rel"
+    mkdir -p "$(dirname "$target")"
+    if [ ! -L "$target" ]; then
+      [ -e "$target" ] && mv -f "$target" "$target.bak"
+      ln -sf "$file" "$target"
+    fi
+  done
+else
+  echo "Windows .agents/claude directory not found" >&2
+fi
+ln -sf -- "$WinClaude"/.claude.json "$HOME/.claude.json"
+
 # Mirror USERPROFILE/.wsl2/etc into WSL /etc (may require running chezmoi with sufficient privileges for /etc).
 WinEtc="$WinWSL/.wsl2/etc/"
 

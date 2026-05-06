@@ -57,7 +57,10 @@ _ghost_render() {
     _ghost_last_prompt="$p"
     _ghost_last_line="$READLINE_LINE"
     printf '\e[s\r\e[K%s%s' "$p" "$READLINE_LINE"
-    [[ -n "$_ghost_suggestion" ]] && printf '\e[38;5;245m%s\e[0m' "$_ghost_suggestion"
+    if [[ -n "$_ghost_suggestion" ]]; then
+        local avail=$(( ${COLUMNS:-80} - ${#p} - ${#READLINE_LINE} ))
+        (( avail > 1 )) && printf '\e[38;5;245m%s\e[0m' "${_ghost_suggestion:0:$avail}"
+    fi
     printf '\e[u'
 }
 
@@ -72,8 +75,10 @@ _ghost_dismiss() {
 }
 
 _ghost_ps0_cleanup() {
-    [[ -n "$_ghost_last_render" ]] && printf '\e[1A\r%s%s\e[K\e[1B\r' "$_ghost_last_prompt" "$_ghost_last_line"
+    local had="${_ghost_last_render#*|}"
     _ghost_last_render=""
+    [[ -z "$had" ]] && return
+    printf '\e[1A\r%s%s\e[K\e[1B\r' "$_ghost_last_prompt" "$_ghost_last_line"
 }
 
 _ghost_insert() {
@@ -148,7 +153,10 @@ bind -x '"\C-a":  _ghost_home'     # Ctrl+A
 bind -x '"\C-e":  _ghost_end'      # Ctrl+E
 bind -x '"\C-h":  _ghost_backspace'
 bind -x '"\C-?":  _ghost_backspace'
-bind -x '"\e":    _ghost_dismiss'  # Escape
+bind 'set enable-bracketed-paste on'
+# Note: \e (Escape) intentionally NOT bound here — binding it alone prevents
+# readline from recognising the longer \e[200~ bracketed-paste sequence.
+# Ghost is dismissed by left-arrow, home, backspace, or typing new characters.
 
 for c in {a..z} {A..Z} {0..9} \
          ' ' '-' '_' '/' '.' ',' '@' '=' '+' \
