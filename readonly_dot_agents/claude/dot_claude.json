@@ -36,7 +36,8 @@
     "shift-enter-setup": 50,
     "git-worktrees": 74,
     "powershell-tool-env": 52,
-    "ide-upsell-external-terminal": 75
+    "ide-upsell-external-terminal": 75,
+    "colorterm-truecolor": 77
   },
   "promptQueueUseCount": 13,
   "btwUseCount": 1,
