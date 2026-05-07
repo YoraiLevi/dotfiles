@@ -40,6 +40,25 @@ git push -u origin master
 
 > **Why not fork?** Forks stay linked to the upstream repo on GitHub, which can clutter your profile and creates an implicit relationship you probably don't want for personal dotfiles.
 
+### One branch per machine
+
+This template uses **one branch per machine**, with `master` holding shared configs that every machine inherits. Pick a short, descriptive name for each machine you'll use — common conventions:
+
+| `<machine-name>` | Use for |
+|---|---|
+| `desktop-home`, `desktop-work` | Stationary desktops, distinguished by location |
+| `laptop-personal`, `laptop-work` | Laptops, distinguished by ownership |
+| `vm-dev`, `wsl-ubuntu` | Virtual machines and WSL distros |
+| `server-home`, `vps-prod` | Remote servers |
+
+Create the first machine's branch right after pushing to your repo:
+```bash
+git checkout -b <machine-name>      # e.g. laptop-work
+git push -u origin <machine-name>
+```
+
+The full per-machine workflow (merging shared changes from `master`, what to commit where) is documented in [Multiple machines](#multiple-machines) below.
+
 ---
 
 ## The `config` command
