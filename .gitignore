@@ -1,2 +1,14 @@
 /*
 !/.*
+
+# Defensive: never track these even if explicitly added
+.ssh/id_*
+.ssh/*_rsa
+.ssh/*_ed25519
+.ssh/known_hosts
+.netrc
+.aws/credentials
+.env
+.env.*
+*.pem
+*.key

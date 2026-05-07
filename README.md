@@ -6,6 +6,8 @@ The trick: a bare repo stored at `~/.dotfiles` with `$HOME` as its work-tree, ac
 
 > **`<placeholder>`** — anything in angle brackets is something you must replace with your own value before running the command.
 
+> ⚠️ **Never track secret files.** With auto-commit enabled, any tracked file is pushed within 60 seconds of being modified. The included `.gitignore` blocks the most common ones (`.ssh/id_*`, `.netrc`, `.aws/credentials`, `.env*`, `*.pem`, `*.key`) defensively. Audit before running `config add` on anything new.
+
 ---
 
 ## Using this template (no fork required)
@@ -78,14 +80,15 @@ config push -u origin main
 ```bash
 git clone --bare git@github.com:<YOU>/dotfiles.git $HOME/.dotfiles
 config config --local status.showUntrackedFiles no
-config checkout main -- .
+# Without "-- ." git refuses if conflicts exist (safer than overwriting)
+config checkout main
 ```
 
 If checkout fails due to conflicting files already on the machine:
 ```bash
 # Back up conflicts, then retry
 mv ~/.bashrc ~/.bashrc.backup
-config checkout main -- .
+config checkout main
 ```
 
 ---
@@ -161,8 +164,10 @@ config config --local status.showUntrackedFiles no
 
 # Back up any conflicting OS defaults, then checkout
 config checkout "$BRANCH" -- . 2>/dev/null || {
-  config checkout "$BRANCH" 2>&1 | grep "^\s" | awk '{print $1}' \
-    | xargs -I{} sh -c 'mv "$HOME/{}" "$HOME/{}.bak"'
+  config checkout "$BRANCH" 2>&1 | grep $'^\t' | while IFS= read -r file; do
+    file="${file#$'\t'}"
+    [ -e "$HOME/$file" ] && mv "$HOME/$file" "$HOME/$file.bak"
+  done
   config checkout "$BRANCH" -- .
 }
 
@@ -186,7 +191,9 @@ config checkout $BRANCH -- . 2>$null
 if ($LASTEXITCODE -ne 0) {
     config checkout $BRANCH 2>&1 | Where-Object { $_ -match "^\t" } | ForEach-Object {
         $file = $_.Trim()
-        Move-Item "$HOME\$file" "$HOME\$file.bak" -Force
+        if (Test-Path "$HOME\$file") {
+            Move-Item "$HOME\$file" "$HOME\$file.bak" -Force
+        }
     }
     config checkout $BRANCH -- .
 }
@@ -219,6 +226,10 @@ The commit script is stored inside `~/.dotfiles/` (the bare repo), keeping it ou
 ---
 
 ## Submodules (optional)
+
+> ⚠️ **Known limitation:** submodule operations (`add`, `init`, `update`) don't always compose cleanly with the bare-repo `--git-dir`/`--work-tree` pattern — a long-standing git issue. The instructions below work for many users but may fail on some git versions. If you hit errors, alternatives include committing the files directly or using a tool like `chezmoi` that has first-class submodule support.
+>
+> Reference (may become stale): [git mailing list discussion, 2012](https://www.spinics.net/lists/git/msg185334.html)
 
 For shell plugins or large tool configs, use submodules instead of copying files:
 

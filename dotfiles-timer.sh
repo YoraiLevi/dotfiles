@@ -35,16 +35,22 @@ git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" add -u
 if ! git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --quiet --cached; then
   git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" commit -m "chore: auto-commit at \$(date --iso-8601=s)"
 fi
-git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" push
+git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" push || {
+  echo "auto-commit: push failed (check SSH agent / network)" >&2
+  exit 1
+}
 EOF
     chmod +x "$SCRIPT_FILE"
 
     cat > "$SERVICE_FILE" <<EOF
 [Unit]
 Description=Auto-commit tracked dotfiles changes
+After=network-online.target
+Wants=network-online.target
 
 [Service]
 Type=oneshot
+Environment=SSH_AUTH_SOCK=%t/keyring/ssh
 ExecStart=$SCRIPT_FILE
 EOF
 

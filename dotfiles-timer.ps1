@@ -43,16 +43,18 @@ if (`$LASTEXITCODE -ne 0) {
 & git @gitArgs push
 "@ | Set-Content -Path $ScriptPath -Encoding UTF8
 
-    $action   = New-ScheduledTaskAction -Execute 'pwsh' `
-                    -Argument "-NonInteractive -WindowStyle Hidden -File `"$ScriptPath`""
-    $trigger  = New-ScheduledTaskTrigger -Once -At (Get-Date) `
-                    -RepetitionInterval ([TimeSpan]::FromMinutes(1))
-    $settings = New-ScheduledTaskSettingsSet `
-                    -ExecutionTimeLimit ([TimeSpan]::FromMinutes(5)) `
-                    -StartWhenAvailable
+    $action    = New-ScheduledTaskAction -Execute 'pwsh' `
+                     -Argument "-NonInteractive -WindowStyle Hidden -File `"$ScriptPath`""
+    $triggerLogon = New-ScheduledTaskTrigger -AtLogOn
+    $triggerRepeat = New-ScheduledTaskTrigger -Once -At (Get-Date).AddSeconds(30) `
+                     -RepetitionInterval ([TimeSpan]::FromMinutes(1)) `
+                     -RepetitionDuration ([TimeSpan]::FromDays(365 * 10))
+    $settings  = New-ScheduledTaskSettingsSet `
+                     -ExecutionTimeLimit ([TimeSpan]::FromMinutes(5)) `
+                     -StartWhenAvailable
 
     Register-ScheduledTask -TaskName $TaskName `
-        -Action $action -Trigger $trigger -Settings $settings `
+        -Action $action -Trigger @($triggerLogon, $triggerRepeat) -Settings $settings `
         -RunLevel Limited -Force | Out-Null
 
     Write-Host "Installed task '$TaskName' (commits every minute, git-dir: $GitDir)"
