@@ -4,9 +4,9 @@ Manage dotfiles across machines using a bare git repository. No symlinks, no ext
 
 The trick: a bare repo stored at `~/.dotfiles` with `$HOME` as its work-tree, accessed via a short alias.
 
-> **`<placeholder>`** — anything in angle brackets is something you must replace with your own value before running the command.
+> `**<placeholder>**` — anything in angle brackets is something you must replace with your own value before running the command.
 
-> ⚠️ **Never track secret files.** With auto-commit enabled, any tracked file is pushed within 60 seconds of being modified. The included `.gitignore` blocks the most common ones (`.ssh/id_*`, `.netrc`, `.aws/credentials`, `.env*`, `*.pem`, `*.key`) defensively. Audit before running `config add` on anything new.
+> ⚠️ **Never track secret files.** With auto-commit enabled, any tracked file is pushed within 60 seconds of being modified. The included `.gitignore` blocks the most common ones (`.ssh/id_`*, `.netrc`, `.aws/credentials`, `.env*`, `*.pem`, `*.key`) defensively. Audit before running `config add` on anything new.
 
 ---
 
@@ -15,11 +15,13 @@ The trick: a bare repo stored at `~/.dotfiles` with `$HOME` as its work-tree, ac
 Add one of these to your shell profile and use `config` everywhere you'd use `git`:
 
 **Bash / Zsh** (`~/.bashrc` or `~/.zshrc`):
+
 ```bash
 alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 ```
 
 **PowerShell** (`$PROFILE`):
+
 ```powershell
 function config { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 ```
@@ -44,6 +46,7 @@ git push -u origin master
 ```
 
 Or if you prefer a fresh history (no template commits):
+
 ```bash
 git clone https://github.com/DgxSparkLabs/dotfiles-template.git dotfiles
 cd dotfiles
@@ -65,27 +68,9 @@ git clone --bare git@github.com:<YOU>/dotfiles.git $HOME/.dotfiles
 config config --local status.showUntrackedFiles no
 
 # Populate $HOME with master's tracked files
-config checkout master
+config checkout master -- .gitignore dotfiles-timer.sh dotfiles-timer.ps1
+config add -u . && config commit -m "Init dotfiles"
 ```
-
-If `config checkout master` fails with **"untracked working tree files would be overwritten/removed"**, your `$HOME` already has files at paths master tracks. Pick one resolution and re-run:
-
-- **Keep master's version, back yours up first:**
-  ```bash
-  mv ~/.bashrc ~/.bashrc.backup     # repeat for each conflicting file
-  config checkout master
-  ```
-- **Keep your version, untrack the path on master:**
-  ```bash
-  config rm --cached <path-1> <path-2>
-  config commit -m "Untrack OS-managed paths"
-  config push
-  config checkout master
-  ```
-- **Selective checkout — only write paths that don't conflict:**
-  ```bash
-  config checkout master -- .bashrc .gitconfig .config/   # list paths you want
-  ```
 
 Verify the work-tree is fully in sync:
 
@@ -93,32 +78,28 @@ Verify the work-tree is fully in sync:
 config status
 ```
 
-It should show **no** "Changes to be committed". If it shows `deleted: <files>`, the bare-clone index didn't fully populate. List what's missing and restore those paths explicitly:
-
-```bash
-config diff --name-status master    # D <path> = tracked in master, missing from work-tree
-config checkout master -- README.md dotfiles-timer.sh dotfiles-timer.ps1 .github/workflows/validate-timer.yml
-config status                        # confirm clean
-```
-
-If `diff --name-status` shows a different set of paths (because you've added more tracked files since), substitute that list instead. Listing files explicitly is safer than `-- .` because it touches *only* what you name.
-
 ### 3. Create this machine's branch
 
 This template uses **one branch per machine**, with `master` holding shared configs. Pick a short, descriptive name for each machine:
 
-| `<machine-name>` | Use for |
-|---|---|
-| `desktop-home`, `desktop-work` | Stationary desktops, distinguished by location |
-| `laptop-personal`, `laptop-work` | Laptops, distinguished by ownership |
-| `vm-dev`, `wsl-ubuntu` | Virtual machines and WSL distros |
-| `server-home`, `vps-prod` | Remote servers |
+
+| `<machine-name>`                 | Use for                                        |
+| -------------------------------- | ---------------------------------------------- |
+| `desktop-home`, `desktop-work`   | Stationary desktops, distinguished by location |
+| `laptop-personal`, `laptop-work` | Laptops, distinguished by ownership            |
+| `vm-dev`, `wsl-ubuntu`           | Virtual machines and WSL distros               |
+| `server-home`, `vps-prod`        | Remote servers                                 |
+
 
 > Confirm `config status` is clean from step 2 before proceeding — otherwise any staged deletions follow into the new branch and your first commit there will silently delete those files from master.
 
 ```bash
 config checkout -b <machine-name> master
 config push -u origin <machine-name>
+
+# Suggestion for windows
+config checkout -b $((Get-WmiObject -class Win32_BaseBoard).product) master
+config push -u origin $((Get-WmiObject -class Win32_BaseBoard).product)
 ```
 
 ### 4. Add your dotfiles
@@ -151,18 +132,23 @@ For changes you want every machine to inherit, see [Multiple machines](#multiple
 Automatically stage and push changes to already-tracked dotfiles on a schedule. Uses `git add -u` — new files must still be added manually with `config add`.
 
 **Linux** (systemd user timer, runs every minute):
+
 ```bash
 bash dotfiles-timer.sh install
 # reinstall | disable | remove | status | logs
 ```
 
-**Windows** (Task Scheduler, runs every minute):
+**Windows** (auto-detects privilege; runs every minute either way):
+
 ```powershell
 pwsh dotfiles-timer.ps1 install
 # reinstall | uninstall | status | logs
 ```
 
-The commit script is stored inside `~/.dotfiles/` (the bare repo), keeping it out of your work-tree and off `config status`.
+- **From an admin shell:** registers a Windows Task Scheduler task. Survives logoff, runs as your user with limited rights.
+- **From a regular (non-admin) shell:** drops a hidden VBS launcher in your Startup folder that fires a detached `pwsh` while-loop at each logon. No admin required, no console window flash (the VBS host is windowless). Errors log to `%TEMP%\dotfiles-auto-commit.log`.
+
+The commit script (and the loop script, in user mode) lives inside `~/.dotfiles/` (the bare repo), keeping both out of your work-tree and off `config status`.
 
 ### Submodules (optional)
 
@@ -177,6 +163,7 @@ config submodule add https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh
 ```
 
 On a new machine after cloning:
+
 ```bash
 config submodule init
 config submodule update
@@ -187,6 +174,7 @@ config submodule update
 ## Managing `.gitignore`
 
 The included `.gitignore` contains:
+
 ```
 /*
 !/.*
@@ -195,6 +183,7 @@ The included `.gitignore` contains:
 This ignores everything in `$HOME` except hidden files/dirs (those starting with `.`). This prevents `config status` from flooding with every file in your home directory.
 
 **To also track a non-hidden directory** (e.g. `~/bin`), add a negation line to `.gitignore`:
+
 ```
 /*
 !/.*
@@ -202,6 +191,7 @@ This ignores everything in `$HOME` except hidden files/dirs (those starting with
 ```
 
 Then commit the updated `.gitignore`:
+
 ```bash
 config add ~/.gitignore
 config commit -m "Unignore ~/bin"
@@ -265,6 +255,7 @@ exec $SHELL
 Save this as `bootstrap.sh` in your repo and run it with `bash bootstrap.sh` on any new or reset machine.
 
 **PowerShell (`bootstrap.ps1`):**
+
 ```powershell
 # bootstrap.ps1 — run once on a fresh machine
 $REPO = "git@github.com:<YOU>/dotfiles.git"
