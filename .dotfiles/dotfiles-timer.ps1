@@ -6,19 +6,20 @@
 
 param(
     [Parameter(Position=0, Mandatory=$false)]
-    [ValidateSet('install','reinstall','uninstall','status','logs')]
+    [ValidateSet('install','reinstall','enable','disable','start','stop','uninstall','remove','status','logs')]
     [string]$Action
 )
 
 $ErrorActionPreference = 'Stop'
 
-$TaskName     = "dotfiles-git-commit"
-$GitDir       = "$HOME\.dotfiles"
-$WorkTree     = "$HOME"
-$ScriptPath   = "$GitDir\.auto-commit.ps1"
-$LoopPath     = "$GitDir\.auto-commit-loop.ps1"
-$LauncherPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\DotfilesAutoCommit.vbs"
-$LogPath      = "$env:TEMP\dotfiles-auto-commit.log"
+$TaskName             = "dotfiles-git-commit"
+$GitDir               = "$HOME\.dotfiles"
+$WorkTree             = "$HOME"
+$ScriptPath           = "$GitDir\.auto-commit.ps1"
+$LoopPath             = "$GitDir\.auto-commit-loop.ps1"
+$LauncherPath         = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\DotfilesAutoCommit.vbs"
+$DisabledLauncherPath = "$LauncherPath.disabled"
+$LogPath              = "$env:TEMP\dotfiles-auto-commit.log"
 
 function Test-IsAdmin {
     $id = [System.Security.Principal.WindowsIdentity]::GetCurrent()
@@ -29,15 +30,19 @@ function Test-IsAdmin {
 if (-not $Action) {
     $mode = if (Test-IsAdmin) { 'admin (Task Scheduler)' } else { 'user (startup folder + VBS)' }
     Write-Host @"
-Usage: pwsh dotfiles-timer.ps1 [install|reinstall|uninstall|status|logs]
+Usage: pwsh dotfiles-timer.ps1 [install|reinstall|enable|disable|start|stop|status|logs|uninstall|remove]
 
 Detected privilege: $mode
 
-  install    Install the auto-commit timer.
-  reinstall  Remove then reinstall.
-  uninstall  Remove the timer (and stop running loop if in user mode).
-  status     Show installation status (checks both modes).
+  install    Write files, enable autostart, start now.
+  reinstall  Uninstall + install.
+  enable     Mark to autostart on next boot/logon (don't necessarily run now).
+  disable    Turn off autostart and stop now (keep files).
+  start      Run now (idempotent — also enables if disabled).
+  stop       Stop running now (transient — auto-resumes on reboot if enabled).
+  status     Show install + autostart + running state.
   logs       Show recent activity.
+  uninstall  Full removal (alias: remove).
 "@
     exit 1
 }
@@ -58,16 +63,34 @@ if (`$LASTEXITCODE -ne 0) {
 function Write-LoopScript {
     @"
 # .auto-commit-loop.ps1 — invoked by the VBS launcher at logon
-`$logPath = '$LogPath'
+`$logPath   = '$LogPath'
+`$maxBytes  = 524288     # 0.5 MB threshold for log rotation
+`$keepCount = 5          # archives to keep before pruning oldest
+
+function Invoke-LogRotation([string]`$path) {
+    if (-not (Test-Path `$path)) { return }
+    if ((Get-Item `$path).Length -le `$maxBytes) { return }
+    `$archive = "`$path.`$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+    Move-Item `$path `$archive -Force
+    `$dir  = Split-Path `$path -Parent
+    `$name = Split-Path `$path -Leaf
+    Get-ChildItem -Path `$dir -Filter "`$name.*" -File |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -Skip `$keepCount |
+        Remove-Item -Force -ErrorAction SilentlyContinue
+}
+
 while (`$true) {
     `$ts = Get-Date -Format 'o'
     try {
         # Capture all stdout+stderr from the commit script (git output, etc.)
         `$output = & '$ScriptPath' 2>&1 | Out-String
         if (`$output.Trim()) {
+            Invoke-LogRotation `$logPath
             Add-Content -Path `$logPath -Value "[`$ts] `$(`$output.TrimEnd())"
         }
     } catch {
+        Invoke-LogRotation `$logPath
         Add-Content -Path `$logPath -Value "[`$ts] ERROR: `$(`$_.Exception.Message)"
     }
     Start-Sleep -Seconds 60
@@ -135,10 +158,70 @@ function Uninstall-Admin {
 
 function Uninstall-User {
     Stop-LoopProcesses
-    Remove-Item $LauncherPath -Force -ErrorAction SilentlyContinue
-    Remove-Item $LoopPath -Force -ErrorAction SilentlyContinue
-    Remove-Item $ScriptPath -Force -ErrorAction SilentlyContinue
+    Remove-Item $LauncherPath         -Force -ErrorAction SilentlyContinue
+    Remove-Item $DisabledLauncherPath -Force -ErrorAction SilentlyContinue
+    Remove-Item $LoopPath             -Force -ErrorAction SilentlyContinue
+    Remove-Item $ScriptPath           -Force -ErrorAction SilentlyContinue
     Write-Host "[user] Removed startup launcher and stopped running loop."
+}
+
+function Enable-Timer {
+    if (Test-IsAdmin) {
+        $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+        if (-not $task) { Write-Host "Not installed."; return }
+        Enable-ScheduledTask -TaskName $TaskName -ErrorAction Stop | Out-Null
+        Write-Host "[admin] Task enabled (will autostart per its triggers)."
+    } else {
+        if (Test-Path $DisabledLauncherPath) {
+            Move-Item $DisabledLauncherPath $LauncherPath -Force
+        }
+        if (-not (Test-Path $LauncherPath)) { Write-Host "Not installed."; return }
+        Write-Host "[user] Autostart re-enabled (VBS in startup folder; runs at next logon)."
+    }
+}
+
+function Disable-Timer {
+    if (Test-IsAdmin) {
+        Stop-ScheduledTask    -TaskName $TaskName -ErrorAction SilentlyContinue
+        Disable-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue | Out-Null
+        Write-Host "[admin] Task disabled and stopped (files preserved; 'start' or 'enable' to resume)."
+    } else {
+        Stop-LoopProcesses
+        if (Test-Path $LauncherPath) {
+            Move-Item $LauncherPath $DisabledLauncherPath -Force
+        }
+        Write-Host "[user] Loop stopped, autostart disabled (VBS parked at $DisabledLauncherPath)."
+    }
+}
+
+function Start-Timer {
+    if (Test-IsAdmin) {
+        $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+        if (-not $task) { Write-Host "Not installed. Run 'install' first."; return }
+        Enable-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue | Out-Null
+        Start-ScheduledTask  -TaskName $TaskName
+        Write-Host "[admin] Task enabled and started."
+    } else {
+        if (Test-Path $DisabledLauncherPath) {
+            Move-Item $DisabledLauncherPath $LauncherPath -Force
+        }
+        if (-not (Test-Path $LauncherPath)) { Write-Host "Not installed. Run 'install' first."; return }
+        $running = Get-CimInstance Win32_Process -Filter "Name='pwsh.exe' OR Name='powershell.exe'" |
+            Where-Object { $_.CommandLine -and $_.CommandLine -like "*$LoopPath*" }
+        if ($running) { Write-Host "[user] Loop already running."; return }
+        Start-Process wscript.exe -ArgumentList "`"$LauncherPath`"" -WindowStyle Hidden
+        Write-Host "[user] Loop started."
+    }
+}
+
+function Stop-Timer {
+    if (Test-IsAdmin) {
+        Stop-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+        Write-Host "[admin] Stopped current run (autostart still on; use 'disable' to fully halt)."
+    } else {
+        Stop-LoopProcesses
+        Write-Host "[user] Loop stopped (will resume on next logon if not disabled)."
+    }
 }
 
 function Get-Status {
@@ -155,7 +238,7 @@ function Get-Status {
 
     if (Test-Path $LauncherPath) {
         $found = $true
-        Write-Host "[user mode] Startup launcher: $LauncherPath"
+        Write-Host "[user mode] Startup launcher: $LauncherPath  (autostart: ENABLED)"
         $procs = Get-CimInstance Win32_Process -Filter "Name='pwsh.exe' OR Name='powershell.exe'" |
             Where-Object { $_.CommandLine -and $_.CommandLine -like "*$LoopPath*" }
         if ($procs) {
@@ -163,6 +246,10 @@ function Get-Status {
         } else {
             Write-Host "Loop NOT running (will start on next logon)."
         }
+    } elseif (Test-Path $DisabledLauncherPath) {
+        $found = $true
+        Write-Host "[user mode] Parked launcher: $DisabledLauncherPath  (autostart: DISABLED)"
+        Write-Host "Run 'enable' or 'start' to resume."
     }
 
     if (-not $found) {
@@ -203,7 +290,12 @@ $isAdmin = Test-IsAdmin
 switch ($Action) {
     'install'   { if ($isAdmin) { Install-Admin } else { Install-User } }
     'reinstall' { if ($isAdmin) { Uninstall-Admin; Install-Admin } else { Uninstall-User; Install-User } }
+    'enable'    { Enable-Timer }
+    'disable'   { Disable-Timer }
+    'start'     { Start-Timer }
+    'stop'      { Stop-Timer }
     'uninstall' { if ($isAdmin) { Uninstall-Admin } else { Uninstall-User } }
+    'remove'    { if ($isAdmin) { Uninstall-Admin } else { Uninstall-User } }
     'status'    { Get-Status }
     'logs'      { Get-Logs }
 }

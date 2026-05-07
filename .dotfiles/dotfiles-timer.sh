@@ -12,14 +12,17 @@ SERVICE_UNIT="${SERVICE_NAME}.service"
 
 print_usage() {
   cat <<EOF
-Usage: $0 [install|reinstall|disable|remove|status|logs]
+Usage: $0 [install|reinstall|enable|disable|start|stop|status|logs|uninstall|remove]
 
-  install    Install and enable the auto-commit timer.
-  reinstall  Remove then reinstall.
-  disable    Stop and disable (leaves unit files).
-  remove     Disable and delete unit files.
+  install    Write unit files, enable autostart, start now.
+  reinstall  Uninstall + install.
+  enable     Mark to autostart on next boot (don't necessarily run now).
+  disable    Turn off autostart and stop now (keep unit files).
+  start      Run now (idempotent — also enables if disabled).
+  stop       Stop running now (transient — auto-resumes on reboot if enabled).
   status     Show timer and service status.
   logs       Show recent service logs.
+  uninstall  Full removal (alias: remove).
 
 Commits tracked dotfiles changes every minute using:
   git --git-dir=$GIT_DIR --work-tree=$WORK_TREE
@@ -97,10 +100,13 @@ remove_timer() {
 }
 
 case "${1:-}" in
-    install)   install_timer ;;
-    reinstall) remove_timer; install_timer ;;
-    disable)   disable_timer ;;
-    remove)    remove_timer ;;
+    install)          install_timer ;;
+    reinstall)        remove_timer; install_timer ;;
+    enable)           systemctl --user enable "$TIMER_UNIT" ;;
+    disable)          systemctl --user disable --now "$TIMER_UNIT" 2>/dev/null || true ;;
+    start)            systemctl --user enable --now "$TIMER_UNIT" ;;
+    stop)             systemctl --user stop "$TIMER_UNIT" ;;
+    uninstall|remove) remove_timer ;;
     status)
         systemctl --user status "$TIMER_UNIT"
         echo ""

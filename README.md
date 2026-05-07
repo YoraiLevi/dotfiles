@@ -145,10 +145,16 @@ function dotfiles-timer { pwsh "$HOME\.dotfiles\dotfiles-timer.ps1" @args }
 
 Then on any platform:
 
-```
-dotfiles-timer install
-# install | reinstall | status | logs
-# Linux additionally: disable | remove   |   Windows: uninstall
+```text
+dotfiles-timer install      # write files, enable autostart, start now
+dotfiles-timer reinstall    # uninstall + install
+dotfiles-timer enable       # turn on autostart (don't necessarily run now)
+dotfiles-timer disable      # turn off autostart and stop (keep files)
+dotfiles-timer start        # run now (idempotent — also enables if disabled)
+dotfiles-timer stop         # stop running now (transient — auto-resumes on reboot if enabled)
+dotfiles-timer status       # show install + autostart + running state
+dotfiles-timer logs         # show recent activity
+dotfiles-timer uninstall    # full removal (alias: remove)
 ```
 
 Behavior per platform:
