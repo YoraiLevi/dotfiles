@@ -94,6 +94,51 @@ config commit -m "Unignore ~/bin"
 
 ---
 
+## Multiple machines
+
+Use one branch per machine, with `main` holding shared configs. Each machine branch merges from `main` to pull shared changes.
+
+```bash
+# On each machine, create its branch from main
+config checkout -b machine-laptop
+config push -u origin machine-laptop
+
+# Pull shared changes from main onto this machine
+config merge main
+```
+
+To share a change across all machines: commit it to `main`, then `config merge main` on each machine.
+
+---
+
+## Restoring a machine from scratch
+
+The `config` alias lives in your profile — which hasn't been restored yet. Define it temporarily first, then check out your machine's branch (which restores the profile):
+
+```bash
+#!/bin/bash
+# bootstrap.sh — run once on a fresh machine
+REPO="git@github.com:YOU/dotfiles.git"
+BRANCH="machine-laptop"  # change to this machine's branch
+
+git clone --bare "$REPO" "$HOME/.dotfiles"
+alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+config config --local status.showUntrackedFiles no
+
+# Back up any conflicting OS defaults, then checkout
+config checkout "$BRANCH" -- . 2>/dev/null || {
+  config checkout "$BRANCH" 2>&1 | grep "^\s" | awk '{print $1}' \
+    | xargs -I{} sh -c 'mv "$HOME/{}" "$HOME/{}.bak"'
+  config checkout "$BRANCH" -- .
+}
+
+exec $SHELL
+```
+
+Save this as `bootstrap.sh` in your repo and run it with `bash bootstrap.sh` on any new or reset machine.
+
+---
+
 ## Submodules (optional)
 
 For shell plugins or large tool configs, use submodules instead of copying files:
