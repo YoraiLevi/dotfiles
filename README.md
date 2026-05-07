@@ -4,6 +4,8 @@ Manage dotfiles across machines using a bare git repository. No symlinks, no ext
 
 The trick: a bare repo stored at `~/.dotfiles` with `$HOME` as its work-tree, accessed via a short alias.
 
+> **`<placeholder>`** — anything in angle brackets is something you must replace with your own value before running the command.
+
 ---
 
 ## Using this template (no fork required)
@@ -17,7 +19,7 @@ cd dotfiles
 
 # 2. Point it at your own repo
 git remote remove origin
-git remote add origin https://github.com/YOU/dotfiles.git
+git remote add origin https://github.com/<YOU>/dotfiles.git
 git push -u origin master
 ```
 
@@ -30,7 +32,7 @@ rm -rf .git
 git init
 git add .
 git commit -m "Initial dotfiles setup"
-git remote add origin https://github.com/YOU/dotfiles.git
+git remote add origin https://github.com/<YOU>/dotfiles.git
 git push -u origin master
 ```
 
@@ -65,7 +67,7 @@ config branch -M main
 config add ~/.bashrc
 config commit -m "Initial commit"
 
-config remote add origin git@github.com:YOU/dotfiles.git
+config remote add origin git@github.com:<YOU>/dotfiles.git
 config push -u origin main
 ```
 
@@ -74,7 +76,7 @@ config push -u origin main
 ## New machine — clone existing repo
 
 ```bash
-git clone --bare git@github.com:YOU/dotfiles.git $HOME/.dotfiles
+git clone --bare git@github.com:<YOU>/dotfiles.git $HOME/.dotfiles
 config config --local status.showUntrackedFiles no
 config checkout main -- .
 ```
@@ -132,8 +134,8 @@ Use one branch per machine, with `main` holding shared configs. Each machine bra
 
 ```bash
 # On each machine, create its branch from main
-config checkout -b machine-laptop
-config push -u origin machine-laptop
+config checkout -b <machine-name>
+config push -u origin <machine-name>
 
 # Pull shared changes from main onto this machine
 config merge main
@@ -150,8 +152,8 @@ The `config` alias lives in your profile — which hasn't been restored yet. Def
 ```bash
 #!/bin/bash
 # bootstrap.sh — run once on a fresh machine
-REPO="git@github.com:YOU/dotfiles.git"
-BRANCH="machine-laptop"  # change to this machine's branch
+REPO="git@github.com:<YOU>/dotfiles.git"
+BRANCH="<machine-name>"
 
 git clone --bare "$REPO" "$HOME/.dotfiles"
 alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
@@ -172,8 +174,8 @@ Save this as `bootstrap.sh` in your repo and run it with `bash bootstrap.sh` on 
 **PowerShell (`bootstrap.ps1`):**
 ```powershell
 # bootstrap.ps1 — run once on a fresh machine
-$REPO = "git@github.com:YOU/dotfiles.git"
-$BRANCH = "machine-laptop"  # change to this machine's branch
+$REPO = "git@github.com:<YOU>/dotfiles.git"
+$BRANCH = "<machine-name>"
 
 git clone --bare $REPO "$HOME/.dotfiles"
 function config { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
