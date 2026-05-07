@@ -1,12 +1,13 @@
 #!/usr/bin/env pwsh
 # dotfiles-timer.ps1: Manage a Windows Task Scheduler task that auto-commits dotfiles changes.
-$ErrorActionPreference = 'Stop'
 
 param(
     [Parameter(Position=0, Mandatory=$false)]
     [ValidateSet('install','reinstall','uninstall','status','logs')]
     [string]$Action
 )
+
+$ErrorActionPreference = 'Stop'
 
 $TaskName   = "dotfiles-git-commit"
 $GitDir     = "$HOME\.dotfiles"
