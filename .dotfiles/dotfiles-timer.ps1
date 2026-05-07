@@ -12,14 +12,17 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$TaskName             = "dotfiles-git-commit"
-$GitDir               = "$HOME\.dotfiles"
-$WorkTree             = "$HOME"
-$ScriptPath           = "$GitDir\.auto-commit.ps1"
-$LoopPath             = "$GitDir\.auto-commit-loop.ps1"
-$LauncherPath         = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\DotfilesAutoCommit.vbs"
-$DisabledLauncherPath = "$LauncherPath.disabled"
-$LogPath              = "$env:TEMP\dotfiles-auto-commit.log"
+$TaskName     = "dotfiles-git-commit"
+$GitDir       = "$HOME\.dotfiles"
+$WorkTree     = "$HOME"
+$ScriptPath   = "$GitDir\.auto-commit.ps1"
+$LoopPath     = "$GitDir\.auto-commit-loop.ps1"
+$LauncherPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\DotfilesAutoCommit.vbs"
+$LogPath      = "$env:TEMP\dotfiles-auto-commit.log"
+# In user mode the install state is encoded by file presence:
+#   $LoopPath exists, $LauncherPath exists  -> installed + enabled
+#   $LoopPath exists, $LauncherPath missing -> installed + disabled
+#   $LoopPath missing                       -> not installed
 
 function Test-IsAdmin {
     $id = [System.Security.Principal.WindowsIdentity]::GetCurrent()
@@ -158,10 +161,9 @@ function Uninstall-Admin {
 
 function Uninstall-User {
     Stop-LoopProcesses
-    Remove-Item $LauncherPath         -Force -ErrorAction SilentlyContinue
-    Remove-Item $DisabledLauncherPath -Force -ErrorAction SilentlyContinue
-    Remove-Item $LoopPath             -Force -ErrorAction SilentlyContinue
-    Remove-Item $ScriptPath           -Force -ErrorAction SilentlyContinue
+    Remove-Item $LauncherPath -Force -ErrorAction SilentlyContinue
+    Remove-Item $LoopPath     -Force -ErrorAction SilentlyContinue
+    Remove-Item $ScriptPath   -Force -ErrorAction SilentlyContinue
     Write-Host "[user] Removed startup launcher and stopped running loop."
 }
 
@@ -172,11 +174,9 @@ function Enable-Timer {
         Enable-ScheduledTask -TaskName $TaskName -ErrorAction Stop | Out-Null
         Write-Host "[admin] Task enabled (will autostart per its triggers)."
     } else {
-        if (Test-Path $DisabledLauncherPath) {
-            Move-Item $DisabledLauncherPath $LauncherPath -Force
-        }
-        if (-not (Test-Path $LauncherPath)) { Write-Host "Not installed."; return }
-        Write-Host "[user] Autostart re-enabled (VBS in startup folder; runs at next logon)."
+        if (-not (Test-Path $LoopPath)) { Write-Host "Not installed."; return }
+        if (-not (Test-Path $LauncherPath)) { Write-VbsLauncher }
+        Write-Host "[user] VBS launcher re-created in startup folder (runs at next logon)."
     }
 }
 
@@ -187,10 +187,8 @@ function Disable-Timer {
         Write-Host "[admin] Task disabled and stopped (files preserved; 'start' or 'enable' to resume)."
     } else {
         Stop-LoopProcesses
-        if (Test-Path $LauncherPath) {
-            Move-Item $LauncherPath $DisabledLauncherPath -Force
-        }
-        Write-Host "[user] Loop stopped, autostart disabled (VBS parked at $DisabledLauncherPath)."
+        Remove-Item $LauncherPath -Force -ErrorAction SilentlyContinue
+        Write-Host "[user] Loop stopped and VBS launcher removed from startup folder (loop+commit scripts kept)."
     }
 }
 
@@ -202,10 +200,8 @@ function Start-Timer {
         Start-ScheduledTask  -TaskName $TaskName
         Write-Host "[admin] Task enabled and started."
     } else {
-        if (Test-Path $DisabledLauncherPath) {
-            Move-Item $DisabledLauncherPath $LauncherPath -Force
-        }
-        if (-not (Test-Path $LauncherPath)) { Write-Host "Not installed. Run 'install' first."; return }
+        if (-not (Test-Path $LoopPath)) { Write-Host "Not installed. Run 'install' first."; return }
+        if (-not (Test-Path $LauncherPath)) { Write-VbsLauncher }
         $running = Get-CimInstance Win32_Process -Filter "Name='pwsh.exe' OR Name='powershell.exe'" |
             Where-Object { $_.CommandLine -and $_.CommandLine -like "*$LoopPath*" }
         if ($running) { Write-Host "[user] Loop already running."; return }
@@ -220,7 +216,7 @@ function Stop-Timer {
         Write-Host "[admin] Stopped current run (autostart still on; use 'disable' to fully halt)."
     } else {
         Stop-LoopProcesses
-        Write-Host "[user] Loop stopped (will resume on next logon if not disabled)."
+        Write-Host "[user] Loop stopped (will resume on next logon if VBS launcher still in startup folder)."
     }
 }
 
@@ -236,20 +232,21 @@ function Get-Status {
             Format-List LastRunTime, LastTaskResult, NextRunTime, NumberOfMissedRuns
     }
 
-    if (Test-Path $LauncherPath) {
+    if (Test-Path $LoopPath) {
         $found = $true
-        Write-Host "[user mode] Startup launcher: $LauncherPath  (autostart: ENABLED)"
+        if (Test-Path $LauncherPath) {
+            Write-Host "[user mode] Installed; autostart: ENABLED ($LauncherPath)"
+        } else {
+            Write-Host "[user mode] Installed; autostart: DISABLED (no VBS in startup folder)"
+            Write-Host "Run 'enable' or 'start' to recreate the launcher."
+        }
         $procs = Get-CimInstance Win32_Process -Filter "Name='pwsh.exe' OR Name='powershell.exe'" |
             Where-Object { $_.CommandLine -and $_.CommandLine -like "*$LoopPath*" }
         if ($procs) {
             Write-Host "Loop running (PIDs: $(($procs.ProcessId) -join ', '))"
         } else {
-            Write-Host "Loop NOT running (will start on next logon)."
+            Write-Host "Loop NOT running."
         }
-    } elseif (Test-Path $DisabledLauncherPath) {
-        $found = $true
-        Write-Host "[user mode] Parked launcher: $DisabledLauncherPath  (autostart: DISABLED)"
-        Write-Host "Run 'enable' or 'start' to resume."
     }
 
     if (-not $found) {
