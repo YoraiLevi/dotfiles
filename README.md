@@ -93,12 +93,15 @@ Verify the work-tree is fully in sync:
 config status
 ```
 
-It should show **no** "Changes to be committed". If it shows `deleted: <files>`, the bare-clone index didn't fully populate — force-write the remaining tracked files:
+It should show **no** "Changes to be committed". If it shows `deleted: <files>`, the bare-clone index didn't fully populate. List what's missing and restore those paths explicitly:
 
 ```bash
-config checkout master -- .
-config status     # confirm clean
+config diff --name-status master    # D <path> = tracked in master, missing from work-tree
+config checkout master -- README.md dotfiles-timer.sh dotfiles-timer.ps1 .github/workflows/validate-timer.yml
+config status                        # confirm clean
 ```
+
+If `diff --name-status` shows a different set of paths (because you've added more tracked files since), substitute that list instead. Listing files explicitly is safer than `-- .` because it touches *only* what you name.
 
 ### 3. Create this machine's branch
 
