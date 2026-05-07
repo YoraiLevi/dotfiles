@@ -6,6 +6,38 @@ The trick: a bare repo stored at `~/.dotfiles` with `$HOME` as its work-tree, ac
 
 ---
 
+## Using this template (no fork required)
+
+You don't need to fork on GitHub. Clone directly, then push to your own repo:
+
+```bash
+# 1. Clone this template
+git clone https://github.com/DgxSparkLabs/dotfiles-template.git dotfiles
+cd dotfiles
+
+# 2. Point it at your own repo
+git remote remove origin
+git remote add origin https://github.com/YOU/dotfiles.git
+git push -u origin master
+```
+
+Or if you prefer a fresh history (no template commits):
+```bash
+# Start clean: copy files, init a new repo, push
+git clone https://github.com/DgxSparkLabs/dotfiles-template.git dotfiles
+cd dotfiles
+rm -rf .git
+git init
+git add .
+git commit -m "Initial dotfiles setup"
+git remote add origin https://github.com/YOU/dotfiles.git
+git push -u origin master
+```
+
+> **Why not fork?** Forks stay linked to the upstream repo on GitHub, which can clutter your profile and creates an implicit relationship you probably don't want for personal dotfiles.
+
+---
+
 ## The `config` command
 
 Add one of these to your shell profile and use `config` everywhere you'd use `git`:
