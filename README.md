@@ -68,7 +68,7 @@ git clone --bare git@github.com:<YOU>/dotfiles.git $HOME/.dotfiles
 config config --local status.showUntrackedFiles no
 
 # Populate $HOME with master's tracked files
-config checkout master -- .gitignore dotfiles-timer.sh dotfiles-timer.ps1
+config checkout master -- .gitignore .dotfiles/
 config add -u . && config commit -m "Init dotfiles"
 ```
 
@@ -134,14 +134,14 @@ Automatically stage and push changes to already-tracked dotfiles on a schedule. 
 **Linux** (systemd user timer, runs every minute):
 
 ```bash
-bash dotfiles-timer.sh install
+bash ~/.dotfiles/dotfiles-timer.sh install
 # reinstall | disable | remove | status | logs
 ```
 
 **Windows** (auto-detects privilege; runs every minute either way):
 
 ```powershell
-pwsh dotfiles-timer.ps1 install
+pwsh "$HOME\.dotfiles\dotfiles-timer.ps1" install
 # reinstall | uninstall | status | logs
 ```
 

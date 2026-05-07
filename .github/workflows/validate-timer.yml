@@ -55,12 +55,12 @@ jobs:
       # ── Install ──────────────────────────────────────────────────────────
       - name: Install systemd timer
         if: runner.os == 'Linux'
-        run: bash dotfiles-timer.sh install
+        run: bash .dotfiles/dotfiles-timer.sh install
 
       - name: Install Task Scheduler task
         if: runner.os == 'Windows'
         shell: pwsh
-        run: pwsh dotfiles-timer.ps1 install
+        run: pwsh .dotfiles/dotfiles-timer.ps1 install
 
       # ── Smoke test: scheduler registration ──────────────────────────────
       - name: Verify systemd timer registered
