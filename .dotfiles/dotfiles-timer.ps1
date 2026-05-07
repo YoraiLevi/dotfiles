@@ -258,7 +258,7 @@ function Get-Logs {
     $emitted = $false
 
     if (Test-Path $LogPath) {
-        Write-Host "User-mode log ($LogPath):"
+        Write-Host "User-mode log ( $LogPath ):"
         Get-Content $LogPath -Tail 50
         $emitted = $true
     }

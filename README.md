@@ -6,24 +6,24 @@ The trick: a bare repo stored at `~/.dotfiles` with `$HOME` as its work-tree, ac
 
 > `**<placeholder>**` — anything in angle brackets is something you must replace with your own value before running the command.
 
-> ⚠️ **Never track secret files.** With auto-commit enabled, any tracked file is pushed within 60 seconds of being modified. The included `.gitignore` blocks the most common ones (`.ssh/id_`*, `.netrc`, `.aws/credentials`, `.env*`, `*.pem`, `*.key`) defensively. Audit before running `config add` on anything new.
+> ⚠️ **Never track secret files.** With auto-commit enabled, any tracked file is pushed within 60 seconds of being modified. The included `.gitignore` blocks the most common ones (`.ssh/id_`*, `.netrc`, `.aws/credentials`, `.env`*, `*.pem`, `*.key`) defensively. Audit before running `dotfiles add` on anything new.
 
 ---
 
-## The `config` command
+## The `dotfiles` command
 
-Add one of these to your shell profile and use `config` everywhere you'd use `git`:
+Add one of these to your shell profile and use `dotfiles` everywhere you'd use `git`:
 
 **Bash / Zsh** (`~/.bashrc` or `~/.zshrc`):
 
 ```bash
-alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 ```
 
 **PowerShell** (`$PROFILE`):
 
 ```powershell
-function config { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 ```
 
 ---
@@ -65,17 +65,17 @@ git push -u origin master
 
 ```bash
 git clone --bare git@github.com:<YOU>/dotfiles.git $HOME/.dotfiles
-config config --local status.showUntrackedFiles no
+dotfiles config --local status.showUntrackedFiles no
 
 # Populate $HOME with master's tracked files
-config checkout master -- .gitignore .dotfiles/
-config add -u . && config commit -m "Init dotfiles"
+dotfiles checkout master -- .gitignore .dotfiles/
+dotfiles add -u . && dotfiles commit -m "Init dotfiles"
 ```
 
 Verify the work-tree is fully in sync:
 
 ```bash
-config status
+dotfiles status
 ```
 
 ### 3. Create this machine's branch
@@ -91,23 +91,31 @@ This template uses **one branch per machine**, with `master` holding shared conf
 | `server-home`, `vps-prod`        | Remote servers                                 |
 
 
-> Confirm `config status` is clean from step 2 before proceeding — otherwise any staged deletions follow into the new branch and your first commit there will silently delete those files from master.
+> Confirm `dotfiles status` is clean from step 2 before proceeding — otherwise any staged deletions follow into the new branch and your first commit there will silently delete those files from master.
 
 ```bash
-config checkout -b <machine-name> master
-config push -u origin <machine-name>
+dotfiles checkout -b <machine-name> master
+dotfiles push -u origin <machine-name>
 
 # Suggestion for windows
-config checkout -b $((Get-WmiObject -class Win32_BaseBoard).product) master
-config push -u origin $((Get-WmiObject -class Win32_BaseBoard).product)
+dotfiles checkout -b $((Get-WmiObject -class Win32_BaseBoard).product) master
+dotfiles push -u origin $((Get-WmiObject -class Win32_BaseBoard).product)
+
+# Suggestion for linux
+dotfiles checkout -b $(cat /sys/class/dmi/id/board_name) master
+dotfiles push -u origin $(cat /sys/class/dmi/id/board_name)
+
+# Suggestion for WSL
+dotfiles checkout -b WSL master
+dotfiles push -u origin WSL
 ```
 
 ### 4. Add your dotfiles
 
 ```bash
-config add ~/.bashrc
-config commit -m "Add bashrc"
-config push
+dotfiles add ~/.bashrc
+dotfiles commit -m "Add bashrc"
+dotfiles push
 ```
 
 For the ongoing per-machine workflow, see [Multiple machines](#multiple-machines).
@@ -119,26 +127,28 @@ For the ongoing per-machine workflow, see [Multiple machines](#multiple-machines
 You're always on your machine's branch (`<machine-name>`). Routine changes commit and push there:
 
 ```bash
-config status
-config add ~/.config/someapp/config
-config commit -m "Add someapp config"
-config push                 # pushes to <machine-name> on origin
+dotfiles status
+dotfiles add ~/.config/someapp/config
+dotfiles commit -m "Add someapp config"
+dotfiles push                 # pushes to <machine-name> on origin
 ```
 
 For changes you want every machine to inherit, see [Multiple machines](#multiple-machines) — those go on `master`.
 
 ### Auto-commit (optional)
 
-Automatically stage and push changes to already-tracked dotfiles on a schedule. Uses `git add -u` — new files must still be added manually with `config add`.
+Automatically stage and push changes to already-tracked dotfiles on a schedule. Uses `git add -u` — new files must still be added manually with `dotfiles add`.
 
-Add a `dotfiles-timer` wrapper to your shell profile (same pattern as the `config` function above) so the install/uninstall/status commands are identical across all your machines:
+Add a `dotfiles-timer` wrapper to your shell profile (same pattern as the `dotfiles` function above) so the install/uninstall/status commands are identical across all your machines:
 
 **Bash / Zsh** (`~/.bashrc` or `~/.zshrc`):
+
 ```bash
 alias dotfiles-timer='bash $HOME/.dotfiles/dotfiles-timer.sh'
 ```
 
 **PowerShell** (`$PROFILE`):
+
 ```powershell
 function dotfiles-timer { pwsh "$HOME\.dotfiles\dotfiles-timer.ps1" @args }
 ```
@@ -163,7 +173,7 @@ Behavior per platform:
 - **Windows admin shell** — registers a Task Scheduler task. Survives logoff, runs as your user with limited rights.
 - **Windows non-admin shell** — drops a hidden VBS launcher in your Startup folder that fires a detached `pwsh` while-loop at each logon. No admin required, no console window flash (the VBS host is windowless). Errors log to `%TEMP%\dotfiles-auto-commit.log`.
 
-The commit script (and the loop script, in Windows user mode) lives inside `~/.dotfiles/`, keeping both out of your work-tree and off `config status`.
+The commit script (and the loop script, in Windows user mode) lives inside `~/.dotfiles/`, keeping both out of your work-tree and off `dotfiles status`.
 
 ### Submodules (optional)
 
@@ -171,17 +181,17 @@ The commit script (and the loop script, in Windows user mode) lives inside `~/.d
 >
 > Reference (may become stale): [git mailing list discussion, 2012](https://www.spinics.net/lists/git/msg185334.html)
 
-For shell plugins or large tool configs, use submodules instead of copying files:
+For shell plugins or large tool dotfiless, use submodules instead of copying files:
 
 ```bash
-config submodule add https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+dotfiles submodule add https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
 ```
 
 On a new machine after cloning:
 
 ```bash
-config submodule init
-config submodule update
+dotfiles submodule init
+dotfiles submodule update
 ```
 
 ---
@@ -195,7 +205,7 @@ The included `.gitignore` contains:
 !/.*
 ```
 
-This ignores everything in `$HOME` except hidden files/dirs (those starting with `.`). This prevents `config status` from flooding with every file in your home directory.
+This ignores everything in `$HOME` except hidden files/dirs (those starting with `.`). This prevents `dotfiles status` from flooding with every file in your home directory.
 
 **To also track a non-hidden directory** (e.g. `~/bin`), add a negation line to `.gitignore`:
 
@@ -208,8 +218,8 @@ This ignores everything in `$HOME` except hidden files/dirs (those starting with
 Then commit the updated `.gitignore`:
 
 ```bash
-config add ~/.gitignore
-config commit -m "Unignore ~/bin"
+dotfiles add ~/.gitignore
+dotfiles commit -m "Unignore ~/bin"
 ```
 
 > Note: a `.gitignore` placed inside an ignored subdirectory will not be read by git — the negation must always be added to the root `.gitignore`.
@@ -222,10 +232,10 @@ Use one branch per machine, with `master` holding shared configs. Each machine b
 
 ```bash
 # Pull shared changes from master onto this machine
-config merge master
+dotfiles merge master
 ```
 
-To share a change across all machines: commit it to `master`, push, then run `config merge master` on each other machine.
+To share a change across all machines: commit it to `master`, push, then run `dotfiles merge master` on each other machine.
 
 ### Adding another machine
 
@@ -234,7 +244,7 @@ Repeat [Using this template](#using-this-template-no-fork-required) **steps 2–
 If a branch for this machine already exists on the remote (e.g. you set it up before and are reinstalling), substitute step 3 with:
 
 ```bash
-config checkout <machine-name>     # checkout the existing branch instead of creating one
+dotfiles checkout <machine-name>     # checkout the existing branch instead of creating one
 ```
 
 For full disaster-recovery automation, see [Restoring a machine from scratch](#restoring-a-machine-from-scratch).
@@ -243,7 +253,7 @@ For full disaster-recovery automation, see [Restoring a machine from scratch](#r
 
 ## Restoring a machine from scratch
 
-The `config` alias lives in your profile — which hasn't been restored yet. Define it temporarily first, then check out your machine's branch (which restores the profile):
+The `dotfiles` alias lives in your profile — which hasn't been restored yet. Define it temporarily first, then check out your machine's branch (which restores the profile):
 
 ```bash
 #!/bin/bash
@@ -252,16 +262,16 @@ REPO="git@github.com:<YOU>/dotfiles.git"
 BRANCH="<machine-name>"
 
 git clone --bare "$REPO" "$HOME/.dotfiles"
-alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-config config --local status.showUntrackedFiles no
+alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+dotfiles config --local status.showUntrackedFiles no
 
 # Back up any conflicting OS defaults, then checkout
-config checkout "$BRANCH" -- . 2>/dev/null || {
-  config checkout "$BRANCH" 2>&1 | grep $'^\t' | while IFS= read -r file; do
+dotfiles checkout "$BRANCH" -- . 2>/dev/null || {
+  dotfiles checkout "$BRANCH" 2>&1 | grep $'^\t' | while IFS= read -r file; do
     file="${file#$'\t'}"
     [ -e "$HOME/$file" ] && mv "$HOME/$file" "$HOME/$file.bak"
   done
-  config checkout "$BRANCH" -- .
+  dotfiles checkout "$BRANCH" -- .
 }
 
 exec $SHELL
@@ -277,19 +287,19 @@ $REPO = "git@github.com:<YOU>/dotfiles.git"
 $BRANCH = "<machine-name>"
 
 git clone --bare $REPO "$HOME/.dotfiles"
-function config { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
-config config --local status.showUntrackedFiles no
+function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+dotfiles config --local status.showUntrackedFiles no
 
 # Back up any conflicting OS defaults, then checkout
-config checkout $BRANCH -- . 2>$null
+dotfiles checkout $BRANCH -- . 2>$null
 if ($LASTEXITCODE -ne 0) {
-    config checkout $BRANCH 2>&1 | Where-Object { $_ -match "^\t" } | ForEach-Object {
+    dotfiles checkout $BRANCH 2>&1 | Where-Object { $_ -match "^\t" } | ForEach-Object {
         $file = $_.Trim()
         if (Test-Path "$HOME\$file") {
             Move-Item "$HOME\$file" "$HOME\$file.bak" -Force
         }
     }
-    config checkout $BRANCH -- .
+    dotfiles checkout $BRANCH -- .
 }
 
 . $PROFILE
@@ -312,7 +322,7 @@ dotfiles-timer uninstall    # both Linux and Windows; alias: remove
 ### 2. List what's currently tracked (so you know what'll change)
 
 ```bash
-config ls-tree -r HEAD --name-only
+dotfiles ls-tree -r HEAD --name-only
 ```
 
 Save the list somewhere if you want to keep a record of what files were managed.
@@ -320,20 +330,22 @@ Save the list somewhere if you want to keep a record of what files were managed.
 ### 3. Remove the bare repo
 
 **Linux / macOS:**
+
 ```bash
 rm -rf ~/.dotfiles
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 Remove-Item -Recurse -Force "$HOME\.dotfiles"
 ```
 
-After this, the `config` and `dotfiles-timer` wrappers in your shell profile still exist but no longer point at anything functional.
+After this, the `dotfiles` and `dotfiles-timer` wrappers in your shell profile still exist but no longer point at anything functional.
 
 ### 4. (Optional) Decide what to do with the tracked files in `$HOME`
 
-The actual content (`.bashrc`, `.gitconfig`, etc.) is **plain files in `$HOME`**, not symlinks — removing the bare repo doesn't delete them. Choose:
+The actual content (`.bashrc`, `.gitdotfiles`, etc.) is **plain files in `$HOME`**, not symlinks — removing the bare repo doesn't delete them. Choose:
 
 - **Keep them** — most users want this. The files just stop being version-controlled and otherwise behave normally.
 - **Restore OS defaults** — manually delete or replace each file from the list in step 2.
@@ -343,20 +355,23 @@ The actual content (`.bashrc`, `.gitconfig`, etc.) is **plain files in `$HOME`**
 Edit your shell profile and delete these lines:
 
 **Bash / Zsh** (`~/.bashrc` or `~/.zshrc`):
+
 ```bash
-alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-alias dotfiles-timer='bash $HOME/.dotfiles/dotfiles-timer.sh'
+alias dotfiles=
+alias dotfiles-timer=
 ```
 
 **PowerShell** (`$PROFILE`):
+
 ```powershell
-function config { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
-function dotfiles-timer { pwsh "$HOME\.dotfiles\dotfiles-timer.ps1" @args }
+function dotfiles {
+function dotfiles-timer {
 ```
 
 ### 6. (Optional) Clean up the auto-commit log
 
 **Windows** only — the user-mode loop writes to `%TEMP%`:
+
 ```powershell
 Remove-Item "$env:TEMP\dotfiles-auto-commit.log*" -Force -ErrorAction SilentlyContinue
 ```
@@ -366,11 +381,13 @@ Linux uses `journalctl`, which has its own retention; nothing to clean.
 ### 7. Reload your shell
 
 **Bash / Zsh:**
+
 ```bash
 exec $SHELL
 ```
 
 **PowerShell:** open a new terminal, or:
+
 ```powershell
 . $PROFILE
 ```
