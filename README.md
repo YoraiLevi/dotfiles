@@ -131,24 +131,33 @@ For changes you want every machine to inherit, see [Multiple machines](#multiple
 
 Automatically stage and push changes to already-tracked dotfiles on a schedule. Uses `git add -u` — new files must still be added manually with `config add`.
 
-**Linux** (systemd user timer, runs every minute):
+Add a `dotfiles-timer` wrapper to your shell profile (same pattern as the `config` function above) so the install/uninstall/status commands are identical across all your machines:
 
+**Bash / Zsh** (`~/.bashrc` or `~/.zshrc`):
 ```bash
-bash ~/.dotfiles/dotfiles-timer.sh install
-# reinstall | disable | remove | status | logs
+alias dotfiles-timer='bash $HOME/.dotfiles/dotfiles-timer.sh'
 ```
 
-**Windows** (auto-detects privilege; runs every minute either way):
-
+**PowerShell** (`$PROFILE`):
 ```powershell
-pwsh "$HOME\.dotfiles\dotfiles-timer.ps1" install
-# reinstall | uninstall | status | logs
+function dotfiles-timer { pwsh "$HOME\.dotfiles\dotfiles-timer.ps1" @args }
 ```
 
-- **From an admin shell:** registers a Windows Task Scheduler task. Survives logoff, runs as your user with limited rights.
-- **From a regular (non-admin) shell:** drops a hidden VBS launcher in your Startup folder that fires a detached `pwsh` while-loop at each logon. No admin required, no console window flash (the VBS host is windowless). Errors log to `%TEMP%\dotfiles-auto-commit.log`.
+Then on any platform:
 
-The commit script (and the loop script, in user mode) lives inside `~/.dotfiles/` (the bare repo), keeping both out of your work-tree and off `config status`.
+```
+dotfiles-timer install
+# install | reinstall | status | logs
+# Linux additionally: disable | remove   |   Windows: uninstall
+```
+
+Behavior per platform:
+
+- **Linux** — installs a systemd user timer that runs every minute.
+- **Windows admin shell** — registers a Task Scheduler task. Survives logoff, runs as your user with limited rights.
+- **Windows non-admin shell** — drops a hidden VBS launcher in your Startup folder that fires a detached `pwsh` while-loop at each logon. No admin required, no console window flash (the VBS host is windowless). Errors log to `%TEMP%\dotfiles-auto-commit.log`.
+
+The commit script (and the loop script, in Windows user mode) lives inside `~/.dotfiles/`, keeping both out of your work-tree and off `config status`.
 
 ### Submodules (optional)
 
