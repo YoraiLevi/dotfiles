@@ -1,5 +1,6 @@
 #!/usr/bin/env pwsh
 # dotfiles-timer.ps1: Manage a Windows Task Scheduler task that auto-commits dotfiles changes.
+$ErrorActionPreference = 'Stop'
 
 param(
     [Parameter(Position=0, Mandatory=$false)]
@@ -47,7 +48,7 @@ if (`$LASTEXITCODE -ne 0) {
                     -RepetitionInterval ([TimeSpan]::FromMinutes(1))
     $settings = New-ScheduledTaskSettingsSet `
                     -ExecutionTimeLimit ([TimeSpan]::FromMinutes(5)) `
-                    -StartWhenAvailable $true
+                    -StartWhenAvailable
 
     Register-ScheduledTask -TaskName $TaskName `
         -Action $action -Trigger $trigger -Settings $settings `
