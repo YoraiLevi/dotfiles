@@ -10,58 +10,6 @@ The trick: a bare repo stored at `~/.dotfiles` with `$HOME` as its work-tree, ac
 
 ---
 
-## Using this template (no fork required)
-
-You don't need to fork on GitHub. Clone directly, then push to your own repo:
-
-```bash
-# 1. Clone this template
-git clone https://github.com/DgxSparkLabs/dotfiles-template.git dotfiles
-cd dotfiles
-
-# 2. Point it at your own repo
-git remote remove origin
-git remote add origin https://github.com/<YOU>/dotfiles.git
-git push -u origin master
-```
-
-Or if you prefer a fresh history (no template commits):
-```bash
-# Start clean: copy files, init a new repo, push
-git clone https://github.com/DgxSparkLabs/dotfiles-template.git dotfiles
-cd dotfiles
-rm -rf .git
-git init
-git add .
-git commit -m "Initial dotfiles setup"
-git branch -M master    # pin to master regardless of your git default
-git remote add origin https://github.com/<YOU>/dotfiles.git
-git push -u origin master
-```
-
-> **Why not fork?** Forks stay linked to the upstream repo on GitHub, which can clutter your profile and creates an implicit relationship you probably don't want for personal dotfiles.
-
-### One branch per machine
-
-This template uses **one branch per machine**, with `master` holding shared configs that every machine inherits. Pick a short, descriptive name for each machine you'll use — common conventions:
-
-| `<machine-name>` | Use for |
-|---|---|
-| `desktop-home`, `desktop-work` | Stationary desktops, distinguished by location |
-| `laptop-personal`, `laptop-work` | Laptops, distinguished by ownership |
-| `vm-dev`, `wsl-ubuntu` | Virtual machines and WSL distros |
-| `server-home`, `vps-prod` | Remote servers |
-
-Create the first machine's branch right after pushing to your repo:
-```bash
-git checkout -b <machine-name>      # e.g. laptop-work
-git push -u origin <machine-name>
-```
-
-The full per-machine workflow (merging shared changes from `master`, what to commit where) is documented in [Multiple machines](#multiple-machines) below.
-
----
-
 ## The `config` command
 
 Add one of these to your shell profile and use `config` everywhere you'd use `git`:
@@ -78,48 +26,78 @@ function config { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 
 ---
 
-## First machine — new repo
+## Using this template (no fork required)
+
+You don't need to fork on GitHub. Clone directly, set up your own repo, then bring it down to your machine as a bare repo.
+
+### 1. Create your own GitHub repo from this template
 
 ```bash
-git init --bare $HOME/.dotfiles
-config config --local status.showUntrackedFiles no
+# Clone this template
+git clone https://github.com/DgxSparkLabs/dotfiles-template.git dotfiles
+cd dotfiles
 
-# Add shared dotfiles to master (the cross-machine branch)
-config add ~/.bashrc
-config commit -m "Initial commit"
-config branch -M master
-
-config remote add origin git@github.com:<YOU>/dotfiles.git
-config push -u origin master
-
-# Create this machine's branch for machine-specific files
-config checkout -b <machine-name>
-config push -u origin <machine-name>
+# Point it at your own repo
+git remote remove origin
+git remote add origin https://github.com/<YOU>/dotfiles.git
+git push -u origin master
 ```
 
----
+Or if you prefer a fresh history (no template commits):
+```bash
+git clone https://github.com/DgxSparkLabs/dotfiles-template.git dotfiles
+cd dotfiles
+rm -rf .git
+git init
+git add .
+git commit -m "Initial dotfiles setup"
+git branch -M master    # pin to master regardless of your git default
+git remote add origin https://github.com/<YOU>/dotfiles.git
+git push -u origin master
+```
 
-## New machine — clone existing repo
+> **Why not fork?** Forks stay linked to the upstream repo on GitHub, which can clutter your profile and creates an implicit relationship you probably don't want for personal dotfiles.
+
+### 2. Set up the bare repo on this machine
 
 ```bash
 git clone --bare git@github.com:<YOU>/dotfiles.git $HOME/.dotfiles
 config config --local status.showUntrackedFiles no
+# Without "-- ." git refuses if conflicts exist (safer than overwriting)
+config checkout master
+```
 
-# If this machine's branch already exists on the remote:
-# (without "-- ." git refuses if conflicts exist — safer than overwriting)
-config checkout <machine-name>
+If checkout fails due to conflicting OS defaults already on the machine:
+```bash
+mv ~/.bashrc ~/.bashrc.backup
+config checkout master
+```
 
-# Or, if this is a fresh machine and no branch exists yet:
+### 3. Create this machine's branch
+
+This template uses **one branch per machine**, with `master` holding shared configs. Pick a short, descriptive name for each machine:
+
+| `<machine-name>` | Use for |
+|---|---|
+| `desktop-home`, `desktop-work` | Stationary desktops, distinguished by location |
+| `laptop-personal`, `laptop-work` | Laptops, distinguished by ownership |
+| `vm-dev`, `wsl-ubuntu` | Virtual machines and WSL distros |
+| `server-home`, `vps-prod` | Remote servers |
+
+```bash
 config checkout -b <machine-name> master
 config push -u origin <machine-name>
 ```
 
-If checkout fails due to conflicting files already on the machine:
+### 4. Add your dotfiles
+
 ```bash
-# Back up conflicts, then retry
-mv ~/.bashrc ~/.bashrc.backup
-config checkout <machine-name>
+config add ~/.bashrc
+config commit -m "Add bashrc"
+config push
 ```
+
+For the ongoing per-machine workflow, see [Multiple machines](#multiple-machines).
 
 ---
 
@@ -135,6 +113,42 @@ config push                 # pushes to <machine-name> on origin
 ```
 
 For changes you want every machine to inherit, see [Multiple machines](#multiple-machines) — those go on `master`.
+
+### Auto-commit (optional)
+
+Automatically stage and push changes to already-tracked dotfiles on a schedule. Uses `git add -u` — new files must still be added manually with `config add`.
+
+**Linux** (systemd user timer, runs every minute):
+```bash
+bash dotfiles-timer.sh install
+# reinstall | disable | remove | status | logs
+```
+
+**Windows** (Task Scheduler, runs every minute):
+```powershell
+pwsh dotfiles-timer.ps1 install
+# reinstall | uninstall | status | logs
+```
+
+The commit script is stored inside `~/.dotfiles/` (the bare repo), keeping it out of your work-tree and off `config status`.
+
+### Submodules (optional)
+
+> ⚠️ **Known limitation:** submodule operations (`add`, `init`, `update`) don't always compose cleanly with the bare-repo `--git-dir`/`--work-tree` pattern — a long-standing git issue. The instructions below work for many users but may fail on some git versions. If you hit errors, alternatives include committing the files directly or using a tool like `chezmoi` that has first-class submodule support.
+>
+> Reference (may become stale): [git mailing list discussion, 2012](https://www.spinics.net/lists/git/msg185334.html)
+
+For shell plugins or large tool configs, use submodules instead of copying files:
+
+```bash
+config submodule add https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+```
+
+On a new machine after cloning:
+```bash
+config submodule init
+config submodule update
+```
 
 ---
 
@@ -170,15 +184,23 @@ config commit -m "Unignore ~/bin"
 Use one branch per machine, with `master` holding shared configs. Each machine branch merges from `master` to pull shared changes.
 
 ```bash
-# On each machine, create its branch from master (only needed once per machine)
-config checkout -b <machine-name> master
-config push -u origin <machine-name>
-
 # Pull shared changes from master onto this machine
 config merge master
 ```
 
 To share a change across all machines: commit it to `master`, push, then run `config merge master` on each other machine.
+
+### Adding another machine
+
+Repeat [Using this template](#using-this-template-no-fork-required) **steps 2–4** on the new machine, picking a new `<machine-name>` in step 3. Step 1 (creating the GitHub repo) only happens once, on your first machine.
+
+If a branch for this machine already exists on the remote (e.g. you set it up before and are reinstalling), substitute step 3 with:
+
+```bash
+config checkout <machine-name>     # checkout the existing branch instead of creating one
+```
+
+For full disaster-recovery automation, see [Restoring a machine from scratch](#restoring-a-machine-from-scratch).
 
 ---
 
@@ -236,43 +258,3 @@ if ($LASTEXITCODE -ne 0) {
 ```
 
 Run with `pwsh bootstrap.ps1` on any new or reset Windows machine.
-
----
-
-## Auto-commit (optional)
-
-Automatically stage and push changes to already-tracked dotfiles on a schedule. Uses `git add -u` — new files must still be added manually with `config add`.
-
-**Linux** (systemd user timer, runs every minute):
-```bash
-bash dotfiles-timer.sh install
-# reinstall | disable | remove | status | logs
-```
-
-**Windows** (Task Scheduler, runs every minute):
-```powershell
-pwsh dotfiles-timer.ps1 install
-# reinstall | uninstall | status | logs
-```
-
-The commit script is stored inside `~/.dotfiles/` (the bare repo), keeping it out of your work-tree and off `config status`.
-
----
-
-## Submodules (optional)
-
-> ⚠️ **Known limitation:** submodule operations (`add`, `init`, `update`) don't always compose cleanly with the bare-repo `--git-dir`/`--work-tree` pattern — a long-standing git issue. The instructions below work for many users but may fail on some git versions. If you hit errors, alternatives include committing the files directly or using a tool like `chezmoi` that has first-class submodule support.
->
-> Reference (may become stale): [git mailing list discussion, 2012](https://www.spinics.net/lists/git/msg185334.html)
-
-For shell plugins or large tool configs, use submodules instead of copying files:
-
-```bash
-config submodule add https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
-```
-
-On a new machine after cloning:
-```bash
-config submodule init
-config submodule update
-```
