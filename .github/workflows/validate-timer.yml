@@ -1,0 +1,124 @@
+name: Validate Timer Scripts
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure git identity
+        run: |
+          git config --global user.email "ci@github-actions"
+          git config --global user.name "CI"
+
+      # ── Linux: expose systemd user session to subsequent steps ────────────
+      - name: Export XDG_RUNTIME_DIR
+        if: runner.os == 'Linux'
+        run: echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> "$GITHUB_ENV"
+
+      # ── Synthetic bare repo: local fake remote so push works without creds ─
+      - name: Set up synthetic bare dotfiles repo (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          git init --bare "$HOME/.dotfiles"
+          git init --bare /tmp/dotfiles-remote.git
+          git --git-dir="$HOME/.dotfiles" remote add origin /tmp/dotfiles-remote.git
+          echo "# dotfiles" > "$HOME/README.md"
+          git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" add "$HOME/README.md"
+          git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" commit -m "init"
+          git --git-dir="$HOME/.dotfiles" push -u origin HEAD
+
+      - name: Set up synthetic bare dotfiles repo (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $d = "$env:USERPROFILE\.dotfiles"
+          git init --bare $d
+          git init --bare C:\dotfiles-remote.git
+          git --git-dir=$d remote add origin C:\dotfiles-remote.git
+          "# dotfiles" | Out-File "$env:USERPROFILE\README.md" -Encoding utf8
+          git --git-dir=$d --work-tree=$env:USERPROFILE add "$env:USERPROFILE\README.md"
+          git --git-dir=$d --work-tree=$env:USERPROFILE commit -m "init"
+          git --git-dir=$d push -u origin HEAD
+
+      # ── Install ──────────────────────────────────────────────────────────
+      - name: Install systemd timer
+        if: runner.os == 'Linux'
+        run: bash dotfiles-timer.sh install
+
+      - name: Install Task Scheduler task
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: pwsh dotfiles-timer.ps1 install
+
+      # ── Smoke test: scheduler registration ──────────────────────────────
+      - name: Verify systemd timer registered
+        if: runner.os == 'Linux'
+        run: |
+          systemctl --user list-timers --all
+          systemctl --user is-enabled dotfiles-git-commit.timer
+
+      - name: Verify Task Scheduler task registered
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $task = Get-ScheduledTask -TaskName 'dotfiles-git-commit' -ErrorAction Stop
+          Write-Host "Task state: $($task.State)"
+          Write-Host "Next run:   $((Get-ScheduledTaskInfo -TaskName 'dotfiles-git-commit').NextRunTime)"
+
+      # ── Unit test: commit fires when a tracked file changes ──────────────
+      - name: "Unit test: commit fires on file change (Linux)"
+        if: runner.os == 'Linux'
+        run: |
+          echo "change" >> "$HOME/README.md"
+          bash "$HOME/.dotfiles/.auto-commit.sh"
+          COUNT=$(git --git-dir="$HOME/.dotfiles" log --oneline | wc -l)
+          [ "$COUNT" -ge 2 ] || { echo "FAIL: expected commit, got $COUNT"; exit 1; }
+          MSG=$(git --git-dir="$HOME/.dotfiles" log -1 --pretty=%s)
+          echo "$MSG" | grep -E "^chore: auto-commit at" \
+            || { echo "FAIL: unexpected message: $MSG"; exit 1; }
+          echo "PASS: $MSG"
+
+      - name: "Unit test: commit fires on file change (Windows)"
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          "change" | Add-Content "$env:USERPROFILE\README.md"
+          & "$env:USERPROFILE\.dotfiles\.auto-commit.ps1"
+          $count = (git --git-dir="$env:USERPROFILE\.dotfiles" log --oneline).Count
+          if ($count -lt 2) { throw "FAIL: expected commit, got $count" }
+          $msg = git --git-dir="$env:USERPROFILE\.dotfiles" log -1 --pretty=%s
+          if ($msg -notmatch '^chore: auto-commit at') { throw "FAIL: unexpected message: $msg" }
+          Write-Host "PASS: $msg"
+
+      # ── Unit test: no spurious commit when nothing changed ───────────────
+      - name: "Unit test: no commit when nothing changed (Linux)"
+        if: runner.os == 'Linux'
+        run: |
+          BEFORE=$(git --git-dir="$HOME/.dotfiles" log -1 --pretty=%H)
+          bash "$HOME/.dotfiles/.auto-commit.sh"
+          AFTER=$(git --git-dir="$HOME/.dotfiles" log -1 --pretty=%H)
+          [ "$BEFORE" = "$AFTER" ] \
+            || { echo "FAIL: unexpected commit when nothing changed"; exit 1; }
+          echo "PASS: no spurious commit"
+
+      - name: "Unit test: no commit when nothing changed (Windows)"
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $before = git --git-dir="$env:USERPROFILE\.dotfiles" log -1 --pretty=%H
+          & "$env:USERPROFILE\.dotfiles\.auto-commit.ps1"
+          $after  = git --git-dir="$env:USERPROFILE\.dotfiles" log -1 --pretty=%H
+          if ($before -ne $after) { throw "FAIL: unexpected commit when nothing changed" }
+          Write-Host "PASS: no spurious commit"
