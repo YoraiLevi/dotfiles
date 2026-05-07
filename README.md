@@ -164,6 +164,26 @@ Run with `pwsh bootstrap.ps1` on any new or reset Windows machine.
 
 ---
 
+## Auto-commit (optional)
+
+Automatically stage and push changes to already-tracked dotfiles on a schedule. Uses `git add -u` — new files must still be added manually with `config add`.
+
+**Linux** (systemd user timer, runs every minute):
+```bash
+bash dotfiles-timer.sh install
+# reinstall | disable | remove | status | logs
+```
+
+**Windows** (Task Scheduler, runs every minute):
+```powershell
+pwsh dotfiles-timer.ps1 install
+# reinstall | uninstall | status | logs
+```
+
+The commit script is stored inside `~/.dotfiles/` (the bare repo), keeping it out of your work-tree and off `config status`.
+
+---
+
 ## Submodules (optional)
 
 For shell plugins or large tool configs, use submodules instead of copying files:
