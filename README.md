@@ -34,6 +34,7 @@ rm -rf .git
 git init
 git add .
 git commit -m "Initial dotfiles setup"
+git branch -M master    # pin to master regardless of your git default
 git remote add origin https://github.com/<YOU>/dotfiles.git
 git push -u origin master
 ```
@@ -82,14 +83,18 @@ function config { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 ```bash
 git init --bare $HOME/.dotfiles
 config config --local status.showUntrackedFiles no
-config branch -M main
 
-# Add your dotfiles
+# Add shared dotfiles to master (the cross-machine branch)
 config add ~/.bashrc
 config commit -m "Initial commit"
+config branch -M master
 
 config remote add origin git@github.com:<YOU>/dotfiles.git
-config push -u origin main
+config push -u origin master
+
+# Create this machine's branch for machine-specific files
+config checkout -b <machine-name>
+config push -u origin <machine-name>
 ```
 
 ---
@@ -99,27 +104,37 @@ config push -u origin main
 ```bash
 git clone --bare git@github.com:<YOU>/dotfiles.git $HOME/.dotfiles
 config config --local status.showUntrackedFiles no
-# Without "-- ." git refuses if conflicts exist (safer than overwriting)
-config checkout main
+
+# If this machine's branch already exists on the remote:
+# (without "-- ." git refuses if conflicts exist — safer than overwriting)
+config checkout <machine-name>
+
+# Or, if this is a fresh machine and no branch exists yet:
+config checkout -b <machine-name> master
+config push -u origin <machine-name>
 ```
 
 If checkout fails due to conflicting files already on the machine:
 ```bash
 # Back up conflicts, then retry
 mv ~/.bashrc ~/.bashrc.backup
-config checkout main
+config checkout <machine-name>
 ```
 
 ---
 
 ## Daily use
 
+You're always on your machine's branch (`<machine-name>`). Routine changes commit and push there:
+
 ```bash
 config status
 config add ~/.config/someapp/config
 config commit -m "Add someapp config"
-config push
+config push                 # pushes to <machine-name> on origin
 ```
+
+For changes you want every machine to inherit, see [Multiple machines](#multiple-machines) — those go on `master`.
 
 ---
 
@@ -152,18 +167,18 @@ config commit -m "Unignore ~/bin"
 
 ## Multiple machines
 
-Use one branch per machine, with `main` holding shared configs. Each machine branch merges from `main` to pull shared changes.
+Use one branch per machine, with `master` holding shared configs. Each machine branch merges from `master` to pull shared changes.
 
 ```bash
-# On each machine, create its branch from main
-config checkout -b <machine-name>
+# On each machine, create its branch from master (only needed once per machine)
+config checkout -b <machine-name> master
 config push -u origin <machine-name>
 
-# Pull shared changes from main onto this machine
-config merge main
+# Pull shared changes from master onto this machine
+config merge master
 ```
 
-To share a change across all machines: commit it to `main`, then `config merge main` on each machine.
+To share a change across all machines: commit it to `master`, push, then run `config merge master` on each other machine.
 
 ---
 
