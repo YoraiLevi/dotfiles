@@ -63,14 +63,41 @@ git push -u origin master
 ```bash
 git clone --bare git@github.com:<YOU>/dotfiles.git $HOME/.dotfiles
 config config --local status.showUntrackedFiles no
-# Without "-- ." git refuses if conflicts exist (safer than overwriting)
+
+# Populate $HOME with master's tracked files
 config checkout master
 ```
 
-If checkout fails due to conflicting OS defaults already on the machine:
+If `config checkout master` fails with **"untracked working tree files would be overwritten/removed"**, your `$HOME` already has files at paths master tracks. Pick one resolution and re-run:
+
+- **Keep master's version, back yours up first:**
+  ```bash
+  mv ~/.bashrc ~/.bashrc.backup     # repeat for each conflicting file
+  config checkout master
+  ```
+- **Keep your version, untrack the path on master:**
+  ```bash
+  config rm --cached <path-1> <path-2>
+  config commit -m "Untrack OS-managed paths"
+  config push
+  config checkout master
+  ```
+- **Selective checkout — only write paths that don't conflict:**
+  ```bash
+  config checkout master -- .bashrc .gitconfig .config/   # list paths you want
+  ```
+
+Verify the work-tree is fully in sync:
+
 ```bash
-mv ~/.bashrc ~/.bashrc.backup
-config checkout master
+config status
+```
+
+It should show **no** "Changes to be committed". If it shows `deleted: <files>`, the bare-clone index didn't fully populate — force-write the remaining tracked files:
+
+```bash
+config checkout master -- .
+config status     # confirm clean
 ```
 
 ### 3. Create this machine's branch
@@ -83,6 +110,8 @@ This template uses **one branch per machine**, with `master` holding shared conf
 | `laptop-personal`, `laptop-work` | Laptops, distinguished by ownership |
 | `vm-dev`, `wsl-ubuntu` | Virtual machines and WSL distros |
 | `server-home`, `vps-prod` | Remote servers |
+
+> Confirm `config status` is clean from step 2 before proceeding — otherwise any staged deletions follow into the new branch and your first commit there will silently delete those files from master.
 
 ```bash
 config checkout -b <machine-name> master
