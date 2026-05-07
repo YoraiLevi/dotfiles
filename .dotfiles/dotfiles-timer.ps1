@@ -60,10 +60,15 @@ function Write-LoopScript {
 # .auto-commit-loop.ps1 — invoked by the VBS launcher at logon
 `$logPath = '$LogPath'
 while (`$true) {
+    `$ts = Get-Date -Format 'o'
     try {
-        & '$ScriptPath'
+        # Capture all stdout+stderr from the commit script (git output, etc.)
+        `$output = & '$ScriptPath' 2>&1 | Out-String
+        if (`$output.Trim()) {
+            Add-Content -Path `$logPath -Value "[`$ts] `$(`$output.TrimEnd())"
+        }
     } catch {
-        Add-Content -Path `$logPath -Value "`$(Get-Date -Format 'o') ERROR: `$(`$_.Exception.Message)"
+        Add-Content -Path `$logPath -Value "[`$ts] ERROR: `$(`$_.Exception.Message)"
     }
     Start-Sleep -Seconds 60
 }
@@ -183,7 +188,14 @@ function Get-Logs {
         $emitted = $true
     }
 
-    if (-not $emitted) { Write-Host "No logs yet." }
+    if (-not $emitted) {
+        Write-Host "No log file at $LogPath."
+        Write-Host ""
+        Write-Host "The log captures git output (commits, pushes) and errors — silent no-op runs"
+        Write-Host "(when nothing has changed) leave no entry. To verify the loop is alive, use:"
+        Write-Host "  dotfiles-timer status     # shows running PIDs"
+        Write-Host "  config log --oneline      # shows commits the timer has actually made"
+    }
 }
 
 $isAdmin = Test-IsAdmin
