@@ -137,6 +137,31 @@ exec $SHELL
 
 Save this as `bootstrap.sh` in your repo and run it with `bash bootstrap.sh` on any new or reset machine.
 
+**PowerShell (`bootstrap.ps1`):**
+```powershell
+# bootstrap.ps1 — run once on a fresh machine
+$REPO = "git@github.com:YOU/dotfiles.git"
+$BRANCH = "machine-laptop"  # change to this machine's branch
+
+git clone --bare $REPO "$HOME/.dotfiles"
+function config { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+config config --local status.showUntrackedFiles no
+
+# Back up any conflicting OS defaults, then checkout
+config checkout $BRANCH -- . 2>$null
+if ($LASTEXITCODE -ne 0) {
+    config checkout $BRANCH 2>&1 | Where-Object { $_ -match "^\t" } | ForEach-Object {
+        $file = $_.Trim()
+        Move-Item "$HOME\$file" "$HOME\$file.bak" -Force
+    }
+    config checkout $BRANCH -- .
+}
+
+. $PROFILE
+```
+
+Run with `pwsh bootstrap.ps1` on any new or reset Windows machine.
+
 ---
 
 ## Submodules (optional)
