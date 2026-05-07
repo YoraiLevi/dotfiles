@@ -296,3 +296,91 @@ if ($LASTEXITCODE -ne 0) {
 ```
 
 Run with `pwsh bootstrap.ps1` on any new or reset Windows machine.
+
+---
+
+## Uninstalling — completely remove this dotfiles system
+
+If you decide to stop using this approach, here's how to clean up everything on a single machine.
+
+### 1. Stop and uninstall the auto-commit timer (if installed)
+
+```bash
+dotfiles-timer uninstall    # both Linux and Windows; alias: remove
+```
+
+### 2. List what's currently tracked (so you know what'll change)
+
+```bash
+config ls-tree -r HEAD --name-only
+```
+
+Save the list somewhere if you want to keep a record of what files were managed.
+
+### 3. Remove the bare repo
+
+**Linux / macOS:**
+```bash
+rm -rf ~/.dotfiles
+```
+
+**Windows (PowerShell):**
+```powershell
+Remove-Item -Recurse -Force "$HOME\.dotfiles"
+```
+
+After this, the `config` and `dotfiles-timer` wrappers in your shell profile still exist but no longer point at anything functional.
+
+### 4. (Optional) Decide what to do with the tracked files in `$HOME`
+
+The actual content (`.bashrc`, `.gitconfig`, etc.) is **plain files in `$HOME`**, not symlinks — removing the bare repo doesn't delete them. Choose:
+
+- **Keep them** — most users want this. The files just stop being version-controlled and otherwise behave normally.
+- **Restore OS defaults** — manually delete or replace each file from the list in step 2.
+
+### 5. Remove the wrapper definitions from your shell profile
+
+Edit your shell profile and delete these lines:
+
+**Bash / Zsh** (`~/.bashrc` or `~/.zshrc`):
+```bash
+alias config='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias dotfiles-timer='bash $HOME/.dotfiles/dotfiles-timer.sh'
+```
+
+**PowerShell** (`$PROFILE`):
+```powershell
+function config { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+function dotfiles-timer { pwsh "$HOME\.dotfiles\dotfiles-timer.ps1" @args }
+```
+
+### 6. (Optional) Clean up the auto-commit log
+
+**Windows** only — the user-mode loop writes to `%TEMP%`:
+```powershell
+Remove-Item "$env:TEMP\dotfiles-auto-commit.log*" -Force -ErrorAction SilentlyContinue
+```
+
+Linux uses `journalctl`, which has its own retention; nothing to clean.
+
+### 7. Reload your shell
+
+**Bash / Zsh:**
+```bash
+exec $SHELL
+```
+
+**PowerShell:** open a new terminal, or:
+```powershell
+. $PROFILE
+```
+
+### 8. (Optional) Delete the GitHub repo
+
+This is irreversible — only do it if you want to fully erase the cloud copy across all your machines:
+
+```bash
+gh repo delete <YOU>/dotfiles --yes
+```
+
+Or via the GitHub UI: **Settings → Danger Zone → Delete this repository**.
