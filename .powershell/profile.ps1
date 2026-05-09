@@ -507,6 +507,31 @@ function Find-EnvPath {
     return $envPaths -ne $null
 }
 
+function Set-SymlinkRelative {
+    param (
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+        [string]$Path
+    )
+
+    process {
+        $item = Get-Item -Path $Path
+        if ($null -eq $item.LinkType) {
+            Write-Warning "'$Path' is not a symbolic link."
+            return
+        }
+
+        # The current absolute target
+        $target = $item.Target
+        # Calculate path from the Link's Parent folder to the Target
+        $relPath = Resolve-Path -Path $target -RelativeBasePath $item.DirectoryName -Relative
+
+        # Re-create the link with the relative value
+        # This preserves the File vs Directory type automatically because -Value is resolved during creation
+        New-Item -ItemType SymbolicLink -Path $item.FullName -Value $relPath -Force
+    }
+}
+
+
 function Get-Type {
     param(
         [Parameter(ValueFromPipeline = $true, Mandatory = $true)]
