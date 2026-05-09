@@ -1,1 +1,1 @@
-C:/Users/devic/.agents/claude/statusline.py
+../.agents/claude/statusline.py
