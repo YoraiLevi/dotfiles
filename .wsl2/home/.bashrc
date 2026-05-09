@@ -363,8 +363,8 @@ if [ -n "$SSH_CONNECTION" ] && [ -z "$DISPLAY" ]; then
 fi
 
 
-function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
-function dotfiles-timer { pwsh "$HOME\.dotfiles\dotfiles-timer.ps1" @args }
+alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias dotfiles-timer='bash $HOME/.dotfiles/dotfiles-timer.sh'
 
 # zellij da -y > /dev/null # delete dead sessions
 
