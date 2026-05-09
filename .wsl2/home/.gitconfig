@@ -1,18 +1,35 @@
 [init]
 	defaultBranch = master
-[diff]
-	tool = vscode
-[difftool "vscode"]
-	cmd = "cursor --wait --diff  "
-[difftool "cursor"]
-	cmd = "cursor --wait --diff  "
-[difftool]
-	prompt = false
-[credential "https://github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
-[credential "https://gist.github.com"]
-	helper = 
-	helper = !/usr/bin/gh auth git-credential
+
+[user]
+    email = yorai.email@gmail.com
+    name = Yorai
 [push]
+    default = simple
 	autoSetupRemote = true
+[pull]
+    rebase = true
+[grep]
+    lineNumber = true
+[core]
+    # editor = code-insiders --wait
+	autocrlf = input
+    eol = lf
+	longpaths = true
+
+# [credential "https://github.com"]
+# 	helper = 
+# 	helper = !/usr/bin/gh auth git-credential
+# [credential "https://gist.github.com"]
+# 	helper = 
+# 	helper = !/usr/bin/gh auth git-credential
+# [push]
+# 	autoSetupRemote = true
+
+[filter "lfs"]
+        clean = git-lfs clean -- %f
+        smudge = git-lfs smudge -- %f
+        process = git-lfs filter-process
+        required = true
+[i18n]
+	logOutputEncoding = utf-8
