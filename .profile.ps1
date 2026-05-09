@@ -1,0 +1,1 @@
+C:/Users/devic/.powershell/profile.ps1
