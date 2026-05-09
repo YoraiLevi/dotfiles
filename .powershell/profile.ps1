@@ -540,32 +540,39 @@ function New-Symlink {
         [Parameter(Mandatory=$true)]
         [string]$Target,
 
-        [switch]$AbsolutePath
+        [switch]$AbsolutePath,
+        
+        [switch]$Force
     )
 
-    # 1. Resolve full paths to perform logic checks
-    $fullPath = New-Item -ItemType File -Path $Path -Force | Select-Object -ExpandProperty FullName
-    Remove-Item $fullPath # Clean up the dummy file used to get the absolute path
-    
-    $fullTarget = Resolve-Path -Path $Target -ErrorAction Stop
+    # 1. Clean up existing item if Force is used
+    if ($Force -and (Test-Path -Path $Path -ErrorAction SilentlyContinue)) {
+        Write-Verbose "Force: Removing existing item at $Path"
+        Remove-Item -Path $Path -Recurse -Force -ErrorAction Stop
+    }
+
+    # 2. Get Absolute paths for logic (without creating physical files)
+    $fullPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+    $fullTargetObj = Resolve-Path -Path $Target -ErrorAction Stop
+    $fullTarget = $fullTargetObj.Path
     $isDir = Test-Path -Path $fullTarget -PathType Container
 
-    # 2. Determine the value to store in the link
+    # 3. Determine the string to store in the link
     if ($AbsolutePath) {
-        $finalTarget = $fullTarget.Path
+        $finalTarget = $fullTarget
     } else {
-        # Calculate relative path from the Link's parent directory to the Target
         $parentDir = Split-Path -Path $fullPath -Parent
+        # Calculate relative jumps (../../) from Link Parent to Target
         $finalTarget = Resolve-Path -Path $fullTarget -RelativeBasePath $parentDir -Relative
     }
 
-    # 3. Create the link
+    # 4. Create the link based on Type
     if ($isDir) {
-        # Use mklink /D to avoid the PowerShell "File-bit" bug for directories
-        Write-Verbose "Creating Directory Symlink: $Path -> $finalTarget"
+        # mklink /D is the only way to guarantee the Directory bit on Windows
+        Write-Verbose "Creating Directory Symlink: $fullPath -> $finalTarget"
         cmd /c mklink /D "$fullPath" "$finalTarget"
     } else {
-        Write-Verbose "Creating File Symlink: $Path -> $finalTarget"
+        Write-Verbose "Creating File Symlink: $fullPath -> $finalTarget"
         New-Item -ItemType SymbolicLink -Path $fullPath -Value $finalTarget -Force
     }
 }
