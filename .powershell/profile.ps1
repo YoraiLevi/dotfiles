@@ -531,6 +531,45 @@ function Set-SymlinkRelative {
     }
 }
 
+function New-Symlink {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]$Path,
+
+        [Parameter(Mandatory=$true)]
+        [string]$Target,
+
+        [switch]$AbsolutePath
+    )
+
+    # 1. Resolve full paths to perform logic checks
+    $fullPath = New-Item -ItemType File -Path $Path -Force | Select-Object -ExpandProperty FullName
+    Remove-Item $fullPath # Clean up the dummy file used to get the absolute path
+    
+    $fullTarget = Resolve-Path -Path $Target -ErrorAction Stop
+    $isDir = Test-Path -Path $fullTarget -PathType Container
+
+    # 2. Determine the value to store in the link
+    if ($AbsolutePath) {
+        $finalTarget = $fullTarget.Path
+    } else {
+        # Calculate relative path from the Link's parent directory to the Target
+        $parentDir = Split-Path -Path $fullPath -Parent
+        $finalTarget = Resolve-Path -Path $fullTarget -RelativeBasePath $parentDir -Relative
+    }
+
+    # 3. Create the link
+    if ($isDir) {
+        # Use mklink /D to avoid the PowerShell "File-bit" bug for directories
+        Write-Verbose "Creating Directory Symlink: $Path -> $finalTarget"
+        cmd /c mklink /D "$fullPath" "$finalTarget"
+    } else {
+        Write-Verbose "Creating File Symlink: $Path -> $finalTarget"
+        New-Item -ItemType SymbolicLink -Path $fullPath -Value $finalTarget -Force
+    }
+}
+
 
 function Get-Type {
     param(
