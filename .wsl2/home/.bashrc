@@ -364,6 +364,7 @@ fi
 
 
 function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+function dotfiles-timer { pwsh "$HOME\.dotfiles\dotfiles-timer.ps1" @args }
 
 # zellij da -y > /dev/null # delete dead sessions
 
