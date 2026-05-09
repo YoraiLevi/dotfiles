@@ -1,0 +1,396 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+# HISTCONTROL=ignoreboth
+# https://linuxconfig.org/how-to-store-all-shell-commands-immediately-after-execution-into-bash-history-file
+HISTCONTROL=ignoredups:erasedups
+HISTIGNORE="clear:history:[bf]g:exit:date:* --help"
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+# HISTSIZE=1000
+# HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# colored GCC warnings and errors
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+
+# https://stackoverflow.com/a/40158199/12603110
+function rescue_history {
+    history -a
+}
+trap rescue_history SIGHUP
+
+# Eternal bash history.
+# ---------------------
+# Undocumented feature which sets the size to "unlimited".
+# http://stackoverflow.com/questions/9457233/unlimited-bash-history
+export HISTFILESIZE=
+export HISTSIZE=
+export HISTTIMEFORMAT="[%F %T] "
+# Change the file location because certain bash sessions truncate .bash_history file upon close.
+# http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
+export HISTFILE=~/.bash_eternal_history
+# Force prompt to write history after every command.
+# http://superuser.com/questions/20900/bash-history-loss
+PROMPT_COMMAND="history -a${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+
+# https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c
+stty -ixon
+
+# Prevent accidental pip install into system Python
+export PIP_REQUIRE_VIRTUALENV=true
+
+# Load pyenv automatically by appending
+# the following to
+# ~/.bash_profile if it exists, otherwise ~/.profile (for login shells)
+# and ~/.bashrc (for interactive shells) :
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv >/dev/null 2>&1
+then
+    eval "$(pyenv init - bash)"
+fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# uv / uvx — lazy-load shell completions on first invocation
+uv() {
+    unset -f uv uvx
+    if command -v uv >/dev/null 2>&1; then
+        eval "$(command uv generate-shell-completion bash 2>/dev/null)"
+        eval "$(command uvx --generate-shell-completion bash 2>/dev/null)"
+    fi
+    command uv "$@"
+}
+uvx() {
+    unset -f uv uvx
+    if command -v uv >/dev/null 2>&1; then
+        eval "$(command uv generate-shell-completion bash 2>/dev/null)"
+        eval "$(command uvx --generate-shell-completion bash 2>/dev/null)"
+    fi
+    command uvx "$@"
+}
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+# https://www.youtube.com/watch?v=Wl7CDe9jsuo
+alias mv="mv -iv"
+alias cp="cp -riv"
+alias mkdir='mkdir -vp'
+
+# Directory navigation improvements
+alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias bd='cd "$OLDPWD"'  # cd into the old directory
+
+up () {
+    local d=""
+    limit=$1
+    for ((i=1 ; i <= limit ; i++))
+        do
+            d=$d/..
+        done
+    d=$(echo $d | sed 's/^\///')
+    if [ -z "$d" ]; then
+        d=..
+    fi
+    cd $d
+}
+
+cd() {
+    builtin cd "$@" && {
+        local count
+        count=$(command ls -1A 2>/dev/null | wc -l)
+        if [ "$count" -lt 15 ]; then
+            ls --color=auto -F
+        fi
+    }
+}
+
+# Set IDE alias to the first available editor (cursor > code-insiders > code)
+_editor=""
+for _cmd in cursor code-insiders code nano; do
+    if command -v "$_cmd" >/dev/null 2>&1; then
+        _editor="$_cmd"
+        break
+    fi
+done
+if [ -n "$_editor" ]; then
+    if [ "$_editor" != "code" ]; then
+        alias code="$_editor"
+        alias vscode="$_editor"
+    fi
+    if [ "$_editor" = "nano" ]; then
+        export EDITOR="$_editor"
+        export VISUAL="$_editor"
+    else
+        export EDITOR="$_editor -w -n"
+        export VISUAL="$_editor -w -n"
+    fi
+fi
+unset _editor _cmd
+
+extract () {
+    for archive in $*; do
+        if [ -f $archive ] ; then
+            case $archive in
+                *.tar.bz2)   tar xvjf $archive    ;;
+                *.tar.gz)    tar xvzf $archive    ;;
+                *.bz2)       bunzip2 $archive     ;;
+                *.rar)       rar x $archive       ;;
+                *.gz)        gunzip $archive      ;;
+                *.tar)       tar xvf $archive     ;;
+                *.tbz2)      tar xvjf $archive    ;;
+                *.tgz)       tar xvzf $archive    ;;
+                *.zip)       unzip $archive       ;;
+                *.Z)         uncompress $archive  ;;
+                *.7z)        7z x $archive        ;;
+                *)           echo "don't know how to extract '$archive'..." ;;
+            esac
+        else
+            echo "'$archive' is not a valid file!"
+        fi
+    done
+}
+
+nop() { return; }
+
+claude() {
+    IS_SANDBOX=1 CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE=10000000 command claude --enable-auto-mode --allow-dangerously-skip-permissions "$@"
+}
+
+edit-profile() {
+    ${EDITOR:-nano} ~/.bashrc
+}
+alias edp='edit-profile'
+
+# fzf (history search)
+# git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+# ~/.fzf/install --no-bash --no-zsh --no-fish --bin
+export PATH="$HOME/.fzf/bin:$PATH"
+if command -v fzf >/dev/null 2>&1; then
+    __fzf_history() {
+        local selected
+        selected=$(cat "$HISTFILE" 2>/dev/null | sed 's/^#[0-9]*$//' | grep -v '^$' | tac | awk '!seen[$0]++' | fzf --height=40% --reverse --no-sort --query="$READLINE_LINE")
+        if [ -n "$selected" ]; then
+            READLINE_LINE="$selected"
+            READLINE_POINT=${#selected}
+        fi
+    }
+    bind -x '"\C-r": __fzf_history'
+fi
+
+# Ghost.sh — fish-style inline history ghost text
+# DISABLED: Too many edge cases and state sync issues
+# if [ -f "$HOME/.ghost.sh" ]; then
+#     source "$HOME/.ghost.sh"
+#     _ghost_history_file="${HISTFILE:-$HOME/.bash_history}"
+#     _ghost_load_history
+# fi
+
+# Source credential env files (skip .json and other data files)
+if [ -d "$HOME/.auth" ]; then
+    for f in "$HOME/.auth"/*; do
+        case "$f" in *.json) continue ;; esac
+        [ -f "$f" ] && . "$f" 2>/dev/null
+    done
+fi
+
+if [ -f "$HOME/.local/bin/env" ] ; then
+    . "$HOME/.local/bin/env"
+fi
+
+if [ -f "$HOME/.env" ] ; then
+    . "$HOME/.env"
+fi
+
+# zellij
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && . "$HOME/.cargo/env"
+# cargo install --locked zellij
+if [ -f "$HOME/.cargo/env" ] ; then
+    . "$HOME/.cargo/env"
+
+# If running in VSCode/Cursor terminal, exit bashrc early to avoid double-session (mirrors pwsh logic)
+if [[ "$TERM_PROGRAM" == "vscode" || "$VSCODE_INJECTION" == "1" ]]; then
+    # echo "VSCode/Cursor terminal detected, exiting bashrc"
+    return
+fi
+if [[ "$VSCODE_CLI" == "1" || "$CURSOR_AGENT" == "1" || -n "$VSCODE_PID" ]]; then
+    # echo "VSCode/Cursor AI agent terminal detected, exiting bashrc"
+    return
+fi
+
+# Detect if running inside WSL
+if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; then
+    # echo "Running inside WSL"
+    alias explorer="explorer.exe"
+    alias chezmoi="chezmoi.exe"
+    alias wsl="wsl.exe"
+    alias pwsh="pwsh.exe"
+    alias powershell="powershell.exe"
+    alias cmd="cmd.exe"
+    alias zellij="zellij.exe"
+    command -v tssh >/dev/null 2>&1 && alias ssh='tssh'
+    # export SHELL="wsl.exe"
+    export BROWSER='/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'
+    # alias tssh="tssh.exe"
+else
+    # echo "Running outside WSL"
+    export SHELL="bash"
+fi
+
+export GTK_THEME=Adwaita:dark
+
+if [ -n "$SSH_CONNECTION" ] && [ -z "$DISPLAY" ]; then
+    export BROWSER="$HOME/.local/bin/ssh-copy-text-to-clipboard"
+fi
+
+# zellij da -y > /dev/null # delete dead sessions
+
+if [ -n "$ZELLIJ_SESSION_NAME" ]; then
+    if [ -n "$USERPROFILE" ] && command -v wslpath >/dev/null 2>&1; then
+        _ZELLIJ_TIMEDIR="$(wslpath -u "$USERPROFILE" 2>/dev/null)/AppData/Local/Temp/zellij-session-times"
+    else
+        _ZELLIJ_TIMEDIR="/tmp/zellij-session-times"
+    fi
+    mkdir -p "$_ZELLIJ_TIMEDIR" 2>/dev/null
+    _zellij_update_timestamp() {
+        local ns
+        ns=$(date +%s%N 2>/dev/null)
+        printf '%s' "$(( ns / 100 + 621355968000000000 ))" > "$_ZELLIJ_TIMEDIR/$ZELLIJ_SESSION_NAME" 2>/dev/null
+    }
+    PROMPT_COMMAND="_zellij_update_timestamp${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
+
+
+if [[ -z "$ZELLIJ" ]]; then
+    if [ ! -z "$SSH_CONNECTION" ]; then
+        zellij attach main -c
+    fi
+elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then
+    local_motd="/tmp/.motd-shown-$(id -u)"
+    today=$(date +%Y-%m-%d)
+    if [[ ! -f "$local_motd" || "$(cat "$local_motd")" != "$today" ]]; then
+        run-parts /etc/update-motd.d/ 2>/dev/null
+        echo "$today" > "$local_motd"
+    fi
+    unset local_motd today
+fi
+fi
