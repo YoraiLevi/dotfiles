@@ -46,6 +46,7 @@
     dag = log --graph --format='format:%C(yellow)%h%C(reset) %C(blue)\"%an\" <%ae>%C(reset) %C(magenta)%ar%C(reset)%C(auto)%d%C(reset)%n%s' --date-order
 	acp = !git add -u && git commit -m \"\" --allow-empty-message && git push origin
     # https://stackoverflow.com/a/15778570/12603110 - uncommit
+    # https://stackoverflow.com/a/56476553/12603110 - uncommit soft,mixed,hard
     uncommit = reset HEAD^
     unstage = git restore --staged .
 [i18n]
