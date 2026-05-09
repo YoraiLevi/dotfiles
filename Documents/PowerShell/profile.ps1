@@ -1,1 +1,1 @@
-./.powershell/profile.ps1
+./../../.powershell/profile.ps1
