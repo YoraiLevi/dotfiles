@@ -1,0 +1,48 @@
+[user]
+    email = yorai.email@gmail.com
+    name = Yorai
+[push]
+    default = simple
+	autoSetupRemote = true
+[pull]
+    rebase = true
+[grep]
+    lineNumber = true
+[core]
+    # editor = code-insiders --wait
+	autocrlf = input
+    eol = lf
+	longpaths = true
+
+# ; https://stackoverflow.com/a/71192747/12603110
+# [diff]
+	# tool = cursor
+#         prompt = false
+# [difftool "vscode-insiders"]
+#         cmd = code-insiders -w -n --diff $LOCAL $REMOTE
+
+# [difftool "cursor"]
+        # cmd = cursor -w -n --diff $LOCAL $REMOTE
+
+# [difftool "vscode"]
+# 	cmd = code --wait --diff $LOCAL $REMOTE
+
+# [merge]
+        # tool = vscode-insiders
+# [mergetool "vscode-insiders"]
+        # cmd = code-insiders -w -n --merge $REMOTE $LOCAL $BASE $MERGED
+
+[filter "lfs"]
+        clean = git-lfs clean -- %f
+        smudge = git-lfs smudge -- %f
+        process = git-lfs filter-process
+        required = true
+
+; https://gist.github.com/mauve/1939169fe6ee1b500d70 - gitconfig for windows
+[alias]
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    dag = log --graph --format='format:%C(yellow)%h%C(reset) %C(blue)\"%an\" <%ae>%C(reset) %C(magenta)%ar%C(reset)%C(auto)%d%C(reset)%n%s' --date-order
+	acp = !git add -u && git commit -m \"\" --allow-empty-message && git push origin
+[i18n]
+	logOutputEncoding = utf-8
+
