@@ -1,6 +1,8 @@
 [user]
     email = yorai.email@gmail.com
     name = Yorai
+[init]
+	defaultBranch = master
 [push]
     default = simple
 	autoSetupRemote = true
