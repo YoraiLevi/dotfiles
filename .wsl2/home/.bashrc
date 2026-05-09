@@ -362,6 +362,9 @@ if [ -n "$SSH_CONNECTION" ] && [ -z "$DISPLAY" ]; then
     export BROWSER="$HOME/.local/bin/ssh-copy-text-to-clipboard"
 fi
 
+
+function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+
 # zellij da -y > /dev/null # delete dead sessions
 
 if [ -n "$ZELLIJ_SESSION_NAME" ]; then
