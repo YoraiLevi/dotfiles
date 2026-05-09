@@ -349,7 +349,7 @@ if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; th
     alias zellij="zellij.exe"
     command -v tssh >/dev/null 2>&1 && alias ssh='tssh'
     # export SHELL="wsl.exe"
-    export BROWSER='/mnt/c/Program Files\ (x86)/Microsoft/Edge/Application/msedge.exe'
+    export BROWSER='/mnt/c/Program\ Files\ (x86)/Microsoft/Edge/Application/msedge.exe'
     # alias tssh="tssh.exe"
 else
     # echo "Running outside WSL"
