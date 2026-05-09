@@ -1,0 +1,11 @@
+[wsl2]
+memory=16GB
+processors=4
+swap=100GB
+vmIdleTimeout=180
+[experimental]
+sparseVhd=true
+[wsl2]
+# Disabled: msrdc.exe (WSLg RDP client) was stealing keyboard focus every ~30s
+# Re-enable if you need Linux GUI apps, then run: wsl --shutdown
+guiApplications=false
