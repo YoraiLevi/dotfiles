@@ -1,1 +1,1 @@
-C:/Users/devic/.wsl2/home/.bashrc
+./.wsl2/home/.bashrc
