@@ -1,1 +1,1 @@
-C:/Users/devic/.powershell/Microsoft.PowerShell_profile.ps1
+../../.powershell/Microsoft.PowerShell_profile.ps1
