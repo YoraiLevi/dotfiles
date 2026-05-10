@@ -391,7 +391,7 @@
                 },
                 "guid": "{681405cc-6475-4a68-b6c7-3845db706f9b}",
                 "hidden": false,
-                "icon": "C:\\Users\\devic\\.wsl2\\wsl.ico",
+                "icon": "%USERPROFILE%/.wsl2/wsl.ico",
                 "name": "WSL2 (Zellij)",
                 "startingDirectory": "~"
             },
