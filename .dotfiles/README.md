@@ -74,6 +74,6 @@ After cloning this repo on a new WSL distro or machine, run the script once (fro
 | Path | Purpose |
 |------|---------|
 | `.local/opt/setup-wsl2-symlinks` | WSL ↔ Windows symlink mirror |
-| `.githooks/` | Unified hook dispatcher + symlinks |
+| `.dotfiles/.githooks/` | Unified hook dispatcher + symlinks |
 | `.dotfiles/dotfiles-timer.{sh,ps1}` | Timer install / Windows helper |
 | `.dotfiles/.auto-commit.sh` | Used by the systemd timer |
