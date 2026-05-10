@@ -354,7 +354,7 @@ up () {
 cd() {
     builtin cd "$@" && {
         local count
-        count=$(command ls -1A 2>/dev/null | wc -l)
+        count=$(command ls -go 2>/dev/null | wc -l)
         if [ "$count" -lt 15 ]; then
             ls -go --color=auto -F
         fi
