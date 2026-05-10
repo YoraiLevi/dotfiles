@@ -8,6 +8,7 @@ dash
 debianutils
 diffutils
 findutils
+gh
 grep
 gzip
 hostname
@@ -18,7 +19,12 @@ ncurses-base
 ncurses-bin
 openssh-server
 rustup
+software-properties-common
+trzsz
 tssh
 ubuntu-minimal
 ubuntu-wsl
 util-linux
+x11-apps
+zenity
+zsh
