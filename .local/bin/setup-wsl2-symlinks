@@ -79,6 +79,16 @@ dry_cp_f() {
   fi
 }
 
+# True if relative path $1 matches any pattern in remaining args (bash [[ == ]] glob rules: * ? [...]).
+rel_matches_exclude() {
+  local rel="$1" pat
+  shift
+  for pat in "$@"; do
+    [[ "$rel" == $pat ]] && return 0
+  done
+  return 1
+}
+
 # Intended absolute path of a symlink's target (GNU realpath -m; works for broken links).
 symlink_intended_abs() {
   local lnk="$1" raw dir
@@ -198,9 +208,21 @@ fi
 # Mirror USERPROFILE/.ssh into WSL ~/.ssh
 WinDotSSH="$WinWSL/.ssh/"
 
+# Define exclusion list (glob patterns; relative paths under WinDotSSH)
+ssh_exclude_list=(
+  ".gitkeep"
+  "*.bak"
+  # Add more patterns as needed, relative to $WinDotSSH
+)
+
 if [ -d "$WinDotSSH" ]; then
   find "$WinDotSSH" \( -type f -o -type l \) -print0 | while IFS= read -r -d '' file; do
     rel="${file#"$WinDotSSH"}"
+    rel="${rel#/}"
+    if rel_matches_exclude "$rel" "${ssh_exclude_list[@]}"; then
+      say "Skipping excluded: $rel"
+      continue
+    fi
     target="$HOME/.ssh/$rel"
     say "$rel"
     dry_mkdir_p "$(dirname "$target")"
@@ -248,10 +270,11 @@ fi
 # Mirror USERPROFILE/.auth into WSL ~/.auth
 WinAuth="$WinWSL/.auth/"
 
-# Define exclusion list (relative paths under WinAuth)
+# Define exclusion list (glob patterns; relative paths under WinAuth)
 auth_exclude_list=(
   ".gitkeep"
-  # Add more paths as needed, relative to $WinAuth
+  "*.bak"
+  # Add more patterns as needed, relative to $WinAuth
 )
 
 if [ -d "$WinAuth" ]; then
@@ -259,14 +282,7 @@ if [ -d "$WinAuth" ]; then
     rel="${file#"$WinAuth"}"
     # Remove leading slash, if any
     rel="${rel#/}"
-    skip=false
-    for excluded in "${auth_exclude_list[@]}"; do
-      if [ "$rel" = "$excluded" ]; then
-        skip=true
-        break
-      fi
-    done
-    if $skip; then
+    if rel_matches_exclude "$rel" "${auth_exclude_list[@]}"; then
       say "Skipping excluded: $rel"
       continue
     fi
@@ -285,9 +301,21 @@ fi
 # Mirror USERPROFILE/.wsl2/home into WSL $HOME
 WinHome="$WinWSL/.wsl2/home/"
 
+# Define exclusion list (glob patterns; relative paths under WinHome)
+home_exclude_list=(
+  ".gitkeep"
+  "*.bak"
+  # Add more patterns as needed, relative to $WinHome
+)
+
 if [ -d "$WinHome" ]; then
   find "$WinHome" \( -type f -o -type l \) | while read -r file; do
     rel="${file#"$WinHome"}"
+    rel="${rel#/}"
+    if rel_matches_exclude "$rel" "${home_exclude_list[@]}"; then
+      say "Skipping excluded: $rel"
+      continue
+    fi
     target="$HOME/$rel"
     say "$rel"
     dry_mkdir_p "$(dirname "$target")"
@@ -304,10 +332,12 @@ fi
 # Mirror USERPROFILE/.agents/claude into WSL $HOME
 WinClaude="$WinWSL/.agents/claude/"
 
-# Define exclusion list (relative paths under WinClaude)
+# Define exclusion list (glob patterns; relative paths under WinClaude)
 exclude_list=(
   ".claude.json"
-  # Add more paths as needed, relative to $WinClaude
+  ".gitkeep"
+  "*.bak"
+  # Add more patterns as needed, relative to $WinClaude
 )
 
 if [ -d "$WinClaude" ]; then
@@ -315,14 +345,7 @@ if [ -d "$WinClaude" ]; then
     rel="${file#"$WinClaude"}"
     # Remove leading slash, if any
     rel="${rel#/}"
-    skip=false
-    for excluded in "${exclude_list[@]}"; do
-      if [ "$rel" = "$excluded" ]; then
-        skip=true
-        break
-      fi
-    done
-    if $skip; then
+    if rel_matches_exclude "$rel" "${exclude_list[@]}"; then
       say "Skipping excluded: $rel"
       continue
     fi
@@ -342,9 +365,21 @@ ln_sf_rel "$WinClaude/.claude.json" "$HOME/.claude.json"
 # Mirror USERPROFILE/.wsl2/etc into WSL /etc (may require running chezmoi with sufficient privileges for /etc).
 WinEtc="$WinWSL/.wsl2/etc/"
 
+# Define exclusion list (glob patterns; relative paths under WinEtc)
+etc_exclude_list=(
+  ".gitkeep"
+  "*.bak"
+  # Add more patterns as needed, relative to $WinEtc
+)
+
 if [ -d "$WinEtc" ]; then
   find "$WinEtc" \( -type f -o -type l \) | while read -r file; do
     rel="${file#"$WinEtc"}"
+    rel="${rel#/}"
+    if rel_matches_exclude "$rel" "${etc_exclude_list[@]}"; then
+      say "Skipping excluded: $rel"
+      continue
+    fi
     target="/etc/$rel"
     say "etc: $rel"
     dry_mkdir_p "$(dirname "$target")"
