@@ -34,9 +34,28 @@ install_timer() {
 
     cat > "$SCRIPT_FILE" <<EOF
 #!/bin/bash
+# Message pattern: counts from --diff-filter (like git-magic / git-alias porcelain summaries) + path list in body.
 git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" add -u
 if ! git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --quiet --cached; then
-  git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" commit -m "chore: auto-commit at \$(date --iso-8601=s)"
+  \$n_added=\$(( \$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --diff-filter=A --name-only | wc -l) ))
+  \$n_updated=\$(( \$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --diff-filter=M --name-only | wc -l) ))
+  \$n_deleted=\$(( \$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --diff-filter=D --name-only | wc -l) ))
+  \$n_renamed=\$(( \$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --diff-filter=R --name-only | wc -l) ))
+  parts=()
+  [ "\$n_added" -gt 0 ] && parts+=(\"\${n_added} added\")
+  [ "\$n_updated" -gt 0 ] && parts+=(\"\${n_updated} updated\")
+  [ "\$n_deleted" -gt 0 ] && parts+=(\"\${n_deleted} deleted\")
+  [ "\$n_renamed" -gt 0 ] && parts+=(\"\${n_renamed} renamed\")
+  \$summary=\$(IFS=', '; echo \"\${parts[*]}\")
+  \$ts=\$(date --iso-8601=seconds 2>/dev/null || date -u +\"%Y-%m-%dT%H:%M:%SZ\")
+  \$subject=\"chore(dotfiles): dotfiles sync (\${summary}) at \${ts}\"
+  \$file_list=\$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --name-only | head -n 40)
+  if [ -n \"\$file_list\" ]; then
+    \$msg=\$(printf '%s\\n\\n%s\\n%s' \"\$subject\" \"Changed paths:\" \"\$file_list\")
+    git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" commit -m \"\$msg\"
+  else
+    git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" commit -m \"\$subject\"
+  fi
 fi
 git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" push || {
   echo "auto-commit: push failed (check SSH agent / network)" >&2

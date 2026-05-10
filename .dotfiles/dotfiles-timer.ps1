@@ -52,12 +52,36 @@ Detected privilege: $mode
 
 function Write-CommitScript {
     @"
-`$gitArgs = @('--git-dir', '$GitDir', '--work-tree', '$WorkTree')
+`$gitArgs = @('--git-dir', '$($GitDir)', '--work-tree', '$($WorkTree)')
 & git @gitArgs add -u
 & git @gitArgs diff --cached --quiet
 if (`$LASTEXITCODE -ne 0) {
-    `$ts = Get-Date -Format 'yyyy-MM-ddTHH:mm:sszzz'
-    & git @gitArgs commit -m "chore: auto-commit at `$ts"
+    function Get-DiffPathCount([string]`$filter) {
+        `$out = & git @gitArgs diff --cached --diff-filter=`$filter --name-only 2>`$null
+        if (-not `$out) { return 0 }
+        if (`$out -is [array]) { return `$out.Count }
+        return 1
+    }
+    `$nAdded    = Get-DiffPathCount 'A'
+    `$nUpdated  = Get-DiffPathCount 'M'
+    `$nDeleted  = Get-DiffPathCount 'D'
+    `$nRenamed  = Get-DiffPathCount 'R'
+    `$parts = [System.Collections.Generic.List[string]]::new()
+    if (`$nAdded   -gt 0) { `$parts.Add("{0} added"   -f `$nAdded) }
+    if (`$nUpdated -gt 0) { `$parts.Add("{0} updated" -f `$nUpdated) }
+    if (`$nDeleted -gt 0) { `$parts.Add("{0} deleted" -f `$nDeleted) }
+    if (`$nRenamed -gt 0) { `$parts.Add("{0} renamed" -f `$nRenamed) }
+    `$summary = (`$parts -join ', ')
+    `$ts = Get-Date -Format 'o'
+    `$subject = "chore(dotfiles): dotfiles sync (`$summary) at `$ts"
+    `$fileList = @(& git @gitArgs diff --cached --name-only | Select-Object -First 40)
+    if (`$fileList.Count -gt 0) {
+        `$bodyText = (`$fileList | ForEach-Object { `$_ }) -join "`n"
+        `$msg = "`$subject`n`nChanged paths:`n`$bodyText"
+        & git @gitArgs commit -m `$msg
+    } else {
+        & git @gitArgs commit -m `$subject
+    }
 }
 & git @gitArgs push
 "@ | Set-Content -Path $ScriptPath -Encoding UTF8
