@@ -396,6 +396,24 @@
                 "startingDirectory": "~"
             },
             {
+              "colorScheme": "Ubuntu-24.04-ColorScheme",
+              "commandline": "tssh",
+              "cursorShape": "filledBox",
+              "environment": 
+              {
+                  "TERM": "xterm-256color"
+              },
+              "font": 
+              {
+                  "size": 13
+              },
+              "guid": "{a222541a-d636-451f-a59c-68f79fea7799}",
+              "hidden": false,
+              "icon": "C:\\Users\\devic\\.wsl2\\wsl.ico",
+              "name": "tssh",
+              "startingDirectory": "~"
+          },
+            {
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
                 "name": "PowerShell",
