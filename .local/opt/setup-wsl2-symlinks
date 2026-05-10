@@ -23,6 +23,7 @@ ln_sf_rel() {
 
 ln_sf_rel "$WinWSL" "$HOME/winHome"
 ln_sf_rel "$WinWSL" "$HOME/homeWin"
+WinWSL="$HOME/winHome"
 
 # Mirror USERPROFILE/.ssh into WSL ~/.ssh
 WinDotSSH="$WinWSL/.ssh/"
