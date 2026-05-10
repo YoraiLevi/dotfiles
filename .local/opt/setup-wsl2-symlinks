@@ -12,7 +12,7 @@ while [ "$#" -gt 0 ]; do
   case "$1" in
     -q | --quiet) QUIET=1 ;;
     -h | --help)
-      printf 'Usage: %s [-q|--quiet]\n' "${0##*/}" >&2
+      printf 'Usage: %s [-q|--quiet]\n  -q  No progress; silence cmd.exe stderr; skip cmd if ~/winHome resolves.\n' "${0##*/}" >&2
       exit 0
       ;;
     *)
@@ -28,8 +28,42 @@ say() {
   [ "$QUIET" -eq 1 ] || printf '%s\n' "$@"
 }
 
-# Define WinWSL as the translated Windows %USERPROFILE% root in WSL
-WinWSL="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")"
+# Resolve Windows %USERPROFILE% as a WSL path. Prefer existing ~/winHome (no cmd.exe).
+# Run cmd.exe from /mnt/c or / so cwd is not a UNC path (avoids cmd's "UNC paths are not supported").
+win_userprofile_wsl() {
+  local win_raw prof_dir
+  prof_dir=/mnt/c
+  [ -d "$prof_dir" ] || prof_dir=/tmp
+  [ -d "$prof_dir" ] || prof_dir=/
+  if [ "$QUIET" -eq 1 ]; then
+    win_raw="$(
+      cd "$prof_dir" || exit 1
+      cmd.exe /c "echo %USERPROFILE%" 2>/dev/null | tr -d '\r' | sed 's|\\|/|g'
+    )"
+  else
+    win_raw="$(
+      cd "$prof_dir" || exit 1
+      cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g'
+    )"
+  fi
+  [ -n "$win_raw" ] || return 1
+  if [ "$QUIET" -eq 1 ]; then
+    wslpath -u "$win_raw" 2>/dev/null
+  else
+    wslpath -u "$win_raw"
+  fi
+}
+
+WinWSL=""
+if [ -e "$HOME/winHome" ]; then
+  WinWSL="$(readlink -f -- "$HOME/winHome" 2>/dev/null || true)"
+fi
+if [ -z "$WinWSL" ] || [ ! -d "$WinWSL" ]; then
+  WinWSL="$(win_userprofile_wsl)" || {
+    echo "Could not resolve Windows USERPROFILE (cmd.exe / wslpath)." >&2
+    exit 1
+  }
+fi
 
 # Symlink $dst -> $src using a path relative to dirname($dst) (-s: do not resolve symlinks in $src).
 ln_sf_rel() {
