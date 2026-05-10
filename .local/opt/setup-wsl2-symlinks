@@ -9,19 +9,22 @@
 
 QUIET=0
 FAST=0
+CLEAN_BROKEN=0
 while [ "$#" -gt 0 ]; do
   case "$1" in
     -q | --quiet) QUIET=1 ;;
     -F | --fast) FAST=1 ;;
+    -C | --clean-broken) CLEAN_BROKEN=1 ;;
     -h | --help)
-      printf 'Usage: %s [-q|--quiet] [-F|--fast]\n' "${0##*/}" >&2
+      printf 'Usage: %s [-q|--quiet] [-F|--fast] [-C|--clean-broken]\n' "${0##*/}" >&2
       printf '  -q  No progress; silence cmd.exe stderr when resolving USERPROFILE.\n' >&2
       printf '  -F  Skip chmod/chown pass on ~/.ssh (faster on %%USERPROFILE%% / drvfs).\n' >&2
+      printf '  -C  Remove dangling symlinks under $HOME and /etc whose target resolves under %%USERPROFILE%%.\n' >&2
       exit 0
       ;;
     *)
       printf 'Unknown option: %s\n' "$1" >&2
-      printf 'Usage: %s [-q|--quiet] [-F|--fast]\n' "${0##*/}" >&2
+      printf 'Usage: %s [-q|--quiet] [-F|--fast] [-C|--clean-broken]\n' "${0##*/}" >&2
       exit 1
       ;;
   esac
@@ -30,6 +33,29 @@ done
 
 say() {
   [ "$QUIET" -eq 1 ] || printf '%s\n' "$@"
+}
+
+# Intended absolute path of a symlink's target (GNU realpath -m; works for broken links).
+symlink_intended_abs() {
+  local lnk="$1" raw dir
+  [ -L "$lnk" ] || return 1
+  raw=$(readlink -- "$lnk") || return 1
+  dir=$(dirname -- "$lnk")
+  if [ "${raw#/}" != "$raw" ]; then
+    realpath -m -- "$raw" 2>/dev/null
+  else
+    realpath -m -- "$dir/$raw" 2>/dev/null
+  fi
+}
+
+# True if intended path is $winpfx or a path under it (prefix-safe).
+refers_under_win_profile() {
+  local intended="$1" winpfx="$2"
+  [ -n "$intended" ] && [ -n "$winpfx" ] || return 1
+  case "$intended" in
+    "$winpfx" | "$winpfx"/*) return 0 ;;
+    *) return 1 ;;
+  esac
 }
 
 # Resolve Windows %USERPROFILE% as a WSL path. Prefer existing ~/winHome (no cmd.exe).
@@ -81,6 +107,33 @@ ln_sf_rel() {
 ln_sf_rel "$WinWSL" "$HOME/winHome"
 ln_sf_rel "$WinWSL" "$HOME/homeWin"
 WinWSL="$HOME/winHome"
+
+# Absolute path of Windows profile (symlink target of ~/winHome).
+WinProfileAbs="$(readlink -f -- "$HOME/winHome" 2>/dev/null)"
+
+# Remove dangling symlinks whose intended target lies under WinProfileAbs (absolute or relative link text).
+if [ "$CLEAN_BROKEN" -eq 1 ]; then
+  if [ -z "$WinProfileAbs" ] || [ ! -d "$WinProfileAbs" ]; then
+    echo "clean-broken: could not resolve WinProfileAbs from ~/winHome; skipping." >&2
+  else
+    winpfx="$(realpath -m -- "$WinProfileAbs" 2>/dev/null)"
+    [ -n "$winpfx" ] || winpfx="$WinProfileAbs"
+    while IFS= read -r -d '' path; do
+      [ -L "$path" ] || continue
+      case "$path" in
+        "$HOME/winHome" | "$HOME/homeWin") continue ;;
+      esac
+      [ -e "$path" ] && continue
+      intended="$(symlink_intended_abs "$path")" || continue
+      refers_under_win_profile "$intended" "$winpfx" || continue
+      say "clean-broken: rm $path -> $intended"
+      rm -- "$path"
+    done < <( {
+      find "$HOME" -type l ! -path "$HOME/winHome" ! -path "$HOME/homeWin" -print0 2>/dev/null
+      [ -d /etc ] && find /etc -type l -print0 2>/dev/null
+    } )
+  fi
+fi
 
 # Mirror USERPROFILE/.ssh into WSL ~/.ssh
 WinDotSSH="$WinWSL/.ssh/"
