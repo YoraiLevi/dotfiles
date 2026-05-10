@@ -13,4 +13,5 @@
 *.key
 .auth*
 
+!.agents/
 !.wsl2/
