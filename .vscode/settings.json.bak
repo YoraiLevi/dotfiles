@@ -1,0 +1,510 @@
+{
+	"update.showReleaseNotes": true,
+	"update.enableWindowsBackgroundUpdates": false,
+	"cursor.cpp.enablePartialAccepts": true,
+	"cursor.diffs.useCharacterLevelDiffs": true,
+	"cursor.terminal.usePreviewBox": true,
+	"editor.accessibilitySupport": "off",
+	"editor.gotoLocation.multipleDeclarations": "gotoAndPeek",
+	"editor.gotoLocation.multipleDefinitions": "gotoAndPeek",
+	"editor.gotoLocation.multipleImplementations": "gotoAndPeek",
+	"editor.gotoLocation.multipleReferences": "gotoAndPeek",
+	"editor.gotoLocation.multipleTypeDefinitions": "gotoAndPeek",
+	"editor.formatOnSaveMode": "modificationsIfAvailable",
+	"references.preferredLocation": "view",
+	"[python]": {
+		"diffEditor.ignoreTrimWhitespace": true,
+		"editor.defaultFormatter": "ms-python.black-formatter",
+		"editor.wordWrap": "on",
+		// "editor.formatOnSave": true,
+		// "editor.codeActionsOnSave": {
+		// "source.organizeImports": "explicit"
+		// },
+		"editor.formatOnType": true,
+	},
+	"python.testing.pytestEnabled": true,
+	"python.languageServer": "None",
+	"python.testing.unittestEnabled": false,
+	"jupyter.askForKernelRestart": false,
+	"jupyter.widgetScriptSources": [
+		"jsdelivr.com",
+		"unpkg.com"
+	],
+	"notebook.lineNumbers": "on",
+	"notebook.navigation.allowNavigateToSurroundingCells": false,
+	"notebook.output.scrolling": true,
+	"notebook.output.textLineLimit": 80,
+	"notebook.output.wordWrap": true,
+	"powershell.enableProfileLoading": false,
+	"files.autoSave": "onFocusChange",
+	"files.hotExit": "onExitAndWindowClose", // No save to close pop up
+	"files.watcherExclude": {
+		"**/.git/objects/**": true,
+		"**/.git/subtree-cache/**": true,
+		"**/.hg/store/**": true,
+		"**/node_modules/**": true,
+		"**/.pytest_cache/**": true,
+		"**/__pycache__/**": true,
+		"**/.venv/**": true
+	},
+	"git.autofetch": true,
+	"git.pruneOnFetch": true,
+	"git.branchProtection": [
+		"release",
+		"main",
+		"master",
+		"prod",
+		"qa",
+		"dev",
+	],
+	"git.mergeEditor": true,
+	"git.blame.editorDecoration.enabled": false,
+	"git.blame.statusBarItem.enabled": false,
+	"git.suggestSmartCommit": false,
+	"gitlens.views.commitDetails.files.layout": "tree",
+	"diffEditor.ignoreTrimWhitespace": true,
+	"diffEditor.codeLens": true,
+	"diffEditor.renderSideBySide": true,
+	"remote.autoForwardPortsSource": "hybrid",
+	"search.searchOnType": true, // ctrl+shift+f auto search on typing in search
+	"search.showLineNumbers": true,
+	"search.decorations.badges": false,
+	"terminal.integrated.suggest.enabled": false, // The suggestions are annoying. keep them off
+	"terminal.integrated.scrollback": 90000,
+	"vscode-default-keybindings.removeOSKeybindings": true,
+	"vscode-default-keybindings.windowsKeybindings": true,
+	"window.restoreWindows": "all", // important
+	"explorer.openEditors.visible": 15,
+	"workbench.editor.showTabs": "single",
+	"workbench.editor.limit.enabled": true,
+	"workbench.editor.limit.value": 10,
+	"workbench.editorLargeFileConfirmation": 30,
+	"workbench.sideBar.location": "right",
+	"indentRainbow.indicatorStyle": "light",
+	"indentRainbow.lightIndicatorStyleLineWidth": 3,
+	"indentRainbow.colors": [
+		"rgba(255, 255, 255, 0)",
+		"rgba(255, 255, 255, 0.1)",
+		"rgba(255, 255, 255, 0.2)",
+		"rgba(255, 255, 255, 0.3)",
+		"rgba(255, 255, 255, 0.4)",
+		"rgba(255, 255, 255, 0.5)",
+		"rgba(255, 255, 255, 0.6)",
+		"rgba(255, 255, 255, 0.7)",
+		"rgba(255, 255, 255, 0.8)",
+		"rgba(255, 255, 255, 0.9)"
+	],
+	// the same colors as above but more visible
+	"workbench.iconTheme": "Monokai Pro (Filter Ristretto) Icons",
+	"workbench.colorTheme": "Monokai Pro (Filter Ristretto)",
+	"workbench.colorCustomizations": {
+		"[Monokai Pro (Filter Ristretto)]": {
+
+			// === Sidebar container & section headers (warm-tinted to match body cream) ===
+			"sideBar.foreground": "#d6c9c0", // Main sidebar text — file/folder names in Explorer, item text in Search/Source Control/Outline panels
+			"sideBarTitle.foreground": "#fff1f3", // Big sidebar title above section headers (project name) — slight emphasis
+			"sideBarSectionHeader.foreground": "#fff1f3c3", // Section headers (EXPLORER, SOURCE CONTROL, etc.) @ 76% — brighter than body so they read as headers
+			"sideBarSectionHeader.border": "#fff1f33e", // Warm subtle separator under section headers (was pure white at 49%)
+			"sideBarStickyScroll.border": "#fff1f33e", // Warm separator under sticky scroll (was pure white at 49%) — sticky scroll text inherits sideBar.foreground above
+
+			// === List item states (apply to Explorer, Search results, Source Control, Outline, References view, anywhere with a list) ===
+			"list.hoverBackground": "#3a322e", // Hovering an item — subtle warm tint, no jarring contrast
+			"list.hoverForeground": "#fff1f3", // Hover text — slightly brighter than body so the hover state registers
+			"list.activeSelectionBackground": "#564b45", // Selected item when sidebar has focus — clearly warm dark
+			"list.activeSelectionForeground": "#fff1f3", // Selected text when sidebar focused — max-emphasis warm white
+			"list.inactiveSelectionBackground": "#d6c9c01a", // Selected item when sidebar lost focus — warm cream @ ~10% (replaces the cool white-tint at 13%)
+			"list.inactiveSelectionForeground": "#d6c9c0", // Inactive selection text — body color (calm)
+			"list.focusBackground": "#564b4580", // Keyboard-navigated item bg — like active selection but more transparent
+			"list.focusForeground": "#fff1f3", // Keyboard-focused text
+			"list.focusOutline": "#fd6883", // Pink ring around the keyboard-focused item — strong visual cue for keyboard nav
+			"list.highlightForeground": "#fd6883", // Matching characters when you type to filter (Ctrl+P, search panel filter, etc.) — pink so they pop
+			"list.focusHighlightForeground": "#fd6883", // Same matching characters in the currently-focused item
+			"list.deemphasizedForeground": "#7a6e64", // Faded items (gitignored/deleted in git views) — warm dim
+			"list.errorForeground": "#fd6883", // Items in error state — Monokai pink (matches your bracket #1)
+			"list.warningForeground": "#f9cc6c", // Items in warning state — Ristretto warm yellow
+			"tree.indentGuidesStroke": "#fd6883", // *** TEMPORARY JARRING — BRIGHT PINK *** = ACTIVE folder path indent guides. Open Explorer (Ctrl+Shift+E), expand a deep folder, look for the bright pink vertical lines. Then tell me to dial back. (Subtle warm value was: "#564b45")
+			"tree.inactiveIndentGuidesStroke": "#78dce8", // *** TEMPORARY JARRING — BRIGHT CYAN *** = INACTIVE folder paths indent guides. The connectors of OTHER expanded folders that aren't on your selected path. Cyan vs pink makes the difference obvious. (Subtle warm value was: "#3a322e")
+
+			"selection.background": "#acacac6e", // Text-selection bg in non-editor inputs: agent chat textbox, search fields, settings UI, etc. Higher opacity than the editor selection so it stays visible against the slightly different sidebar/input backgrounds.
+			"quickInput.foreground": "#a8a6a9", // Quick Input main text (Ctrl+P, command palette) — kept your existing dim gray; see notes if you want to align to body
+			"quickInput.background": "#2a292b",
+			"editorGutter.addedBackground": "#a3be8c",
+			"editorGutter.deletedBackground": "#bf616a",
+			"editorGutter.modifiedBackground": "#ebcb8b",
+			"gitDecoration.addedResourceForeground": "#a3be8c",
+			"gitDecoration.deletedResourceForeground": "#bf616a",
+			"gitDecoration.ignoredResourceForeground": "#494949",
+			"gitDecoration.modifiedResourceForeground": "#ebcb8b",
+			"gitDecoration.untrackedResourceForeground": "#88c0d0",
+			"minimapGutter.addedBackground": "#a3be8c",
+			"minimapGutter.deletedBackground": "#bf616a",
+			"minimapGutter.modifiedBackground": "#ebcb8b",
+			"editorOverviewRuler.addedForeground": "#a3be8c",
+			"editorOverviewRuler.deletedForeground": "#bf616a",
+			"editorOverviewRuler.modifiedForeground": "#ebcb8b",
+			// "editorOverviewRuler.border": "#00000000",
+			// "editorOverviewRuler.bracketMatchForeground": "#a0a0a0",
+			// "editorOverviewRuler.commentForeground": "#272727",
+			// "editorOverviewRuler.commentUnresolvedForeground": "#272727",
+			// "editorOverviewRuler.commonContentForeground": "#60606066",
+			// "editorOverviewRuler.currentContentForeground": "#88c0d066",
+			// "editorOverviewRuler.errorForeground": "#ff1212b3",
+			// "editorOverviewRuler.findMatchForeground": "#d186167e",
+			// "editorOverviewRuler.incomingContentForeground": "#a3be8c66",
+			// "editorOverviewRuler.infoForeground": "#3794ff",
+			// "editorOverviewRuler.inlineChatInserted": "#a3be8c14",
+			// "editorOverviewRuler.inlineChatRemoved": "#bf616a14",
+			// "editorOverviewRuler.rangeHighlightForeground": "#007acc99",
+			// "editorOverviewRuler.selectionHighlightForeground": "#a0a0a0cc",
+			// "editorOverviewRuler.warningForeground": "#ebcb8b",
+			// "editorOverviewRuler.wordHighlightForeground": "#a0a0a0cc",
+			// "editorOverviewRuler.wordHighlightStrongForeground": "#c0a0c0cc",
+			// "editorOverviewRuler.wordHighlightTextForeground": "#a0a0a0cc",
+			// === Buttons (Welcome view, "Initialize Repository", "Open Folder", dialog confirms — anything that's a clickable action button) ===
+			"button.background": "#564b45", // Was #555357 cool gray — now warm dark, matches list active-selection bg
+			"button.foreground": "#fff1f3", // Warm white text (was already this)
+			"button.hoverBackground": "#6a5d54", // Lighter warm on hover
+			"button.secondaryBackground": "#3a322e", // Secondary actions — darker, less prominent
+			"button.secondaryForeground": "#d6c9c0", // Was #c1c0c0 cool gray — now body cream
+			"button.secondaryHoverBackground": "#4a403c", // Lighter warm on hover
+			"button.border": "#564b4500", // Transparent — let bg define the button shape
+			"button.separator": "#3a322e", // Visual separator inside split buttons
+
+			// === Dropdowns (the "..." trigger buttons in panel headers, settings dropdowns, language picker bottom-right) ===
+			"dropdown.background": "#2a292b", // Match input box bg
+			"dropdown.foreground": "#d6c9c0", // Body cream text
+			"dropdown.border": "#3a322e", // Subtle warm border
+			"dropdown.listBackground": "#2a292b", // Background of the opened dropdown list
+
+			// === Context menus (right-click, "..." panel header → menu items) — THIS is where the gray-bg/white-text combo most likely comes from ===
+			"menu.background": "#2a292b", // Slightly different from main bg so menus visually pop forward
+			"menu.foreground": "#d6c9c0", // Body cream
+			"menu.selectionBackground": "#564b45", // Hovered/keyboard-focused menu item — matches list active selection
+			"menu.selectionForeground": "#fff1f3", // Hovered menu item text — warm white max emphasis
+			"menu.separatorBackground": "#3a322e", // Horizontal divider lines between menu sections
+			"menu.border": "#3a322e", // Outer menu border
+
+			// === Top menubar (File, Edit, View, etc. at top of window — only visible if you're not using merged title bar) ===
+			"menubar.selectionBackground": "#564b45", // Hovered top-menu item
+			"menubar.selectionForeground": "#fff1f3", // Hovered top-menu text
+
+			// === Toolbar (icon buttons in panel headers: "+", refresh, collapse-all, "..." trigger icons in Explorer/SCM/Search) ===
+			"toolbar.hoverBackground": "#3a322e", // Subtle warm hover on the icon buttons
+			"toolbar.activeBackground": "#564b45", // Active/pressed state — matches list active selection
+			"toolbar.hoverOutline": "#564b4500", // No outline on hover — bg change is enough
+
+			// === Agent / Chat panel (the AI conversation sidebar — your messages, agent responses, code blocks) ===
+			"chat.requestBackground": "#332e2a", // Your message bubble bg — slightly warmer/darker than panel bg so your messages visually separate from the agent's
+			"chat.requestBorder": "#564b4540", // Subtle warm border around your message bubble
+			"chat.slashCommandBackground": "#564b45", // Slash command pills (/edit, /explain, etc.) — warm dark chip
+			"chat.slashCommandForeground": "#fd6883", // Slash command text — pink so they pop as actionable
+			"chat.avatarBackground": "#564b45", // Avatar circle bg — warm dark
+			"chat.avatarForeground": "#d6c9c0", // Avatar initials/icon — cream
+			"chat.editedFileForeground": "#8ab393", // Edited file names in "files changed" list — green = "modified, healthy"
+			"textLink.foreground": "#f9cc6c", // Links in markdown preview, extension READMEs, welcome pages — Ristretto standard yellow, matches warning/find-match accent family
+			"textLink.activeForeground": "#ffd866", // Same links when clicked/hovered — slightly brighter Monokai yellow
+
+			// === Inline Chat (Ctrl+K popup that appears inside the editor) ===
+			"inlineChat.background": "#2a292b", // Widget bg — matches input/quickInput bg
+			"inlineChat.foreground": "#d6c9c0", // Widget text — cream
+			"inlineChat.border": "#564b45", // Widget border — warm visible
+			"inlineChat.shadow": "#1a161480", // Drop shadow — warm dark, subtle
+			"inlineChatInput.background": "#332e2a", // Input field inside the inline chat — slightly warmer than widget bg
+			"inlineChatInput.border": "#564b45", // Input border
+			"inlineChatInput.focusBorder": "#fd6883", // Input border when typing — pink focus ring (matches list.focusOutline)
+			"inlineChatInput.placeholderForeground": "#7a6e64", // Placeholder "Ask Cursor..." text — dim warm
+			"inlineChatDiff.inserted": "#8ab39320", // Green tint for added code in inline diff — your comment green at 12%
+			"inlineChatDiff.removed": "#c4576f20", // Pink tint for removed code in inline diff — muted pink at 12%
+
+			// === Status bar (bottom strip: branch name, errors/warnings counts, line/col, encoding, language picker, Cursor usage indicator) ===
+			"statusBar.foreground": "#d6c9c0", // Was a dim warm gray — now body cream for readability
+			"statusBar.background": "#3a322e", // Slightly darker warm than editor bg — gives the bar visual separation without being jarring
+			"statusBar.border": "#564b4540", // Subtle warm top edge separating bar from editor
+			"statusBarItem.hoverBackground": "#564b45", // Hovering a status bar item — warm dark
+			"statusBarItem.hoverForeground": "#fff1f3", // Hover text — warm white for clear feedback
+			"statusBarItem.activeBackground": "#6a5d54", // Pressed/clicked state
+			"statusBarItem.prominentBackground": "#564b45", // Prominent items (sync indicator, "Problems" toggle, lock indicator) — warm dark
+			"statusBarItem.prominentForeground": "#fff1f3", // Prominent text — warm white
+			"statusBarItem.prominentHoverBackground": "#6a5d54", // Prominent item on hover
+			"statusBarItem.focusBorder": "#fd688300", // Transparent — no ring on keyboard focus
+
+			// Error/warning count indicators — colored TEXT on bar bg, not colored slabs
+			"statusBarItem.errorBackground": "#3a322e", // Same as bar bg — blend in, let the text color do the talking
+			"statusBarItem.errorForeground": "#c4576f", // Muted pink text — clearly "error" without screaming
+			"statusBarItem.errorHoverBackground": "#564b45", // Standard warm hover
+			"statusBarItem.warningBackground": "#3a322e", // Same as bar bg
+			"statusBarItem.warningForeground": "#c9a84e", // Muted yellow text — clearly "warning" without glare
+			"statusBarItem.warningHoverBackground": "#564b45", // Standard warm hover
+
+			// Mode-specific — bar bg shifts subtly to a tinted dark so you can tell at a glance what state you're in. Text stays muted colored.
+			"statusBar.debuggingBackground": "#452e1e", // Dark orange-brown tint — noticeably warmer than normal bar
+			"statusBar.debuggingForeground": "#c4845a", // Muted orange text
+			"statusBar.debuggingBorder": "#c4845a60", // Orange top edge — the strongest "you're debugging" signal
+			"statusBar.noFolderBackground": "#332e2e", // Slightly cooler/darker than normal — feels "empty", subtly off
+			"statusBar.noFolderForeground": "#7a6e64", // Dim warm text
+			"statusBar.noFolderBorder": "#564b4540", // Warm edge
+			"statusBarItem.remoteBackground": "#1e3528", // Dark green tint — clearly "connected" without being a neon slab
+			"statusBarItem.remoteForeground": "#8ab393", // Muted green text — matches your comment color
+			"statusBarItem.remoteHoverBackground": "#2a4535", // Slightly lighter green-dark on hover
+
+			// "debugView.valueChangedHighlight": "#ffd866",
+			// "editor.findMatchHighlightBorder": "#00000000",
+			// "editor.findRangeHighlightBorder": "#00000000",
+			// "editor.lineHighlightBorder": "#00000000",
+			// "editor.rangeHighlightBorder": "#403e41",
+			// "editor.selectionHighlightBorder": "#00000000",
+			// "editor.wordHighlightBorder": "#00000000",
+			// "editor.wordHighlightStrongBackground": "#fcfcfa26",
+			// "editor.wordHighlightStrongBorder": "#00000000",
+			// "editorOverviewRuler.rangeHighlightForeground": "#fcfcfa26",
+			// "editorOverviewRuler.selectionHighlightForeground": "#fcfcfa26",
+			// "editorOverviewRuler.wordHighlightForeground": "#fcfcfa26",
+			// "editorOverviewRuler.wordHighlightStrongForeground": "#fcfcfa26",
+			// "editorSuggestWidget.highlightForeground": "#fcfcfa",
+			// "list.highlightForeground": "#fcfcfa",
+			//"editor.snippetFinalTabstopHighlightBorder": "#525252",
+			//"editor.wordHighlightTextBackground": "#fcfcfa26",
+			//"editor.wordHighlightTextBorder": "#00000000",
+			//"editorHoverWidget.highlightForeground": "#fcfcfa",
+			//"editorOverviewRuler.wordHighlightTextForeground": "#fcfcfa26",
+			//"editorSuggestWidget.focusHighlightForeground": "#fcfcfa",
+			//"editorUnicodeHighlight.background": "#00000000",
+			//"editorUnicodeHighlight.border": "#fc9867",
+			//"list.focusHighlightForeground": "#fcfcfa",
+			//"minimap.chatEditHighlight": "#2d2a2e99",
+			//"editor.findMatchHighlightForeground": null,
+			//"editor.snippetTabstopHighlightBorder": null,
+			//"editor.symbolHighlightBorder": null,
+			//"peekViewEditor.matchHighlightBorder": null,
+			//"terminal.findMatchHighlightBorder": null,
+			"foreground": "#d6c9c0", // UI body text — warm cream, ~9.5:1 contrast vs Ristretto bg
+			"editor.foreground": "#d6c9c0", // Editor body text (default/punctuation/operators) — same warm cream
+			"editorLineNumber.foreground": "#7a6e64", // Line numbers — warm dim, ~half brightness of body so they stay visible without competing
+			"editorLineNumber.activeForeground": "#d6c9c0", // Current line's number — matches body so the active line clearly pops
+			"editorWhitespace.foreground": "#564b45", // Whitespace markers (dots/arrows when render whitespace is on) — very subtle warm
+			"editorIndentGuide.background1": "#3a322e", // Indent guide vertical lines — barely visible warm
+			"editorIndentGuide.activeBackground1": "#564b45", // Current indent's guide — slightly brighter than the non-active ones
+			"terminal.foreground": "#d6c9c0", // Terminal text — match editor body so the terminal panel doesn't read as "white" against the warmer editor
+			"descriptionForeground": "#a39a92", // Secondary UI text (slash command descriptions, paths under filenames in Ctrl+P, settings hints) — bumped from #a39a92 for readability
+			
+			
+			"input.foreground": "#d6c9c0",            // Text you're typing — match body
+			"input.background": "#2a292b",            // Box background — slightly different from main bg, matches your existing quickInput.background
+			"input.border": "#3a322e",                // Border around the input
+			"input.placeholderForeground": "#7a6e64", // The faded "Plan, search, build anything..." prompt text — dim warm
+			"inputOption.activeForeground": "#d6c9c0",
+			"inputOption.activeBackground": "#564b45",
+			"inputOption.activeBorder": "#a39a92",
+
+			
+			"editor.selectionBackground": "#acacac44", // Selection color (focused editor)
+			"editor.inactiveSelectionBackground": "#acacac4e", // Selection color when editor loses focus (e.g., clicked into chat/sidebar). Slightly higher opacity than focused so it stays readable instead of fading to ~13%.
+			// "editor.selectionForeground": "#ffffff", // Uncomment to force a fixed text color inside selections if contrast is still poor
+			"editor.focusedStackFrameHighlightBackground": "#0000ff", // This is related to Debug? What it is: The full-line highlight on the line where the debugger is currently paused in the active stack frame. You see it constantly when stepping through code with the debugger.
+			// Live trigger recipe:
+			// Open any script (Python, JS, whatever).
+			// Click in the gutter to set a breakpoint (or F9).
+			// F5 to start debugging.
+			// When execution pauses on the breakpoint, the line gets this highlight.
+			// With value at pure #0000ff you can't read the line you're debugging. That's the whole problem.
+			// Try these (the line should remain readable):
+			// "editor.focusedStackFrameHighlightBackground": "#ffd86640", // Monokai yellow @ 25% — classic "debugger is here"
+			// "editor.focusedStackFrameHighlightBackground": "#a9dc7640", // Monokai green @ 25% — leans into your green preference
+			// "editor.focusedStackFrameHighlightBackground": "#ff618844"  // Monokai pink @ 27% — leans into your pink preference
+
+			
+			"editor.stackFrameHighlightBackground": "#a9dc7620",
+
+			"editor.findMatchHighlightBackground": "#afaf0e38", // "Search result" ctrl+f, ctrl+shift+f
+			"editor.findMatchHighlightBorder": "#afaf0e", // "Search result" ctrl+f, ctrl+shift+f
+			"editor.findRangeHighlightBackground": "#b1f78915", // "Find in selection" area selected color"
+			"editor.hoverHighlightBackground": "#8a898a73", // After a period of hovering, highlights the text
+			"editor.wordHighlightBackground": "#afaf0e38", // Highlight of "word" at typing cursor and other occurances
+			"editor.wordHighlightBorder": "#afaf0e", // Highlight of "word" at typing cursor and other occurances
+			"editor.selectionHighlightBackground": "#c3b7b826", // Highlight for same content as selection 
+			"editor.selectionHighlightBorder": "#979797ad", // Border for same content as selection 
+			"editor.lineHighlightBackground": "#a0a0a020", // Current line highlight
+			"editor.rangeHighlightBackground": "#ff618825", // Highlight for line for selected search result ctrl+f, ctrl+shift+f
+			"editor.snippetTabstopHighlightBackground": "#ffa9ff41", // The snipping manual fill fields
+			"editor.snippetFinalTabstopHighlightBackground": "#ff0000",
+			// What it is: Highlights the final tabstop ($0 in snippet syntax) of a snippet — the position your cursor lands at after Tab-ing through all the placeholder fields. Visible for as long as the snippet session is "active" (until you start typing or click away).
+			// Live trigger recipe:
+			// Open a Python file (you already have Python tooling configured).
+			// Type for and pick the for snippet from autocomplete.
+			// Tab through index, iterable placeholders.
+			// After the last Tab, your cursor lands on the $0 exit point — that's where this highlight appears.
+			// Currently #ff0000 opaque — the entire spot becomes a solid red square.
+			// Try these:
+			// "editor.snippetFinalTabstopHighlightBackground": "#ff618844", // Monokai pink, matches your bracket #1 color
+			// "editor.snippetFinalTabstopHighlightBackground": "#a9dc7644", // Monokai green
+			// "editor.snippetFinalTabstopHighlightBackground": "#ffd86640"  // Monokai yellow
+			// Optional matching border for extra visibility:
+			"editor.snippetFinalTabstopHighlightBorder": "#b68a95aa", // or whichever family color you picked
+
+			"editor.symbolHighlightBackground": "#0000ff", // Doesn't seem to do anything? Live trigger recipe:
+			// Open any source file with multiple functions/classes.
+			// Press Ctrl+Shift+O (Go to Symbol in File).
+			// Pick a symbol from the dropdown.
+			// The symbol's location flashes with this color. Currently pure opaque blue covers the symbol text completely. Change value, repeat the steps.
+			// Try these:
+			// "editor.symbolHighlightBackground": "#0000ff33", // your current blue but transparent (20%)
+			// "editor.symbolHighlightBackground": "#ffd86640", // Monokai yellow, gentle pulse
+			// "editor.symbolHighlightBackground": "#a9dc7640", // Monokai green, gentle pulse
+			// "editor.symbolHighlightBackground": "#ff618840"  // Monokai pink, gentle pulse
+
+			// Option A: Brighter version of your existing yellow (most consistent with what you already have)
+			"editor.findMatchBackground": "#8766ff0a",
+			"editor.findMatchBorder": "#8766ff",
+			"terminal.findMatchBackground": "#8766ff0a",
+			"terminal.findMatchBorder": "#8766ff",
+			"terminal.findMatchHighlightBackground": "#afaf0e38", // Ctrl+f matches in terminal
+			"terminal.findMatchHighlightBorder": "#afaf0e", // Ctrl+f matches in terminal
+			"terminal.hoverHighlightBackground": "#8d3e8d49",
+			"minimap.infoHighlight": "#78dce8a5",
+			"minimap.warningHighlight": "#fc9867a5",
+			"minimap.errorHighlight": "#ff6188a5",
+			"minimap.findMatchHighlight": "#afaf0e38",
+			"minimap.selectionHighlight": "#c1c0c026",
+			"minimap.selectionOccurrenceHighlight": "#979797ad", // Highlight in minimap for same content as selection  
+			"editorBracketHighlight.foreground1": "#ff6188",
+			"editorBracketHighlight.foreground2": "#78dce8",
+			"editorBracketHighlight.foreground3": "#fc9867",
+			"editorBracketHighlight.foreground4": "#a9dc76",
+			"editorBracketHighlight.foreground5": "#ffd866",
+			"editorBracketHighlight.foreground6": "#ab9df2",
+			"editorBracketHighlight.unexpectedBracket.foreground": "#db6165",
+		}
+	},
+	"editor.tokenColorCustomizations": {
+		"[Monokai Pro (Filter Ristretto)]": {
+			"textMateRules": [
+				{
+					"scope": [ // Cozy Color for comments
+						"comment",
+						"comment.block",
+						"comment.line",
+						"comment.block.documentation",
+						"punctuation.definition.comment",
+						"string.quoted.docstring.multi",
+						"comment.block.documentation source",
+						"string.quoted.docstring.multi.python",
+						"string.quoted.double.block.python punctuation.definition.string.end.python",
+						"string.quoted.double.block.python punctuation.definition.string.begin.python",
+						"string.quoted.double.block.python",
+						"punctuation.definition.string.begin.python",
+						"punctuation.definition.string.end.python"
+					],
+					"settings": {
+						"foreground": "#8ab393"
+					}
+				},
+				{
+					// JSON property keys — fix for "the keys are pure white" issue.
+					// Active: Monokai pink (Ristretto-native, Monokai-friendly, fits pink-green preference).
+					// Swap by replacing the foreground value below with one of:
+					//   "#f9cc6c" — warm yellow (Ristretto)
+					//   "#adda78" — warm green (Ristretto)
+					//   "#d6c9c0" — body color (mutes keys to match body — calmer but loses key/value distinction)
+					"scope": [
+						"support.type.property-name.json",          // The key text itself (the property name)
+						"meta.structure.dictionary.key.json string.quoted.double.json" // The surrounding double quotes
+					],
+					"settings": {
+						"foreground": "#d6c9c0"
+					}
+				},
+			],
+		},
+	},
+	"[dockercompose]": {
+		"editor.insertSpaces": true,
+		"editor.tabSize": 2,
+		"editor.autoIndent": "advanced",
+		"editor.quickSuggestions": {
+			"other": true,
+			"comments": false,
+			"strings": true
+		},
+		"editor.defaultFormatter": "redhat.vscode-yaml"
+	},
+	"[github-actions-workflow]": {
+		"editor.defaultFormatter": "redhat.vscode-yaml"
+	},
+	"workbench.commandPalette.experimental.suggestCommands": true,
+	"workbench.editor.editorActionsLocation": "titleBar",
+	"window.title": "${dirty} ${rootName}${separator}${activeEditorMedium} ${dirty}",
+	"terminal.integrated.tabs.title": "${shellCommand}",
+	"powershell.promptToUpdatePowerShell": false,
+	"powershell.codeFormatting.autoCorrectAliases": true,
+	"powershell.codeFormatting.useCorrectCasing": true,
+	"powershell.codeFormatting.whitespaceBetweenParameters": true,
+	"powershell.pester.useLegacyCodeLens": false,
+	"powershell.integratedConsole.startInBackground": true,
+	"cursor.composer.usageSummaryDisplay": "always",
+	"cursor.composer.textSizeScale": 1.25, // Chat panel text size multiplier. 1.0 = default, 1.3 = 30% larger (current). Known bug: doesn't apply on startup — open and Ctrl+S this file after launch to force it. No picker needed, edit the number directly.
+	"cursor.composer.planTextSizeScale": 1.15, // Plan panel text size multiplier. 1.0 = default, 1.3 = 30% larger (current).
+	"cursor.composer.renderPillsInsteadOfBlocks": true, // File references in chat show as compact inline chips instead of large expanded blocks — less visual noise when agent references many files
+
+
+	"python.testing.pytestArgs": [
+		"-vv",
+		"-s"
+	],
+	"githubPullRequests.pullBranch": "always",
+	"editor.minimap.enabled": true,
+	"[markdown]": {
+		"editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+	},
+	"editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+	"editor.guides.bracketPairs": true,
+	"editor.suggestSelection": "recentlyUsedByPrefix",
+	"editor.suggest.snippetsPreventQuickSuggestions": true,
+	"editor.suggest.shareSuggestSelections": true,
+	"editor.suggest.preview": true,
+	"editor.suggest.localityBonus": true,
+	"editor.screenReaderAnnounceInlineSuggestion": false,
+	"editor.minimap.showSlider": "always",
+	"editor.minimap.side": "left",
+	"editor.snippetSuggestions": "top",
+	"window.zoomLevel": 0.55, // Overall UI zoom (~8% larger than default). Status bar, sidebar, chat panel, and ALL workbench text scales with this — no independent key exists for those.
+	"editor.fontSize": 13.5, // Code editor text only. Adjust this independently of zoom. Default: 14. Try 15 or 16 if you want code larger without changing overall UI scale.
+	"editor.lineHeight": 1.75, // Vertical line spacing multiplier. 1.5 = 50% extra breathing room between lines. Try 1.4–1.7 to taste.
+	"terminal.integrated.fontSize": 14.5, // Terminal panel text only. Independent of editor.fontSize.
+	"terraform.experimentalFeatures.validateOnSave": true,
+	"[xml]": {
+		"editor.defaultFormatter": "redhat.vscode-xml"
+	},
+	"remote.SSH.remotePlatform": {
+		"calc1-104003": "linux",
+		"calc2-104004": "linux"
+	},
+	"search.useIgnoreFiles": false,
+	"search.useGlobalIgnoreFiles": false,
+	"terminal.integrated.profiles.linux": {
+		"integrated-bash": {
+			"path": "/bin/bash",
+			"args": [
+				"-l"
+			],
+			"env": {
+			},
+			"icon": "terminal-bash"
+		},
+	},
+	"terminal.integrated.defaultProfile.linux": "integrated-bash",
+	"terminal.integrated.profiles.windows": {
+		"integrated-pwsh": {
+			"path": "pwsh",
+			"args": [
+				"-NoLogo",
+			],
+			"env": {
+			},
+			"icon": "terminal-powershell"
+		}
+	},
+	"terminal.integrated.defaultProfile.windows": "integrated-pwsh",
+	"cursor.composer.shouldChimeAfterChatFinishes": false,
+	"search.quickOpen.includeHistory": false
+	
+}

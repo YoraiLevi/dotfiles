@@ -17,3 +17,5 @@
 !.agents/
 !.powershell/
 !.wsl2/
+!.choco/
+!.vscode/
