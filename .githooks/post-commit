@@ -1,0 +1,2 @@
+#!/bin/sh
+exec pwsh -NoProfile -ExecutionPolicy Bypass -File "$(dirname "$0")/Run-GitHook.ps1" "$(basename "$0")" "$@"
