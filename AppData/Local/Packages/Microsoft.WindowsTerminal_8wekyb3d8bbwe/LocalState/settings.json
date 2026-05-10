@@ -383,7 +383,7 @@
                 "environment": 
                 {
                     "InformationPreference": "SilentlyContinue",
-                    "TERM": "xterm-256color"
+                    // "TERM": "xterm-256color"
                 },
                 "font": 
                 {
@@ -421,7 +421,7 @@
                 "closeOnExit": "automatic",
                 "guid": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
                 "hidden": false,
-                "icon": "C:\\Users\\devic\\.wsl2\\wsl.ico",
+                "icon": "%USERPROFILE%/.wsl2/wsl.ico",
                 "name": "Ubuntu 24.04.1 LTS",
                 "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc"
             },
