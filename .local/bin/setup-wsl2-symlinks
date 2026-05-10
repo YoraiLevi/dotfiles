@@ -36,8 +36,8 @@ while [ "$#" -gt 0 ]; do
 done
 
 # Symlinks under $HOME → Windows %USERPROFILE%% (single definition; used throughout).
-WIN_HOME_LINK="$HOME/winHome"
-HOME_WIN_LINK="$HOME/homeWin"
+WIN_HOME_LINK="$HOME/.winHome"
+HOME_WIN_LINK="$HOME/.homeWin"
 
 say() {
   [ "$QUIET" -eq 1 ] || printf '%s\n' "$@"
