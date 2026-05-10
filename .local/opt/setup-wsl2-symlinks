@@ -11,8 +11,17 @@
 # Define WinWSL as the translated Windows %USERPROFILE% root in WSL
 WinWSL="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")"
 
-ln -sf -- "$WinWSL" "$HOME/winHome"
-ln -sf -- "$WinWSL" "$HOME/homeWin"
+# Symlink $dst -> $src using a path relative to dirname($dst) (-s: do not resolve symlinks in $src).
+ln_sf_rel() {
+  local src="$1" dst="$2"
+  local dst_dir relpath
+  dst_dir=$(dirname -- "$dst")
+  relpath=$(realpath -s --relative-to="$dst_dir" "$src") || return 1
+  ln -sf -- "$relpath" "$dst"
+}
+
+ln_sf_rel "$WinWSL" "$HOME/winHome"
+ln_sf_rel "$WinWSL" "$HOME/homeWin"
 
 # Mirror USERPROFILE/.ssh into WSL ~/.ssh
 WinDotSSH="$WinWSL/.ssh/"
@@ -25,7 +34,7 @@ if [ -d "$WinDotSSH" ]; then
     mkdir -p "$(dirname "$target")"
     if [ ! -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
-      ln -sf "$file" "$target"
+      ln_sf_rel "$file" "$target"
     fi
   done
 else
@@ -75,7 +84,7 @@ if [ -d "$WinHome" ]; then
     mkdir -p "$(dirname "$target")"
     if [ ! -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
-      ln -sf "$file" "$target"
+      ln_sf_rel "$file" "$target"
     fi
   done
 else
@@ -113,13 +122,13 @@ if [ -d "$WinClaude" ]; then
     mkdir -p "$(dirname "$target")"
     if [ ! -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
-      ln -sf "$file" "$target"
+      ln_sf_rel "$file" "$target"
     fi
   done
 else
   echo "Windows .agents/claude directory not found" >&2
 fi
-ln -sf -- "$WinClaude"/.claude.json "$HOME/.claude.json"
+ln_sf_rel "$WinClaude/.claude.json" "$HOME/.claude.json"
 
 # Mirror USERPROFILE/.wsl2/etc into WSL /etc (may require running chezmoi with sufficient privileges for /etc).
 WinEtc="$WinWSL/.wsl2/etc/"
@@ -132,7 +141,7 @@ if [ -d "$WinEtc" ]; then
     mkdir -p "$(dirname "$target")"
     if [ ! -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
-      ln -sf "$file" "$target"
+      ln_sf_rel "$file" "$target"
     fi
   done
 else
