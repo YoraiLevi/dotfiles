@@ -25,6 +25,31 @@ Tracked paths are **WSL/Linux glue**: symlink installer, Git hooks, timer helper
 
 **Canonical dotfiles for interactive use** are maintained under Windows and mirrored into WSL by symlinks (see below). Managing the same text in both Chezmoi (Windows) and this repo would cause drift; keep a clear split.
 
+## Git hooks
+
+Hook scripts are **not** in `~/.dotfiles/hooks` (the default bare-repo hooks dir). They live under the work tree at **`~/.dotfiles/.githooks/`** so they can be version-controlled with everything else.
+
+Git only runs them if **`core.hooksPath`** points there. The path is **relative to the work tree** (`$HOME`), not relative to `~/.dotfiles`:
+
+```bash
+git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" config core.hooksPath .dotfiles/.githooks
+```
+
+Or with the `dotfiles` alias:
+
+```bash
+dotfiles config core.hooksPath .dotfiles/.githooks
+```
+
+Check:
+
+```bash
+dotfiles config --get core.hooksPath
+# expect: .dotfiles/.githooks
+```
+
+If this is unset after a fresh clone, commits and other Git actions will skip your hooks until you set it. Ensure hook entrypoints under `.dotfiles/.githooks/` are executable (`chmod +x` on real scripts if Git reports hook failures).
+
 ## Windows-side layout (sources of truth)
 
 Roughly:
@@ -60,9 +85,10 @@ After cloning this repo on a new WSL distro or machine, run the script once (fro
 
 1. Clone or fetch so **`~/.dotfiles`** exists and contains this repo’s objects.
 2. Ensure **`~/.gitignore`** is present (tracked) so `git status` is not flooded.
-3. Run **`~/.local/opt/setup-wsl2-symlinks`** (with `-q` if you prefer) so Windows-backed configs appear under `$HOME`, `~/.ssh`, etc.
-4. If you use `/etc` mirroring or `wsl.conf`, run the parts that need root as appropriate.
-5. Configure `git config` remote/auth if you plan to push.
+3. **Wire Git hooks:** `dotfiles config core.hooksPath .dotfiles/.githooks` (see [Git hooks](#git-hooks)).
+4. Run **`~/.local/opt/setup-wsl2-symlinks`** (with `-q` if you prefer) so Windows-backed configs appear under `$HOME`, `~/.ssh`, etc.
+5. If you use `/etc` mirroring or `wsl.conf`, run the parts that need root as appropriate.
+6. Configure `git config` remote/auth if you plan to push.
 
 ## Secrets and noise
 
