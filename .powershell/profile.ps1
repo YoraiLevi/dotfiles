@@ -27,11 +27,11 @@ function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 function dotfiles-timer { pwsh "$HOME\.dotfiles\dotfiles-timer.ps1" @args }
 
 # chezmoi also has a conflict with git-posh after vscode exit only if the editor field is defined in chezmoi.toml !!! the bug is that typing breaks and half the characters dont apply
-if (($ENV:CHEZMOI -eq 1)) {
-    # don't load the profile if chezmoi is active
-    # why would you edit with chezmoi active anyway?
-    return
-}
+# if (($ENV:CHEZMOI -eq 1)) {
+#     # don't load the profile if chezmoi is active
+#     # why would you edit with chezmoi active anyway?
+#     return
+# }
 
 
 function global:Set-MyPrompt {
