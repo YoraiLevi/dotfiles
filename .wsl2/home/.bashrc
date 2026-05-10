@@ -426,10 +426,19 @@ if command -v fzf >/dev/null 2>&1; then
     bind -x '"\C-r": __fzf_history'
 fi
 
-# Source credential env files (skip .json and other data files)
+# ~/.auth/*.env — dotenv-style (KEY=value) and export KEY=value lines (allexport)
 if [ -d "$HOME/.auth" ]; then
+    set -a
+    for f in "$HOME/.auth"/*.env; do
+        [ -f "$f" ] || continue
+        # shellcheck source=/dev/null
+        . "$f" 2>/dev/null
+    done
+    set +a
+
+    # Other credential scripts (skip .json data and *.env — loaded above)
     for f in "$HOME/.auth"/*; do
-        case "$f" in *.json) continue ;; esac
+        case "$f" in *.json|*.env) continue ;; esac
         [ -f "$f" ] && . "$f" 2>/dev/null
     done
 fi
