@@ -7,6 +7,27 @@
 #     permissions).
 # Drive metadata for chmod to stick is validated in run_before_001_wsl2.sh, not here.
 
+QUIET=0
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -q | --quiet) QUIET=1 ;;
+    -h | --help)
+      printf 'Usage: %s [-q|--quiet]\n' "${0##*/}" >&2
+      exit 0
+      ;;
+    *)
+      printf 'Unknown option: %s\n' "$1" >&2
+      printf 'Usage: %s [-q|--quiet]\n' "${0##*/}" >&2
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+say() {
+  [ "$QUIET" -eq 1 ] || printf '%s\n' "$@"
+}
+
 # Define WinWSL as the translated Windows %USERPROFILE% root in WSL
 WinWSL="$(wslpath -u "$(cmd.exe /c "echo %USERPROFILE%" | tr -d '\r' | sed 's|\\|/|g')")"
 
@@ -30,7 +51,7 @@ if [ -d "$WinDotSSH" ]; then
   find "$WinDotSSH" \( -type f -o -type l \) -print0 | while IFS= read -r -d '' file; do
     rel="${file#"$WinDotSSH"}"
     target="$HOME/.ssh/$rel"
-    echo "$rel"
+    say "$rel"
     mkdir -p "$(dirname "$target")"
     if [ -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
@@ -80,7 +101,7 @@ if [ -d "$WinHome" ]; then
   find "$WinHome" \( -type f -o -type l \) | while read -r file; do
     rel="${file#"$WinHome"}"
     target="$HOME/$rel"
-    echo "$rel"
+    say "$rel"
     mkdir -p "$(dirname "$target")"
     if [ -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
@@ -114,11 +135,11 @@ if [ -d "$WinClaude" ]; then
       fi
     done
     if $skip; then
-      echo "Skipping excluded: $rel"
+      say "Skipping excluded: $rel"
       continue
     fi
     target="$HOME/.claude/$rel"
-    echo "$rel"
+    say "$rel"
     mkdir -p "$(dirname "$target")"
     if [ -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
@@ -137,7 +158,7 @@ if [ -d "$WinEtc" ]; then
   find "$WinEtc" \( -type f -o -type l \) | while read -r file; do
     rel="${file#"$WinEtc"}"
     target="/etc/$rel"
-    echo "etc: $rel"
+    say "etc: $rel"
     mkdir -p "$(dirname "$target")"
     if [ -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
@@ -150,7 +171,7 @@ fi
 
 WslConf="$WinWSL/.wsl2/wsl.conf" 
 if [ -f "$WslConf" ]; then
-  echo "$WslConf"
+  say "$WslConf"
   command cp -f -- "$WslConf" /etc/wsl.conf
   chmod 644 -- /etc/wsl.conf
   chown root:root -- /etc/wsl.conf
