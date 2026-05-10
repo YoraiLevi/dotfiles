@@ -1,13 +1,1 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
-url="${1:?Usage: ssh-copy-text-to-clipboard <url>}"
-
-# Print the URL (clickable in most terminals)
-printf '%s\n' "$url"
-
-# OSC 52 — copy to terminal's clipboard (works over SSH)
-encoded=$(printf '%s' "$url" | base64 -w0)
-printf '\033]52;c;%s\a' "$encoded"
-
-echo "(URL copied to clipboard via OSC 52)"
+../../winHome/.wsl2/home/.local/bin/ssh-copy-text-to-clipboard
