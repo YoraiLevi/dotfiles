@@ -14,7 +14,8 @@
 	"references.preferredLocation": "view",
 	"editor.wordWrap": "on",
 	"editor.rulers": [
-		
+		100,
+		120
 	],
 	"[python]": {
 		"diffEditor.ignoreTrimWhitespace": true,
