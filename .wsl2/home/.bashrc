@@ -182,7 +182,7 @@ mvln() {
   [ "$resolve" -eq 1 ] && pwd_flags="-P"
 
   local src_dir abs_src
-  src_dir="$(cd -- "$(dirname -- "$src")" && pwd $pwd_flags)" \
+  src_dir="$(builtin cd -- "$(dirname -- "$src")" && pwd $pwd_flags)" \
     || { printf 'mvln: cannot resolve source parent: %s\n' "$src" >&2; return 1; }
   abs_src="$src_dir/$(basename -- "$src")"
 
@@ -191,7 +191,7 @@ mvln() {
   dst_base="$(basename -- "$dst")"
   mkdir -p -- "$dst_parent" \
     || { printf 'mvln: cannot create destination parent: %s\n' "$dst_parent" >&2; return 1; }
-  dst_parent="$(cd -- "$dst_parent" && pwd $pwd_flags)" \
+  dst_parent="$(builtin cd -- "$dst_parent" && pwd $pwd_flags)" \
     || { printf 'mvln: cannot resolve destination parent: %s\n' "$dst" >&2; return 1; }
   abs_dst="$dst_parent/$dst_base"
 
