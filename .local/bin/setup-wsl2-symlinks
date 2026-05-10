@@ -244,6 +244,24 @@ if [ "$FAST" -eq 0 ] && [ -d "$HOME/.ssh" ]; then
   done
 fi
 
+# Mirror USERPROFILE/.auth into WSL ~/.auth
+WinAuth="$WinWSL/.auth/"
+
+if [ -d "$WinAuth" ]; then
+  find "$WinAuth" \( -type f -o -type l \) | while read -r file; do
+    rel="${file#"$WinAuth"}"
+    target="$HOME/.auth/$rel"
+    say "$rel"
+    dry_mkdir_p "$(dirname "$target")"
+    if [ ! -L "$target" ]; then
+      [ -e "$target" ] && dry_mv_f "$target" "$target.bak"
+      ln_sf_rel "$file" "$target"
+    fi
+  done
+else
+  echo "Windows .auth directory not found" >&2
+fi
+
 # Mirror USERPROFILE/.wsl2/home into WSL $HOME
 WinHome="$WinWSL/.wsl2/home/"
 
