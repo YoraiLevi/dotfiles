@@ -509,22 +509,29 @@ function Find-EnvPath {
 
 # Read KEY=value lines from .env files into Env: for this process. Use -Path or pipe paths/FileInfo (e.g. Get-ChildItem ~/.auth -File).
 function Import-DotEnv {
+    # Two ways to invoke: pass -Path (string), or pipe objects—parameter sets keep those modes mutually exclusive.
     [CmdletBinding(DefaultParameterSetName = 'Path')]
     param(
+        # Explicit file path (supports ~, relative paths, provider paths); used when nothing is piped in.
         [Parameter(ParameterSetName = 'Path', Position = 0, Mandatory = $true)]
         [string] $Path,
 
+        # Each piped object becomes one file to load (FileInfo from dir listings, strings, or .FullName-bearing objects).
         [Parameter(ParameterSetName = 'Pipeline', Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
 
+        # When set, missing files throw; otherwise they are skipped quietly.
         [switch] $Required
     )
 
     process {
+        # --- Resolve to concrete filesystem path(s) for this invocation/pipeline object ---
+        # Unary comma (,) wraps a single string so foreach always iterates paths, never characters.
         $resolvedPaths =
             if ($PSCmdlet.ParameterSetName -eq 'Path') {
                 ,($ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path))
             } else {
+                # Normalize pipeline input to a path string; directories yield nothing so they are skipped later.
                 $raw =
                     if ($InputObject -is [System.IO.FileInfo]) { $InputObject.FullName }
                     elseif ($InputObject -is [System.IO.DirectoryInfo]) { $null }
@@ -539,30 +546,38 @@ function Import-DotEnv {
             }
 
         foreach ($resolved in $resolvedPaths) {
+            # --- Guardrails before reading file contents ---
             if (-not (Test-Path -LiteralPath $resolved)) {
                 if ($Required) { throw "Import-DotEnv: file not found: $resolved" }
                 continue
             }
 
+            # Only regular files: skip folders that appeared in directory listings without -File.
             $item = Get-Item -LiteralPath $resolved -ErrorAction SilentlyContinue
             if ($null -eq $item -or $item.PSIsContainer) { continue }
 
+            # --- Parse line-by-line (streaming); subset of common .env rules ---
             switch -Regex -File $resolved {
+                # Ignore empty lines and shell-style # comments.
                 '^\s*(?:#.*)?$' { continue }
                 default {
                     $line = $_.TrimEnd()
+                    # Strip optional "export " prefix so Unix-style .env lines still work.
                     if ($line.StartsWith('export ')) { $line = $line.Substring(7).TrimStart() }
+                    # Split only on the first "=" so values may contain "=" (URLs, secrets, etc.).
                     $eq = $line.IndexOf('=')
                     if ($eq -lt 1) { continue }
                     $name = $line.Substring(0, $eq).Trim()
                     if ([string]::IsNullOrWhiteSpace($name) -or $name[0] -eq '#') { continue }
                     $value = $line.Substring($eq + 1).Trim()
+                    # Remove one matching pair of outer ' or " quotes if both ends agree (simple unquoting).
                     if ($value.Length -ge 2) {
                         $q = $value[0]
                         if (($q -eq '"' -or $q -eq "'") -and $value[-1] -eq $q) {
                             $value = $value.Substring(1, $value.Length - 2)
                         }
                     }
+                    # Process-scoped env var: visible in this session and processes spawned from it.
                     Set-Item -LiteralPath "Env:$name" -Value $value
                 }
             }
