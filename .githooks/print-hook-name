@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Shared helper: Git runs this file via a symlink named after each hook ($0).
+printf '[githook] %s\n' "$(basename "$0")" >&2
+exit 0
