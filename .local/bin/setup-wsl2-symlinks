@@ -248,9 +248,28 @@ fi
 # Mirror USERPROFILE/.auth into WSL ~/.auth
 WinAuth="$WinWSL/.auth/"
 
+# Define exclusion list (relative paths under WinAuth)
+auth_exclude_list=(
+  ".gitkeep"
+  # Add more paths as needed, relative to $WinAuth
+)
+
 if [ -d "$WinAuth" ]; then
   find "$WinAuth" \( -type f -o -type l \) | while read -r file; do
     rel="${file#"$WinAuth"}"
+    # Remove leading slash, if any
+    rel="${rel#/}"
+    skip=false
+    for excluded in "${auth_exclude_list[@]}"; do
+      if [ "$rel" = "$excluded" ]; then
+        skip=true
+        break
+      fi
+    done
+    if $skip; then
+      say "Skipping excluded: $rel"
+      continue
+    fi
     target="$HOME/.auth/$rel"
     say "$rel"
     dry_mkdir_p "$(dirname "$target")"
