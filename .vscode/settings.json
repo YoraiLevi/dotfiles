@@ -13,9 +13,9 @@
 	"editor.formatOnSaveMode": "modificationsIfAvailable",
 	"references.preferredLocation": "view",
 	"editor.wordWrap": "on",
+	"editor.wrappingIndent": "same",
 	"editor.rulers": [
 		105,
-		120
 	],
 	"[python]": {
 		"diffEditor.ignoreTrimWhitespace": true,
