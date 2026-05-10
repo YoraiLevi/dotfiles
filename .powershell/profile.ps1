@@ -507,6 +507,55 @@ function Find-EnvPath {
     return $envPaths -ne $null
 }
 
+function Import-DotEnv {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, Mandatory=$true)]
+        [string] $Path,
+
+        # If set, fail when the file is missing instead of no-op
+        [switch] $Required
+    )
+
+    $resolved = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+    if (-not (Test-Path -LiteralPath $resolved)) {
+        if ($Required) {
+            throw "Import-DotEnv: file not found: $resolved"
+        }
+        return
+    }
+
+    switch -Regex -File $resolved {
+        '^\s*(?:#.*)?$' {
+            # blank or comment-only line
+            continue
+        }
+        default {
+            $line = $_.TrimEnd()
+            if ($line.StartsWith('export ')) {
+                $line = $line.Substring(7).TrimStart()
+            }
+
+            $eq = $line.IndexOf('=')
+            if ($eq -lt 1) { continue }
+
+            $name = $line.Substring(0, $eq).Trim()
+            if ([string]::IsNullOrWhiteSpace($name) -or $name[0] -eq '#') { continue }
+
+            $value = $line.Substring($eq + 1).Trim()
+
+            if ($value.Length -ge 2) {
+                $q = $value[0]
+                if (($q -eq '"' -or $q -eq "'") -and $value[-1] -eq $q) {
+                    $value = $value.Substring(1, $value.Length - 2)
+                }
+            }
+
+            Set-Item -LiteralPath "Env:$name" -Value $value
+        }
+    }
+}
+
 function Set-SymlinkRelative {
     param (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
@@ -776,11 +825,11 @@ function Show-NativeArgumentCompleters {
     }
 }
 
-Register-LazyArgumentCompleter -CommandName 'chezmoi' -CompletionCodeFactory {
-    if (-not (Get-Command chezmoi.exe -ErrorAction SilentlyContinue)) { return }
-    # this needs to stay in the global scope, probably should report the error to the developer
-    return (& chezmoi completion powershell) | Out-String
-}
+# Register-LazyArgumentCompleter -CommandName 'chezmoi' -CompletionCodeFactory {
+#     if (-not (Get-Command chezmoi.exe -ErrorAction SilentlyContinue)) { return }
+#     # this needs to stay in the global scope, probably should report the error to the developer
+#     return (& chezmoi completion powershell) | Out-String
+# }
 
 function Invoke-Fnm {
     Remove-Alias -Name fnm -Scope Global
