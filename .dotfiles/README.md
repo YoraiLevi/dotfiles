@@ -33,7 +33,6 @@ Roughly:
 |--------------|------|
 | `%USERPROFILE%\.wsl2\home\` | Mirror of Linux `$HOME` paths (files symlinked into WSL) |
 | `%USERPROFILE%\.ssh\` | SSH keys and config → `~/.ssh/` |
-| `%USERPROFILE%\.agents\claude\` | Claude Code agent files → `~/.claude/` and `~/.claude.json` |
 | `%USERPROFILE%\.wsl2\etc\` | Files symlinked under `/etc/` (needs sufficient privileges) |
 | `%USERPROFILE%\.wsl2\wsl.conf` | Copied to `/etc/wsl.conf` (not symlinked) |
 
