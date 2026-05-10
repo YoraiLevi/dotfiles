@@ -78,14 +78,6 @@ dry_cp_f() {
   fi
 }
 
-dry_rm() {
-  if [ "$DRY_RUN" -eq 1 ]; then
-    say "dry-run: rm -- $1"
-  else
-    rm -- "$1"
-  fi
-}
-
 # Intended absolute path of a symlink's target (GNU realpath -m; works for broken links).
 symlink_intended_abs() {
   local lnk="$1" raw dir
@@ -162,13 +154,11 @@ ln_sf_rel() {
   ln -sf -- "$relpath" "$dst"
 }
 
+ln_sf_rel "$PROFILE_ROOT" "$HOME/winHome"
+ln_sf_rel "$PROFILE_ROOT" "$HOME/homeWin"
 if [ "$DRY_RUN" -eq 0 ]; then
-  ln_sf_rel "$PROFILE_ROOT" "$HOME/winHome"
-  ln_sf_rel "$PROFILE_ROOT" "$HOME/homeWin"
   WinWSL="$HOME/winHome"
 else
-  say "dry-run: ln -sf -- <relative-to-$HOME/winHome> $HOME/winHome"
-  say "dry-run: ln -sf -- <relative-to-$HOME/homeWin> $HOME/homeWin"
   WinWSL="$PROFILE_ROOT"
 fi
 
@@ -191,8 +181,12 @@ if [ "$CLEAN_BROKEN" -eq 1 ]; then
       [ -e "$path" ] && continue
       intended="$(symlink_intended_abs "$path")" || continue
       refers_under_win_profile "$intended" "$winpfx" || continue
-      say "clean-broken: rm $path -> $intended"
-      dry_rm "$path"
+      if [ "$DRY_RUN" -eq 1 ]; then
+        say "dry-run: clean-broken rm -- $path -> $intended"
+      else
+        say "clean-broken: rm $path -> $intended"
+        rm -- "$path"
+      fi
     done < <( {
       find "$HOME" -type l ! -path "$HOME/winHome" ! -path "$HOME/homeWin" -print0 2>/dev/null
       [ -d /etc ] && find /etc -type l -print0 2>/dev/null
@@ -227,25 +221,25 @@ if [ "$FAST" -eq 0 ] && [ -d "$HOME/.ssh" ]; then
     real=$(readlink -f -- "$entry" 2>/dev/null) || continue
     [ -n "$real" ] && [ -e "$real" ] || continue
     if [ -d "$real" ]; then
-      chmod 700 -- "$real"
+      dry_chmod 700 -- "$real"
     else
       base=$(basename -- "$entry")
       case "$base" in
         known_hosts)
-          chmod 644 -- "$real"
+          dry_chmod 644 -- "$real"
           ;;
         *.pub)
-          chmod 644 -- "$real"
+          dry_chmod 644 -- "$real"
           ;;
         config|authorized_keys)
-          chmod 600 -- "$real"
+          dry_chmod 600 -- "$real"
           ;;
         *)
-          chmod 600 -- "$real"
+          dry_chmod 600 -- "$real"
           ;;
       esac
       # Ensure the user running the script (root) owns the target
-      chown "$(id -u):$(id -g)" -- "$real"
+      dry_chown "$(id -u):$(id -g)" -- "$real"
     fi
   done
 fi
@@ -258,9 +252,9 @@ if [ -d "$WinHome" ]; then
     rel="${file#"$WinHome"}"
     target="$HOME/$rel"
     say "$rel"
-    mkdir -p "$(dirname "$target")"
+    dry_mkdir_p "$(dirname "$target")"
     if [ ! -L "$target" ]; then
-      [ -e "$target" ] && mv -f "$target" "$target.bak"
+      [ -e "$target" ] && dry_mv_f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
   done
@@ -296,9 +290,9 @@ if [ -d "$WinClaude" ]; then
     fi
     target="$HOME/.claude/$rel"
     say "$rel"
-    mkdir -p "$(dirname "$target")"
+    dry_mkdir_p "$(dirname "$target")"
     if [ ! -L "$target" ]; then
-      [ -e "$target" ] && mv -f "$target" "$target.bak"
+      [ -e "$target" ] && dry_mv_f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
   done
@@ -315,9 +309,9 @@ if [ -d "$WinEtc" ]; then
     rel="${file#"$WinEtc"}"
     target="/etc/$rel"
     say "etc: $rel"
-    mkdir -p "$(dirname "$target")"
+    dry_mkdir_p "$(dirname "$target")"
     if [ ! -L "$target" ]; then
-      [ -e "$target" ] && mv -f "$target" "$target.bak"
+      [ -e "$target" ] && dry_mv_f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
   done
@@ -328,9 +322,9 @@ fi
 WslConf="$WinWSL/.wsl2/wsl.conf" 
 if [ -f "$WslConf" ]; then
   say "$WslConf"
-  command cp -f -- "$WslConf" /etc/wsl.conf
-  chmod 644 -- /etc/wsl.conf
-  chown root:root -- /etc/wsl.conf
+  dry_cp_f "$WslConf" /etc/wsl.conf
+  dry_chmod 644 -- /etc/wsl.conf
+  dry_chown root:root -- /etc/wsl.conf
 else
   echo "Windows .wsl2/wsl.conf file not found" >&2
 fi
@@ -339,7 +333,7 @@ fi
 if [ -d "$HOME/.local/bin" ]; then
   find "$HOME/.local/bin" -type f | while read -r f; do
     if [ ! -x "$f" ]; then
-      chmod +x "$f"
+      dry_chmod +x -- "$f"
     fi
   done
 fi
