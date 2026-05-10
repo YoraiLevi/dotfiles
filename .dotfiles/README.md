@@ -4,13 +4,67 @@
 
 Git directory: **`~/.dotfiles`**. Work tree: **`$HOME`** (config and tracked files live alongside normal dotfiles).
 
-After a new clone or fresh WSL distro, walk through these in order:
+Layout matches the bare-repo pattern documented in **[YoraiLevi/dotfiles](https://github.com/YoraiLevi/dotfiles)** ([README](https://raw.githubusercontent.com/YoraiLevi/dotfiles/refs/heads/master/README.md)): no separate checkout directory — Git metadata lives in **`~/.dotfiles`**, tracked files appear directly under **`$HOME`**.
 
-1. **Repository present** — Clone or fetch until **`~/.dotfiles`** exists and contains the repo objects.
+### Clone the bare repo and check out the `WSL` branch
 
-2. **`~/.gitignore`** — Checkout or restore the tracked ignore file so `git status` is usable (the root `/*` rule ignores most paths until selectively tracked).
+This WSL distro uses the **`WSL`** branch on the remote (one branch per machine). Replace the clone URL with SSH or HTTPS depending on how you authenticate.
 
-3. **Git hooks** — Hooks live in **`~/.dotfiles/.githooks/`**. Tell Git to use them (**path is relative to `$HOME`**, not to `~/.dotfiles`):
+1. **Define the `dotfiles` alias** for this shell session (repeat after reopening the terminal until your **`~/.bashrc`** is restored):
+
+   ```bash
+   alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+   ```
+
+2. **Bare clone** into **`~/.dotfiles`**:
+
+   ```bash
+   git clone --bare git@github.com:YoraiLevi/dotfiles.git "$HOME/.dotfiles"
+   ```
+
+   HTTPS example:
+
+   ```bash
+   git clone --bare https://github.com/YoraiLevi/dotfiles.git "$HOME/.dotfiles"
+   ```
+
+3. **Quiet status by default** (same as upstream template):
+
+   ```bash
+   dotfiles config --local status.showUntrackedFiles no
+   ```
+
+4. **Fetch and check out the machine branch `WSL`**:
+
+   ```bash
+   dotfiles fetch origin
+   dotfiles checkout WSL
+   ```
+
+   If Git refuses because existing files in **`$HOME`** would be overwritten, move those paths aside (or use the conflict loop from the upstream **Restoring a machine from scratch** section), then run **`dotfiles checkout WSL -- .`** again.
+
+   **First time creating this branch** (only if **`WSL` does not exist on the remote yet): start from **`master`**, then publish:
+
+   ```bash
+   dotfiles fetch origin
+   dotfiles checkout -b WSL origin/master
+   dotfiles push -u origin WSL
+   ```
+
+5. **Verify**:
+
+   ```bash
+   dotfiles branch --show-current    # expect: WSL
+   dotfiles status
+   ```
+
+After a clone, continue with **WSL-specific setup** in the next subsection (hooks, symlinks, remote).
+
+### WSL-specific setup
+
+1. **`~/.gitignore`** — Comes from **`dotfiles checkout WSL`**. If **`dotfiles status`** still lists everything under **`$HOME`**, restore it: **`dotfiles checkout WSL -- .gitignore`**.
+
+2. **Git hooks** — Hooks live in **`~/.dotfiles/.githooks/`**. Tell Git to use them (**path is relative to `$HOME`**, not to `~/.dotfiles`):
 
    ```bash
    dotfiles config core.hooksPath .dotfiles/.githooks
@@ -24,11 +78,11 @@ After a new clone or fresh WSL distro, walk through these in order:
 
    Verify: `dotfiles config --get core.hooksPath` → `.dotfiles/.githooks`. If hooks fail to run, ensure scripts there are executable (`chmod +x`).
 
-4. **Symlinks from Windows** — Run **`~/.local/opt/setup-wsl2-symlinks`** (e.g. `-q` for quiet, `-F` to skip SSH chmod pass). This mirrors `%USERPROFILE%\.wsl2\home`, `.ssh`, Claude agents, optional `.wsl2\etc`, and copies `wsl.conf`; details below.
+3. **Symlinks from Windows** — Run **`~/.local/opt/setup-wsl2-symlinks`** (e.g. `-q` for quiet, `-F` to skip SSH chmod pass). This mirrors `%USERPROFILE%\.wsl2\home`, `.ssh`, Claude agents, optional `.wsl2\etc`, and copies `wsl.conf`; details below.
 
-5. **`/etc` and `wsl.conf`** — If you use the `.wsl2\etc` mirror or Windows-backed `wsl.conf`, apply those steps with appropriate privileges (see script header).
+4. **`/etc` and `wsl.conf`** — If you use the `.wsl2\etc` mirror or Windows-backed `wsl.conf`, apply those steps with appropriate privileges (see script header).
 
-6. **Remote and auth** — Configure remote URL and credentials so `dotfiles push` works.
+5. **Remote and auth** — The bare clone sets **`origin`**. Adjust URL or credentials if **`dotfiles push`** / **`dotfiles fetch`** fails.
 
 **Optional:** install the auto-commit systemd timer — `bash ~/.dotfiles/dotfiles-timer.sh help` (and use `dotfiles-timer` if aliased in `~/.bashrc`).
 
@@ -60,6 +114,8 @@ git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" <command>
 Tracked paths are **WSL/Linux glue**: symlink installer, Git hooks, timer helpers, and other files that belong in Git—not the bulk of shell or editor config stored under **`%USERPROFILE%\.wsl2\home`** on Windows.
 
 Keep a single source of truth: **canonical interactive dotfiles** are on Windows and mirrored into WSL via symlinks. If you also use **Chezmoi** (or similar) on Windows, avoid editing the same logical file in two managers.
+
+Shared dotfiles workflow (**`master`**, merging between machines, bootstrap scripts) matches **[YoraiLevi/dotfiles](https://github.com/YoraiLevi/dotfiles)** — see the upstream [README](https://raw.githubusercontent.com/YoraiLevi/dotfiles/refs/heads/master/README.md) for **Daily use**, **Multiple machines**, and **Restoring a machine from scratch**.
 
 ### Windows-side layout (sources of truth)
 
