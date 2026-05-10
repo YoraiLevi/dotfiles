@@ -34,7 +34,7 @@ install_timer() {
 
     cat > "$SCRIPT_FILE" <<EOF
 #!/bin/bash
-git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" add -u
+git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" add -A
 if ! git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --quiet --cached; then
   git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" commit -m "chore: auto-commit at \$(date --iso-8601=s)"
 fi
