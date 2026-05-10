@@ -14,7 +14,7 @@
 	"references.preferredLocation": "view",
 	"editor.wordWrap": "on",
 	"editor.rulers": [
-		100,
+		105,
 		120
 	],
 	"[python]": {
