@@ -462,7 +462,7 @@ fi
 if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; then
     # echo "Running inside WSL"
     alias explorer="explorer.exe"
-    alias chezmoi="chezmoi.exe"
+    # alias chezmoi="chezmoi.exe"
     alias wsl="wsl.exe"
     alias pwsh="pwsh.exe"
     alias powershell="powershell.exe"
