@@ -8,16 +8,20 @@
 # Drive metadata for chmod to stick is validated in run_before_001_wsl2.sh, not here.
 
 QUIET=0
+FAST=0
 while [ "$#" -gt 0 ]; do
   case "$1" in
     -q | --quiet) QUIET=1 ;;
+    -F | --fast) FAST=1 ;;
     -h | --help)
-      printf 'Usage: %s [-q|--quiet]\n  -q  No progress; silence cmd.exe stderr; skip cmd if ~/winHome resolves.\n' "${0##*/}" >&2
+      printf 'Usage: %s [-q|--quiet] [-F|--fast]\n' "${0##*/}" >&2
+      printf '  -q  No progress; silence cmd.exe stderr when resolving USERPROFILE.\n' >&2
+      printf '  -F  Skip chmod/chown pass on ~/.ssh (faster on %%USERPROFILE%% / drvfs).\n' >&2
       exit 0
       ;;
     *)
       printf 'Unknown option: %s\n' "$1" >&2
-      printf 'Usage: %s [-q|--quiet]\n' "${0##*/}" >&2
+      printf 'Usage: %s [-q|--quiet] [-F|--fast]\n' "${0##*/}" >&2
       exit 1
       ;;
   esac
@@ -87,7 +91,7 @@ if [ -d "$WinDotSSH" ]; then
     target="$HOME/.ssh/$rel"
     say "$rel"
     mkdir -p "$(dirname "$target")"
-    if [ -L "$target" ]; then
+    if [ ! -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
@@ -99,7 +103,7 @@ fi
 # Set modes on the canonical file/dir behind each path (readlink -f) so deep symlinks
 # to Windows files get the right perms. On /mnt/c, modes persist only with drvfs metadata
 # in /etc/wsl.conf (e.g. [automount] options) after restart.
-if [ -d "$HOME/.ssh" ]; then
+if [ "$FAST" -eq 0 ] && [ -d "$HOME/.ssh" ]; then
   find "$HOME/.ssh" -print0 | while IFS= read -r -d '' entry; do
     [ -e "$entry" ] || [ -L "$entry" ] || continue
     real=$(readlink -f -- "$entry" 2>/dev/null) || continue
@@ -137,7 +141,7 @@ if [ -d "$WinHome" ]; then
     target="$HOME/$rel"
     say "$rel"
     mkdir -p "$(dirname "$target")"
-    if [ -L "$target" ]; then
+    if [ ! -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
@@ -175,7 +179,7 @@ if [ -d "$WinClaude" ]; then
     target="$HOME/.claude/$rel"
     say "$rel"
     mkdir -p "$(dirname "$target")"
-    if [ -L "$target" ]; then
+    if [ ! -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
@@ -194,7 +198,7 @@ if [ -d "$WinEtc" ]; then
     target="/etc/$rel"
     say "etc: $rel"
     mkdir -p "$(dirname "$target")"
-    if [ -L "$target" ]; then
+    if [ ! -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
