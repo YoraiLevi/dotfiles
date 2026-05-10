@@ -53,6 +53,14 @@ function Invoke-Hook_post_applypatch {
 
 function Invoke-Hook_pre_commit {
   Write-GitHookLog
+  $null = @('cursor', 'code-insiders') | Where-Object { Get-Command $_ -ErrorAction SilentlyContinue } | Select-Object -First 1 | ForEach-Object { & $_ --list-extensions 2>$null | Out-File $(Join-Path $ENV:USERPROFILE ".vscode" "$_-extensions.txt") }
+  $null = (Get-InstalledModule).Name | Out-File $(Join-Path $ENV:USERPROFILE ".powershell" "pwsh-modules.txt")
+  $null = choco export "$(Join-Path $ENV:USERPROFILE ".choco" "packages.config")"
+  $null = wsl apt-mark showmanual | Out-File $(Join-Path $ENV:USERPROFILE ".wsl2" "apt-packages.txt")
+  $null = wsl snap list | Out-File $(Join-Path $ENV:USERPROFILE ".wsl2" "snap-packages.txt")
+  # cat /etc/apt/sources.list /etc/apt/sources.list.d/*
+  # ppa backup/restore https://askubuntu.com/a/148968/1602862
+  $null = wsl apt-cache policy | Out-File $(Join-Path $ENV:USERPROFILE ".wsl2" "apt-cache-policy.txt")
 }
 
 function Invoke-Hook_pre_merge_commit {
