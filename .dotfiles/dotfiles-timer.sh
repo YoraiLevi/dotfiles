@@ -48,7 +48,7 @@ if ! git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --quiet --cached; th
   [ "\$n_renamed" -gt 0 ] && parts+=(\"\${n_renamed} renamed\")
   \$summary=\$(IFS=', '; echo \"\${parts[*]}\")
   \$ts=\$(date --iso-8601=seconds 2>/dev/null || date -u +\"%Y-%m-%dT%H:%M:%SZ\")
-  \$subject=\"chore(dotfiles): dotfiles sync (\${summary}) at \${ts}\"
+  \$subject=\"chore\(dotfiles\): dotfiles sync \(\${summary}\) at \${ts}\"
   \$file_list=\$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --name-only | head -n 40)
   if [ -n \"\$file_list\" ]; then
     \$msg=\$(printf '%s\\n\\n%s\\n%s' \"\$subject\" \"Changed paths:\" \"\$file_list\")
