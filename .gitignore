@@ -1,5 +1,4 @@
 /*
-!/.*
 
 # Defensive: never track these even if explicitly added
 .ssh/id_*
