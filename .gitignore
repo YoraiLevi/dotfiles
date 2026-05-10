@@ -14,8 +14,8 @@
 .auth*
 .auth/
 
-# when dotfiles add -A is executed these folders will be added to the index
 # Only ~/.config/systemd/user — un-ignore each parent and re-ignore siblings so
+# when dotfiles add -A is executed these folders will be added to the index
 
 !.agents/
 !.powershell/
