@@ -940,7 +940,7 @@ if ($ENV:TERM_PROGRAM -eq "vscode" -or $ENV:VSCODE_INJECTION -eq 1) {
 
 }
 
-if ($ENV:VSCODE_CLI -eq 1 -or $ENV:CURSOR_AGENT -eq 1 -or $ENV:VSCODE_PID -ne $null) {
+if (($ENV:VSCODE_CLI -eq 1) -or ($ENV:CURSOR_AGENT -eq 1) -or ($null -ne $ENV:VSCODE_PID)) {
     # Cursor AI agent terminal
     return
 }
