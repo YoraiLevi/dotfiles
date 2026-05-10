@@ -383,7 +383,7 @@
                 "environment": 
                 {
                     "InformationPreference": "SilentlyContinue",
-                    // "TERM": "xterm-256color"
+                    "TERM": "xterm-256color"
                 },
                 "font": 
                 {
