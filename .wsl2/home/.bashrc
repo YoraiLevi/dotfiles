@@ -315,7 +315,7 @@ uvx() {
 if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
 fi
-# set PATH so it includes user's private bin if it exists
+# set PATH so it includes user's private .bin if it exists
 if [ -d "$HOME/.bin" ] ; then
     PATH="$HOME/.bin:$PATH"
 fi
@@ -356,7 +356,7 @@ cd() {
         local count
         count=$(command ls -1A 2>/dev/null | wc -l)
         if [ "$count" -lt 15 ]; then
-            ls --color=auto -F
+            ls -l --color=auto -F
         fi
     }
 }
