@@ -1,5 +1,3 @@
-# run_after_001_wsl2_symlink.sh — Windows → WSL symlink sync (after templates; WSL2)
-#
 # This is not a "config warning" script.  It mirrors Windows paths into WSL by symlink
 # (targets are relative to each link path, not absolute):
 #   - %USERPROFILE%\.ssh → ~/.ssh, then chmod/chown on real targets behind symlinks (readlink -f);
@@ -153,7 +151,7 @@ fi
 WslConf="$WinWSL/.wsl2/wsl.conf" 
 if [ -f "$WslConf" ]; then
   echo "$WslConf"
-  cp -f -- "$WslConf" /etc/wsl.conf
+  command cp -f -- "$WslConf" /etc/wsl.conf
   chmod 644 -- /etc/wsl.conf
   chown root:root -- /etc/wsl.conf
 else
