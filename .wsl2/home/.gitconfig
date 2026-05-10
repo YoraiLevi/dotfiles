@@ -50,6 +50,7 @@
 	# https://stackoverflow.com/a/51911725/12603110 - uncommit zsh note git reset --soft HEAD\^
 	uncommit = reset HEAD^
 	unstage = restore --staged .
+    unadd = rm --cached .
 [i18n]
 	logOutputEncoding = utf-8
 
