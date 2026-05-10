@@ -481,8 +481,8 @@ if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; th
     # export SHELL="wsl.exe"
     export BROWSER=/mnt/c/PROGRA~2/Microsoft/Edge/Application/msedge.exe
     # alias tssh="tssh.exe"
-    if [ -f "$HOME/.local/opt/setup-wsl2-symlinks" ]; then
-        . "setup-wsl2-symlinks" -q
+    if [ -f "$HOME/.local/bin/setup-wsl2-symlinks" ]; then
+        . "$HOME/.local/bin/setup-wsl2-symlinks" -q
     fi
 else
     # echo "Running outside WSL"
