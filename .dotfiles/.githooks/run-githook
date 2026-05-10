@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Git invokes this script via symlinks named after each hook (e.g. pre-commit).
-# HOOK_NAME is derived from $0 so one file backs many hook entrypoints.
+# Shared Git hook implementation. Each Git hook is a small script that execs
+# this file with GIT_HOOK_NAME set (after exec, $0 would otherwise be run-githook).
 #
 # Design
 # ------
@@ -11,11 +11,11 @@
 # 2. hook_* — one function per hook; start with log_hook and add commands,
 #    or call shared helpers. Return non-zero from client hooks that support
 #    --no-verify to block the Git operation.
-# 3. hook_default — safety net if a new symlink name is added but case lags.
+# 3. hook_default — safety net if a new hook wrapper is added but case lags.
 #
 set -u
 
-HOOK_NAME=$(basename "$0")
+HOOK_NAME="${GIT_HOOK_NAME:-$(basename "$0")}"
 
 log_hook() {
   printf '[githook] %s\n' "$HOOK_NAME" >&2

@@ -1,1 +1,3 @@
-print-hook-name
+#!/usr/bin/env bash
+_GITHOOKS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec env GIT_HOOK_NAME="$(basename "$0")" "$_GITHOOKS_DIR/run-githook" "$@"
