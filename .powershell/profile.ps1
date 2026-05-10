@@ -991,6 +991,9 @@ if (($ENV:VSCODE_CLI -eq 1) -or ($ENV:CURSOR_AGENT -eq 1) -or ($null -ne $ENV:VS
     # Cursor AI agent terminal
     return
 }
+
+
+
 # $null = zellij da -y # delete dead sessions
 $ENV:SHELL = 'pwsh'
 if (-not $ENV:ZELLIJ) {
