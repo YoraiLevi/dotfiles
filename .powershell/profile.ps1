@@ -985,7 +985,6 @@ Get-Variable | Where-Object Name -NotIn $existingVariables.Name | Remove-Variabl
 if ($ENV:TERM_PROGRAM -eq "vscode" -or $ENV:VSCODE_INJECTION -eq 1) {
     # Cursor/VSCode terminal
     return
-
 }
 
 if (($ENV:VSCODE_CLI -eq 1) -or ($ENV:CURSOR_AGENT -eq 1) -or ($null -ne $ENV:VSCODE_PID)) {
