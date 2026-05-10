@@ -35,6 +35,10 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
+# Symlinks under $HOME → Windows %USERPROFILE%% (single definition; used throughout).
+WIN_HOME_LINK="$HOME/winHome"
+HOME_WIN_LINK="$HOME/homeWin"
+
 say() {
   [ "$QUIET" -eq 1 ] || printf '%s\n' "$@"
 }
@@ -112,7 +116,7 @@ refers_under_win_profile() {
   esac
 }
 
-# Resolve Windows %USERPROFILE% as a WSL path. Prefer existing ~/winHome (no cmd.exe).
+# Resolve Windows %USERPROFILE% as a WSL path. Prefer existing $WIN_HOME_LINK (no cmd.exe).
 # Run cmd.exe from /mnt/c or / so cwd is not a UNC path (avoids cmd's "UNC paths are not supported").
 win_userprofile_wsl() {
   local win_raw prof_dir
@@ -139,8 +143,8 @@ win_userprofile_wsl() {
 }
 
 WinWSL=""
-if [ -e "$HOME/winHome" ]; then
-  WinWSL="$(readlink -f -- "$HOME/winHome" 2>/dev/null || true)"
+if [ -e "$WIN_HOME_LINK" ]; then
+  WinWSL="$(readlink -f -- "$WIN_HOME_LINK" 2>/dev/null || true)"
 fi
 if [ -z "$WinWSL" ] || [ ! -d "$WinWSL" ]; then
   WinWSL="$(win_userprofile_wsl)" || {
@@ -149,7 +153,7 @@ if [ -z "$WinWSL" ] || [ ! -d "$WinWSL" ]; then
   }
 fi
 
-# Absolute WSL path to %%USERPROFILE%% (Windows tree); kept when dry-run skips ~/winHome symlinks.
+# Absolute WSL path to %%USERPROFILE%% (Windows tree); kept when dry-run skips $WIN_HOME_LINK symlinks.
 PROFILE_ROOT="$WinWSL"
 
 # Symlink $dst -> $src using a path relative to dirname($dst) (-s: do not resolve symlinks in $src).
@@ -165,29 +169,29 @@ ln_sf_rel() {
   ln -sf -- "$relpath" "$dst"
 }
 
-ln_sf_rel "$PROFILE_ROOT" "$HOME/winHome"
-ln_sf_rel "$PROFILE_ROOT" "$HOME/homeWin"
+ln_sf_rel "$PROFILE_ROOT" "$WIN_HOME_LINK"
+ln_sf_rel "$PROFILE_ROOT" "$HOME_WIN_LINK"
 if [ "$DRY_RUN" -eq 0 ]; then
-  WinWSL="$HOME/winHome"
+  WinWSL="$WIN_HOME_LINK"
 else
   WinWSL="$PROFILE_ROOT"
 fi
 
-# Absolute path of Windows profile (for clean-broken); uses ~/winHome when present, else PROFILE_ROOT.
-WinProfileAbs="$(readlink -f -- "$HOME/winHome" 2>/dev/null)"
+# Absolute path of Windows profile (for clean-broken); uses $WIN_HOME_LINK when present, else PROFILE_ROOT.
+WinProfileAbs="$(readlink -f -- "$WIN_HOME_LINK" 2>/dev/null)"
 [ -n "$WinProfileAbs" ] || WinProfileAbs="$PROFILE_ROOT"
 
 # Remove dangling symlinks whose intended target lies under WinProfileAbs (absolute or relative link text).
 if [ "$CLEAN_BROKEN" -eq 1 ]; then
   if [ -z "$WinProfileAbs" ] || [ ! -d "$WinProfileAbs" ]; then
-    echo "clean-broken: could not resolve WinProfileAbs from ~/winHome; skipping." >&2
+    echo "clean-broken: could not resolve WinProfileAbs from $WIN_HOME_LINK; skipping." >&2
   else
     winpfx="$(realpath -m -- "$WinProfileAbs" 2>/dev/null)"
     [ -n "$winpfx" ] || winpfx="$WinProfileAbs"
     while IFS= read -r -d '' path; do
       [ -L "$path" ] || continue
       case "$path" in
-        "$HOME/winHome" | "$HOME/homeWin") continue ;;
+        "$WIN_HOME_LINK" | "$HOME_WIN_LINK") continue ;;
       esac
       [ -e "$path" ] && continue
       intended="$(symlink_intended_abs "$path")" || continue
@@ -199,7 +203,7 @@ if [ "$CLEAN_BROKEN" -eq 1 ]; then
         rm -- "$path"
       fi
     done < <( {
-      find "$HOME" -type l ! -path "$HOME/winHome" ! -path "$HOME/homeWin" -print0 2>/dev/null
+      find "$HOME" -type l ! -path "$WIN_HOME_LINK" ! -path "$HOME_WIN_LINK" -print0 2>/dev/null
       [ -d /etc ] && find /etc -type l -print0 2>/dev/null
     } )
   fi
