@@ -1,7 +1,10 @@
-{
-  "$help": "https://aka.ms/terminal-documentation",
+{   "$help": "https://aka.ms/terminal-documentation",
   "$schema": "https://aka.ms/terminal-profiles-schema",
   "actions": [
+    {
+      "command": "experimental.openScratchpad",
+      "id": "User.experimental.openScratchpad"
+    },
     {
       "command": {
         "action": "moveTab",
@@ -10,8 +13,8 @@
       "id": "User.moveTab.EA39957B"
     },
     {
-      "command": "experimental.openScratchpad",
-      "id": "User.experimental.openScratchpad"
+      "command": "tabSearch",
+      "id": "User.tabSearch"
     },
     {
       "command": {
@@ -22,10 +25,6 @@
       "id": "User.splitPane.FEF0D40B"
     },
     {
-      "command": "selectAll",
-      "id": "User.selectAll"
-    },
-    {
       "command": {
         "action": "sendInput",
         "input": "\u001b[68;5u"
@@ -33,8 +32,8 @@
       "id": "User.sendInput.AltShiftD"
     },
     {
-      "command": "tabSearch",
-      "id": "User.tabSearch"
+      "command": "selectAll",
+      "id": "User.selectAll"
     },
     {
       "command": {
@@ -89,13 +88,6 @@
     {
       "command": {
         "action": "sendInput",
-        "input": "\u001b[92;6u"
-      },
-      "id": "User.sendInput.CtrlShiftBackslash"
-    },
-    {
-      "command": {
-        "action": "sendInput",
         "input": "\u001b[86;6u"
       },
       "id": "User.sendInput.CtrlShiftV"
@@ -103,9 +95,9 @@
     {
       "command": {
         "action": "sendInput",
-        "input": "\u001b[96;6u"
+        "input": "\u001b[92;6u"
       },
-      "id": "User.sendInput.CtrlShiftBacktick"
+      "id": "User.sendInput.CtrlShiftBackslash"
     },
     {
       "command": {
@@ -113,6 +105,13 @@
         "input": "\u001b[70;6u"
       },
       "id": "User.sendInput.CtrlShiftF"
+    },
+    {
+      "command": {
+        "action": "sendInput",
+        "input": "\u001b[96;6u"
+      },
+      "id": "User.sendInput.CtrlShiftBacktick"
     },
     {
       "command": {
@@ -136,10 +135,6 @@
       "id": "User.sendInput.CtrlShiftA"
     },
     {
-      "command": "openNewTabDropdown",
-      "id": "User.openNewTabDropdown"
-    },
-    {
       "command": {
         "action": "sendInput",
         "input": "\u001b[13;2u"
@@ -158,32 +153,32 @@
       "keys": "ctrl+shift+c"
     },
     {
-      "id": null,
-      "keys": "ctrl+t"
-    },
-    {
-      "id": null,
-      "keys": "ctrl+p"
-    },
-    {
-      "id": "User.paste",
-      "keys": "ctrl+shift+v"
+      "id": "User.sendInput.CtrlShiftTab",
+      "keys": "ctrl+shift+tab"
     },
     {
       "id": "Terminal.CopyToClipboard",
       "keys": "ctrl+c"
     },
     {
-      "id": "User.sendInput.CtrlShiftTab",
-      "keys": "ctrl+shift+tab"
+      "id": "User.paste",
+      "keys": "ctrl+shift+v"
     },
     {
-      "id": "User.sendInput.CtrlShiftF",
-      "keys": "ctrl+shift+f"
+      "id": null,
+      "keys": "ctrl+p"
+    },
+    {
+      "id": null,
+      "keys": "ctrl+t"
     },
     {
       "id": null,
       "keys": "ctrl+v"
+    },
+    {
+      "id": "User.sendInput.CtrlShiftF",
+      "keys": "ctrl+shift+f"
     },
     {
       "id": null,
@@ -250,7 +245,7 @@
       "keys": "ctrl+shift+\\"
     },
     {
-      "id": "User.openNewTabDropdown",
+      "id": null,
       "keys": "ctrl+`"
     },
     {
@@ -364,24 +359,8 @@
         },
         "guid": "{681405cc-6475-4a68-b6c7-3845db706f9b}",
         "hidden": false,
-        "icon": "%USERPROFILE%/.wsl2/wsl.ico",
+        "icon": "C:\\Users\\devic\\.wsl2\\wsl.ico",
         "name": "WSL2 (Zellij)",
-        "startingDirectory": "~"
-      },
-      {
-        "colorScheme": "Campbell",
-        "commandline": "tssh",
-        "cursorShape": "filledBox",
-        "environment": {
-          "TERM": "xterm-256color"
-        },
-        "font": {
-          "size": 13
-        },
-        "guid": "{a222541a-d636-451f-a59c-68f79fea7799}",
-        "hidden": false,
-        "icon": "%USERPROFILE%/.ssh/ssh-logo.png",
-        "name": "ssh (tssh)",
         "startingDirectory": "~"
       },
       {
@@ -394,7 +373,7 @@
         "closeOnExit": "automatic",
         "guid": "{d8e96812-b789-5068-a5ae-10b2fb53e95f}",
         "hidden": false,
-        "icon": "%USERPROFILE%/.wsl2/wsl.ico",
+        "icon": "C:\\Users\\devic\\.wsl2\\wsl.ico",
         "name": "Ubuntu 24.04.1 LTS",
         "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc"
       },
@@ -420,6 +399,81 @@
         "guid": "{4133d52f-ce95-5480-905a-7609ae31d5f9}",
         "hidden": false,
         "name": "Developer Command Prompt for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      },
+      {
+        "guid": "{4fae0d7f-f9e6-501f-9ea8-f2a669d98a5b}",
+        "hidden": false,
+        "name": "Developer PowerShell for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      }
+    ]
+  },
+  "schemes": [],
+  "showTabsInTitlebar": true,
+  "themes": [],
+  "windowingBehavior": "useNew"
+oper Command Prompt for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      },
+      {
+        "guid": "{4fae0d7f-f9e6-501f-9ea8-f2a669d98a5b}",
+        "hidden": false,
+        "name": "Developer PowerShell for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      }
+    ]
+  },
+  "schemes": [],
+  "showTabsInTitlebar": true,
+  "themes": [],
+  "windowingBehavior": "useNew"
+oper Command Prompt for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      },
+      {
+        "guid": "{4fae0d7f-f9e6-501f-9ea8-f2a669d98a5b}",
+        "hidden": false,
+        "name": "Developer PowerShell for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      }
+    ]
+  },
+  "schemes": [],
+  "showTabsInTitlebar": true,
+  "themes": [],
+  "windowingBehavior": "useNew"
+oper Command Prompt for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      },
+      {
+        "guid": "{4fae0d7f-f9e6-501f-9ea8-f2a669d98a5b}",
+        "hidden": false,
+        "name": "Developer PowerShell for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      }
+    ]
+  },
+  "schemes": [],
+  "showTabsInTitlebar": true,
+  "themes": [],
+  "windowingBehavior": "useNew"
+oper Command Prompt for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      },
+      {
+        "guid": "{4fae0d7f-f9e6-501f-9ea8-f2a669d98a5b}",
+        "hidden": false,
+        "name": "Developer PowerShell for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      }
+    ]
+  },
+  "schemes": [],
+  "showTabsInTitlebar": true,
+  "themes": [],
+  "windowingBehavior": "useNew"
+oper Command Prompt for VS 2022",
         "source": "Windows.Terminal.VisualStudio"
       },
       {
