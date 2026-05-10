@@ -1,5 +1,5 @@
 {
-  "numStartups": 128,
+  "numStartups": 129,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -1025,7 +1025,7 @@
       "enabledMcpjsonServers": [],
       "disabledMcpjsonServers": [],
       "hasTrustDialogAccepted": true,
-      "projectOnboardingSeenCount": 0,
+      "projectOnboardingSeenCount": 1,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastSessionMetrics": {
@@ -1036,10 +1036,14 @@
         "frame_duration_ms_p50": 8.90059999999994,
         "frame_duration_ms_p95": 12.148069999999825,
         "frame_duration_ms_p99": 12.436733999999815
-      }
+      },
+      "lastGracefulShutdown": false,
+      "lastHintSessionId": "80b23939-8502-4d84-8b5d-442159bdcf5b",
+      "lastSessionFirstPrompt": "read the session at @session_id.txt and let's continue working on it",
+      "lastSessionModified": 1778416579363
     }
   },
-  "lastReleaseNotesSeen": "2.1.132",
+  "lastReleaseNotesSeen": "2.1.138",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
@@ -1090,7 +1094,7 @@
     "claude.ai Mermaid Chart",
     "claude.ai Google Drive"
   ],
-  "closedIssuesLastChecked": 1778242706654,
+  "closedIssuesLastChecked": 1778416564199,
   "ideHintShownCount": 5,
   "lastPlanModeUse": 1778245045335,
   "claudeInChromeDefaultEnabled": false,
@@ -1148,5 +1152,6 @@
   "hasVisitedPasses": false,
   "passesLastSeenRemaining": 3,
   "copyOnSelect": false,
-  "showSpinnerTree": false
+  "showSpinnerTree": false,
+  "routineFiredWatermark": "2026-05-10T12:36:03.762Z"
 }
