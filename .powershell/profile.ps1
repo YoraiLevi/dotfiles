@@ -507,12 +507,17 @@ function Find-EnvPath {
     return $envPaths -ne $null
 }
 
+# Parse KEY=value lines from dotenv files (subset of typical .env syntax) and load them into the
+# current process environment (Env: drive). Variables apply to this pwsh session and child processes.
+# Usage: Import-DotEnv -Path .\.env   OR   Get-ChildItem ~/.auth -File | Import-DotEnv
 function Import-DotEnv {
+    # Path vs Pipeline are mutually exclusive sets so you either pass a path string or pipe file objects.
     [CmdletBinding(DefaultParameterSetName = 'Path')]
     param(
         [Parameter(ParameterSetName = 'Path', Position = 0, Mandatory = $true)]
         [string] $Path,
 
+        # Pipeline input from Get-ChildItem (FileInfo), strings, or objects with a FullName property.
         [Parameter(ParameterSetName = 'Pipeline', Mandatory = $true, ValueFromPipeline = $true)]
         [object] $InputObject,
 
@@ -521,6 +526,7 @@ function Import-DotEnv {
     )
 
     begin {
+        # Single-file loader shared by -Path and pipeline paths.
         function Import-OneDotEnvFile {
             param(
                 [string] $ResolvedPath,
@@ -534,12 +540,14 @@ function Import-DotEnv {
                 return
             }
 
+            # Allow only files; directories from Get-ChildItem without -File are ignored here.
             $item = Get-Item -LiteralPath $ResolvedPath -ErrorAction SilentlyContinue
             if ($null -ne $item -and $item.PSIsContainer) {
                 Write-Verbose "Import-DotEnv: skipping directory: $ResolvedPath"
                 return
             }
 
+            # switch -File streams lines (memory-friendly); regex arms skip blanks and #-comments.
             switch -Regex -File $ResolvedPath {
                 '^\s*(?:#.*)?$' {
                     # blank or comment-only line
@@ -547,10 +555,12 @@ function Import-DotEnv {
                 }
                 default {
                     $line = $_.TrimEnd()
+                    # Optional shell-style prefix before KEY=...
                     if ($line.StartsWith('export ')) {
                         $line = $line.Substring(7).TrimStart()
                     }
 
+                    # Split on first '=' only so values may contain '=' (URLs, base64, etc.).
                     $eq = $line.IndexOf('=')
                     if ($eq -lt 1) { continue }
 
@@ -559,6 +569,7 @@ function Import-DotEnv {
 
                     $value = $line.Substring($eq + 1).Trim()
 
+                    # Strip one matching pair of surrounding quotes if present (not full dotenv escaping).
                     if ($value.Length -ge 2) {
                         $q = $value[0]
                         if (($q -eq '"' -or $q -eq "'") -and $value[-1] -eq $q) {
@@ -566,11 +577,13 @@ function Import-DotEnv {
                         }
                     }
 
+                    # Process-scoped env vars for this session (see also [Environment]::SetEnvironmentVariable).
                     Set-Item -LiteralPath "Env:$name" -Value $value
                 }
             }
         }
 
+        # Normalize pipeline objects to zero or one filesystem path per input object.
         function Resolve-DotEnvInputToPath {
             param([object] $Obj)
 
@@ -578,6 +591,7 @@ function Import-DotEnv {
                 return @()
             }
             if ($Obj -is [System.IO.FileInfo]) {
+                # Unary comma ensures a single path stays a one-element array when enumerated later.
                 return ,$Obj.FullName
             }
             if ($Obj -is [System.IO.DirectoryInfo]) {
@@ -588,6 +602,7 @@ function Import-DotEnv {
                 return ,$Obj.Trim()
             }
 
+            # e.g. Select-Object FullName from Get-ChildItem output.
             $fullNameProp = $Obj.PSObject.Properties['FullName']
             if ($null -ne $fullNameProp -and $fullNameProp.Value) {
                 return ,[string]$fullNameProp.Value
@@ -599,6 +614,7 @@ function Import-DotEnv {
 
     process {
         if ($PSCmdlet.ParameterSetName -eq 'Path') {
+            # Expand ~, relative paths, and provider-qualified paths to a literal filesystem path.
             $resolved = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
             Import-OneDotEnvFile -ResolvedPath $resolved -ThrowIfMissing:$Required
             return
