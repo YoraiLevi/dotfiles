@@ -56,7 +56,7 @@
 	unstage = restore --staged .
     # https://stackoverflow.com/a/1143800/12603110 - unadd
     unadd = rm --cached
-    ls = ls-files #--cached --others --exclude-standard
+    ls = ls-files --cached
 [i18n]
 	logOutputEncoding = utf-8
 
