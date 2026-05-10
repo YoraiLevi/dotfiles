@@ -1,6 +1,7 @@
 # This is not a "config warning" script.  It mirrors Windows paths into WSL by symlink
 # (targets are relative to each link path, not absolute):
 #   - %USERPROFILE%\.ssh → ~/.ssh, then chmod/chown on real targets behind symlinks (readlink -f);
+#   - %USERPROFILE%\.auth → ~/.auth;
 #   - %USERPROFILE%\.wsl2\home → $HOME/…;
 #   - %USERPROFILE%\.wsl2\etc → /etc/…;
 #   - and chmod 644 on the real file if /etc/wsl.conf is a symlink (so a linked config keeps sane
