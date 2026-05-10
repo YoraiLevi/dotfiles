@@ -144,29 +144,22 @@ win_userprofile_wsl() {
   fi
 }
 
-# True if $1 looks like a Windows user profile tree (weak check when cmd.exe is unavailable).
-profile_tree_p() {
-  [ -n "$1" ] && [ -d "$1" ] || return 1
-  case "$1" in /mnt/*) ;; *) return 1 ;; esac
-  [ -d "$1/.wsl2" ] || [ -d "$1/.ssh" ] || return 1
-  return 0
-}
-
-# True if directory $1 is the profile described by normalized path $2 (from wslpath), or passes
-# profile_tree_p when $2 is empty.
-profile_dir_matches() {
+# $1 = candidate directory; $2 = realpath of %%USERPROFILE%% from cmd (empty if cmd failed).
+# When cmd worked, only that exact profile counts. Otherwise accept /mnt trees with .wsl2 or .ssh.
+resolved_profile_ok() {
   local cand="$1" norm_cmd="$2" n
   [ -d "$cand" ] || return 1
   if [ -n "$norm_cmd" ]; then
     n="$(realpath -m -- "$cand" 2>/dev/null)" || return 1
     [ "$n" = "$norm_cmd" ]
   else
-    profile_tree_p "$cand"
+    case "$cand" in /mnt/*) ;; *) return 1 ;; esac
+    [ -d "$cand/.wsl2" ] || [ -d "$cand/.ssh" ]
   fi
 }
 
-# Print absolute profile directory: prefer anchor symlinks, then any other top-level $HOME symlink
-# whose target resolves and matches cmd/wslpath when that works, else heuristic; finally cmd path alone.
+# Print absolute profile dir: try ~/.winHome / ~/.homeWin, then any other top-level symlink in $HOME,
+# then fall back to cmd.exe/wslpath (so we never depend on a specific old symlink name).
 resolve_windows_profile_dir() {
   local from_cmd="" norm_cmd="" cand="" link
   from_cmd="$(win_userprofile_wsl 2>/dev/null || true)"
@@ -177,7 +170,7 @@ resolve_windows_profile_dir() {
 
   for anchor in "$WIN_HOME_LINK" "$HOME_WIN_LINK"; do
     cand="$(readlink -f -- "$anchor" 2>/dev/null || true)"
-    if [ -n "$cand" ] && [ -d "$cand" ] && profile_dir_matches "$cand" "$norm_cmd"; then
+    if [ -n "$cand" ] && resolved_profile_ok "$cand" "$norm_cmd"; then
       printf '%s\n' "$cand"
       return 0
     fi
@@ -188,8 +181,8 @@ resolve_windows_profile_dir() {
       "$WIN_HOME_LINK" | "$HOME_WIN_LINK") continue ;;
     esac
     cand="$(readlink -f -- "$link" 2>/dev/null || true)"
-    [ -n "$cand" ] && [ -d "$cand" ] || continue
-    profile_dir_matches "$cand" "$norm_cmd" || continue
+    [ -n "$cand" ] || continue
+    resolved_profile_ok "$cand" "$norm_cmd" || continue
     printf '%s\n' "$cand"
     return 0
   done < <(find "$HOME" -mindepth 1 -maxdepth 1 -type l -print0 2>/dev/null)
@@ -223,8 +216,7 @@ ln_sf_rel() {
   ln -sf -- "$relpath" "$dst"
 }
 
-# Point $dst at $src using the same relative path as ln_sf_rel; replace symlinks when that path changed
-# or the link is broken (readlink text differs from the relative path we would use now).
+# Make $dst a symlink to $src using a path relative to dirname($dst); refresh if wrong or dangling.
 mirror_symlink() {
   local src="$1" dst="$2"
   local dst_dir relpath cur
