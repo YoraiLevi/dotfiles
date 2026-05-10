@@ -499,9 +499,6 @@ if [ -n "$SSH_CONNECTION" ] && [ -z "$DISPLAY" ]; then
     export BROWSER="$HOME/.local/bin/ssh-copy-text-to-clipboard"
 fi
 
-
-
-
 # zellij da -y > /dev/null # delete dead sessions
 
 if [ -n "$ZELLIJ_SESSION_NAME" ]; then
@@ -518,7 +515,6 @@ if [ -n "$ZELLIJ_SESSION_NAME" ]; then
     }
     PROMPT_COMMAND="_zellij_update_timestamp${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 fi
-
 
 if [[ -z "$ZELLIJ" ]]; then
     if [ ! -z "$SSH_CONNECTION" ]; then
