@@ -508,50 +508,105 @@ function Find-EnvPath {
 }
 
 function Import-DotEnv {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Path')]
     param(
-        [Parameter(Position = 0, Mandatory=$true)]
+        [Parameter(ParameterSetName = 'Path', Position = 0, Mandatory = $true)]
         [string] $Path,
+
+        [Parameter(ParameterSetName = 'Pipeline', Mandatory = $true, ValueFromPipeline = $true)]
+        [object] $InputObject,
 
         # If set, fail when the file is missing instead of no-op
         [switch] $Required
     )
 
-    $resolved = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
-    if (-not (Test-Path -LiteralPath $resolved)) {
-        if ($Required) {
-            throw "Import-DotEnv: file not found: $resolved"
-        }
-        return
-    }
+    begin {
+        function Import-OneDotEnvFile {
+            param(
+                [string] $ResolvedPath,
+                [switch] $ThrowIfMissing
+            )
 
-    switch -Regex -File $resolved {
-        '^\s*(?:#.*)?$' {
-            # blank or comment-only line
-            continue
-        }
-        default {
-            $line = $_.TrimEnd()
-            if ($line.StartsWith('export ')) {
-                $line = $line.Substring(7).TrimStart()
+            if (-not (Test-Path -LiteralPath $ResolvedPath)) {
+                if ($ThrowIfMissing) {
+                    throw "Import-DotEnv: file not found: $ResolvedPath"
+                }
+                return
             }
 
-            $eq = $line.IndexOf('=')
-            if ($eq -lt 1) { continue }
+            $item = Get-Item -LiteralPath $ResolvedPath -ErrorAction SilentlyContinue
+            if ($null -ne $item -and $item.PSIsContainer) {
+                Write-Verbose "Import-DotEnv: skipping directory: $ResolvedPath"
+                return
+            }
 
-            $name = $line.Substring(0, $eq).Trim()
-            if ([string]::IsNullOrWhiteSpace($name) -or $name[0] -eq '#') { continue }
+            switch -Regex -File $ResolvedPath {
+                '^\s*(?:#.*)?$' {
+                    # blank or comment-only line
+                    continue
+                }
+                default {
+                    $line = $_.TrimEnd()
+                    if ($line.StartsWith('export ')) {
+                        $line = $line.Substring(7).TrimStart()
+                    }
 
-            $value = $line.Substring($eq + 1).Trim()
+                    $eq = $line.IndexOf('=')
+                    if ($eq -lt 1) { continue }
 
-            if ($value.Length -ge 2) {
-                $q = $value[0]
-                if (($q -eq '"' -or $q -eq "'") -and $value[-1] -eq $q) {
-                    $value = $value.Substring(1, $value.Length - 2)
+                    $name = $line.Substring(0, $eq).Trim()
+                    if ([string]::IsNullOrWhiteSpace($name) -or $name[0] -eq '#') { continue }
+
+                    $value = $line.Substring($eq + 1).Trim()
+
+                    if ($value.Length -ge 2) {
+                        $q = $value[0]
+                        if (($q -eq '"' -or $q -eq "'") -and $value[-1] -eq $q) {
+                            $value = $value.Substring(1, $value.Length - 2)
+                        }
+                    }
+
+                    Set-Item -LiteralPath "Env:$name" -Value $value
                 }
             }
+        }
 
-            Set-Item -LiteralPath "Env:$name" -Value $value
+        function Resolve-DotEnvInputToPath {
+            param([object] $Obj)
+
+            if ($null -eq $Obj) {
+                return @()
+            }
+            if ($Obj -is [System.IO.FileInfo]) {
+                return ,$Obj.FullName
+            }
+            if ($Obj -is [System.IO.DirectoryInfo]) {
+                Write-Verbose "Import-DotEnv: skipping directory: $($Obj.FullName)"
+                return @()
+            }
+            if ($Obj -is [string]) {
+                return ,$Obj.Trim()
+            }
+
+            $fullNameProp = $Obj.PSObject.Properties['FullName']
+            if ($null -ne $fullNameProp -and $fullNameProp.Value) {
+                return ,[string]$fullNameProp.Value
+            }
+
+            return ,[string]$Obj
+        }
+    }
+
+    process {
+        if ($PSCmdlet.ParameterSetName -eq 'Path') {
+            $resolved = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+            Import-OneDotEnvFile -ResolvedPath $resolved -ThrowIfMissing:$Required
+            return
+        }
+
+        foreach ($p in (Resolve-DotEnvInputToPath -Obj $InputObject)) {
+            $resolved = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($p)
+            Import-OneDotEnvFile -ResolvedPath $resolved -ThrowIfMissing:$Required
         }
     }
 }
