@@ -12,10 +12,13 @@
 	"editor.gotoLocation.multipleTypeDefinitions": "gotoAndPeek",
 	"editor.formatOnSaveMode": "modificationsIfAvailable",
 	"references.preferredLocation": "view",
+	"editor.wordWrap": "on",
+	"editor.rulers": [
+		
+	],
 	"[python]": {
 		"diffEditor.ignoreTrimWhitespace": true,
 		"editor.defaultFormatter": "ms-python.black-formatter",
-		"editor.wordWrap": "on",
 		// "editor.formatOnSave": true,
 		// "editor.codeActionsOnSave": {
 		// "source.organizeImports": "explicit"
@@ -295,7 +298,7 @@
 			"inputOption.activeForeground": "#d6c9c0",
 			"inputOption.activeBackground": "#564b45",
 			"inputOption.activeBorder": "#a39a92",
-
+			
 			
 			"editor.selectionBackground": "#acacac44", // Selection color (focused editor)
 			"editor.inactiveSelectionBackground": "#acacac4e", // Selection color when editor loses focus (e.g., clicked into chat/sidebar). Slightly higher opacity than focused so it stays readable instead of fading to ~13%.
