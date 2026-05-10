@@ -34,7 +34,7 @@ if [ -d "$WinDotSSH" ]; then
     target="$HOME/.ssh/$rel"
     echo "$rel"
     mkdir -p "$(dirname "$target")"
-    if [ ! -L "$target" ]; then
+    if [ -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
@@ -84,7 +84,7 @@ if [ -d "$WinHome" ]; then
     target="$HOME/$rel"
     echo "$rel"
     mkdir -p "$(dirname "$target")"
-    if [ ! -L "$target" ]; then
+    if [ -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
@@ -122,7 +122,7 @@ if [ -d "$WinClaude" ]; then
     target="$HOME/.claude/$rel"
     echo "$rel"
     mkdir -p "$(dirname "$target")"
-    if [ ! -L "$target" ]; then
+    if [ -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
@@ -141,7 +141,7 @@ if [ -d "$WinEtc" ]; then
     target="/etc/$rel"
     echo "etc: $rel"
     mkdir -p "$(dirname "$target")"
-    if [ ! -L "$target" ]; then
+    if [ -L "$target" ]; then
       [ -e "$target" ] && mv -f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
