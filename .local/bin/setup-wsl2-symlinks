@@ -4,6 +4,7 @@
 #   - %USERPROFILE%\.auth → ~/.auth;
 #   - %USERPROFILE%\.wsl2\home → $HOME/…;
 #   - %USERPROFILE%\.wsl2\etc → /etc/…;
+#   - $HOME/.winHome and $HOME/.homeWin → %%USERPROFILE%% (legacy ~/winHome ~/homeWin removed when redundant);
 #   - and chmod 644 on the real file if /etc/wsl.conf is a symlink (so a linked config keeps sane
 #     permissions).
 # Drive metadata for chmod to stick is validated in run_before_001_wsl2.sh, not here.
@@ -202,7 +203,14 @@ else
 fi
 
 # Remove legacy anchor symlinks if they still point at the same profile (avoids stale winHome/ in link text).
-if [ "$DRY_RUN" -eq 0 ]; then
+if [ "$DRY_RUN" -eq 1 ]; then
+  for legacy in "$LEGACY_WIN_HOME_LINK" "$LEGACY_HOME_WIN_LINK"; do
+    [ -L "$legacy" ] || continue
+    leg_abs="$(readlink -f -- "$legacy" 2>/dev/null)" || continue
+    [ -n "$leg_abs" ] && [ "$leg_abs" = "$PROFILE_ROOT" ] || continue
+    say "dry-run: rm -- $legacy (legacy anchor, same as PROFILE_ROOT)"
+  done
+else
   for legacy in "$LEGACY_WIN_HOME_LINK" "$LEGACY_HOME_WIN_LINK"; do
     [ -L "$legacy" ] || continue
     leg_abs="$(readlink -f -- "$legacy" 2>/dev/null)" || continue
@@ -389,7 +397,7 @@ if [ -d "$WinClaude" ]; then
 else
   echo "Windows .agents/claude directory not found" >&2
 fi
-ln_sf_rel "$WinClaude/.claude.json" "$HOME/.claude.json"
+mirror_symlink "$WinClaude/.claude.json" "$HOME/.claude.json"
 
 # Mirror USERPROFILE/.wsl2/etc into WSL /etc (may require running chezmoi with sufficient privileges for /etc).
 WinEtc="$WinWSL/.wsl2/etc/"
