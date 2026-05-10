@@ -235,11 +235,7 @@ mirror_symlink() {
 
 ln_sf_rel "$PROFILE_ROOT" "$WIN_HOME_LINK"
 ln_sf_rel "$PROFILE_ROOT" "$HOME_WIN_LINK"
-if [ "$DRY_RUN" -eq 0 ]; then
-  WinWSL="$WIN_HOME_LINK"
-else
-  WinWSL="$PROFILE_ROOT"
-fi
+WinWSL="$WIN_HOME_LINK"
 
 # Absolute path of Windows profile (for clean-broken); uses $WIN_HOME_LINK when present, else PROFILE_ROOT.
 WinProfileAbs="$(readlink -f -- "$WIN_HOME_LINK" 2>/dev/null)"

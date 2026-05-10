@@ -1,1 +1,1 @@
-../../winHome/.wsl2/home/.agents/cursor/.bashrc
+../../.winHome/.wsl2/home/.agents/cursor/.bashrc
