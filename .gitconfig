@@ -49,13 +49,19 @@
     # https://stackoverflow.com/a/15778570/12603110 - uncommit
     # https://stackoverflow.com/a/56476553/12603110 - uncommit soft,mixed,hard
 	# https://stackoverflow.com/a/51911725/12603110 - uncommit zsh note git reset --soft HEAD\^
-    uncommit = reset HEAD^
+	uncommit = reset HEAD^
     # https://stackoverflow.com/a/2531803/12603110 - ununcommit
     # Find the commit hash you want to reset to with git reflog, then do a git reset [hash]
     recommit = reset 'HEAD@{1}'
-    unstage = restore --staged .
+	unstage = restore --staged .
     # https://stackoverflow.com/a/1143800/12603110 - unadd
     unadd = rm --cached
 [i18n]
 	logOutputEncoding = utf-8
 
+[credential "https://github.com"]
+	helper = 
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !gh auth git-credential
