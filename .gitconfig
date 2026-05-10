@@ -49,6 +49,9 @@
     # https://stackoverflow.com/a/56476553/12603110 - uncommit soft,mixed,hard
 	# https://stackoverflow.com/a/51911725/12603110 - uncommit zsh note git reset --soft HEAD\^
     uncommit = reset HEAD^
+    # https://stackoverflow.com/a/2531803/12603110 - ununcommit
+    # Find the commit hash you want to reset to with git reflog, then do a git reset [hash]
+    ununcommit = reset 'HEAD@{1}'
     unstage = restore --staged .
     # https://stackoverflow.com/a/1143800/12603110 - unadd
     unadd = rm --cached
