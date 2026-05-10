@@ -51,7 +51,7 @@
     uncommit = reset HEAD^
     # https://stackoverflow.com/a/2531803/12603110 - ununcommit
     # Find the commit hash you want to reset to with git reflog, then do a git reset [hash]
-    ununcommit = reset 'HEAD@{1}'
+    recommit = reset 'HEAD@{1}'
     unstage = restore --staged .
     # https://stackoverflow.com/a/1143800/12603110 - unadd
     unadd = rm --cached
