@@ -356,7 +356,7 @@ cd() {
         local count
         count=$(command ls -1A 2>/dev/null | wc -l)
         if [ "$count" -lt 15 ]; then
-            ls -l --color=auto -F
+            ls -go --color=auto -F
         fi
     }
 }
