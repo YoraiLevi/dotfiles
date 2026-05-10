@@ -4,7 +4,8 @@
 #   - %USERPROFILE%\.auth → ~/.auth;
 #   - %USERPROFILE%\.wsl2\home → $HOME/…;
 #   - %USERPROFILE%\.wsl2\etc → /etc/…;
-#   - $HOME/.winHome and $HOME/.homeWin → %%USERPROFILE%% (legacy ~/winHome ~/homeWin removed when redundant);
+#   - $HOME/.winHome and $HOME/.homeWin → %%USERPROFILE%% (any other top-level symlink to the same
+#     profile is accepted for resolution; broken or stale mirrored symlinks are refreshed by re-linking);
 #   - and chmod 644 on the real file if /etc/wsl.conf is a symlink (so a linked config keeps sane
 #     permissions).
 # Drive metadata for chmod to stick is validated in run_before_001_wsl2.sh, not here.
@@ -39,9 +40,6 @@ done
 # Symlinks under $HOME → Windows %USERPROFILE%% (single definition; used throughout).
 WIN_HOME_LINK="$HOME/.winHome"
 HOME_WIN_LINK="$HOME/.homeWin"
-# Previous names (bootstrap only): resolved if dot-prefix links are missing but old symlinks remain.
-LEGACY_WIN_HOME_LINK="$HOME/winHome"
-LEGACY_HOME_WIN_LINK="$HOME/homeWin"
 
 say() {
   [ "$QUIET" -eq 1 ] || printf '%s\n' "$@"
@@ -120,7 +118,7 @@ refers_under_win_profile() {
   esac
 }
 
-# Resolve Windows %USERPROFILE% as a WSL path. Prefer existing $WIN_HOME_LINK (no cmd.exe).
+# Resolve Windows %USERPROFILE% as a WSL path.
 # Run cmd.exe from /mnt/c or / so cwd is not a UNC path (avoids cmd's "UNC paths are not supported").
 win_userprofile_wsl() {
   local win_raw prof_dir
@@ -146,21 +144,67 @@ win_userprofile_wsl() {
   fi
 }
 
-WinWSL=""
-if [ -e "$WIN_HOME_LINK" ]; then
-  WinWSL="$(readlink -f -- "$WIN_HOME_LINK" 2>/dev/null || true)"
-fi
-if [ -z "$WinWSL" ] || [ ! -d "$WinWSL" ]; then
-  if [ -e "$LEGACY_WIN_HOME_LINK" ]; then
-    WinWSL="$(readlink -f -- "$LEGACY_WIN_HOME_LINK" 2>/dev/null || true)"
+# True if $1 looks like a Windows user profile tree (weak check when cmd.exe is unavailable).
+profile_tree_p() {
+  [ -n "$1" ] && [ -d "$1" ] || return 1
+  [ -d "$1/.wsl2" ] || [ -d "$1/.ssh" ] || return 1
+  return 0
+}
+
+# True if directory $1 is the profile described by normalized path $2 (from wslpath), or passes
+# profile_tree_p when $2 is empty.
+profile_dir_matches() {
+  local cand="$1" norm_cmd="$2" n
+  [ -d "$cand" ] || return 1
+  if [ -n "$norm_cmd" ]; then
+    n="$(realpath -m -- "$cand" 2>/dev/null)" || return 1
+    [ "$n" = "$norm_cmd" ]
+  else
+    profile_tree_p "$cand"
   fi
-fi
-if [ -z "$WinWSL" ] || [ ! -d "$WinWSL" ]; then
-  WinWSL="$(win_userprofile_wsl)" || {
-    echo "Could not resolve Windows USERPROFILE (cmd.exe / wslpath)." >&2
-    exit 1
-  }
-fi
+}
+
+# Print absolute profile directory: prefer anchor symlinks, then any other top-level $HOME symlink
+# whose target resolves and matches cmd/wslpath when that works, else heuristic; finally cmd path alone.
+resolve_windows_profile_dir() {
+  local from_cmd="" norm_cmd="" cand="" link
+  from_cmd="$(win_userprofile_wsl 2>/dev/null || true)"
+  norm_cmd=""
+  if [ -n "$from_cmd" ] && [ -d "$from_cmd" ]; then
+    norm_cmd="$(realpath -m -- "$from_cmd" 2>/dev/null || true)"
+  fi
+
+  for anchor in "$WIN_HOME_LINK" "$HOME_WIN_LINK"; do
+    cand="$(readlink -f -- "$anchor" 2>/dev/null || true)"
+    if [ -n "$cand" ] && [ -d "$cand" ] && profile_dir_matches "$cand" "$norm_cmd"; then
+      printf '%s\n' "$cand"
+      return 0
+    fi
+  done
+
+  while IFS= read -r -d '' link; do
+    case "$link" in
+      "$WIN_HOME_LINK" | "$HOME_WIN_LINK") continue ;;
+    esac
+    cand="$(readlink -f -- "$link" 2>/dev/null || true)"
+    [ -n "$cand" ] && [ -d "$cand" ] || continue
+    profile_dir_matches "$cand" "$norm_cmd" || continue
+    printf '%s\n' "$cand"
+    return 0
+  done < <(find "$HOME" -mindepth 1 -maxdepth 1 -type l -print0 2>/dev/null)
+
+  if [ -n "$norm_cmd" ] && [ -n "$from_cmd" ] && [ -d "$from_cmd" ]; then
+    printf '%s\n' "$(readlink -f -- "$from_cmd" 2>/dev/null || printf '%s' "$from_cmd")"
+    return 0
+  fi
+
+  return 1
+}
+
+WinWSL="$(resolve_windows_profile_dir)" || {
+  echo "Could not resolve Windows USERPROFILE (no working profile symlink under \$HOME and cmd.exe/wslpath failed)." >&2
+  exit 1
+}
 
 # Absolute WSL path to %%USERPROFILE%% (Windows tree); kept when dry-run skips $WIN_HOME_LINK symlinks.
 PROFILE_ROOT="$WinWSL"
@@ -179,7 +223,7 @@ ln_sf_rel() {
 }
 
 # Point $dst at $src using the same relative path as ln_sf_rel; replace symlinks when that path changed
-# (e.g. after renaming WIN_HOME_LINK so mirrored links must switch winHome → .winHome in link text).
+# or the link is broken (readlink text differs from the relative path we would use now).
 mirror_symlink() {
   local src="$1" dst="$2"
   local dst_dir relpath cur
