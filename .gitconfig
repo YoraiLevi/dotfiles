@@ -49,7 +49,7 @@
     # https://stackoverflow.com/a/56476553/12603110 - uncommit soft,mixed,hard
 	# https://stackoverflow.com/a/51911725/12603110 - uncommit zsh note git reset --soft HEAD\^
     uncommit = reset HEAD^
-    unstage = git restore --staged .
+    unstage = restore --staged .
 [i18n]
 	logOutputEncoding = utf-8
 

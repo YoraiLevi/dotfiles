@@ -174,7 +174,7 @@ mvln() {
   case "$dst" in */) dst_trailing=1 ;; esac
   if [ "$dst_trailing" -eq 1 ] || { [ -d "$dst" ] && [ ! -L "$dst" ]; }; then
     while [ "${#dst}" -gt 1 ] && [ "${dst%/}" != "$dst" ]; do dst="${dst%/}"; done
-    dst="$dst/$(basename -- "$src")"
+    dst="$dst/$(command basename -- "$src")"
   fi
 
   # Pick logical (default) or physical (--resolve) absolute-path resolution.
@@ -182,16 +182,16 @@ mvln() {
   [ "$resolve" -eq 1 ] && pwd_flags="-P"
 
   local src_dir abs_src
-  src_dir="$(builtin cd -- "$(dirname -- "$src")" && pwd $pwd_flags)" \
+  src_dir="$(builtin cd -- "$(command dirname -- "$src")" && builtin pwd $pwd_flags)" \
     || { printf 'mvln: cannot resolve source parent: %s\n' "$src" >&2; return 1; }
-  abs_src="$src_dir/$(basename -- "$src")"
+  abs_src="$src_dir/$(command basename -- "$src")"
 
   local dst_parent dst_base abs_dst
-  dst_parent="$(dirname -- "$dst")"
-  dst_base="$(basename -- "$dst")"
+  dst_parent="$(command dirname -- "$dst")"
+  dst_base="$(command basename -- "$dst")"
   mkdir -p -- "$dst_parent" \
     || { printf 'mvln: cannot create destination parent: %s\n' "$dst_parent" >&2; return 1; }
-  dst_parent="$(builtin cd -- "$dst_parent" && pwd $pwd_flags)" \
+  dst_parent="$(builtin cd -- "$dst_parent" && builtin pwd $pwd_flags)" \
     || { printf 'mvln: cannot resolve destination parent: %s\n' "$dst" >&2; return 1; }
   abs_dst="$dst_parent/$dst_base"
 
@@ -203,8 +203,8 @@ mvln() {
   fi
   if [ -e "$abs_dst" ] && [ -e "$abs_src" ]; then
     local si di
-    si="$(ls -dLi -- "$abs_src" 2>/dev/null | awk '{print $1}')"
-    di="$(ls -dLi -- "$abs_dst" 2>/dev/null | awk '{print $1}')"
+    si="$(command ls -dLi -- "$abs_src" 2>/dev/null | awk '{print $1}')"
+    di="$(command ls -dLi -- "$abs_dst" 2>/dev/null | awk '{print $1}')"
     if [ -n "$si" ] && [ "$si" = "$di" ]; then
       printf 'mvln: source and destination resolve to the same inode: %s\n' "$abs_src" >&2
       return 1

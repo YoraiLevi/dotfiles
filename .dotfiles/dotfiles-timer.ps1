@@ -53,7 +53,7 @@ Detected privilege: $mode
 function Write-CommitScript {
     @"
 `$gitArgs = @('--git-dir', '$GitDir', '--work-tree', '$WorkTree')
-& git @gitArgs add -u
+& git @gitArgs add -A
 & git @gitArgs diff --cached --quiet
 if (`$LASTEXITCODE -ne 0) {
     `$ts = Get-Date -Format 'yyyy-MM-ddTHH:mm:sszzz'

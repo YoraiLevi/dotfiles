@@ -12,3 +12,5 @@
 *.pem
 *.key
 .auth*
+
+!.wsl2/
