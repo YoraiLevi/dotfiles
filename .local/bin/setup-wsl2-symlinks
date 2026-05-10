@@ -165,8 +165,8 @@ ln_sf_rel() {
   ln -sf -- "$relpath" "$dst"
 }
 
-ln_sf_rel "$PROFILE_ROOT" "$HOME/.winHome"
-ln_sf_rel "$PROFILE_ROOT" "$HOME/.homeWin"
+ln_sf_rel "$PROFILE_ROOT" "$HOME/winHome"
+ln_sf_rel "$PROFILE_ROOT" "$HOME/homeWin"
 if [ "$DRY_RUN" -eq 0 ]; then
   WinWSL="$HOME/winHome"
 else
