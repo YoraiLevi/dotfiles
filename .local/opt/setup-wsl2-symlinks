@@ -10,21 +10,24 @@
 QUIET=0
 FAST=0
 CLEAN_BROKEN=0
+DRY_RUN=0
 while [ "$#" -gt 0 ]; do
   case "$1" in
     -q | --quiet) QUIET=1 ;;
     -F | --fast) FAST=1 ;;
     -C | --clean-broken) CLEAN_BROKEN=1 ;;
+    -n | --dry-run) DRY_RUN=1 ;;
     -h | --help)
-      printf 'Usage: %s [-q|--quiet] [-F|--fast] [-C|--clean-broken]\n' "${0##*/}" >&2
+      printf 'Usage: %s [-q|--quiet] [-F|--fast] [-C|--clean-broken] [-n|--dry-run]\n' "${0##*/}" >&2
       printf '  -q  No progress; silence cmd.exe stderr when resolving USERPROFILE.\n' >&2
       printf '  -F  Skip chmod/chown pass on ~/.ssh (faster on %%USERPROFILE%% / drvfs).\n' >&2
       printf '  -C  Remove dangling symlinks under $HOME and /etc whose target resolves under %%USERPROFILE%%.\n' >&2
+      printf '  -n  Print actions only; no ln/rm/cp/chmod/chown/mkdir/mv.\n' >&2
       exit 0
       ;;
     *)
       printf 'Unknown option: %s\n' "$1" >&2
-      printf 'Usage: %s [-q|--quiet] [-F|--fast] [-C|--clean-broken]\n' "${0##*/}" >&2
+      printf 'Usage: %s [-q|--quiet] [-F|--fast] [-C|--clean-broken] [-n|--dry-run]\n' "${0##*/}" >&2
       exit 1
       ;;
   esac
@@ -33,6 +36,54 @@ done
 
 say() {
   [ "$QUIET" -eq 1 ] || printf '%s\n' "$@"
+}
+
+dry_mkdir_p() {
+  if [ "$DRY_RUN" -eq 1 ]; then
+    say "dry-run: mkdir -p -- $1"
+  else
+    mkdir -p -- "$1"
+  fi
+}
+
+dry_mv_f() {
+  if [ "$DRY_RUN" -eq 1 ]; then
+    say "dry-run: mv -f -- $1 $2"
+  else
+    mv -f -- "$1" "$2"
+  fi
+}
+
+dry_chmod() {
+  if [ "$DRY_RUN" -eq 1 ]; then
+    say "dry-run: chmod $*"
+  else
+    chmod "$@"
+  fi
+}
+
+dry_chown() {
+  if [ "$DRY_RUN" -eq 1 ]; then
+    say "dry-run: chown $*"
+  else
+    chown "$@"
+  fi
+}
+
+dry_cp_f() {
+  if [ "$DRY_RUN" -eq 1 ]; then
+    say "dry-run: cp -f -- $1 $2"
+  else
+    command cp -f -- "$1" "$2"
+  fi
+}
+
+dry_rm() {
+  if [ "$DRY_RUN" -eq 1 ]; then
+    say "dry-run: rm -- $1"
+  else
+    rm -- "$1"
+  fi
 }
 
 # Intended absolute path of a symlink's target (GNU realpath -m; works for broken links).
@@ -95,21 +146,35 @@ if [ -z "$WinWSL" ] || [ ! -d "$WinWSL" ]; then
   }
 fi
 
+# Absolute WSL path to %%USERPROFILE%% (Windows tree); kept when dry-run skips ~/winHome symlinks.
+PROFILE_ROOT="$WinWSL"
+
 # Symlink $dst -> $src using a path relative to dirname($dst) (-s: do not resolve symlinks in $src).
 ln_sf_rel() {
   local src="$1" dst="$2"
   local dst_dir relpath
   dst_dir=$(dirname -- "$dst")
   relpath=$(realpath -s --relative-to="$dst_dir" "$src") || return 1
+  if [ "$DRY_RUN" -eq 1 ]; then
+    say "dry-run: ln -sf -- $relpath $dst"
+    return 0
+  fi
   ln -sf -- "$relpath" "$dst"
 }
 
-ln_sf_rel "$WinWSL" "$HOME/winHome"
-ln_sf_rel "$WinWSL" "$HOME/homeWin"
-WinWSL="$HOME/winHome"
+if [ "$DRY_RUN" -eq 0 ]; then
+  ln_sf_rel "$PROFILE_ROOT" "$HOME/winHome"
+  ln_sf_rel "$PROFILE_ROOT" "$HOME/homeWin"
+  WinWSL="$HOME/winHome"
+else
+  say "dry-run: ln -sf -- <relative-to-$HOME/winHome> $HOME/winHome"
+  say "dry-run: ln -sf -- <relative-to-$HOME/homeWin> $HOME/homeWin"
+  WinWSL="$PROFILE_ROOT"
+fi
 
-# Absolute path of Windows profile (symlink target of ~/winHome).
+# Absolute path of Windows profile (for clean-broken); uses ~/winHome when present, else PROFILE_ROOT.
 WinProfileAbs="$(readlink -f -- "$HOME/winHome" 2>/dev/null)"
+[ -n "$WinProfileAbs" ] || WinProfileAbs="$PROFILE_ROOT"
 
 # Remove dangling symlinks whose intended target lies under WinProfileAbs (absolute or relative link text).
 if [ "$CLEAN_BROKEN" -eq 1 ]; then
@@ -127,7 +192,7 @@ if [ "$CLEAN_BROKEN" -eq 1 ]; then
       intended="$(symlink_intended_abs "$path")" || continue
       refers_under_win_profile "$intended" "$winpfx" || continue
       say "clean-broken: rm $path -> $intended"
-      rm -- "$path"
+      dry_rm "$path"
     done < <( {
       find "$HOME" -type l ! -path "$HOME/winHome" ! -path "$HOME/homeWin" -print0 2>/dev/null
       [ -d /etc ] && find /etc -type l -print0 2>/dev/null
@@ -143,9 +208,9 @@ if [ -d "$WinDotSSH" ]; then
     rel="${file#"$WinDotSSH"}"
     target="$HOME/.ssh/$rel"
     say "$rel"
-    mkdir -p "$(dirname "$target")"
+    dry_mkdir_p "$(dirname "$target")"
     if [ ! -L "$target" ]; then
-      [ -e "$target" ] && mv -f "$target" "$target.bak"
+      [ -e "$target" ] && dry_mv_f "$target" "$target.bak"
       ln_sf_rel "$file" "$target"
     fi
   done
