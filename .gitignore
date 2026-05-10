@@ -12,6 +12,7 @@
 *.pem
 *.key
 .auth*
+.auth/
 
 # when dotfiles add -A is executed these folders will be added to the index
 !.agents/
