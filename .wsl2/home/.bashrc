@@ -297,14 +297,6 @@ if command -v fzf >/dev/null 2>&1; then
     bind -x '"\C-r": __fzf_history'
 fi
 
-# Ghost.sh — fish-style inline history ghost text
-# DISABLED: Too many edge cases and state sync issues
-# if [ -f "$HOME/.ghost.sh" ]; then
-#     source "$HOME/.ghost.sh"
-#     _ghost_history_file="${HISTFILE:-$HOME/.bash_history}"
-#     _ghost_load_history
-# fi
-
 # Source credential env files (skip .json and other data files)
 if [ -d "$HOME/.auth" ]; then
     for f in "$HOME/.auth"/*; do
@@ -351,6 +343,9 @@ if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; th
     # export SHELL="wsl.exe"
     export BROWSER=/mnt/c/PROGRA~2/Microsoft/Edge/Application/msedge.exe
     # alias tssh="tssh.exe"
+    if [ -f "$HOME/.local/opt/setup-wsl2-symlinks" ]; then
+        . "$HOME/.local/opt/setup-wsl2-symlinks" -q
+    fi
 else
     # echo "Running outside WSL"
     export SHELL="bash"
