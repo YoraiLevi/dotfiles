@@ -32,36 +32,40 @@ EOF
 install_timer() {
     mkdir -p "$HOME/.config/systemd/user"
 
-    cat > "$SCRIPT_FILE" <<EOF
+    # Quoted heredoc: an unquoted EOF would run $((…)) and $(git …) while *installing*, corrupting the script.
+    cat > "$SCRIPT_FILE" <<'AUTOSCRIPT'
 #!/bin/bash
-# Message pattern: counts from --diff-filter (like git-magic / git-alias porcelain summaries) + path list in body.
-git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" add -u
-if ! git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --quiet --cached; then
-  \$n_added=\$(( \$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --diff-filter=A --name-only | wc -l) ))
-  \$n_updated=\$(( \$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --diff-filter=M --name-only | wc -l) ))
-  \$n_deleted=\$(( \$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --diff-filter=D --name-only | wc -l) ))
-  \$n_renamed=\$(( \$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --diff-filter=R --name-only | wc -l) ))
+# Message pattern: counts from --diff-filter + path list in body.
+GDIR='@DOTFILES_GIT_DIR@'
+WTREE='@DOTFILES_WORK_TREE@'
+git --git-dir="$GDIR" --work-tree="$WTREE" add -u
+if ! git --git-dir="$GDIR" --work-tree="$WTREE" diff --quiet --cached; then
+  n_added=$(( $(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=A --name-only | wc -l) ))
+  n_updated=$(( $(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=M --name-only | wc -l) ))
+  n_deleted=$(( $(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=D --name-only | wc -l) ))
+  n_renamed=$(( $(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=R --name-only | wc -l) ))
   parts=()
-  [ "\$n_added" -gt 0 ] && parts+=(\"\${n_added} added\")
-  [ "\$n_updated" -gt 0 ] && parts+=(\"\${n_updated} updated\")
-  [ "\$n_deleted" -gt 0 ] && parts+=(\"\${n_deleted} deleted\")
-  [ "\$n_renamed" -gt 0 ] && parts+=(\"\${n_renamed} renamed\")
-  \$summary=\$(IFS=', '; echo \"\${parts[*]}\")
-  \$ts=\$(date --iso-8601=seconds 2>/dev/null || date -u +\"%Y-%m-%dT%H:%M:%SZ\")
-  \$subject=\"chore\(dotfiles\): dotfiles sync \(\${summary}\) at \${ts}\"
-  \$file_list=\$(git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" diff --cached --name-only | head -n 40)
-  if [ -n \"\$file_list\" ]; then
-    \$msg=\$(printf '%s\\n\\n%s\\n%s' \"\$subject\" \"Changed paths:\" \"\$file_list\")
-    git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" commit -m \"\$msg\"
+  [ "$n_added" -gt 0 ] && parts+=("${n_added} added")
+  [ "$n_updated" -gt 0 ] && parts+=("${n_updated} updated")
+  [ "$n_deleted" -gt 0 ] && parts+=("${n_deleted} deleted")
+  [ "$n_renamed" -gt 0 ] && parts+=("${n_renamed} renamed")
+  summary=$(IFS=', '; echo "${parts[*]}")
+  ts=$(date --iso-8601=seconds 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%SZ")
+  subject="chore(dotfiles): dotfiles sync (${summary}) at ${ts}"
+  file_list=$(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --name-only | head -n 40)
+  if [ -n "$file_list" ]; then
+    msg=$(printf '%s\n\n%s\n%s' "$subject" "Changed paths:" "$file_list")
+    git --git-dir="$GDIR" --work-tree="$WTREE" commit -m "$msg"
   else
-    git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" commit -m \"\$subject\"
+    git --git-dir="$GDIR" --work-tree="$WTREE" commit -m "$subject"
   fi
 fi
-git --git-dir="$GIT_DIR" --work-tree="$WORK_TREE" push || {
+git --git-dir="$GDIR" --work-tree="$WTREE" push || {
   echo "auto-commit: push failed (check SSH agent / network)" >&2
   exit 1
 }
-EOF
+AUTOSCRIPT
+    sed -i "s|@DOTFILES_GIT_DIR@|$GIT_DIR|g;s|@DOTFILES_WORK_TREE@|$WORK_TREE|g" "$SCRIPT_FILE"
     chmod +x "$SCRIPT_FILE"
 
     cat > "$SERVICE_FILE" <<EOF
