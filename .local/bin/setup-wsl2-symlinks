@@ -38,6 +38,9 @@ done
 # Symlinks under $HOME → Windows %USERPROFILE%% (single definition; used throughout).
 WIN_HOME_LINK="$HOME/.winHome"
 HOME_WIN_LINK="$HOME/.homeWin"
+# Previous names (bootstrap only): resolved if dot-prefix links are missing but old symlinks remain.
+LEGACY_WIN_HOME_LINK="$HOME/winHome"
+LEGACY_HOME_WIN_LINK="$HOME/homeWin"
 
 say() {
   [ "$QUIET" -eq 1 ] || printf '%s\n' "$@"
@@ -147,6 +150,11 @@ if [ -e "$WIN_HOME_LINK" ]; then
   WinWSL="$(readlink -f -- "$WIN_HOME_LINK" 2>/dev/null || true)"
 fi
 if [ -z "$WinWSL" ] || [ ! -d "$WinWSL" ]; then
+  if [ -e "$LEGACY_WIN_HOME_LINK" ]; then
+    WinWSL="$(readlink -f -- "$LEGACY_WIN_HOME_LINK" 2>/dev/null || true)"
+  fi
+fi
+if [ -z "$WinWSL" ] || [ ! -d "$WinWSL" ]; then
   WinWSL="$(win_userprofile_wsl)" || {
     echo "Could not resolve Windows USERPROFILE (cmd.exe / wslpath)." >&2
     exit 1
@@ -169,12 +177,38 @@ ln_sf_rel() {
   ln -sf -- "$relpath" "$dst"
 }
 
+# Point $dst at $src using the same relative path as ln_sf_rel; replace symlinks when that path changed
+# (e.g. after renaming WIN_HOME_LINK so mirrored links must switch winHome → .winHome in link text).
+mirror_symlink() {
+  local src="$1" dst="$2"
+  local dst_dir relpath cur
+  dst_dir=$(dirname -- "$dst")
+  relpath=$(realpath -s --relative-to="$dst_dir" "$src") || return 1
+  if [ -L "$dst" ]; then
+    cur=$(readlink -- "$dst") || return 1
+    [ "$cur" = "$relpath" ] && return 0
+  elif [ -e "$dst" ]; then
+    dry_mv_f "$dst" "$dst.bak"
+  fi
+  ln_sf_rel "$src" "$dst"
+}
+
 ln_sf_rel "$PROFILE_ROOT" "$WIN_HOME_LINK"
 ln_sf_rel "$PROFILE_ROOT" "$HOME_WIN_LINK"
 if [ "$DRY_RUN" -eq 0 ]; then
   WinWSL="$WIN_HOME_LINK"
 else
   WinWSL="$PROFILE_ROOT"
+fi
+
+# Remove legacy anchor symlinks if they still point at the same profile (avoids stale winHome/ in link text).
+if [ "$DRY_RUN" -eq 0 ]; then
+  for legacy in "$LEGACY_WIN_HOME_LINK" "$LEGACY_HOME_WIN_LINK"; do
+    [ -L "$legacy" ] || continue
+    leg_abs="$(readlink -f -- "$legacy" 2>/dev/null)" || continue
+    [ -n "$leg_abs" ] && [ "$leg_abs" = "$PROFILE_ROOT" ] || continue
+    rm -f -- "$legacy"
+  done
 fi
 
 # Absolute path of Windows profile (for clean-broken); uses $WIN_HOME_LINK when present, else PROFILE_ROOT.
@@ -191,7 +225,7 @@ if [ "$CLEAN_BROKEN" -eq 1 ]; then
     while IFS= read -r -d '' path; do
       [ -L "$path" ] || continue
       case "$path" in
-        "$WIN_HOME_LINK" | "$HOME_WIN_LINK") continue ;;
+        "$WIN_HOME_LINK" | "$HOME_WIN_LINK" | "$LEGACY_WIN_HOME_LINK" | "$LEGACY_HOME_WIN_LINK") continue ;;
       esac
       [ -e "$path" ] && continue
       intended="$(symlink_intended_abs "$path")" || continue
@@ -203,7 +237,10 @@ if [ "$CLEAN_BROKEN" -eq 1 ]; then
         rm -- "$path"
       fi
     done < <( {
-      find "$HOME" -type l ! -path "$WIN_HOME_LINK" ! -path "$HOME_WIN_LINK" -print0 2>/dev/null
+      find "$HOME" -type l \
+        ! -path "$WIN_HOME_LINK" ! -path "$HOME_WIN_LINK" \
+        ! -path "$LEGACY_WIN_HOME_LINK" ! -path "$LEGACY_HOME_WIN_LINK" \
+        -print0 2>/dev/null
       [ -d /etc ] && find /etc -type l -print0 2>/dev/null
     } )
   fi
@@ -230,10 +267,7 @@ if [ -d "$WinDotSSH" ]; then
     target="$HOME/.ssh/$rel"
     say "$rel"
     dry_mkdir_p "$(dirname "$target")"
-    if [ ! -L "$target" ]; then
-      [ -e "$target" ] && dry_mv_f "$target" "$target.bak"
-      ln_sf_rel "$file" "$target"
-    fi
+    mirror_symlink "$file" "$target"
   done
 else
   echo "Windows home directory not found" >&2
@@ -293,10 +327,7 @@ if [ -d "$WinAuth" ]; then
     target="$HOME/.auth/$rel"
     say "$rel"
     dry_mkdir_p "$(dirname "$target")"
-    if [ ! -L "$target" ]; then
-      [ -e "$target" ] && dry_mv_f "$target" "$target.bak"
-      ln_sf_rel "$file" "$target"
-    fi
+    mirror_symlink "$file" "$target"
   done
 else
   echo "Windows .auth directory not found" >&2
@@ -323,10 +354,7 @@ if [ -d "$WinHome" ]; then
     target="$HOME/$rel"
     say "$rel"
     dry_mkdir_p "$(dirname "$target")"
-    if [ ! -L "$target" ]; then
-      [ -e "$target" ] && dry_mv_f "$target" "$target.bak"
-      ln_sf_rel "$file" "$target"
-    fi
+    mirror_symlink "$file" "$target"
   done
 else
   echo "Windows home directory not found" >&2
@@ -356,10 +384,7 @@ if [ -d "$WinClaude" ]; then
     target="$HOME/.claude/$rel"
     say "$rel"
     dry_mkdir_p "$(dirname "$target")"
-    if [ ! -L "$target" ]; then
-      [ -e "$target" ] && dry_mv_f "$target" "$target.bak"
-      ln_sf_rel "$file" "$target"
-    fi
+    mirror_symlink "$file" "$target"
   done
 else
   echo "Windows .agents/claude directory not found" >&2
@@ -387,10 +412,7 @@ if [ -d "$WinEtc" ]; then
     target="/etc/$rel"
     say "etc: $rel"
     dry_mkdir_p "$(dirname "$target")"
-    if [ ! -L "$target" ]; then
-      [ -e "$target" ] && dry_mv_f "$target" "$target.bak"
-      ln_sf_rel "$file" "$target"
-    fi
+    mirror_symlink "$file" "$target"
   done
 else
   echo "Windows .wsl2/etc directory not found" >&2
