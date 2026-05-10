@@ -7,6 +7,10 @@ case $- in
     *i*) ;;
       *) return;;
 esac
+
+alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+alias dotfiles-timer='bash $HOME/.dotfiles/dotfiles-timer.sh'
+
 # don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 # HISTCONTROL=ignoreboth
@@ -496,8 +500,7 @@ if [ -n "$SSH_CONNECTION" ] && [ -z "$DISPLAY" ]; then
 fi
 
 
-alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
-alias dotfiles-timer='bash $HOME/.dotfiles/dotfiles-timer.sh'
+
 
 # zellij da -y > /dev/null # delete dead sessions
 
