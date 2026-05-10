@@ -15,4 +15,4 @@
 .auth/
 
 # when dotfiles add -A is executed these folders will be added to the index
-! .config/systemd/user/
+!.config/systemd/user/*
