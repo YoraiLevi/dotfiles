@@ -147,6 +147,7 @@ win_userprofile_wsl() {
 # True if $1 looks like a Windows user profile tree (weak check when cmd.exe is unavailable).
 profile_tree_p() {
   [ -n "$1" ] && [ -d "$1" ] || return 1
+  case "$1" in /mnt/*) ;; *) return 1 ;; esac
   [ -d "$1/.wsl2" ] || [ -d "$1/.ssh" ] || return 1
   return 0
 }
@@ -231,7 +232,9 @@ mirror_symlink() {
   relpath=$(realpath -s --relative-to="$dst_dir" "$src") || return 1
   if [ -L "$dst" ]; then
     cur=$(readlink -- "$dst") || return 1
-    [ "$cur" = "$relpath" ] && return 0
+    if [ "$cur" = "$relpath" ] && [ -e "$dst" ]; then
+      return 0
+    fi
   elif [ -e "$dst" ]; then
     dry_mv_f "$dst" "$dst.bak"
   fi
@@ -244,23 +247,6 @@ if [ "$DRY_RUN" -eq 0 ]; then
   WinWSL="$WIN_HOME_LINK"
 else
   WinWSL="$PROFILE_ROOT"
-fi
-
-# Remove legacy anchor symlinks if they still point at the same profile (avoids stale winHome/ in link text).
-if [ "$DRY_RUN" -eq 1 ]; then
-  for legacy in "$LEGACY_WIN_HOME_LINK" "$LEGACY_HOME_WIN_LINK"; do
-    [ -L "$legacy" ] || continue
-    leg_abs="$(readlink -f -- "$legacy" 2>/dev/null)" || continue
-    [ -n "$leg_abs" ] && [ "$leg_abs" = "$PROFILE_ROOT" ] || continue
-    say "dry-run: rm -- $legacy (legacy anchor, same as PROFILE_ROOT)"
-  done
-else
-  for legacy in "$LEGACY_WIN_HOME_LINK" "$LEGACY_HOME_WIN_LINK"; do
-    [ -L "$legacy" ] || continue
-    leg_abs="$(readlink -f -- "$legacy" 2>/dev/null)" || continue
-    [ -n "$leg_abs" ] && [ "$leg_abs" = "$PROFILE_ROOT" ] || continue
-    rm -f -- "$legacy"
-  done
 fi
 
 # Absolute path of Windows profile (for clean-broken); uses $WIN_HOME_LINK when present, else PROFILE_ROOT.
@@ -277,7 +263,7 @@ if [ "$CLEAN_BROKEN" -eq 1 ]; then
     while IFS= read -r -d '' path; do
       [ -L "$path" ] || continue
       case "$path" in
-        "$WIN_HOME_LINK" | "$HOME_WIN_LINK" | "$LEGACY_WIN_HOME_LINK" | "$LEGACY_HOME_WIN_LINK") continue ;;
+        "$WIN_HOME_LINK" | "$HOME_WIN_LINK") continue ;;
       esac
       [ -e "$path" ] && continue
       intended="$(symlink_intended_abs "$path")" || continue
@@ -289,10 +275,7 @@ if [ "$CLEAN_BROKEN" -eq 1 ]; then
         rm -- "$path"
       fi
     done < <( {
-      find "$HOME" -type l \
-        ! -path "$WIN_HOME_LINK" ! -path "$HOME_WIN_LINK" \
-        ! -path "$LEGACY_WIN_HOME_LINK" ! -path "$LEGACY_HOME_WIN_LINK" \
-        -print0 2>/dev/null
+      find "$HOME" -type l ! -path "$WIN_HOME_LINK" ! -path "$HOME_WIN_LINK" -print0 2>/dev/null
       [ -d /etc ] && find /etc -type l -print0 2>/dev/null
     } )
   fi
