@@ -1021,6 +1021,8 @@ if (($ENV:VSCODE_CLI -eq 1) -or ($ENV:CURSOR_AGENT -eq 1) -or ($null -ne $ENV:VS
     return
 }
 
+Get-ChildItem "~/.auth/*.env" | Import-DotEnv
+
 # $null = zellij da -y # delete dead sessions
 $ENV:SHELL = 'pwsh'
 if (-not $ENV:ZELLIJ) {
