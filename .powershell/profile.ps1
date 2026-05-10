@@ -507,8 +507,8 @@ function Find-EnvPath {
     return $envPaths -ne $null
 }
 
-# Read KEY=value lines from .env files into Env: for this process. Use -Path or pipe paths/FileInfo (e.g. Get-ChildItem ~/.auth -File).
 function Import-DotEnv {
+    # Read KEY=value lines from .env files into Env: for this process. Use -Path or pipe paths/FileInfo (e.g. Get-ChildItem ~/.auth -File).
     # Two ways to invoke: pass -Path (string), or pipe objects—parameter sets keep those modes mutually exclusive.
     [CmdletBinding(DefaultParameterSetName = 'Path')]
     param(
@@ -1020,8 +1020,6 @@ if (($ENV:VSCODE_CLI -eq 1) -or ($ENV:CURSOR_AGENT -eq 1) -or ($null -ne $ENV:VS
     # Cursor AI agent terminal
     return
 }
-
-
 
 # $null = zellij da -y # delete dead sessions
 $ENV:SHELL = 'pwsh'
