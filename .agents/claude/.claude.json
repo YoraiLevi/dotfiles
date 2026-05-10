@@ -1,5 +1,5 @@
 {
-  "numStartups": 125,
+  "numStartups": 128,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -472,7 +472,7 @@
   "sonnet1m45MigrationComplete": true,
   "migrationVersion": 13,
   "userID": "b50944c051a8c32450daad839326b2a8261ad363adee4f8296c9cd82533abb55",
-  "changelogLastFetched": 1778228370303,
+  "changelogLastFetched": 1778416474962,
   "autoUpdatesProtectedForNative": true,
   "oauthAccount": {
     "accountUuid": "59481114-4cf3-4697-a1b6-0e9306a56b6e",
@@ -1017,6 +1017,26 @@
       "lastHintSessionId": "0d225c5a-8d15-4e35-b0d6-623aea0581a1",
       "lastSessionFirstPrompt": "You are joining a project that follows the agent-project-template philosophy: \"You don't have memory. These files do.\"  PROJECT: two Ansible repositories that manage a pair of NVIDIA DGX Sparks (produ",
       "lastSessionModified": 1778229716898
+    },
+    "C:/Users/devic/source/move-and-link": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "lastSessionMetrics": {
+        "frame_duration_ms_count": 3,
+        "frame_duration_ms_min": 1.755100000000084,
+        "frame_duration_ms_max": 12.508899999999812,
+        "frame_duration_ms_avg": 7.721533333333279,
+        "frame_duration_ms_p50": 8.90059999999994,
+        "frame_duration_ms_p95": 12.148069999999825,
+        "frame_duration_ms_p99": 12.436733999999815
+      }
     }
   },
   "lastReleaseNotesSeen": "2.1.132",
@@ -1044,7 +1064,7 @@
   "groveConfigCache": {
     "59481114-4cf3-4697-a1b6-0e9306a56b6e": {
       "grove_enabled": true,
-      "timestamp": 1778243284141
+      "timestamp": 1778416477836
     }
   },
   "cachedExtraUsageDisabledReason": null,
@@ -1103,6 +1123,9 @@
   "githubRepoPaths": {
     "dgxsparklabs/agent-project-template": [
       "C:\\Users\\devic\\source\\agent-project-template"
+    ],
+    "yorailevi/move-and-link": [
+      "C:\\Users\\devic\\source\\move-and-link"
     ]
   },
   "passesEligibilityCache": {
@@ -1118,7 +1141,7 @@
         "currency": "USD"
       },
       "remaining_passes": 3,
-      "timestamp": 1778243286006
+      "timestamp": 1778416488434
     }
   },
   "passesUpsellSeenCount": 3,
