@@ -432,7 +432,7 @@
 	},
 	"workbench.commandPalette.experimental.suggestCommands": true,
 	"workbench.editor.editorActionsLocation": "titleBar",
-	"window.title": "${dirty} ${rootName}${separator}${activeEditorMedium} ${dirty}",
+	"window.title": "${dirty} ${activeEditorMedium}${separator}${rootName} ${dirty}",
 	"terminal.integrated.tabs.title": "${shellCommand}",
 	"powershell.promptToUpdatePowerShell": false,
 	"powershell.codeFormatting.autoCorrectAliases": true,
@@ -463,7 +463,7 @@
 	"editor.suggest.preview": true,
 	"editor.suggest.localityBonus": true,
 	"editor.screenReaderAnnounceInlineSuggestion": false,
-	"editor.minimap.showSlider": "always",
+	"editor.minimap.showSlider": "mouseover",
 	"editor.minimap.side": "left",
 	"editor.snippetSuggestions": "top",
 	"window.zoomLevel": 0.55, // Overall UI zoom (~8% larger than default). Status bar, sidebar, chat panel, and ALL workbench text scales with this — no independent key exists for those.
