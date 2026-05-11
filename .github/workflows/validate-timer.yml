@@ -40,21 +40,23 @@ jobs:
           git config --global init.defaultBranch master
           dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
 
-          echo "[validate-timer] git clone --bare \"\$GITHUB_WORKSPACE\" \"\$HOME/.dotfiles\""
-          echo "[validate-timer] git clone --bare "$GITHUB_WORKSPACE" "$HOME/.dotfiles""
-          git clone --bare "$GITHUB_WORKSPACE" "$HOME/.dotfiles"
-          # Local->local bare clone can inherit sparse-checkout from workspace .git; disable so README's pathspec checkouts work.
-          dotfiles sparse-checkout disable 2>/dev/null || true
-
-          echo "[validate-timer] synthetic bare remote: /tmp/dotfiles-remote.git"
+          # Stand up a synthetic "github.com/<YOU>/dotfiles.git" so the README's
+          # `git clone --bare <remote-url>` simulation is faithful: a clean bare
+          # remote that received this workspace's content via git push protocol,
+          # not a local->local hardlink-clone (which would inherit sparse-checkout
+          # and worktree-config files from the workspace .git).
+          echo "[validate-timer] git init --bare /tmp/dotfiles-remote.git"
           git init --bare /tmp/dotfiles-remote.git
-          dotfiles remote set-url origin /tmp/dotfiles-remote.git
+          echo "[validate-timer] push workspace HEAD -> /tmp/dotfiles-remote.git refs/heads/master"
+          git -C "$GITHUB_WORKSPACE" push /tmp/dotfiles-remote.git "HEAD:refs/heads/master"
+
+          # README step 2: git clone --bare <remote-url> $HOME/.dotfiles
+          echo "[validate-timer] git clone --bare /tmp/dotfiles-remote.git \"\$HOME/.dotfiles\""
+          git clone --bare /tmp/dotfiles-remote.git "$HOME/.dotfiles"
 
           echo "[validate-timer] dotfiles config status.showUntrackedFiles no"
           dotfiles config status.showUntrackedFiles no
 
-          ls -la "$HOME/.dotfiles"
-          ls -la "$GITHUB_WORKSPACE"
           echo "[validate-timer] dotfiles checkout master -- .gitignore .dotfiles/"
           dotfiles checkout master -- .gitignore .dotfiles/
 
@@ -76,15 +78,20 @@ jobs:
           function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 
           $ws = $env:GITHUB_WORKSPACE
-          Write-Host "[validate-timer] git clone --bare GITHUB_WORKSPACE -> `$HOME/.dotfiles"
-          Write-Host "[validate-timer] git clone --bare "$ws" "$HOME\.dotfiles""
-          git clone --bare "$ws" "$HOME/.dotfiles"
-          # Local->local bare clone can inherit sparse-checkout from workspace .git; disable so README's pathspec checkouts work.
-          git --git-dir="$HOME\.dotfiles" --work-tree="$HOME" sparse-checkout disable 2>$null
 
-          Write-Host "[validate-timer] synthetic bare remote: C:\dotfiles-remote.git"
+          # Stand up a synthetic "github.com/<YOU>/dotfiles.git" so the README's
+          # `git clone --bare <remote-url>` simulation is faithful: a clean bare
+          # remote that received this workspace's content via git push protocol,
+          # not a local->local hardlink-clone (which would inherit sparse-checkout
+          # and worktree-config files from the workspace .git).
+          Write-Host "[validate-timer] git init --bare C:\dotfiles-remote.git"
           git init --bare C:\dotfiles-remote.git
-          dotfiles remote set-url origin C:\dotfiles-remote.git
+          Write-Host "[validate-timer] push workspace HEAD -> C:\dotfiles-remote.git refs/heads/master"
+          git -C "$ws" push C:\dotfiles-remote.git "HEAD:refs/heads/master"
+
+          # README step 2: git clone --bare <remote-url> $HOME/.dotfiles
+          Write-Host "[validate-timer] git clone --bare C:\dotfiles-remote.git `"$HOME/.dotfiles`""
+          git clone --bare C:\dotfiles-remote.git "$HOME/.dotfiles"
 
           Write-Host "[validate-timer] dotfiles config status.showUntrackedFiles no"
           dotfiles config status.showUntrackedFiles no
