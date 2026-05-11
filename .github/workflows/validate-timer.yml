@@ -37,12 +37,12 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           set -euo pipefail
+          git config --global init.defaultBranch master
           dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
 
           echo "[validate-timer] git clone --bare \"\$GITHUB_WORKSPACE\" \"\$HOME/.dotfiles\""
+          echo "[validate-timer] git clone --bare "$GITHUB_WORKSPACE" "$HOME/.dotfiles""
           git clone --bare "$GITHUB_WORKSPACE" "$HOME/.dotfiles"
-          # Local bare clone can copy sparse-checkout settings from the workspace .git; disable so pathspec checkouts work.
-          dotfiles sparse-checkout disable 2>/dev/null || true
 
           echo "[validate-timer] synthetic bare remote: /tmp/dotfiles-remote.git"
           git init --bare /tmp/dotfiles-remote.git
@@ -51,10 +51,10 @@ jobs:
           echo "[validate-timer] dotfiles config status.showUntrackedFiles no"
           dotfiles config status.showUntrackedFiles no
 
+          ls -la "$HOME/.dotfiles"
+          ls -la "$GITHUB_WORKSPACE"
           echo "[validate-timer] dotfiles checkout master -- .gitignore .dotfiles/"
           dotfiles checkout master -- .gitignore .dotfiles/
-          echo "[validate-timer] dotfiles checkout master -- README.md"
-          dotfiles checkout master -- README.md
 
           echo "[validate-timer] dotfiles add -u ."
           dotfiles add -u .
@@ -70,13 +70,13 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
+          git config --global init.defaultBranch master
           function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 
           $ws = $env:GITHUB_WORKSPACE
           Write-Host "[validate-timer] git clone --bare GITHUB_WORKSPACE -> `$HOME/.dotfiles"
-          git clone --bare "$ws" "$HOME\.dotfiles"
-          # Local bare clone can copy sparse-checkout from the workspace .git; disable so pathspec checkouts work.
-          git --git-dir="$HOME\.dotfiles" --work-tree="$HOME" sparse-checkout disable 2>$null
+          Write-Host "[validate-timer] git clone --bare "$ws" "$HOME\.dotfiles""
+          git clone --bare "$ws" "$HOME/.dotfiles"
 
           Write-Host "[validate-timer] synthetic bare remote: C:\dotfiles-remote.git"
           git init --bare C:\dotfiles-remote.git
@@ -87,8 +87,6 @@ jobs:
 
           Write-Host "[validate-timer] dotfiles checkout master -- .gitignore .dotfiles/"
           dotfiles checkout master -- .gitignore .dotfiles/
-          Write-Host "[validate-timer] dotfiles checkout master -- README.md"
-          dotfiles checkout master -- README.md
 
           Write-Host "[validate-timer] dotfiles add -u ."
           dotfiles add -u .
