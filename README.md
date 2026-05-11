@@ -175,6 +175,50 @@ Behavior per platform:
 
 The commit script (and the loop script, in Windows user mode) lives inside `~/.dotfiles/`, keeping both out of your work-tree and off `dotfiles status`.
 
+### Git hooks (optional)
+
+Client-side hooks run as **POSIX `#!/bin/sh` stubs** under `~/.dotfiles/.githooks/` (tracked in this repo as **`.dotfiles/.githooks/`**). Each stub executes the same **Python dispatcher** via **`uv run`** — no `pre-commit` framework dependency.
+
+**Prerequisites**
+
+- **[uv](https://docs.astral.sh/uv/)** on `PATH` wherever Git runs hooks (terminal **and** GUI clients often inherit a minimal PATH — if hooks fail to find `uv`, set `--uv-exe` during install or fix PATH).
+- **Linux / macOS**: normal system `sh`.
+- **Windows**: **Git for Windows** (hooks are executed with **`sh.exe`** from Git’s MSYS environment).
+
+**One-time setup (after your work-tree contains `.dotfiles/`)**
+
+```bash
+# Lock/sync the runner
+uv sync --project ~/.dotfiles/githooks-runner
+
+# Regenerate POSIX stubs (defaults resolve ~/.dotfiles/.githooks from the installed runner path)
+uv run --project ~/.dotfiles/githooks-runner python -m dotfiles_githooks install
+```
+
+Options:
+
+```bash
+uv run --project ~/.dotfiles/githooks-runner python -m dotfiles_githooks install \
+  --hooks-dir ~/.dotfiles/.githooks --runner-dir ~/.dotfiles/githooks-runner
+uv run --project ~/.dotfiles/githooks-runner python -m dotfiles_githooks install --uv-exe /full/path/to/uv
+```
+
+**Point the bare repo at the hooks directory** (required — hooks live outside `$GIT_DIR/hooks`):
+
+```bash
+git --git-dir "$HOME/.dotfiles" config core.hooksPath "$HOME/.dotfiles/.githooks"
+```
+
+You can also use a path **relative to `$GIT_DIR`** if you prefer; verify with:
+
+```bash
+git --git-dir "$HOME/.dotfiles" config --show-origin core.hooksPath
+```
+
+**Optional logging**
+
+Set `DOTFILES_GITHOOKS_VERBOSE=1` to print a line to stderr for every hook invocation (default is silent).
+
 ### Submodules (optional)
 
 > ⚠️ **Known limitation:** submodule operations (`add`, `init`, `update`) don't always compose cleanly with the bare-repo `--git-dir`/`--work-tree` pattern — a long-standing git issue. The instructions below work for many users but may fail on some git versions. If you hit errors, alternatives include committing the files directly or using a tool like `chezmoi` that has first-class submodule support.
