@@ -43,6 +43,8 @@ jobs:
           echo "[validate-timer] git clone --bare \"\$GITHUB_WORKSPACE\" \"\$HOME/.dotfiles\""
           echo "[validate-timer] git clone --bare "$GITHUB_WORKSPACE" "$HOME/.dotfiles""
           git clone --bare "$GITHUB_WORKSPACE" "$HOME/.dotfiles"
+          # Local->local bare clone can inherit sparse-checkout from workspace .git; disable so README's pathspec checkouts work.
+          dotfiles sparse-checkout disable 2>/dev/null || true
 
           echo "[validate-timer] synthetic bare remote: /tmp/dotfiles-remote.git"
           git init --bare /tmp/dotfiles-remote.git
@@ -77,6 +79,8 @@ jobs:
           Write-Host "[validate-timer] git clone --bare GITHUB_WORKSPACE -> `$HOME/.dotfiles"
           Write-Host "[validate-timer] git clone --bare "$ws" "$HOME\.dotfiles""
           git clone --bare "$ws" "$HOME/.dotfiles"
+          # Local->local bare clone can inherit sparse-checkout from workspace .git; disable so README's pathspec checkouts work.
+          git --git-dir="$HOME\.dotfiles" --work-tree="$HOME" sparse-checkout disable 2>$null
 
           Write-Host "[validate-timer] synthetic bare remote: C:\dotfiles-remote.git"
           git init --bare C:\dotfiles-remote.git
@@ -167,8 +171,8 @@ jobs:
           set -euo pipefail
           dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
 
-          echo "[validate-timer] unit: change README.md -> .auto-commit.sh -> expect chore(dotfiles): commit"
-          echo "change" >> "$HOME/README.md"
+          echo "[validate-timer] unit: change .gitignore -> .auto-commit.sh -> expect chore(dotfiles): commit"
+          echo "# touched-by-ci" >> "$HOME/.gitignore"
           bash "$HOME/.dotfiles/.auto-commit.sh"
           COUNT=$(dotfiles log --oneline | wc -l)
           [ "$COUNT" -ge 2 ] || { echo "FAIL: expected commit, got $COUNT"; exit 1; }
@@ -183,8 +187,8 @@ jobs:
         run: |
           function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 
-          Write-Host "[validate-timer] unit: change README.md -> .auto-commit.ps1 -> expect chore(dotfiles): commit"
-          "change" | Add-Content "$env:USERPROFILE\README.md"
+          Write-Host "[validate-timer] unit: change .gitignore -> .auto-commit.ps1 -> expect chore(dotfiles): commit"
+          "# touched-by-ci" | Add-Content "$env:USERPROFILE\.gitignore"
           & "$env:USERPROFILE\.dotfiles\.auto-commit.ps1"
           $count = (dotfiles log --oneline).Count
           if ($count -lt 2) { throw "FAIL: expected commit, got $count" }
