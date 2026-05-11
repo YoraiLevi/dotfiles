@@ -122,3 +122,13 @@ jobs:
           $after  = git --git-dir="$env:USERPROFILE\.dotfiles" log -1 --pretty=%H
           if ($before -ne $after) { throw "FAIL: unexpected commit when nothing changed" }
           Write-Host "PASS: no spurious commit"
+
+      # ── CI log samples: print subject/body for mod/add/del/ren/long/combined ─
+      - name: "CI samples: commit message shapes (Linux)"
+        if: runner.os == 'Linux'
+        run: bash .github/scripts/ci-commit-message-demos.sh
+
+      - name: "CI samples: commit message shapes (Windows)"
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: pwsh .github/scripts/ci-commit-message-demos.ps1
