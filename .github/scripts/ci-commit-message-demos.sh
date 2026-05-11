@@ -21,8 +21,23 @@ echo "ci-commit-message-demos.sh: auto-commit script=${AC}"
 
 WT="${HOME}"
 
+# Pathspecs are CWD-relative; cd to $HOME so demo paths resolve at the work-tree root.
+cd "$WT"
+
+# Prep: extend the (restrictive) .gitignore to permit demo paths, then seed a tracked target.
+echo "ci-commit-message-demos.sh: prep — unignore demo paths and seed .demo-target.txt"
+{
+  echo ""
+  echo "# ci-demo: allow demo paths"
+  echo "!/.demo-*"
+  echo "!/.ci-*"
+} >> "${WT}/.gitignore"
+echo "demo initial content" > "${WT}/.demo-target.txt"
+dotfiles add "${WT}/.gitignore" "${WT}/.demo-target.txt"
+dotfiles commit -m "ci-demo: seed demo target & allow demo paths"
+
 # --- modified only ---
-echo "patch-demo" >> "${WT}/README.md"
+echo "patch-demo" >> "${WT}/.demo-target.txt"
 bash "$AC"
 dump_msg "Sample A: modified tracked file (mod)"
 
@@ -38,8 +53,7 @@ bash "$AC"
 dump_msg "Sample C: deleted file (del)"
 
 # --- rename ---
-cd "${WT}"
-dotfiles mv README.md README.ci-demo-renamed.md
+dotfiles mv .demo-target.txt .demo-renamed.txt
 bash "$AC"
 dump_msg "Sample D: rename (ren)"
 
@@ -52,7 +66,7 @@ bash "$AC"
 dump_msg "Sample E: many adds (truncated subject when >160 chars)"
 
 # --- combined add + mod + del in one commit ---
-echo "combo-edit" >> "${WT}/README.ci-demo-renamed.md"
+echo "combo-edit" >> "${WT}/.demo-renamed.txt"
 echo "combo-new" > "${WT}/.ci-combo-new.txt"
 dotfiles add "${WT}/.ci-combo-new.txt"
 rm -f "${WT}/.ci-long-01.txt"
