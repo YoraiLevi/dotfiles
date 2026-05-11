@@ -7,7 +7,8 @@
 param(
     [Parameter(Position=0, Mandatory=$false)]
     [ValidateSet('install','reinstall','enable','disable','start','stop','uninstall','remove','status','logs')]
-    [string]$Action
+    [string]$Action,
+    [switch]$AddAll
 )
 
 $ErrorActionPreference = 'Stop'
@@ -33,12 +34,13 @@ function Test-IsAdmin {
 if (-not $Action) {
     $mode = if (Test-IsAdmin) { 'admin (Task Scheduler)' } else { 'user (startup folder + VBS)' }
     Write-Host @"
-Usage: pwsh dotfiles-timer.ps1 [install|reinstall|enable|disable|start|stop|status|logs|uninstall|remove]
+Usage: pwsh dotfiles-timer.ps1 [install|reinstall|enable|disable|start|stop|status|logs|uninstall|remove] [-AddAll]
 
 Detected privilege: $mode
 
-  install    Write files, enable autostart, start now.
-  reinstall  Uninstall + install.
+  install [-AddAll]     Write files, enable autostart. Default auto-commit uses git add -u.
+                        With -AddAll, embeds git add -A (stages new files under the work tree).
+  reinstall [-AddAll]   Uninstall + install (same -AddAll behavior).
   enable     Mark to autostart on next boot/logon (don't necessarily run now).
   disable    Turn off autostart and stop now (keep files).
   start      Run now (idempotent — also enables if disabled).
@@ -51,9 +53,11 @@ Detected privilege: $mode
 }
 
 function Write-CommitScript {
+    param([switch]$AddAll)
+    $addFlag = if ($AddAll) { '-A' } else { '-u' }
     @"
 `$gitArgs = @('--git-dir', '$($GitDir)', '--work-tree', '$($WorkTree)')
-& git @gitArgs add -u
+& git @gitArgs add $addFlag
 & git @gitArgs diff --cached --quiet
 if (`$LASTEXITCODE -ne 0) {
     `$ts = Get-Date -Format 'o'
@@ -178,7 +182,7 @@ function Stop-LoopProcesses {
 }
 
 function Install-Admin {
-    Write-CommitScript
+    Write-CommitScript -AddAll:$AddAll
 
     $action        = New-ScheduledTaskAction -Execute 'pwsh' `
                          -Argument "-NonInteractive -WindowStyle Hidden -File `"$ScriptPath`""
@@ -194,11 +198,12 @@ function Install-Admin {
         -Action $action -Trigger @($triggerLogon, $triggerRepeat) -Settings $settings `
         -RunLevel Limited -Force | Out-Null
 
-    Write-Host "[admin] Installed Task Scheduler task '$TaskName' (commits every minute)."
+    $addHint = if ($AddAll) { 'git add -A' } else { 'git add -u' }
+    Write-Host "[admin] Installed Task Scheduler task '$TaskName' (commits every minute; auto-commit: $addHint)."
 }
 
 function Install-User {
-    Write-CommitScript
+    Write-CommitScript -AddAll:$AddAll
     Write-LoopScript
     Write-VbsLauncher
 
@@ -209,6 +214,8 @@ function Install-User {
     Write-Host "[user] Installed startup launcher: $LauncherPath"
     Write-Host "       Loop script: $LoopPath"
     Write-Host "       Log file:    $LogPath"
+    $addHint = if ($AddAll) { 'git add -A' } else { 'git add -u' }
+    Write-Host "       Auto-commit: $addHint"
     Write-Host "       Loop started; will resume automatically on each logon."
 }
 

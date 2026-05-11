@@ -153,12 +153,13 @@ jobs:
 
       - name: "Reinstall with git add -A (Linux)"
         if: runner.os == 'Linux'
-        run: bash .dotfiles/dotfiles-timer.sh reinstall --all
+        run: bash .dotfiles/dotfiles-timer.sh reinstall '--all'
 
       - name: "Reinstall with git add -A (Windows)"
         if: runner.os == 'Windows'
         shell: pwsh
-        run: pwsh .dotfiles/dotfiles-timer.ps1 reinstall -AddAll
+        # Invoke script in this pwsh session with named params — avoids nested `pwsh ... -AddAll` binding to the host.
+        run: & (Join-Path $env:GITHUB_WORKSPACE '.dotfiles/dotfiles-timer.ps1') -Action reinstall -AddAll
 
       - name: "Validate .auto-commit embeds git add -A after reinstall --all (Linux)"
         if: runner.os == 'Linux'

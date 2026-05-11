@@ -14,8 +14,10 @@ print_usage() {
   cat <<EOF
 Usage: $0 [install|reinstall|enable|disable|start|stop|status|logs|uninstall|remove]
 
-  install    Write unit files, enable autostart, start now.
-  reinstall  Uninstall + install.
+  install [--all|-A]   Write unit files, enable autostart. Default auto-commit uses 'git add -u'.
+                       With --all or -A, embeds 'git add -A' (stages new files under the work tree).
+  reinstall [--all|-A] Uninstall + install (same flags as install).
+
   enable     Mark to autostart on next boot (don't necessarily run now).
   disable    Turn off autostart and stop now (keep unit files).
   start      Run now (idempotent — also enables if disabled).
@@ -26,11 +28,18 @@ Usage: $0 [install|reinstall|enable|disable|start|stop|status|logs|uninstall|rem
 
 Commits tracked dotfiles changes every minute using:
   git --git-dir=$GIT_DIR --work-tree=$WORK_TREE
+
+Default auto-commit uses 'git add -u' (tracked changes only). Use install --all for 'git add -A'.
 EOF
 }
 
 install_timer() {
     mkdir -p "$HOME/.config/systemd/user"
+
+    GIT_ADD_SPEC="-u"
+    if [ "${ADD_ALL_FLAG:-0}" -eq 1 ]; then
+      GIT_ADD_SPEC="-A"
+    fi
 
     # Quoted heredoc: an unquoted EOF would run $((…)) and $(git …) while *installing*, corrupting the script.
     cat > "$SCRIPT_FILE" <<'AUTOSCRIPT'
@@ -38,7 +47,7 @@ install_timer() {
 # Subject: chore(dotfiles): add/mod/del/ren with paths; body: grouped lists (names, not only counts).
 GDIR='@DOTFILES_GIT_DIR@'
 WTREE='@DOTFILES_WORK_TREE@'
-git --git-dir="$GDIR" --work-tree="$WTREE" add -u
+git --git-dir="$GDIR" --work-tree="$WTREE" add @GIT_ADD_SPEC@
 if ! git --git-dir="$GDIR" --work-tree="$WTREE" diff --quiet --cached; then
   ts=$(date --iso-8601=seconds 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%SZ")
 
@@ -110,7 +119,7 @@ git --git-dir="$GDIR" --work-tree="$WTREE" push || {
   exit 1
 }
 AUTOSCRIPT
-    sed -i "s|@DOTFILES_GIT_DIR@|$GIT_DIR|g;s|@DOTFILES_WORK_TREE@|$WORK_TREE|g" "$SCRIPT_FILE"
+    sed -i "s|@DOTFILES_GIT_DIR@|$GIT_DIR|g;s|@DOTFILES_WORK_TREE@|$WORK_TREE|g;s|@GIT_ADD_SPEC@|$GIT_ADD_SPEC|g" "$SCRIPT_FILE"
     chmod +x "$SCRIPT_FILE"
 
     cat > "$SERVICE_FILE" <<EOF
@@ -151,7 +160,7 @@ EOF
         exit 1
     fi
 
-    echo "Installed $TIMER_UNIT (commits every minute, git-dir: $GIT_DIR)"
+    echo "Installed $TIMER_UNIT (commits every minute, git-dir: $GIT_DIR, auto-commit: git add $GIT_ADD_SPEC)"
 }
 
 disable_timer() {
@@ -167,7 +176,16 @@ remove_timer() {
     echo "Removed $TIMER_UNIT unit files."
 }
 
-case "${1:-}" in
+ACTION="${1:-}"
+ADD_ALL_FLAG=0
+# Scan all args so reinstall/install still pick up --all|-A if $2 is not exactly that (CI wrappers, etc.).
+for _df_arg in "$@"; do
+  case "$_df_arg" in
+    --all|-A) ADD_ALL_FLAG=1 ;;
+  esac
+done
+
+case "$ACTION" in
     install)          install_timer ;;
     reinstall)        remove_timer; install_timer ;;
     enable)           systemctl --user enable "$TIMER_UNIT" ;;
@@ -182,6 +200,10 @@ case "${1:-}" in
         ;;
     logs)
         journalctl --user-unit "$SERVICE_UNIT" --no-pager -n 50
+        ;;
+    "")
+        print_usage
+        exit 1
         ;;
     *)
         print_usage
