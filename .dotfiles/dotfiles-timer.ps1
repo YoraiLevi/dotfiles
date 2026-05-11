@@ -7,7 +7,8 @@
 param(
     [Parameter(Position=0, Mandatory=$false)]
     [ValidateSet('install','reinstall','enable','disable','start','stop','uninstall','remove','status','logs')]
-    [string]$Action
+    [string]$Action,
+    [switch]$AddAll
 )
 
 $ErrorActionPreference = 'Stop'
@@ -33,12 +34,13 @@ function Test-IsAdmin {
 if (-not $Action) {
     $mode = if (Test-IsAdmin) { 'admin (Task Scheduler)' } else { 'user (startup folder + VBS)' }
     Write-Host @"
-Usage: pwsh dotfiles-timer.ps1 [install|reinstall|enable|disable|start|stop|status|logs|uninstall|remove]
+Usage: pwsh dotfiles-timer.ps1 [install|reinstall|enable|disable|start|stop|status|logs|uninstall|remove] [-AddAll]
 
 Detected privilege: $mode
 
-  install    Write files, enable autostart, start now.
-  reinstall  Uninstall + install.
+  install [-AddAll]     Write files, enable autostart. Default auto-commit uses git add -u.
+                        With -AddAll, embeds git add -A (stages new files under the work tree).
+  reinstall [-AddAll]   Uninstall + install (same -AddAll behavior).
   enable     Mark to autostart on next boot/logon (don't necessarily run now).
   disable    Turn off autostart and stop now (keep files).
   start      Run now (idempotent — also enables if disabled).
@@ -51,13 +53,74 @@ Detected privilege: $mode
 }
 
 function Write-CommitScript {
+    param([switch]$AddAll)
+    $addFlag = if ($AddAll) { '-A' } else { '-u' }
     @"
-`$gitArgs = @('--git-dir', '$GitDir', '--work-tree', '$WorkTree')
-& git @gitArgs add -A
+`$gitArgs = @('--git-dir', '$($GitDir)', '--work-tree', '$($WorkTree)')
+& git @gitArgs add $addFlag
 & git @gitArgs diff --cached --quiet
 if (`$LASTEXITCODE -ne 0) {
-    `$ts = Get-Date -Format 'yyyy-MM-ddTHH:mm:sszzz'
-    & git @gitArgs commit -m "chore: auto-commit at `$ts"
+    `$ts = Get-Date -Format 'o'
+    `$pathsAdded = @(& git @gitArgs diff --cached --diff-filter=A --name-only 2>`$null)
+    `$pathsModified = @(& git @gitArgs diff --cached --diff-filter=M --name-only 2>`$null)
+    `$pathsDeleted = @(& git @gitArgs diff --cached --diff-filter=D --name-only 2>`$null)
+    `$sbjParts = [System.Collections.Generic.List[string]]::new()
+    foreach (`$f in `$pathsAdded) { if (`$f) { `$sbjParts.Add("add `$f") } }
+    foreach (`$f in `$pathsModified) { if (`$f) { `$sbjParts.Add("mod `$f") } }
+    foreach (`$f in `$pathsDeleted) { if (`$f) { `$sbjParts.Add("del `$f") } }
+    `$renRaw = @(& git @gitArgs diff --cached --name-status --diff-filter=R 2>`$null)
+    foreach (`$line in `$renRaw) {
+        if (-not `$line) { continue }
+        `$p = `$line -split "`t"
+        if (`$p.Length -ge 3) {
+            `$sbjParts.Add(("ren {0} -> {1}" -f `$p[1], `$p[2]))
+        }
+    }
+    `$detail = if (`$sbjParts.Count -gt 0) { `$sbjParts -join '; ' } else { 'changes' }
+    `$subjectCore = "chore(dotfiles): `$detail"
+    `$maxLen = 160
+    if (`$subjectCore.Length -gt `$maxLen) {
+        `$allNames = @(& git @gitArgs diff --cached --name-only 2>`$null | Where-Object { `$_ })
+        `$ntotal = `$allNames.Count
+        `$preview = (`$allNames | Select-Object -First 3) -join ', '
+        `$subjectCore = "chore(dotfiles): `$ntotal paths (`$preview, …)"
+        if (`$subjectCore.Length -gt `$maxLen) {
+            `$subjectCore = "chore(dotfiles): `$ntotal paths (see message body)"
+        }
+    }
+    `$subject = "`$subjectCore at `$ts"
+
+    `$bodyLines = [System.Collections.Generic.List[string]]::new()
+    function Append-Section([string]`$title, `$lines) {
+        `$nonEmpty = @(`$lines | Where-Object { `$_ })
+        if (`$nonEmpty.Count -eq 0) { return }
+        [void]`$bodyLines.Add(`$title)
+        foreach (`$x in `$nonEmpty) { [void]`$bodyLines.Add(("  {0}" -f `$x)) }
+        [void]`$bodyLines.Add("")
+    }
+    Append-Section "Added:" `$pathsAdded
+    Append-Section "Modified:" `$pathsModified
+    Append-Section "Deleted:" `$pathsDeleted
+    `$renBody = [System.Collections.Generic.List[string]]::new()
+    foreach (`$line in `$renRaw) {
+        if (-not `$line) { continue }
+        `$p = `$line -split "`t"
+        if (`$p.Length -ge 3) {
+            [void]`$renBody.Add(("  {0} -> {1}" -f `$p[1], `$p[2]))
+        }
+    }
+    if (`$renBody.Count -gt 0) {
+        [void]`$bodyLines.Add("Renamed:")
+        foreach (`$r in `$renBody) { [void]`$bodyLines.Add(`$r) }
+        [void]`$bodyLines.Add("")
+    }
+    `$bodyText = (`$bodyLines -join "`n").TrimEnd()
+    if (`$bodyText) {
+        `$msg = "`$subject`n`n`$bodyText"
+        & git @gitArgs commit -m `$msg
+    } else {
+        & git @gitArgs commit -m `$subject
+    }
 }
 & git @gitArgs push
 "@ | Set-Content -Path $ScriptPath -Encoding UTF8
@@ -119,7 +182,7 @@ function Stop-LoopProcesses {
 }
 
 function Install-Admin {
-    Write-CommitScript
+    Write-CommitScript -AddAll:$AddAll
 
     $action        = New-ScheduledTaskAction -Execute 'pwsh' `
                          -Argument "-NonInteractive -WindowStyle Hidden -File `"$ScriptPath`""
@@ -135,11 +198,12 @@ function Install-Admin {
         -Action $action -Trigger @($triggerLogon, $triggerRepeat) -Settings $settings `
         -RunLevel Limited -Force | Out-Null
 
-    Write-Host "[admin] Installed Task Scheduler task '$TaskName' (commits every minute)."
+    $addHint = if ($AddAll) { 'git add -A' } else { 'git add -u' }
+    Write-Host "[admin] Installed Task Scheduler task '$TaskName' (commits every minute; auto-commit: $addHint)."
 }
 
 function Install-User {
-    Write-CommitScript
+    Write-CommitScript -AddAll:$AddAll
     Write-LoopScript
     Write-VbsLauncher
 
@@ -150,6 +214,8 @@ function Install-User {
     Write-Host "[user] Installed startup launcher: $LauncherPath"
     Write-Host "       Loop script: $LoopPath"
     Write-Host "       Log file:    $LogPath"
+    $addHint = if ($AddAll) { 'git add -A' } else { 'git add -u' }
+    Write-Host "       Auto-commit: $addHint"
     Write-Host "       Loop started; will resume automatically on each logon."
 }
 
@@ -258,7 +324,7 @@ function Get-Logs {
     $emitted = $false
 
     if (Test-Path $LogPath) {
-        Write-Host "User-mode log ($LogPath):"
+        Write-Host "User-mode log ( $LogPath ):"
         Get-Content $LogPath -Tail 50
         $emitted = $true
     }

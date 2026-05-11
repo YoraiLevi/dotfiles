@@ -1,2 +1,5 @@
 #!/bin/sh
-exec pwsh -NoProfile -ExecutionPolicy Bypass -File "$(dirname "$0")/Run-GitHook.ps1" "$(basename "$0")" "$@"
+# dotfiles_githooks launcher (POSIX; Git for Windows uses sh.exe). LF line endings only.
+HERE="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$HERE/.." && pwd)"
+exec uv run --project "$ROOT/githooks-runner" python -m dotfiles_githooks "$(basename "$0")" "$@"
