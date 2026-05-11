@@ -159,7 +159,9 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         # Invoke script in this pwsh session with named params — avoids nested `pwsh ... -AddAll` binding to the host.
-        run: & (Join-Path $env:GITHUB_WORKSPACE '.dotfiles/dotfiles-timer.ps1') -Action reinstall -AddAll
+        # (& must not start the YAML scalar — bare `&` is interpreted as a YAML anchor.)
+        run: |
+          & (Join-Path $env:GITHUB_WORKSPACE '.dotfiles/dotfiles-timer.ps1') -Action reinstall -AddAll
 
       - name: "Validate .auto-commit embeds git add -A after reinstall --all (Linux)"
         if: runner.os == 'Linux'
