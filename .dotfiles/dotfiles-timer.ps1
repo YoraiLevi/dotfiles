@@ -56,28 +56,63 @@ function Write-CommitScript {
 & git @gitArgs add -u
 & git @gitArgs diff --cached --quiet
 if (`$LASTEXITCODE -ne 0) {
-    function Get-DiffPathCount([string]`$filter) {
-        `$out = & git @gitArgs diff --cached --diff-filter=`$filter --name-only 2>`$null
-        if (-not `$out) { return 0 }
-        if (`$out -is [array]) { return `$out.Count }
-        return 1
-    }
-    `$nAdded    = Get-DiffPathCount 'A'
-    `$nUpdated  = Get-DiffPathCount 'M'
-    `$nDeleted  = Get-DiffPathCount 'D'
-    `$nRenamed  = Get-DiffPathCount 'R'
-    `$parts = [System.Collections.Generic.List[string]]::new()
-    if (`$nAdded   -gt 0) { `$parts.Add("{0} added"   -f `$nAdded) }
-    if (`$nUpdated -gt 0) { `$parts.Add("{0} updated" -f `$nUpdated) }
-    if (`$nDeleted -gt 0) { `$parts.Add("{0} deleted" -f `$nDeleted) }
-    if (`$nRenamed -gt 0) { `$parts.Add("{0} renamed" -f `$nRenamed) }
-    `$summary = (`$parts -join ', ')
     `$ts = Get-Date -Format 'o'
-    `$subject = "chore(dotfiles): dotfiles sync (`$summary) at `$ts"
-    `$fileList = @(& git @gitArgs diff --cached --name-only | Select-Object -First 40)
-    if (`$fileList.Count -gt 0) {
-        `$bodyText = (`$fileList | ForEach-Object { `$_ }) -join "`n"
-        `$msg = "`$subject`n`nChanged paths:`n`$bodyText"
+    `$pathsAdded = @(& git @gitArgs diff --cached --diff-filter=A --name-only 2>`$null)
+    `$pathsModified = @(& git @gitArgs diff --cached --diff-filter=M --name-only 2>`$null)
+    `$pathsDeleted = @(& git @gitArgs diff --cached --diff-filter=D --name-only 2>`$null)
+    `$sbjParts = [System.Collections.Generic.List[string]]::new()
+    foreach (`$f in `$pathsAdded) { if (`$f) { `$sbjParts.Add("add `$f") } }
+    foreach (`$f in `$pathsModified) { if (`$f) { `$sbjParts.Add("mod `$f") } }
+    foreach (`$f in `$pathsDeleted) { if (`$f) { `$sbjParts.Add("del `$f") } }
+    `$renRaw = @(& git @gitArgs diff --cached --name-status --diff-filter=R 2>`$null)
+    foreach (`$line in `$renRaw) {
+        if (-not `$line) { continue }
+        `$p = `$line -split "`t"
+        if (`$p.Length -ge 3) {
+            `$sbjParts.Add(("ren {0} -> {1}" -f `$p[1], `$p[2]))
+        }
+    }
+    `$detail = if (`$sbjParts.Count -gt 0) { `$sbjParts -join '; ' } else { 'changes' }
+    `$subjectCore = "chore(dotfiles): `$detail"
+    `$maxLen = 160
+    if (`$subjectCore.Length -gt `$maxLen) {
+        `$allNames = @(& git @gitArgs diff --cached --name-only 2>`$null | Where-Object { `$_ })
+        `$ntotal = `$allNames.Count
+        `$preview = (`$allNames | Select-Object -First 3) -join ', '
+        `$subjectCore = "chore(dotfiles): `$ntotal paths (`$preview, …)"
+        if (`$subjectCore.Length -gt `$maxLen) {
+            `$subjectCore = "chore(dotfiles): `$ntotal paths (see message body)"
+        }
+    }
+    `$subject = "`$subjectCore at `$ts"
+
+    `$bodyLines = [System.Collections.Generic.List[string]]::new()
+    function Append-Section([string]`$title, `$lines) {
+        `$nonEmpty = @(`$lines | Where-Object { `$_ })
+        if (`$nonEmpty.Count -eq 0) { return }
+        [void]`$bodyLines.Add(`$title)
+        foreach (`$x in `$nonEmpty) { [void]`$bodyLines.Add(("  {0}" -f `$x)) }
+        [void]`$bodyLines.Add("")
+    }
+    Append-Section "Added:" `$pathsAdded
+    Append-Section "Modified:" `$pathsModified
+    Append-Section "Deleted:" `$pathsDeleted
+    `$renBody = [System.Collections.Generic.List[string]]::new()
+    foreach (`$line in `$renRaw) {
+        if (-not `$line) { continue }
+        `$p = `$line -split "`t"
+        if (`$p.Length -ge 3) {
+            [void]`$renBody.Add(("  {0} -> {1}" -f `$p[1], `$p[2]))
+        }
+    }
+    if (`$renBody.Count -gt 0) {
+        [void]`$bodyLines.Add("Renamed:")
+        foreach (`$r in `$renBody) { [void]`$bodyLines.Add(`$r) }
+        [void]`$bodyLines.Add("")
+    }
+    `$bodyText = (`$bodyLines -join "`n").TrimEnd()
+    if (`$bodyText) {
+        `$msg = "`$subject`n`n`$bodyText"
         & git @gitArgs commit -m `$msg
     } else {
         & git @gitArgs commit -m `$subject

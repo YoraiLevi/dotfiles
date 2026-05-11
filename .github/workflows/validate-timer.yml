@@ -86,7 +86,7 @@ jobs:
           COUNT=$(git --git-dir="$HOME/.dotfiles" log --oneline | wc -l)
           [ "$COUNT" -ge 2 ] || { echo "FAIL: expected commit, got $COUNT"; exit 1; }
           MSG=$(git --git-dir="$HOME/.dotfiles" log -1 --pretty=%s)
-          echo "$MSG" | grep -E '^chore\(dotfiles\): dotfiles sync \(' \
+          echo "$MSG" | grep -E '^chore\(dotfiles\):' \
             || { echo "FAIL: unexpected message: $MSG"; exit 1; }
           echo "PASS: $MSG"
 
@@ -99,7 +99,7 @@ jobs:
           $count = (git --git-dir="$env:USERPROFILE\.dotfiles" log --oneline).Count
           if ($count -lt 2) { throw "FAIL: expected commit, got $count" }
           $msg = git --git-dir="$env:USERPROFILE\.dotfiles" log -1 --pretty=%s
-          if ($msg -notmatch '^\s*chore\(dotfiles\): dotfiles sync \(') { throw "FAIL: unexpected message: $msg" }
+          if ($msg -notmatch '^\s*chore\(dotfiles\):') { throw "FAIL: unexpected message: $msg" }
           Write-Host "PASS: $msg"
 
       # ── Unit test: no spurious commit when nothing changed ───────────────

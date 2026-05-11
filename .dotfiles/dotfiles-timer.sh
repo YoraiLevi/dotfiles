@@ -35,26 +35,70 @@ install_timer() {
     # Quoted heredoc: an unquoted EOF would run $((…)) and $(git …) while *installing*, corrupting the script.
     cat > "$SCRIPT_FILE" <<'AUTOSCRIPT'
 #!/bin/bash
-# Message pattern: counts from --diff-filter + path list in body.
+# Subject: chore(dotfiles): add/mod/del/ren with paths; body: grouped lists (names, not only counts).
 GDIR='@DOTFILES_GIT_DIR@'
 WTREE='@DOTFILES_WORK_TREE@'
 git --git-dir="$GDIR" --work-tree="$WTREE" add -u
 if ! git --git-dir="$GDIR" --work-tree="$WTREE" diff --quiet --cached; then
-  n_added=$(( $(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=A --name-only | wc -l) ))
-  n_updated=$(( $(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=M --name-only | wc -l) ))
-  n_deleted=$(( $(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=D --name-only | wc -l) ))
-  n_renamed=$(( $(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=R --name-only | wc -l) ))
-  parts=()
-  [ "$n_added" -gt 0 ] && parts+=("${n_added} added")
-  [ "$n_updated" -gt 0 ] && parts+=("${n_updated} updated")
-  [ "$n_deleted" -gt 0 ] && parts+=("${n_deleted} deleted")
-  [ "$n_renamed" -gt 0 ] && parts+=("${n_renamed} renamed")
-  summary=$(IFS=', '; echo "${parts[*]}")
   ts=$(date --iso-8601=seconds 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%SZ")
-  subject="chore(dotfiles): dotfiles sync (${summary}) at ${ts}"
-  file_list=$(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --name-only | head -n 40)
-  if [ -n "$file_list" ]; then
-    msg=$(printf '%s\n\n%s\n%s' "$subject" "Changed paths:" "$file_list")
+
+  paths_added=$(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=A --name-only)
+  paths_modified=$(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=M --name-only)
+  paths_deleted=$(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --diff-filter=D --name-only)
+
+  sbj_parts=()
+  while IFS= read -r f; do [ -z "$f" ] || sbj_parts+=("add ${f}"); done <<< "$paths_added"
+  while IFS= read -r f; do [ -z "$f" ] || sbj_parts+=("mod ${f}"); done <<< "$paths_modified"
+  while IFS= read -r f; do [ -z "$f" ] || sbj_parts+=("del ${f}"); done <<< "$paths_deleted"
+  while IFS=$'\t' read -r _st oldp newp; do
+    [ -n "$oldp" ] && [ -n "$newp" ] || continue
+    sbj_parts+=("ren ${oldp} -> ${newp}")
+  done < <(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --name-status --diff-filter=R)
+
+  detail=""
+  if [ ${#sbj_parts[@]} -gt 0 ]; then
+    detail=$(IFS='; '; echo "${sbj_parts[*]}")
+  else
+    detail="changes"
+  fi
+  subject_core="chore(dotfiles): ${detail}"
+  max_len=160
+  if [ ${#subject_core} -gt $max_len ]; then
+    name_lines=$(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --name-only)
+    ntotal=$(printf '%s\n' "$name_lines" | sed '/^$/d' | wc -l | tr -d ' ')
+    preview=$(printf '%s\n' "$name_lines" | sed '/^$/d' | head -n 3 | paste -sd ', ' -)
+    subject_core="chore(dotfiles): ${ntotal} paths (${preview}, …)"
+    if [ ${#subject_core} -gt $max_len ]; then
+      subject_core="chore(dotfiles): ${ntotal} paths (see message body)"
+    fi
+  fi
+  subject="${subject_core} at ${ts}"
+
+  body=""
+  append_section() {
+    local title="$1"
+    local lines="$2"
+    local nonempty
+    nonempty=$(printf '%s\n' "$lines" | sed '/^$/d')
+    [ -z "$nonempty" ] && return 0
+    body+="${title}"$'\n'
+    body+=$(printf '%s\n' "$nonempty" | sed 's/^/  /')$'\n'$'\n'
+  }
+  append_section "Added:" "$paths_added"
+  append_section "Modified:" "$paths_modified"
+  append_section "Deleted:" "$paths_deleted"
+  ren_body=""
+  while IFS=$'\t' read -r _st oldp newp; do
+    [ -n "$oldp" ] && [ -n "$newp" ] || continue
+    ren_body+="  ${oldp} -> ${newp}"$'\n'
+  done < <(git --git-dir="$GDIR" --work-tree="$WTREE" diff --cached --name-status --diff-filter=R)
+  if [ -n "$ren_body" ]; then
+    body+="Renamed:"$'\n'
+    body+="$ren_body"$'\n'
+  fi
+
+  if [ -n "$(printf '%s' "$body" | sed '/^$/d')" ]; then
+    msg=$(printf '%s\n\n%s' "$subject" "$body")
     git --git-dir="$GDIR" --work-tree="$WTREE" commit -m "$msg"
   else
     git --git-dir="$GDIR" --work-tree="$WTREE" commit -m "$subject"
