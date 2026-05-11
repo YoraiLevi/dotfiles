@@ -1,0 +1,5 @@
+# POSIX hook stubs must stay LF for Git-Bash/sh on Windows.
+.githooks/* text eol=lf
+githooks-runner/**/*.py text eol=lf
+githooks-runner/pyproject.toml text eol=lf
+githooks-runner/uv.lock text eol=lf

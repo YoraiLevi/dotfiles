@@ -1,3 +1,5 @@
-#!/usr/bin/env bash
-_GITHOOKS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-exec env GIT_HOOK_NAME="$(basename "$0")" "$_GITHOOKS_DIR/run-githook" "$@"
+#!/bin/sh
+# dotfiles_githooks launcher (POSIX; Git for Windows uses sh.exe). LF line endings only.
+HERE="$(cd "$(dirname "$0")" && pwd)"
+ROOT="$(cd "$HERE/.." && pwd)"
+exec uv run --project "$ROOT/githooks-runner" python -m dotfiles_githooks "$(basename "$0")" "$@"
