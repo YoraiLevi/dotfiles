@@ -21,13 +21,16 @@ jobs:
 
       - name: Configure git identity
         run: |
+          echo "[validate-timer] Configuring global git user for commits created during this workflow (runner.os=${{ runner.os }}, sha=${{ github.sha }})."
           git config --global user.email "ci@github-actions"
           git config --global user.name "CI"
 
       # ── Linux: expose systemd user session to subsequent steps ────────────
       - name: Export XDG_RUNTIME_DIR
         if: runner.os == 'Linux'
-        run: echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> "$GITHUB_ENV"
+        run: |
+          echo "[validate-timer] Exporting XDG_RUNTIME_DIR for systemd --user (Linux timer install)."
+          echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> "$GITHUB_ENV"
 
       # ── Synthetic bare repo: local fake remote so push works without creds ─
       - name: Set up synthetic bare dotfiles repo (Linux)
@@ -36,20 +39,34 @@ jobs:
           set -euo pipefail
           dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
 
+          echo "[validate-timer] Cloning GITHUB_WORKSPACE into bare repo at \$HOME/.dotfiles (same idea as README: git clone --bare <remote> \$HOME/.dotfiles)."
           git clone --bare "$GITHUB_WORKSPACE" "$HOME/.dotfiles"
+
+          echo "[validate-timer] Creating synthetic bare remote at /tmp/dotfiles-remote.git so dotfiles push needs no GitHub credentials."
           git init --bare /tmp/dotfiles-remote.git
           dotfiles remote set-url origin /tmp/dotfiles-remote.git
 
+          echo "[validate-timer] dotfiles config status.showUntrackedFiles no (README step 2)."
           dotfiles config status.showUntrackedFiles no
 
-          dotfiles sparse-checkout init --cone
-          dotfiles sparse-checkout set .gitignore .dotfiles
+          echo "[validate-timer] Populating \$HOME from master using explicit checkout paths (README step 2), not sparse-checkout:"
+          echo "  dotfiles checkout master -- .gitignore .dotfiles/"
+          dotfiles checkout master -- .gitignore .dotfiles/
+          echo "[validate-timer] Also checking out README.md so the 'commit on file change' test edits a real tracked file (README only lists .gitignore and .dotfiles/ for the minimal first checkout)."
+          dotfiles checkout master -- README.md
 
+          echo "[validate-timer] Staging tracked work-tree updates: dotfiles add -u ."
           dotfiles add -u .
           if ! dotfiles diff --cached --quiet; then
+            echo "[validate-timer] Creating initial commit: Init dotfiles"
             dotfiles commit -m "Init dotfiles"
+          else
+            echo "[validate-timer] Index already matched work tree after add -u; skipping empty commit."
           fi
+
+          echo "[validate-timer] Pushing to synthetic origin: dotfiles push -u origin HEAD"
           dotfiles push -u origin HEAD
+          echo "[validate-timer] Linux bare dotfiles repo setup finished."
 
       - name: Set up bare dotfiles repo (Windows)
         if: runner.os == 'Windows'
@@ -59,74 +76,98 @@ jobs:
           function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 
           $ws = $env:GITHUB_WORKSPACE
+          Write-Host "[validate-timer] Cloning GITHUB_WORKSPACE into bare repo at $HOME\.dotfiles (README-style bare clone)."
           git clone --bare "$ws" "$HOME\.dotfiles"
+
+          Write-Host "[validate-timer] Creating synthetic bare remote C:\dotfiles-remote.git for credential-free push."
           git init --bare C:\dotfiles-remote.git
           dotfiles remote set-url origin C:\dotfiles-remote.git
 
+          Write-Host "[validate-timer] dotfiles config status.showUntrackedFiles no (README step 2)."
           dotfiles config status.showUntrackedFiles no
 
-          dotfiles sparse-checkout init --cone
-          dotfiles sparse-checkout set .gitignore .dotfiles
+          Write-Host "[validate-timer] Populating profile from master with explicit checkout (README step 2), not sparse-checkout:"
+          Write-Host "  dotfiles checkout master -- .gitignore .dotfiles/"
+          dotfiles checkout master -- .gitignore .dotfiles/
+          Write-Host "[validate-timer] Checking out README.md for the timer unit test (tracked file; README minimal paths omit it)."
+          dotfiles checkout master -- README.md
 
+          Write-Host "[validate-timer] dotfiles add -u ."
           dotfiles add -u .
           dotfiles diff --cached --quiet
           if ($LASTEXITCODE -ne 0) {
+            Write-Host "[validate-timer] Creating initial commit: Init dotfiles"
             dotfiles commit -m "Init dotfiles"
+          } else {
+            Write-Host "[validate-timer] Nothing staged after add -u; skipping commit."
           }
+          Write-Host "[validate-timer] dotfiles push -u origin HEAD"
           dotfiles push -u origin HEAD
+          Write-Host "[validate-timer] Windows bare dotfiles repo setup finished."
 
       # ── Install ──────────────────────────────────────────────────────────
       - name: Install systemd timer
         if: runner.os == 'Linux'
-        run: bash .dotfiles/dotfiles-timer.sh install
+        run: |
+          echo "[validate-timer] Installing systemd user timer via dotfiles-timer.sh install (default git add -u)."
+          bash .dotfiles/dotfiles-timer.sh install
+          echo "[validate-timer] dotfiles-timer.sh install completed."
 
       - name: Install Task Scheduler task
         if: runner.os == 'Windows'
         shell: pwsh
-        run: pwsh .dotfiles/dotfiles-timer.ps1 install
+        run: |
+          Write-Host "[validate-timer] Installing scheduled task via dotfiles-timer.ps1 install (default git add -u)."
+          pwsh .dotfiles/dotfiles-timer.ps1 install
+          Write-Host "[validate-timer] dotfiles-timer.ps1 install completed."
 
       # ── Smoke test: scheduler registration ──────────────────────────────
       - name: Verify systemd timer registered
         if: runner.os == 'Linux'
         run: |
+          echo "[validate-timer] Checking systemd user timers and dotfiles-git-commit.timer enabled state."
           systemctl --user list-timers --all
           systemctl --user is-enabled dotfiles-git-commit.timer
+          echo "[validate-timer] systemd timer smoke check done."
 
       - name: Verify Task Scheduler task registered
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          Write-Host "[validate-timer] Looking up Task Scheduler task 'dotfiles-git-commit'."
           $task = Get-ScheduledTask -TaskName 'dotfiles-git-commit' -ErrorAction Stop
-          Write-Host "Task state: $($task.State)"
-          Write-Host "Next run:   $((Get-ScheduledTaskInfo -TaskName 'dotfiles-git-commit').NextRunTime)"
+          Write-Host "[validate-timer] Task state: $($task.State)"
+          Write-Host "[validate-timer] Next run:   $((Get-ScheduledTaskInfo -TaskName 'dotfiles-git-commit').NextRunTime)"
 
       # ── Validate embedded git add mode (-u default, -A after reinstall) ─────
       - name: "Validate .auto-commit embeds git add -u after install (Linux)"
         if: runner.os == 'Linux'
         run: |
           set -euo pipefail
+          echo "[validate-timer] Asserting generated .auto-commit.sh uses git add -u after default install."
           f="$HOME/.dotfiles/.auto-commit.sh"
           test -f "$f"
           line=$(grep -E '^git .* add -[uA]' "$f" | head -n1)
           [ -n "$line" ] || { echo "FAIL: no git add staging line"; exit 1; }
-          echo "Staging line: $line"
+          echo "[validate-timer] Staging line: $line"
           echo "$line" | grep -q 'add -u'
           echo "$line" | grep -q 'add -A' && { echo "FAIL: expected git add -u on staging line"; exit 1; }
-          echo "PASS: generated script uses git add -u"
+          echo "[validate-timer] PASS: generated script uses git add -u"
 
       - name: "Validate .auto-commit.ps1 embeds git add -u after install (Windows)"
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          Write-Host "[validate-timer] Asserting generated .auto-commit.ps1 uses git add -u after default install."
           $f = Join-Path $env:USERPROFILE '.dotfiles\.auto-commit.ps1'
           if (-not (Test-Path $f)) { throw "missing $f" }
           $hits = @(Select-String -Path $f -Pattern '^\s*& git @gitArgs add -(u|A)')
           if ($hits.Count -eq 0) { throw "FAIL: no '& git @gitArgs add -u|-A' line in $f" }
           $line = $hits[0].Line
-          Write-Host "Staging line: $line"
+          Write-Host "[validate-timer] Staging line: $line"
           if ($line -notmatch 'add -u\s*$') { throw "FAIL: expected '& git @gitArgs add -u', got: $line" }
           if ($line -match 'add -A') { throw "FAIL: unexpected add -A on staging line" }
-          Write-Host "PASS: generated script uses git add -u"
+          Write-Host "[validate-timer] PASS: generated script uses git add -u"
 
       # ── Unit test: commit fires when a tracked file changes ──────────────
       - name: "Unit test: commit fires on file change (Linux)"
@@ -135,6 +176,7 @@ jobs:
           set -euo pipefail
           dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
 
+          echo "[validate-timer] Appending to tracked \$HOME/README.md, then running .auto-commit.sh (expects new commit + chore(dotfiles): subject)."
           echo "change" >> "$HOME/README.md"
           bash "$HOME/.dotfiles/.auto-commit.sh"
           COUNT=$(dotfiles log --oneline | wc -l)
@@ -142,7 +184,7 @@ jobs:
           MSG=$(dotfiles log -1 --pretty=%s)
           echo "$MSG" | grep -E '^chore\(dotfiles\):' \
             || { echo "FAIL: unexpected message: $MSG"; exit 1; }
-          echo "PASS: $MSG"
+          echo "[validate-timer] PASS: $MSG"
 
       - name: "Unit test: commit fires on file change (Windows)"
         if: runner.os == 'Windows'
@@ -150,13 +192,14 @@ jobs:
         run: |
           function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 
+          Write-Host "[validate-timer] Appending to tracked README.md under USERPROFILE, then running .auto-commit.ps1."
           "change" | Add-Content "$env:USERPROFILE\README.md"
           & "$env:USERPROFILE\.dotfiles\.auto-commit.ps1"
           $count = (dotfiles log --oneline).Count
           if ($count -lt 2) { throw "FAIL: expected commit, got $count" }
           $msg = dotfiles log -1 --pretty=%s
           if ($msg -notmatch '^\s*chore\(dotfiles\):') { throw "FAIL: unexpected message: $msg" }
-          Write-Host "PASS: $msg"
+          Write-Host "[validate-timer] PASS: $msg"
 
       # ── Unit test: no spurious commit when nothing changed ───────────────
       - name: "Unit test: no commit when nothing changed (Linux)"
@@ -165,12 +208,13 @@ jobs:
           set -euo pipefail
           dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
 
+          echo "[validate-timer] Running .auto-commit.sh with a clean tree; HEAD must not move."
           BEFORE=$(dotfiles log -1 --pretty=%H)
           bash "$HOME/.dotfiles/.auto-commit.sh"
           AFTER=$(dotfiles log -1 --pretty=%H)
           [ "$BEFORE" = "$AFTER" ] \
             || { echo "FAIL: unexpected commit when nothing changed"; exit 1; }
-          echo "PASS: no spurious commit"
+          echo "[validate-timer] PASS: no spurious commit"
 
       - name: "Unit test: no commit when nothing changed (Windows)"
         if: runner.os == 'Windows'
@@ -178,15 +222,19 @@ jobs:
         run: |
           function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 
+          Write-Host "[validate-timer] Running .auto-commit.ps1 with no new changes; HEAD must not move."
           $before = dotfiles log -1 --pretty=%H
           & "$env:USERPROFILE\.dotfiles\.auto-commit.ps1"
           $after  = dotfiles log -1 --pretty=%H
           if ($before -ne $after) { throw "FAIL: unexpected commit when nothing changed" }
-          Write-Host "PASS: no spurious commit"
+          Write-Host "[validate-timer] PASS: no spurious commit"
 
       - name: "Reinstall with git add -A (Linux)"
         if: runner.os == 'Linux'
-        run: bash .dotfiles/dotfiles-timer.sh reinstall '--all'
+        run: |
+          echo "[validate-timer] Reinstalling timer with --all so embedded script uses git add -A."
+          bash .dotfiles/dotfiles-timer.sh reinstall '--all'
+          echo "[validate-timer] Linux reinstall --all completed."
 
       - name: "Reinstall with git add -A (Windows)"
         if: runner.os == 'Windows'
@@ -194,39 +242,49 @@ jobs:
         # Invoke script in this pwsh session with named params — avoids nested `pwsh ... -AddAll` binding to the host.
         # (& must not start the YAML scalar — bare `&` is interpreted as a YAML anchor.)
         run: |
+          Write-Host "[validate-timer] Reinstalling timer with -AddAll (git add -A in generated script)."
           & (Join-Path $env:GITHUB_WORKSPACE '.dotfiles/dotfiles-timer.ps1') -Action reinstall -AddAll
+          Write-Host "[validate-timer] Windows reinstall -AddAll completed."
 
       - name: "Validate .auto-commit embeds git add -A after reinstall --all (Linux)"
         if: runner.os == 'Linux'
         run: |
           set -euo pipefail
+          echo "[validate-timer] Asserting .auto-commit.sh staging line is git add -A after reinstall --all."
           f="$HOME/.dotfiles/.auto-commit.sh"
           line=$(grep -E '^git .* add -[uA]' "$f" | head -n1)
           [ -n "$line" ] || { echo "FAIL: no git add staging line"; exit 1; }
-          echo "Staging line: $line"
+          echo "[validate-timer] Staging line: $line"
           echo "$line" | grep -q 'add -A'
           echo "$line" | grep -q 'add -u' && { echo "FAIL: expected git add -A on staging line"; exit 1; }
-          echo "PASS: generated script uses git add -A"
+          echo "[validate-timer] PASS: generated script uses git add -A"
 
       - name: "Validate .auto-commit.ps1 embeds git add -A after reinstall -AddAll (Windows)"
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          Write-Host "[validate-timer] Asserting .auto-commit.ps1 staging line is git add -A after reinstall -AddAll."
           $f = Join-Path $env:USERPROFILE '.dotfiles\.auto-commit.ps1'
           $hits = @(Select-String -Path $f -Pattern '^\s*& git @gitArgs add -(u|A)')
           if ($hits.Count -eq 0) { throw "FAIL: no '& git @gitArgs add -u|-A' line in $f" }
           $line = $hits[0].Line
-          Write-Host "Staging line: $line"
+          Write-Host "[validate-timer] Staging line: $line"
           if ($line -notmatch 'add -A\s*$') { throw "FAIL: expected '& git @gitArgs add -A', got: $line" }
           if ($line -match 'add -u\b') { throw "FAIL: unexpected add -u on staging line" }
-          Write-Host "PASS: generated script uses git add -A"
+          Write-Host "[validate-timer] PASS: generated script uses git add -A"
 
       # ── CI log samples: after reinstall --all (git add -A); ~/.gitignore matches template README ─
       - name: "CI samples: commit message shapes (Linux)"
         if: runner.os == 'Linux'
-        run: bash .github/scripts/ci-commit-message-demos.sh
+        run: |
+          echo "[validate-timer] Running Linux commit-message shape demos for CI log samples."
+          bash .github/scripts/ci-commit-message-demos.sh
+          echo "[validate-timer] Linux commit-message demos finished."
 
       - name: "CI samples: commit message shapes (Windows)"
         if: runner.os == 'Windows'
         shell: pwsh
-        run: pwsh .github/scripts/ci-commit-message-demos.ps1
+        run: |
+          Write-Host "[validate-timer] Running Windows commit-message shape demos for CI log samples."
+          pwsh .github/scripts/ci-commit-message-demos.ps1
+          Write-Host "[validate-timer] Windows commit-message demos finished."
