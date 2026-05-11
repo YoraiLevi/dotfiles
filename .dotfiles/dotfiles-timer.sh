@@ -57,7 +57,8 @@ if ! git --git-dir="$GDIR" --work-tree="$WTREE" diff --quiet --cached; then
 
   detail=""
   if [ ${#sbj_parts[@]} -gt 0 ]; then
-    detail=$(IFS='; '; echo "${sbj_parts[*]}")
+    detail=$(printf '%s; ' "${sbj_parts[@]}")
+    detail=${detail%; }
   else
     detail="changes"
   fi
