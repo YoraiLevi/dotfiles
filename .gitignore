@@ -1,5 +1,5 @@
 /*
-
+!.dotfiles/
 # Defensive: never track these even if explicitly added
 .ssh/id_*
 .ssh/*_rsa

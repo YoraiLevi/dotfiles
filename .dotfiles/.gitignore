@@ -1,0 +1,7 @@
+/*
+!.gitignore
+!dotfiles-timer.sh
+!dotfiles-timer.ps1
+
+!.githooks/
+!githooks-runner/
