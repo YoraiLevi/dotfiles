@@ -24,7 +24,7 @@
     "continue": 121,
     "shift-tab": 121,
     "image-paste": 129,
-    "custom-agents": 115,
+    "custom-agents": 130,
     "permissions": 124,
     "rename-conversation": 117,
     "custom-commands": 121,
@@ -41,7 +41,7 @@
     "ide-upsell-external-terminal": 104,
     "colorterm-truecolor": 77,
     "desktop-app": 78,
-    "guest-passes": 125,
+    "guest-passes": 130,
     "agent-flag": 123
   },
   "promptQueueUseCount": 96,
