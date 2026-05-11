@@ -57,11 +57,13 @@ jobs:
 
           echo "[validate-timer] Staging tracked work-tree updates: dotfiles add -u ."
           dotfiles add -u .
-          if ! dotfiles diff --cached --quiet; then
+          # Use a plain `if diff` (no `!`): with `bash -eo pipefail` on the runner, `git diff --quiet`
+          # exits 1 when there *are* staged changes; that must run only as the `if` test, not bare under -e.
+          if dotfiles diff --cached --quiet; then
+            echo "[validate-timer] Index already matched work tree after add -u; skipping empty commit."
+          else
             echo "[validate-timer] Creating initial commit: Init dotfiles"
             dotfiles commit -m "Init dotfiles"
-          else
-            echo "[validate-timer] Index already matched work tree after add -u; skipping empty commit."
           fi
 
           echo "[validate-timer] Pushing to synthetic origin: dotfiles push -u origin HEAD"
