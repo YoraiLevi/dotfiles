@@ -137,7 +137,8 @@ For changes you want every machine to inherit, see [Multiple machines](#multiple
 
 ### Auto-commit (optional)
 
-Automatically stage and push changes to already-tracked dotfiles on a schedule. Uses `git add -u` — new files must still be added manually with `dotfiles add`.
+Automatically stage and push changes on a schedule. By default the generated script runs **`git add -u`** (tracked paths only). **`dotfiles-timer install --all`** (Linux: `--all`/`-A`; Windows: `-AddAll`) embeds **`git add -A`** instead, which also picks up **new untracked** paths under `$HOME`.
+For the default `-u` behavior, new dotfiles must still be staged once with `dotfiles add`.
 
 Add a `dotfiles-timer` wrapper to your shell profile (same pattern as the `dotfiles` function above) so the install/uninstall/status commands are identical across all your machines:
 

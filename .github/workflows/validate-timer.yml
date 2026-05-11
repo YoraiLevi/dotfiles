@@ -31,25 +31,41 @@ jobs:
       - name: Set up synthetic bare dotfiles repo (Linux)
         if: runner.os == 'Linux'
         run: |
-          git init --bare "$HOME/.dotfiles"
+          set -euo pipefail
+          git clone --bare "$GITHUB_WORKSPACE" "$HOME/.dotfiles"
           git init --bare /tmp/dotfiles-remote.git
-          git --git-dir="$HOME/.dotfiles" remote add origin /tmp/dotfiles-remote.git
-          echo "# dotfiles" > "$HOME/README.md"
-          git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" add "$HOME/README.md"
-          git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" commit -m "init"
+          git --git-dir="$HOME/.dotfiles" remote set-url origin /tmp/dotfiles-remote.git
+
+          BRANCH=$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)
+          git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" config status.showUntrackedFiles no
+          git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" checkout "$BRANCH" -- .gitignore .dotfiles/
+
+          git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" add -u .
+          if ! git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" diff --cached --quiet; then
+            git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" commit -m "Init dotfiles"
+          fi
           git --git-dir="$HOME/.dotfiles" push -u origin HEAD
 
       - name: Set up synthetic bare dotfiles repo (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
+          $ws = $env:GITHUB_WORKSPACE
           $d = "$env:USERPROFILE\.dotfiles"
-          git init --bare $d
+          git clone --bare "$ws" "$d"
           git init --bare C:\dotfiles-remote.git
-          git --git-dir=$d remote add origin C:\dotfiles-remote.git
-          "# dotfiles" | Out-File "$env:USERPROFILE\README.md" -Encoding utf8
-          git --git-dir=$d --work-tree=$env:USERPROFILE add "$env:USERPROFILE\README.md"
-          git --git-dir=$d --work-tree=$env:USERPROFILE commit -m "init"
+          git --git-dir=$d remote set-url origin C:\dotfiles-remote.git
+
+          $branch = git -C $ws rev-parse --abbrev-ref HEAD
+          git --git-dir=$d --work-tree=$env:USERPROFILE config status.showUntrackedFiles no
+          git --git-dir=$d --work-tree=$env:USERPROFILE checkout $branch -- .gitignore .dotfiles/
+
+          git --git-dir=$d --work-tree=$env:USERPROFILE add -u .
+          git --git-dir=$d --work-tree=$env:USERPROFILE diff --cached --quiet
+          if ($LASTEXITCODE -ne 0) {
+            git --git-dir=$d --work-tree=$env:USERPROFILE commit -m "Init dotfiles"
+          }
           git --git-dir=$d push -u origin HEAD
 
       # ── Install ──────────────────────────────────────────────────────────
@@ -188,7 +204,7 @@ jobs:
           if ($line -match 'add -u\b') { throw "FAIL: unexpected add -u on staging line" }
           Write-Host "PASS: generated script uses git add -A"
 
-      # ── CI log samples: print subject/body for mod/add/del/ren/long/combined ─
+      # ── CI log samples: after reinstall --all (git add -A); ~/.gitignore matches template README ─
       - name: "CI samples: commit message shapes (Linux)"
         if: runner.os == 'Linux'
         run: bash .github/scripts/ci-commit-message-demos.sh
