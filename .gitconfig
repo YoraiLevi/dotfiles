@@ -53,11 +53,11 @@
     # https://stackoverflow.com/a/2531803/12603110 - ununcommit
     # Find the commit hash you want to reset to with git reflog, then do a git reset [hash]
     recommit = reset 'HEAD@{1}'
-	unstage = restore --staged .
+	unstage = restore --staged
     # https://stackoverflow.com/a/1143800/12603110 - unadd
     unadd = rm --cached
     ls = ls-files --cached
-    
+    # https://stackoverflow.com/a/50645024/12603110
     normalize-line-endings = add --renormalize .
 [i18n]
 	logOutputEncoding = utf-8
