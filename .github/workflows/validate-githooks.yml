@@ -22,38 +22,25 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Sync and smoke-test Python dispatcher
+      - name: Sync and smoke-test dispatcher
         working-directory: .dotfiles/githooks-runner
         shell: bash
         run: |
           set -euo pipefail
           uv sync --locked
           uv run python -m dotfiles_githooks pre-commit
-          log=$(DOTFILES_GITHOOKS_VERBOSE=1 uv run python -m dotfiles_githooks commit-msg "$RUNNER_TEMP/msg.txt" 2>&1)
-          printf '%s\n' "$log"
-          echo "$log" | grep -q '\[dotfiles_githooks\] commit-msg'
+          DOTFILES_GITHOOKS_VERBOSE=1 uv run python -m dotfiles_githooks commit-msg "$RUNNER_TEMP/msg.txt" 2>&1 \
+            | tee "$RUNNER_TEMP/githooks-commit-msg.log" >/dev/null
+          grep -q '\[dotfiles_githooks\] commit-msg' "$RUNNER_TEMP/githooks-commit-msg.log"
 
-      - name: End-to-end — execute POSIX stub (fake ~/.dotfiles layout)
+      - name: End-to-end — tracked POSIX stub runs runner
+        working-directory: .dotfiles/githooks-runner
         shell: bash
         run: |
           set -euo pipefail
-          # Stubs resolve ROOT as parent(.githooks); runner must live at ROOT/githooks-runner (sibling of .githooks).
-          FAKE="$RUNNER_TEMP/dotfiles-e2e"
-          mkdir -p "$FAKE/.dotfiles"
-          ln -sfn "$GITHUB_WORKSPACE/.dotfiles/githooks-runner" "$FAKE/.dotfiles/githooks-runner"
-          cd "$GITHUB_WORKSPACE/.dotfiles/githooks-runner"
-          uv run python -m dotfiles_githooks install \
-            --hooks-dir "$FAKE/.dotfiles/.githooks" \
-            --runner-dir "$FAKE/.dotfiles/githooks-runner"
-          chmod +x "$FAKE/.dotfiles/.githooks/pre-commit"
-          export DOTFILES_GITHOOKS_VERBOSE=1
-          out=$(sh "$FAKE/.dotfiles/.githooks/pre-commit" 2>&1)
-          printf '%s\n' "$out"
-          echo "$out" | grep -q '\[dotfiles_githooks\] pre-commit'
-
-      - name: Spot-check tracked stub in repo
-        shell: bash
-        run: |
-          set -euo pipefail
-          head -n 3 "$GITHUB_WORKSPACE/.dotfiles/.githooks/pre-commit"
+          test -f "$GITHUB_WORKSPACE/.dotfiles/.githooks/pre-commit"
           grep -q 'uv run' "$GITHUB_WORKSPACE/.dotfiles/.githooks/pre-commit"
+          export DOTFILES_GITHOOKS_VERBOSE=1
+          sh "$GITHUB_WORKSPACE/.dotfiles/.githooks/pre-commit" 2>&1 \
+            | tee "$RUNNER_TEMP/githooks-pre-commit.log" >/dev/null
+          grep -q '\[dotfiles_githooks\] pre-commit' "$RUNNER_TEMP/githooks-pre-commit.log"

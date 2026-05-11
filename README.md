@@ -181,26 +181,14 @@ Client-side hooks run as **POSIX `#!/bin/sh` stubs** under `~/.dotfiles/.githook
 
 **Prerequisites**
 
-- **[uv](https://docs.astral.sh/uv/)** on `PATH` wherever Git runs hooks (terminal **and** GUI clients often inherit a minimal PATH — if hooks fail to find `uv`, set `--uv-exe` during install or fix PATH).
+- **[uv](https://docs.astral.sh/uv/)** on `PATH` wherever Git runs hooks (terminal **and** GUI clients often inherit a minimal PATH — if hooks fail to find `uv`, fix PATH or edit the POSIX stubs under `.dotfiles/.githooks/` to invoke a full path to `uv`).
 - **Linux / macOS**: normal system `sh`.
 - **Windows**: **Git for Windows** (hooks are executed with **`sh.exe`** from Git’s MSYS environment).
 
-**One-time setup (after your work-tree contains `.dotfiles/`)**
+The hook launcher scripts under **`.dotfiles/.githooks/`** are **tracked in this repo** (no separate generator step). After your work-tree contains `.dotfiles/`, sync the Python package once:
 
 ```bash
-# Lock/sync the runner
 uv sync --project ~/.dotfiles/githooks-runner
-
-# Regenerate POSIX stubs (defaults resolve ~/.dotfiles/.githooks from the installed runner path)
-uv run --project ~/.dotfiles/githooks-runner python -m dotfiles_githooks install
-```
-
-Options:
-
-```bash
-uv run --project ~/.dotfiles/githooks-runner python -m dotfiles_githooks install \
-  --hooks-dir ~/.dotfiles/.githooks --runner-dir ~/.dotfiles/githooks-runner
-uv run --project ~/.dotfiles/githooks-runner python -m dotfiles_githooks install --uv-exe /full/path/to/uv
 ```
 
 **Point the bare repo at the hooks directory** (required — hooks live outside `$GIT_DIR/hooks`):
