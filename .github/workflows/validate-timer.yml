@@ -77,6 +77,34 @@ jobs:
           Write-Host "Task state: $($task.State)"
           Write-Host "Next run:   $((Get-ScheduledTaskInfo -TaskName 'dotfiles-git-commit').NextRunTime)"
 
+      # ── Validate embedded git add mode (-u default, -A after reinstall) ─────
+      - name: "Validate .auto-commit embeds git add -u after install (Linux)"
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          f="$HOME/.dotfiles/.auto-commit.sh"
+          test -f "$f"
+          line=$(grep -E '^git .* add -[uA]' "$f" | head -n1)
+          [ -n "$line" ] || { echo "FAIL: no git add staging line"; exit 1; }
+          echo "Staging line: $line"
+          echo "$line" | grep -q 'add -u'
+          echo "$line" | grep -q 'add -A' && { echo "FAIL: expected git add -u on staging line"; exit 1; }
+          echo "PASS: generated script uses git add -u"
+
+      - name: "Validate .auto-commit.ps1 embeds git add -u after install (Windows)"
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $f = Join-Path $env:USERPROFILE '.dotfiles\.auto-commit.ps1'
+          if (-not (Test-Path $f)) { throw "missing $f" }
+          $hits = @(Select-String -Path $f -Pattern '^\s*& git @gitArgs add -(u|A)')
+          if ($hits.Count -eq 0) { throw "FAIL: no '& git @gitArgs add -u|-A' line in $f" }
+          $line = $hits[0].Line
+          Write-Host "Staging line: $line"
+          if ($line -notmatch 'add -u\s*$') { throw "FAIL: expected '& git @gitArgs add -u', got: $line" }
+          if ($line -match 'add -A') { throw "FAIL: unexpected add -A on staging line" }
+          Write-Host "PASS: generated script uses git add -u"
+
       # ── Unit test: commit fires when a tracked file changes ──────────────
       - name: "Unit test: commit fires on file change (Linux)"
         if: runner.os == 'Linux'
@@ -122,6 +150,40 @@ jobs:
           $after  = git --git-dir="$env:USERPROFILE\.dotfiles" log -1 --pretty=%H
           if ($before -ne $after) { throw "FAIL: unexpected commit when nothing changed" }
           Write-Host "PASS: no spurious commit"
+
+      - name: "Reinstall with git add -A (Linux)"
+        if: runner.os == 'Linux'
+        run: bash .dotfiles/dotfiles-timer.sh reinstall --all
+
+      - name: "Reinstall with git add -A (Windows)"
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: pwsh .dotfiles/dotfiles-timer.ps1 reinstall -AddAll
+
+      - name: "Validate .auto-commit embeds git add -A after reinstall --all (Linux)"
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          f="$HOME/.dotfiles/.auto-commit.sh"
+          line=$(grep -E '^git .* add -[uA]' "$f" | head -n1)
+          [ -n "$line" ] || { echo "FAIL: no git add staging line"; exit 1; }
+          echo "Staging line: $line"
+          echo "$line" | grep -q 'add -A'
+          echo "$line" | grep -q 'add -u' && { echo "FAIL: expected git add -A on staging line"; exit 1; }
+          echo "PASS: generated script uses git add -A"
+
+      - name: "Validate .auto-commit.ps1 embeds git add -A after reinstall -AddAll (Windows)"
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $f = Join-Path $env:USERPROFILE '.dotfiles\.auto-commit.ps1'
+          $hits = @(Select-String -Path $f -Pattern '^\s*& git @gitArgs add -(u|A)')
+          if ($hits.Count -eq 0) { throw "FAIL: no '& git @gitArgs add -u|-A' line in $f" }
+          $line = $hits[0].Line
+          Write-Host "Staging line: $line"
+          if ($line -notmatch 'add -A\s*$') { throw "FAIL: expected '& git @gitArgs add -A', got: $line" }
+          if ($line -match 'add -u\b') { throw "FAIL: unexpected add -u on staging line" }
+          Write-Host "PASS: generated script uses git add -A"
 
       # ── CI log samples: print subject/body for mod/add/del/ren/long/combined ─
       - name: "CI samples: commit message shapes (Linux)"
