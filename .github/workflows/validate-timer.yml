@@ -55,16 +55,10 @@ jobs:
           echo "[validate-timer] Also checking out README.md so the 'commit on file change' test edits a real tracked file (README only lists .gitignore and .dotfiles/ for the minimal first checkout)."
           dotfiles checkout master -- README.md
 
-          echo "[validate-timer] Staging tracked work-tree updates: dotfiles add -u ."
+          echo "[validate-timer] Staging tracked work-tree updates: dotfiles add -u . (README step 2)."
           dotfiles add -u .
-          # Use a plain `if diff` (no `!`): with `bash -eo pipefail` on the runner, `git diff --quiet`
-          # exits 1 when there *are* staged changes; that must run only as the `if` test, not bare under -e.
-          if dotfiles diff --cached --quiet; then
-            echo "[validate-timer] Index already matched work tree after add -u; skipping empty commit."
-          else
-            echo "[validate-timer] Creating initial commit: Init dotfiles"
-            dotfiles commit -m "Init dotfiles"
-          fi
+          echo "[validate-timer] Creating initial commit: Init dotfiles"
+          dotfiles commit -m "Init dotfiles"
 
           echo "[validate-timer] Pushing to synthetic origin: dotfiles push -u origin HEAD"
           dotfiles push -u origin HEAD
@@ -94,15 +88,10 @@ jobs:
           Write-Host "[validate-timer] Checking out README.md for the timer unit test (tracked file; README minimal paths omit it)."
           dotfiles checkout master -- README.md
 
-          Write-Host "[validate-timer] dotfiles add -u ."
+          Write-Host "[validate-timer] dotfiles add -u . (README step 2)"
           dotfiles add -u .
-          dotfiles diff --cached --quiet
-          if ($LASTEXITCODE -ne 0) {
-            Write-Host "[validate-timer] Creating initial commit: Init dotfiles"
-            dotfiles commit -m "Init dotfiles"
-          } else {
-            Write-Host "[validate-timer] Nothing staged after add -u; skipping commit."
-          }
+          Write-Host "[validate-timer] Creating initial commit: Init dotfiles"
+          dotfiles commit -m "Init dotfiles"
           Write-Host "[validate-timer] dotfiles push -u origin HEAD"
           dotfiles push -u origin HEAD
           Write-Host "[validate-timer] Windows bare dotfiles repo setup finished."
