@@ -19,5 +19,5 @@
 # `git add -A` cannot pull in all of ~/.config (see gitignore "cannot re-include").
 
 # !.config/
-.config/*
+# .config/*
 # !.config/systemd/
