@@ -1,5 +1,5 @@
 {
-  "numStartups": 129,
+  "numStartups": 130,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -1041,6 +1041,18 @@
       "lastHintSessionId": "80b23939-8502-4d84-8b5d-442159bdcf5b",
       "lastSessionFirstPrompt": "read the session at @session_id.txt and let's continue working on it",
       "lastSessionModified": 1778416579363
+    },
+    "C:/Users/devic/source/dotfiles-template": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "lastGracefulShutdown": false
     }
   },
   "lastReleaseNotesSeen": "2.1.138",
@@ -1129,6 +1141,9 @@
     ],
     "yorailevi/move-and-link": [
       "C:\\Users\\devic\\source\\move-and-link"
+    ],
+    "dgxsparklabs/dotfiles-template": [
+      "C:\\Users\\devic\\source\\dotfiles-template"
     ]
   },
   "passesEligibilityCache": {
