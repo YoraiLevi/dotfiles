@@ -32,6 +32,12 @@ jobs:
           echo "[validate-timer] XDG_RUNTIME_DIR for systemd --user"
           echo "XDG_RUNTIME_DIR=/run/user/$(id -u)" >> "$GITHUB_ENV"
 
+      # ── uv on PATH: required by the git hooks runner (README "Git hooks") ─
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
       # ── Synthetic bare repo: local fake remote so push works without creds ─
       - name: Set up synthetic bare dotfiles repo (Linux)
         if: runner.os == 'Linux'
@@ -115,6 +121,71 @@ jobs:
           Write-Host "[validate-timer] dotfiles push -u origin HEAD"
           dotfiles push -u origin HEAD
           Write-Host "[validate-timer] bare repo setup done (Windows)"
+
+      # ── README "Git hooks (optional)": uv sync + core.hooksPath + smoke test ─
+      - name: Set up git hooks (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
+          cd "$HOME"
+
+          echo "[validate-timer] uv sync --project \$HOME/.dotfiles/githooks-runner"
+          uv sync --project "$HOME/.dotfiles/githooks-runner"
+
+          echo "[validate-timer] dotfiles config core.hooksPath \$HOME/.dotfiles/.githooks"
+          dotfiles config core.hooksPath "$HOME/.dotfiles/.githooks"
+          echo "[validate-timer] verify: dotfiles config --get core.hooksPath"
+          dotfiles config --get core.hooksPath
+
+          echo "[validate-timer] smoke-test: direct pre-commit stub with verbose logging"
+          DOTFILES_GITHOOKS_VERBOSE=1 sh "$HOME/.dotfiles/.githooks/pre-commit" 2>&1 \
+            | tee "$RUNNER_TEMP/githooks-smoke.log"
+          grep -q '\[dotfiles_githooks\] pre-commit' "$RUNNER_TEMP/githooks-smoke.log" \
+            || { echo "FAIL: pre-commit stub did not invoke runner"; exit 1; }
+
+          echo "[validate-timer] integration: dotfiles commit --allow-empty triggers configured hooks"
+          DOTFILES_GITHOOKS_VERBOSE=1 dotfiles commit --allow-empty -m "hooks: smoke" 2>&1 \
+            | tee "$RUNNER_TEMP/githooks-commit.log"
+          grep -q '\[dotfiles_githooks\] pre-commit' "$RUNNER_TEMP/githooks-commit.log" \
+            || { echo "FAIL: pre-commit did not fire on dotfiles commit"; exit 1; }
+          grep -q '\[dotfiles_githooks\] commit-msg' "$RUNNER_TEMP/githooks-commit.log" \
+            || { echo "FAIL: commit-msg did not fire on dotfiles commit"; exit 1; }
+          echo "[validate-timer] git hooks setup ok (Linux)"
+
+      - name: Set up git hooks (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+          Set-Location $HOME
+
+          Write-Host "[validate-timer] uv sync --project `$HOME/.dotfiles/githooks-runner"
+          uv sync --project "$HOME/.dotfiles/githooks-runner"
+          if ($LASTEXITCODE -ne 0) { throw "uv sync failed (exit $LASTEXITCODE)" }
+
+          Write-Host "[validate-timer] dotfiles config core.hooksPath `$HOME/.dotfiles/.githooks"
+          dotfiles config core.hooksPath "$HOME/.dotfiles/.githooks"
+          Write-Host "[validate-timer] verify: dotfiles config --get core.hooksPath"
+          dotfiles config --get core.hooksPath
+
+          Write-Host "[validate-timer] integration: dotfiles commit --allow-empty triggers configured hooks"
+          $env:DOTFILES_GITHOOKS_VERBOSE = "1"
+          try {
+              $out = dotfiles commit --allow-empty -m "hooks: smoke" 2>&1 | Out-String
+          } finally {
+              $env:DOTFILES_GITHOOKS_VERBOSE = $null
+          }
+          Write-Host $out
+          if ($out -notmatch '\[dotfiles_githooks\] pre-commit') {
+              throw "FAIL: pre-commit did not fire on dotfiles commit"
+          }
+          if ($out -notmatch '\[dotfiles_githooks\] commit-msg') {
+              throw "FAIL: commit-msg did not fire on dotfiles commit"
+          }
+          Write-Host "[validate-timer] git hooks setup ok (Windows)"
 
       # ── Install ──────────────────────────────────────────────────────────
       - name: Install systemd timer
