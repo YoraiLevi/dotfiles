@@ -1,16 +1,18 @@
 # Run after timer install + unit tests. Exercises auto-commit message shapes; prints subject/body to CI logs.
 $ErrorActionPreference = 'Stop'
 
-$g = Join-Path $env:USERPROFILE '.dotfiles'
+# Same as README “The dotfiles command”
+function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+
 $wt = $env:USERPROFILE
-$ac = Join-Path $g '.auto-commit.ps1'
+$ac = Join-Path $HOME '.dotfiles\.auto-commit.ps1'
 
 function Dump-Msg([string]$Title) {
     Write-Host "::group::$Title"
     Write-Host '--- subject (git log -1 --pretty=%s) ---'
-    git --git-dir="$g" --work-tree="$wt" log -1 --pretty=%s
+    dotfiles log -1 --pretty=%s
     Write-Host '--- body (git log -1 --pretty=%b) ---'
-    git --git-dir="$g" --work-tree="$wt" log -1 --pretty=%b
+    dotfiles log -1 --pretty=%b
     Write-Host '::endgroup::'
 }
 
@@ -24,7 +26,7 @@ Dump-Msg 'Sample A: modified tracked file (mod)'
 # --- new tracked file ---
 $added = Join-Path $wt '.ci-demo-added.txt'
 'ci-demo-added' | Out-File -FilePath $added -Encoding utf8
-git --git-dir="$g" --work-tree="$wt" add -- $added
+dotfiles add -- $added
 & $ac
 Dump-Msg 'Sample B: new tracked file (add)'
 
@@ -35,7 +37,7 @@ Dump-Msg 'Sample C: deleted file (del)'
 
 # --- rename ---
 Set-Location $wt
-git --git-dir="$g" --work-tree="$wt" mv -- README.md README.ci-demo-renamed.md
+dotfiles mv -- README.md README.ci-demo-renamed.md
 & $ac
 Dump-Msg 'Sample D: rename (ren)'
 
@@ -46,7 +48,7 @@ Dump-Msg 'Sample D: rename (ren)'
     "long-$i" | Out-File -FilePath $p -Encoding utf8
 }
 Get-ChildItem -Path $wt -Filter '.ci-long-*.txt' | ForEach-Object {
-    git --git-dir="$g" --work-tree="$wt" add -- $_.FullName
+    dotfiles add -- $_.FullName
 }
 & $ac
 Dump-Msg 'Sample E: many adds (truncated subject when >160 chars)'
@@ -55,7 +57,7 @@ Dump-Msg 'Sample E: many adds (truncated subject when >160 chars)'
 Add-Content (Join-Path $wt 'README.ci-demo-renamed.md') "`ncombo-edit"
 $newCombo = Join-Path $wt '.ci-combo-new.txt'
 'combo-new' | Out-File -FilePath $newCombo -Encoding utf8
-git --git-dir="$g" --work-tree="$wt" add -- $newCombo
+dotfiles add -- $newCombo
 Remove-Item -Force -ErrorAction SilentlyContinue (Join-Path $wt '.ci-long-01.txt')
 & $ac
 Dump-Msg 'Sample F: add + mod + del together'

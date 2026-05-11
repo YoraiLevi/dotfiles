@@ -16,6 +16,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Configure git identity
         run: |
@@ -32,41 +34,46 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           set -euo pipefail
+          dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
+
           git clone --bare "$GITHUB_WORKSPACE" "$HOME/.dotfiles"
           git init --bare /tmp/dotfiles-remote.git
-          git --git-dir="$HOME/.dotfiles" remote set-url origin /tmp/dotfiles-remote.git
+          dotfiles remote set-url origin /tmp/dotfiles-remote.git
 
-          BRANCH=$(git -C "$GITHUB_WORKSPACE" rev-parse --abbrev-ref HEAD)
-          git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" config status.showUntrackedFiles no
-          git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" checkout "$BRANCH" -- .gitignore .dotfiles/
+          dotfiles config status.showUntrackedFiles no
 
-          git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" add -u .
-          if ! git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" diff --cached --quiet; then
-            git --git-dir="$HOME/.dotfiles" --work-tree="$HOME" commit -m "Init dotfiles"
+          dotfiles sparse-checkout init --cone
+          dotfiles sparse-checkout set .gitignore .dotfiles
+
+          dotfiles add -u .
+          if ! dotfiles diff --cached --quiet; then
+            dotfiles commit -m "Init dotfiles"
           fi
-          git --git-dir="$HOME/.dotfiles" push -u origin HEAD
+          dotfiles push -u origin HEAD
 
-      - name: Set up synthetic bare dotfiles repo (Windows)
+      - name: Set up bare dotfiles repo (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
+          function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+
           $ws = $env:GITHUB_WORKSPACE
-          $d = "$env:USERPROFILE\.dotfiles"
-          git clone --bare "$ws" "$d"
+          git clone --bare "$ws" "$HOME\.dotfiles"
           git init --bare C:\dotfiles-remote.git
-          git --git-dir=$d remote set-url origin C:\dotfiles-remote.git
+          dotfiles remote set-url origin C:\dotfiles-remote.git
 
-          $branch = git -C $ws rev-parse --abbrev-ref HEAD
-          git --git-dir=$d --work-tree=$env:USERPROFILE config status.showUntrackedFiles no
-          git --git-dir=$d --work-tree=$env:USERPROFILE checkout $branch -- .gitignore .dotfiles/
+          dotfiles config status.showUntrackedFiles no
 
-          git --git-dir=$d --work-tree=$env:USERPROFILE add -u .
-          git --git-dir=$d --work-tree=$env:USERPROFILE diff --cached --quiet
+          dotfiles sparse-checkout init --cone
+          dotfiles sparse-checkout set .gitignore .dotfiles
+
+          dotfiles add -u .
+          dotfiles diff --cached --quiet
           if ($LASTEXITCODE -ne 0) {
-            git --git-dir=$d --work-tree=$env:USERPROFILE commit -m "Init dotfiles"
+            dotfiles commit -m "Init dotfiles"
           }
-          git --git-dir=$d push -u origin HEAD
+          dotfiles push -u origin HEAD
 
       # ── Install ──────────────────────────────────────────────────────────
       - name: Install systemd timer
@@ -125,11 +132,14 @@ jobs:
       - name: "Unit test: commit fires on file change (Linux)"
         if: runner.os == 'Linux'
         run: |
+          set -euo pipefail
+          dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
+
           echo "change" >> "$HOME/README.md"
           bash "$HOME/.dotfiles/.auto-commit.sh"
-          COUNT=$(git --git-dir="$HOME/.dotfiles" log --oneline | wc -l)
+          COUNT=$(dotfiles log --oneline | wc -l)
           [ "$COUNT" -ge 2 ] || { echo "FAIL: expected commit, got $COUNT"; exit 1; }
-          MSG=$(git --git-dir="$HOME/.dotfiles" log -1 --pretty=%s)
+          MSG=$(dotfiles log -1 --pretty=%s)
           echo "$MSG" | grep -E '^chore\(dotfiles\):' \
             || { echo "FAIL: unexpected message: $MSG"; exit 1; }
           echo "PASS: $MSG"
@@ -138,11 +148,13 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+
           "change" | Add-Content "$env:USERPROFILE\README.md"
           & "$env:USERPROFILE\.dotfiles\.auto-commit.ps1"
-          $count = (git --git-dir="$env:USERPROFILE\.dotfiles" log --oneline).Count
+          $count = (dotfiles log --oneline).Count
           if ($count -lt 2) { throw "FAIL: expected commit, got $count" }
-          $msg = git --git-dir="$env:USERPROFILE\.dotfiles" log -1 --pretty=%s
+          $msg = dotfiles log -1 --pretty=%s
           if ($msg -notmatch '^\s*chore\(dotfiles\):') { throw "FAIL: unexpected message: $msg" }
           Write-Host "PASS: $msg"
 
@@ -150,9 +162,12 @@ jobs:
       - name: "Unit test: no commit when nothing changed (Linux)"
         if: runner.os == 'Linux'
         run: |
-          BEFORE=$(git --git-dir="$HOME/.dotfiles" log -1 --pretty=%H)
+          set -euo pipefail
+          dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
+
+          BEFORE=$(dotfiles log -1 --pretty=%H)
           bash "$HOME/.dotfiles/.auto-commit.sh"
-          AFTER=$(git --git-dir="$HOME/.dotfiles" log -1 --pretty=%H)
+          AFTER=$(dotfiles log -1 --pretty=%H)
           [ "$BEFORE" = "$AFTER" ] \
             || { echo "FAIL: unexpected commit when nothing changed"; exit 1; }
           echo "PASS: no spurious commit"
@@ -161,9 +176,11 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $before = git --git-dir="$env:USERPROFILE\.dotfiles" log -1 --pretty=%H
+          function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
+
+          $before = dotfiles log -1 --pretty=%H
           & "$env:USERPROFILE\.dotfiles\.auto-commit.ps1"
-          $after  = git --git-dir="$env:USERPROFILE\.dotfiles" log -1 --pretty=%H
+          $after  = dotfiles log -1 --pretty=%H
           if ($before -ne $after) { throw "FAIL: unexpected commit when nothing changed" }
           Write-Host "PASS: no spurious commit"
 
