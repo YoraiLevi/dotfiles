@@ -40,11 +40,16 @@ jobs:
           git config --global init.defaultBranch master
           dotfiles() { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"; }
 
+          # cd to $HOME — git pathspecs are CWD-relative, and GHA puts us inside
+          # the workspace which is a subdir of $HOME, so `.gitignore` would
+          # otherwise resolve to `work/.../...gitignore` in master's tree. Real
+          # users running the README from a normal shell are at $HOME or
+          # elsewhere outside the workspace, so this matches their environment.
+          cd "$HOME"
+
           # Stand up a synthetic "github.com/<YOU>/dotfiles.git" so the README's
           # `git clone --bare <remote-url>` simulation is faithful: a clean bare
-          # remote that received this workspace's content via git push protocol,
-          # not a local->local hardlink-clone (which would inherit sparse-checkout
-          # and worktree-config files from the workspace .git).
+          # remote that received this workspace's content via git push protocol.
           echo "[validate-timer] git init --bare /tmp/dotfiles-remote.git"
           git init --bare /tmp/dotfiles-remote.git
           echo "[validate-timer] push workspace HEAD -> /tmp/dotfiles-remote.git refs/heads/master"
@@ -78,6 +83,10 @@ jobs:
           function dotfiles { git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" @args }
 
           $ws = $env:GITHUB_WORKSPACE
+
+          # Match a real user's shell: CWD outside the workspace so git
+          # pathspecs (which are CWD-relative) resolve at the work-tree root.
+          Set-Location $HOME
 
           # Stand up a synthetic "github.com/<YOU>/dotfiles.git" so the README's
           # `git clone --bare <remote-url>` simulation is faithful: a clean bare
