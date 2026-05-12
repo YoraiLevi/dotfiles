@@ -550,7 +550,7 @@ keybinds clear-defaults=true {
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
         bind "Ctrl Shift a" {
-            Run "uv" "run" "--script" "$HOME/.config/zellij/dispatch.py" "switch-session" {
+            Run "pwsh" "-NoProfile" "-NoLogo" "-Command" "uv run --script $HOME/.config/zellij/dispatch.py switch-session" {
                 floating true
                 close_on_exit false
                 name "Switch Session"
@@ -560,7 +560,7 @@ keybinds clear-defaults=true {
             SwitchToMode "locked"
         }
         bind "Ctrl Shift `" {
-            Run "uv" "run" "--script" "$HOME/.config/zellij/dispatch.py" "launch-profile" {
+            Run "pwsh" "-NoProfile" "-NoLogo" "-Command" "uv run --script $HOME/.config/zellij/dispatch.py launch-profile" {
                 floating true
                 close_on_exit false
                 name "New Tab"
