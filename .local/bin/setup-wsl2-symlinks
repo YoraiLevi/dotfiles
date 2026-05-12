@@ -363,10 +363,6 @@ WinHome="$WinWSL/.wsl2/home/"
 home_exclude_list=(
   ".gitkeep"
   "*.bak"
-  ".zshrc"
-  ".zshenv"
-  ".zsh"
-  ".zsh/*"
   # Add more patterns as needed, relative to $WinHome
 )
 
