@@ -582,7 +582,7 @@
       "enabledMcpjsonServers": [],
       "disabledMcpjsonServers": [],
       "hasTrustDialogAccepted": true,
-      "projectOnboardingSeenCount": 8,
+      "projectOnboardingSeenCount": 9,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": true,
@@ -1108,7 +1108,7 @@
       "enabledMcpjsonServers": [],
       "disabledMcpjsonServers": [],
       "hasTrustDialogAccepted": false,
-      "projectOnboardingSeenCount": 2,
+      "projectOnboardingSeenCount": 3,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "exampleFiles": [],
@@ -1168,7 +1168,7 @@
   ],
   "closedIssuesLastChecked": 1778533015436,
   "ideHintShownCount": 5,
-  "lastPlanModeUse": 1778576159806,
+  "lastPlanModeUse": 1778588775832,
   "claudeInChromeDefaultEnabled": false,
   "hasCompletedClaudeInChromeOnboarding": true,
   "remoteControlUpsellSeenCount": 1,
@@ -1229,5 +1229,5 @@
   "copyOnSelect": false,
   "showSpinnerTree": false,
   "routineFiredWatermark": "2026-05-10T12:36:03.762Z",
-  "autoPermissionsNotificationCount": 1
+  "autoPermissionsNotificationCount": 2
 }
