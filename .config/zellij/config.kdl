@@ -552,7 +552,7 @@ keybinds clear-defaults=true {
         bind "Ctrl Shift a" {
             Run "uv" "run" "--script" "$HOME/.config/zellij/dispatch.py" "switch-session" {
                 floating true
-                close_on_exit true
+                close_on_exit false
                 name "Switch Session"
                 width "70%"
                 height "40%"
@@ -562,9 +562,9 @@ keybinds clear-defaults=true {
         bind "Ctrl Shift `" {
             Run "uv" "run" "--script" "$HOME/.config/zellij/dispatch.py" "launch-profile" {
                 floating true
-                close_on_exit true
+                close_on_exit false
                 name "New Tab"
-                width "40%"
+                width "70%"
                 height "35%"
             }
             SwitchToMode "locked"
