@@ -1,5 +1,5 @@
 {
-  "numStartups": 131,
+  "numStartups": 132,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -474,7 +474,7 @@
   "sonnet1m45MigrationComplete": true,
   "migrationVersion": 13,
   "userID": "b50944c051a8c32450daad839326b2a8261ad363adee4f8296c9cd82533abb55",
-  "changelogLastFetched": 1778575915504,
+  "changelogLastFetched": 1778576771303,
   "autoUpdatesProtectedForNative": true,
   "oauthAccount": {
     "accountUuid": "59481114-4cf3-4697-a1b6-0e9306a56b6e",
@@ -1100,9 +1100,25 @@
         }
       },
       "lastSessionId": "5b6c4db7-baf6-4710-a3b8-979ab890688d"
+    },
+    "/root": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 1,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [],
+      "lastGracefulShutdown": false,
+      "lastHintSessionId": "ab149b85-f355-4679-ba9f-983d082fd45e",
+      "lastSessionFirstPrompt": "I want to setup zsh on the system with completions and colors etc, how can i do that? aid me",
+      "lastSessionModified": 1778576830325
     }
   },
-  "lastReleaseNotesSeen": "2.1.139",
+  "lastReleaseNotesSeen": "2.1.138",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
