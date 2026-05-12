@@ -1,5 +1,5 @@
 {
-  "numStartups": 130,
+  "numStartups": 131,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -474,7 +474,7 @@
   "sonnet1m45MigrationComplete": true,
   "migrationVersion": 13,
   "userID": "b50944c051a8c32450daad839326b2a8261ad363adee4f8296c9cd82533abb55",
-  "changelogLastFetched": 1778416474962,
+  "changelogLastFetched": 1778575915504,
   "autoUpdatesProtectedForNative": true,
   "oauthAccount": {
     "accountUuid": "59481114-4cf3-4697-a1b6-0e9306a56b6e",
@@ -582,10 +582,10 @@
       "enabledMcpjsonServers": [],
       "disabledMcpjsonServers": [],
       "hasTrustDialogAccepted": true,
-      "projectOnboardingSeenCount": 3,
+      "projectOnboardingSeenCount": 4,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "lastHintSessionId": "871dde68-dfd0-4c3f-9ee1-b7384666d9f6",
       "lastSessionFirstPrompt": "i was working with claude session on zellij config setup and suddenly i hit a few keys and that zellij tab closed, i didn't expect it to happen, what could have been what i pressed? i think i was in a",
       "lastSessionModified": 1778078048911,
@@ -627,7 +627,8 @@
         "hook_duration_ms_p50": 0,
         "hook_duration_ms_p95": 1,
         "hook_duration_ms_p99": 1
-      }
+      },
+      "lastVersionBase": "2.1.139"
     },
     "C:/Users/devic/source/agent-project-template": {
       "allowedTools": [],
@@ -1060,7 +1061,7 @@
       "lastSessionModified": 1778491877851
     }
   },
-  "lastReleaseNotesSeen": "2.1.138",
+  "lastReleaseNotesSeen": "2.1.139",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
@@ -1082,8 +1083,7 @@
   "penguinModeOrgEnabled": true,
   "groveConfigCache": {
     "59481114-4cf3-4697-a1b6-0e9306a56b6e": {
-      "grove_enabled": true,
-      "timestamp": 1778416477836
+      "timestamp": 1778575915581
     }
   },
   "cachedExtraUsageDisabledReason": null,
@@ -1163,7 +1163,7 @@
         "currency": "USD"
       },
       "remaining_passes": 3,
-      "timestamp": 1778416488434
+      "timestamp": 1778575917840
     }
   },
   "passesUpsellSeenCount": 3,
