@@ -1055,10 +1055,51 @@
       "projectOnboardingSeenCount": 1,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastHintSessionId": "5b6c4db7-baf6-4710-a3b8-979ab890688d",
       "lastSessionFirstPrompt": "observe this folder, understand this project first, we will be fixing an issue",
-      "lastSessionModified": 1778491877851
+      "lastSessionModified": 1778491877851,
+      "lastCost": 20.334454000000008,
+      "lastAPIDuration": 2227960,
+      "lastAPIDurationWithoutRetries": 2226856,
+      "lastToolDuration": 869430,
+      "lastDuration": 84872113,
+      "lastLinesAdded": 622,
+      "lastLinesRemoved": 340,
+      "lastTotalInputTokens": 36395,
+      "lastTotalOutputTokens": 154086,
+      "lastTotalCacheCreationInputTokens": 1074142,
+      "lastTotalCacheReadInputTokens": 22412428,
+      "lastTotalWebSearchRequests": 2,
+      "lastFpsAverage": 0.5,
+      "lastFpsLow1Pct": 54.31,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 36227,
+          "outputTokens": 16183,
+          "cacheReadInputTokens": 1082897,
+          "cacheCreationInputTokens": 127206,
+          "webSearchRequests": 2,
+          "costUSD": 0.40443920000000005
+        },
+        "claude-sonnet-4-6": {
+          "inputTokens": 9,
+          "outputTokens": 2371,
+          "cacheReadInputTokens": 44451,
+          "cacheCreationInputTokens": 27559,
+          "webSearchRequests": 0,
+          "costUSD": 0.15227355
+        },
+        "claude-opus-4-7[1m]": {
+          "inputTokens": 159,
+          "outputTokens": 135532,
+          "cacheReadInputTokens": 21285080,
+          "cacheCreationInputTokens": 919377,
+          "webSearchRequests": 0,
+          "costUSD": 19.777741250000002
+        }
+      },
+      "lastSessionId": "5b6c4db7-baf6-4710-a3b8-979ab890688d"
     }
   },
   "lastReleaseNotesSeen": "2.1.139",
