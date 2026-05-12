@@ -45,5 +45,6 @@
   "showTurnDuration": true,
   "showMessageTimestamps": true,
   "remoteControlAtStartup": true,
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }

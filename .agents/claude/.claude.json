@@ -1111,7 +1111,7 @@
   ],
   "closedIssuesLastChecked": 1778533015436,
   "ideHintShownCount": 5,
-  "lastPlanModeUse": 1778575957915,
+  "lastPlanModeUse": 1778575998020,
   "claudeInChromeDefaultEnabled": false,
   "hasCompletedClaudeInChromeOnboarding": true,
   "remoteControlUpsellSeenCount": 1,
@@ -1171,5 +1171,6 @@
   "passesLastSeenRemaining": 3,
   "copyOnSelect": false,
   "showSpinnerTree": false,
-  "routineFiredWatermark": "2026-05-10T12:36:03.762Z"
+  "routineFiredWatermark": "2026-05-10T12:36:03.762Z",
+  "autoPermissionsNotificationCount": 1
 }
