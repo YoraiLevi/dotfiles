@@ -549,13 +549,11 @@ keybinds clear-defaults=true {
         bind "Alt -"             { Resize "Decrease"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
-        // NOTE: zellij's Run does NOT expand `~` or `$HOME` in the binary path
-        // (only the `cwd` field). Hardcode the absolute uv path per-OS:
-        //   Windows: "C:/Users/devic/.local/bin/uv.exe"
-        //   macOS:   "/Users/devic/.local/bin/uv"
-        //   Linux:   "/home/devic/.local/bin/uv"
+        // uv is resolved from PATH (the uv installer adds ~/.local/bin on every OS).
+        // `cwd` is the only zellij field that expands `~`, so we set it and pass the
+        // script as a bare relative path — keeping this block fully portable.
         bind "Ctrl Shift a" {
-            Run "C:/Users/devic/.local/bin/uv.exe" "run" "--script" "dispatch.py" "switch-session" {
+            Run "uv" "run" "--script" "dispatch.py" "switch-session" {
                 cwd "~/.config/zellij"
                 floating true
                 close_on_exit false
@@ -566,7 +564,7 @@ keybinds clear-defaults=true {
             SwitchToMode "locked"
         }
         bind "Ctrl Shift `" {
-            Run "C:/Users/devic/.local/bin/uv.exe" "run" "--script" "dispatch.py" "launch-profile" {
+            Run "uv" "run" "--script" "dispatch.py" "launch-profile" {
                 cwd "~/.config/zellij"
                 floating true
                 close_on_exit false
