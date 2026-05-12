@@ -549,12 +549,12 @@ keybinds clear-defaults=true {
         bind "Alt -"             { Resize "Decrease"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
-        // uv is resolved from PATH (the uv installer adds ~/.local/bin on every OS).
-        // `cwd` is the only zellij field that expands `~`, so we set it and pass the
-        // script as a bare relative path — keeping this block fully portable.
+        // `zellij-dispatch` is a tiny shim (~/.config/zellij/scripts/zellij-dispatch.cmd
+        // on Windows, ~/.config/zellij/scripts/zellij-dispatch on POSIX) that uv-runs
+        // dispatch.py with the right absolute path. The shim must be on PATH — one-time
+        // setup per machine. See ~/.config/zellij/scripts/zellij-dispatch.cmd for details.
         bind "Ctrl Shift a" {
-            Run "uv" "run" "--script" "dispatch.py" "switch-session" {
-                cwd "~/.config/zellij"
+            Run "zellij-dispatch" "switch-session" {
                 floating true
                 close_on_exit false
                 name "Switch Session"
@@ -564,8 +564,7 @@ keybinds clear-defaults=true {
             SwitchToMode "locked"
         }
         bind "Ctrl Shift `" {
-            Run "uv" "run" "--script" "dispatch.py" "launch-profile" {
-                cwd "~/.config/zellij"
+            Run "zellij-dispatch" "launch-profile" {
                 floating true
                 close_on_exit false
                 name "New Tab"
