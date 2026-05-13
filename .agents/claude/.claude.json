@@ -46,6 +46,7 @@
   },
   "promptQueueUseCount": 98,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_desktop_upsell": {
       "enable_shortcut_tip": true,
