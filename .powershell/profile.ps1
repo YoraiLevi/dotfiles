@@ -102,6 +102,12 @@ Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 
+Set-PSReadLineKeyHandler -Key 'Ctrl+c' -ScriptBlock {
+    param($key, $arg)
+    # Revert any in-progress edit (e.g. MenuComplete insertion), then cancel the line.
+    [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
+    [Microsoft.PowerShell.PSConsoleReadLine]::CancelLine($key, $arg)
+}
 function Benchmark-Profile {
     $pwsh = (Get-Process -Id $PID).Path
     & $pwsh -NoProfile -command 'Measure-Script -Top 10 $profile.CurrentUserAllHosts'
