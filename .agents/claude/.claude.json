@@ -1,5 +1,5 @@
 {
-  "numStartups": 134,
+  "numStartups": 135,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -479,7 +479,7 @@
   "sonnet1m45MigrationComplete": true,
   "migrationVersion": 13,
   "userID": "b50944c051a8c32450daad839326b2a8261ad363adee4f8296c9cd82533abb55",
-  "changelogLastFetched": 1778665174528,
+  "changelogLastFetched": 1778682476786,
   "autoUpdatesProtectedForNative": true,
   "oauthAccount": {
     "accountUuid": "59481114-4cf3-4697-a1b6-0e9306a56b6e",
@@ -1024,7 +1024,8 @@
       "hasCompletedProjectOnboarding": true,
       "lastHintSessionId": "0d225c5a-8d15-4e35-b0d6-623aea0581a1",
       "lastSessionFirstPrompt": "You are joining a project that follows the agent-project-template philosophy: \"You don't have memory. These files do.\"  PROJECT: two Ansible repositories that manage a pair of NVIDIA DGX Sparks (produ",
-      "lastSessionModified": 1778229716898
+      "lastSessionModified": 1778229716898,
+      "lastVersionBase": "2.1.140"
     },
     "C:/Users/devic/source/move-and-link": {
       "allowedTools": [],
@@ -1124,7 +1125,7 @@
       "lastVersionBase": "2.1.139"
     }
   },
-  "lastReleaseNotesSeen": "2.1.139",
+  "lastReleaseNotesSeen": "2.1.140",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
