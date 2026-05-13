@@ -41,9 +41,7 @@ function global:Set-MyPrompt {
         # https://github.com/dahlbyk/posh-git?tab=readme-ov-file#customizing-the-posh-git-prompt
         $Global:GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
         # cwd in light blue (ConsoleColor 'Blue' = ANSI bright blue, matches zsh %F{12})
-        # Use ANSI color "12" (bright blue, same as printf "\e[38;5;12m")
-        $Global:GitPromptSettings.DefaultPromptPath.ForegroundColor = [ConsoleColor]::DodgerBlue
- 
+        $Global:GitPromptSettings.DefaultPromptPath.ForegroundColor = 'Blue'
         function global:PromptWriteErrorInfo() {
             $status = if ($global:GitPromptValues.DollarQuestion) {
                 "`e[32mOK`e[0m" 
