@@ -40,6 +40,8 @@ function global:Set-MyPrompt {
         # https://stackoverflow.com/a/70527216/12603110 - Conda environment name hides git branch after conda init in Powershell
         # https://github.com/dahlbyk/posh-git?tab=readme-ov-file#customizing-the-posh-git-prompt
         $Global:GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $true
+        # cwd in light blue (ConsoleColor 'Blue' = ANSI bright blue, matches zsh %F{12})
+        $Global:GitPromptSettings.DefaultPromptPath.ForegroundColor = 'Blue'
         function global:PromptWriteErrorInfo() {
             $status = if ($global:GitPromptValues.DollarQuestion) {
                 "`e[32mOK`e[0m" 
