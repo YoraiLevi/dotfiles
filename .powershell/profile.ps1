@@ -101,13 +101,48 @@ Set-PSReadLineOption @PSReadLineOptions
 Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+$global:_postMenuBuffer = $null
+
+Set-PSReadLineKeyHandler -Key 'Tab' -ScriptBlock {
+    param($key, $arg)
+    $before = ""
+    $beforeCursor = 0
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$before, [ref]$beforeCursor)
+
+    [Microsoft.PowerShell.PSConsoleReadLine]::MenuComplete($key, $arg)
+
+    $after = ""
+    $afterCursor = 0
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$after, [ref]$afterCursor)
+
+    # Only flag if MenuComplete actually inserted/replaced something.
+    if ($after -ne $before) {
+        $global:_postMenuBuffer = $after
+    } else {
+        $global:_postMenuBuffer = $null
+    }
+}
 
 Set-PSReadLineKeyHandler -Key 'Ctrl+c' -ScriptBlock {
     param($key, $arg)
-    # Revert any in-progress edit (e.g. MenuComplete insertion), then cancel the line.
-    [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
-    # [Microsoft.PowerShell.PSConsoleReadLine]::CancelLine($key, $arg)
+    if ($null -ne $global:_postMenuBuffer) {
+        $current = ""
+        $cursor = 0
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$current, [ref]$cursor)
+        if ($current -eq $global:_postMenuBuffer) {
+            # Buffer matches what we recorded right after MenuComplete returned →
+            # user hasn't touched anything since. Rev
+            [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
+            $global:_postMenuBuffer = $null
+            return
+        }
+        # Buffer was modified since the menu exited. Forget the recorded state
+        # and fall through to a normal cancel.
+        $global:_postMenuBuffer = $null
+    }
+    [Microsoft.PowerShell.PSConsoleReadLine]::CancelLine($key, $arg)
 }
+
 function Benchmark-Profile {
     $pwsh = (Get-Process -Id $PID).Path
     & $pwsh -NoProfile -command 'Measure-Script -Top 10 $profile.CurrentUserAllHosts'
