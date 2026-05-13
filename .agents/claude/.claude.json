@@ -587,7 +587,7 @@
       "enabledMcpjsonServers": [],
       "disabledMcpjsonServers": [],
       "hasTrustDialogAccepted": true,
-      "projectOnboardingSeenCount": 11,
+      "projectOnboardingSeenCount": 12,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": true,
@@ -1113,7 +1113,7 @@
       "enabledMcpjsonServers": [],
       "disabledMcpjsonServers": [],
       "hasTrustDialogAccepted": false,
-      "projectOnboardingSeenCount": 4,
+      "projectOnboardingSeenCount": 5,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "exampleFiles": [],
@@ -1124,7 +1124,7 @@
       "lastVersionBase": "2.1.139"
     }
   },
-  "lastReleaseNotesSeen": "2.1.138",
+  "lastReleaseNotesSeen": "2.1.139",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
