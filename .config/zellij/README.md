@@ -20,18 +20,22 @@ once to add uv's tool-bin dir to `PATH`.
 
 ## Runtime dependencies
 
-| OS | Required |
-|---|---|
-| All | `uv` (one-time install: <https://docs.astral.sh/uv/getting-started/installation/>), `zellij` |
+
+| OS  | Required                                                                                                                                              |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| All | `uv` (one-time install: [https://docs.astral.sh/uv/getting-started/installation/](https://docs.astral.sh/uv/getting-started/installation/)), `zellij` |
+
 
 `uv` handles Python — you don't need to install Python yourself. Both `launch-profile` and `switch-session` are implemented in Python stdlib only and need no external tools (no `fzf`, no `pwsh`/`bash`).
 
 ## What the keybinds do
 
-| Key | Action |
-|---|---|
-| `Ctrl+Shift+A` | Session switcher — list zellij sessions, switch / delete / create |
+
+| Key             | Action                                                                                                |
+| --------------- | ----------------------------------------------------------------------------------------------------- |
+| `Ctrl+Shift+A`  | Session switcher — list zellij sessions, switch / delete / create                                     |
 | `Ctrl+Shift+` ` | Profile launcher — pick from `profiles.json` (+ Windows Terminal merge on Windows), open in a new tab |
+
 
 Both open in a floating pane. Both work the same on all three OSes.
 
@@ -40,20 +44,24 @@ Both open in a floating pane. Both work the same on all three OSes.
 Both pickers are rendered in pure Python (stdlib only — no `fzf` dependency).
 Shared controls:
 
-| Key | Action |
-|---|---|
+
+| Key                      | Action                                    |
+| ------------------------ | ----------------------------------------- |
 | `↑` / `↓` (or `k` / `j`) | Move selection up / down (wraps at edges) |
-| `Home` / `End` | Jump to first / last entry |
-| `Enter` | Accept the highlighted entry |
-| `1`-`9`, `0` | Jump to entry 1-9 or 10 (instant accept) |
-| `Esc`, `q`, or `Ctrl-C` | Cancel |
+| `Home` / `End`           | Jump to first / last entry                |
+| `Enter`                  | Accept the highlighted entry              |
+| `1`-`9`, `0`             | Jump to entry 1-9 or 10 (instant accept)  |
+| `Esc`, `q`, or `Ctrl-C`  | Cancel                                    |
+
 
 Extra controls inside `switch-session`:
 
-| Key | Action |
-|---|---|
+
+| Key      | Action                                                                                                                 |
+| -------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `Ctrl-D` | Delete the highlighted session. If it has active clients, prompts `Kill it? [y/N]`. Cannot delete the current session. |
-| `Ctrl-N` | Create a new session — prompts for a name, then switches to it |
+| `Ctrl-N` | Create a new session — prompts for a name, then switches to it                                                         |
+
 
 When stdin isn't a TTY (e.g. piped input, CI), each picker degrades to a
 line-based mode: type a number (or, for `launch-profile`, a substring), press
@@ -73,9 +81,9 @@ zellij           (reads config.kdl)
 Two dispatch paths, in priority order:
 
 1. **Python handler** (`HANDLERS` dict in `dispatch.py`). Used by both
-   `launch-profile` and `switch-session` today; needs no external tools.
+  `launch-profile` and `switch-session` today; needs no external tools.
 2. **Script fallback** — `scripts/<action>.ps1` on Windows or
-   `scripts/<action>.sh` on POSIX. Kept in place for future shell-only actions
+  `scripts/<action>.sh` on POSIX. Kept in place for future shell-only actions
    (no current users; `scripts/` may be empty).
 
 Either path is fine for a new action. The naming convention (file basename
@@ -107,7 +115,7 @@ no host-specific config. See [zellij issues #2574](https://github.com/zellij-org
 fzf):
 
 1. Drop `scripts/<my-action>.ps1` and/or `scripts/<my-action>.sh`. Either is
-   optional — the dispatcher errors with a clear message if the impl for the
+  optional — the dispatcher errors with a clear message if the impl for the
    current OS is missing.
 2. On POSIX: `chmod +x scripts/<my-action>.sh`.
 3. Wire the keybind. Done; auto-discovered by glob.
@@ -151,41 +159,24 @@ if it has a key for that OS. Fields per OS: `command` (array, required),
 On Windows, `launch-profile` also reads
 `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json`
 and merges the WT profile list into the picker. WT-sourced entries get a
-subtle ` [wt]` suffix in the fzf list so you can tell them apart.
+subtle  `[wt]` suffix in the fzf list so you can tell them apart.
 
 - **Order**: `profiles.json` entries first, then WT entries.
 - **Conflict policy**: if a name appears in both, `profiles.json` wins — that
-  's how you override / shadow a WT profile's behavior under zellij.
+'s how you override / shadow a WT profile's behavior under zellij.
 - **Graceful degradation**: if WT isn't installed (no `settings.json`), only
-  `profiles.json` is used; if the WT JSON fails to parse, a warning is
-  emitted but the launcher still works with whatever it could read.
+`profiles.json` is used; if the WT JSON fails to parse, a warning is
+emitted but the launcher still works with whatever it could read.
 
-Update WT profiles → they automatically appear in `Ctrl+Shift+\``. No
+Update WT profiles → they automatically appear in `Ctrl+Shift+`. No
 duplication required.
-
-## Files
-
-```
-~/.config/zellij/
-├── README.md               this file
-├── config.kdl              zellij config; keybinds invoke `zellij-dispatch`
-├── dispatch.py             the dispatcher (installed via uv tool install)
-├── pyproject.toml          metadata for uv tool install
-├── profiles.json           profile registry for launch-profile
-├── scripts/                empty today; reserved for future shell-only actions
-├── attach-main.ps1         legacy: invoked by external `.cmd` shims (WT entry points)
-└── ssh-ts-listener.ps1     legacy: long-running TCP daemon, port 27182
-```
-
-`attach-main.ps1` and `ssh-ts-listener.ps1` are not part of the dispatcher
-flow — they have external callers and run outside zellij's keybind context.
 
 ## Maintenance
 
 - **Edit the dispatcher**: just edit `dispatch.py`; `--editable` mode picks
-  up changes immediately. No reinstall needed.
+up changes immediately. No reinstall needed.
 - **Upgrade Python**: `uv` manages a venv for the tool with its own Python.
-  To rebuild the venv (e.g. after `requires-python` change): `uv tool install
-  --reinstall --editable ~/.config/zellij`.
+To rebuild the venv (e.g. after `requires-python` change): `uv tool install --reinstall --editable ~/.config/zellij`.
 - **Uninstall**: `uv tool uninstall zellij-dispatch`.
 - **List installed tools**: `uv tool list`.
+
