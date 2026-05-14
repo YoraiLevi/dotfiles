@@ -1,5 +1,5 @@
 {
-  "numStartups": 135,
+  "numStartups": 136,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -46,7 +46,6 @@
   },
   "promptQueueUseCount": 99,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_kairos_cron": true,
     "tengu_amber_sentinel": true,
@@ -483,7 +482,7 @@
   "sonnet1m45MigrationComplete": true,
   "migrationVersion": 13,
   "userID": "b50944c051a8c32450daad839326b2a8261ad363adee4f8296c9cd82533abb55",
-  "changelogLastFetched": 1778682476786,
+  "changelogLastFetched": 1778758210898,
   "autoUpdatesProtectedForNative": true,
   "oauthAccount": {
     "accountUuid": "59481114-4cf3-4697-a1b6-0e9306a56b6e",
@@ -594,7 +593,7 @@
       "projectOnboardingSeenCount": 12,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "lastHintSessionId": "1e6fa0f4-cedb-41b1-92d9-428d62a8489e",
       "lastSessionFirstPrompt": "look at the config.kdl of zellij config, it has a few scripts there (named inaccurately to what they're doing right now, this will need to also be changed) but the task is to create a single python wr",
       "lastSessionModified": 1778576160511,
@@ -637,7 +636,7 @@
         "hook_duration_ms_p95": 1,
         "hook_duration_ms_p99": 1
       },
-      "lastVersionBase": "2.1.139"
+      "lastVersionBase": "2.1.141"
     },
     "C:/Users/devic/source/agent-project-template": {
       "allowedTools": [],
@@ -1162,7 +1161,7 @@
       "lastVersionBase": "2.1.139"
     }
   },
-  "lastReleaseNotesSeen": "2.1.140",
+  "lastReleaseNotesSeen": "2.1.141",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
@@ -1185,7 +1184,7 @@
   "penguinModeOrgEnabled": true,
   "groveConfigCache": {
     "59481114-4cf3-4697-a1b6-0e9306a56b6e": {
-      "timestamp": 1778665177192
+      "timestamp": 1778758210115
     }
   },
   "cachedExtraUsageDisabledReason": null,
@@ -1211,7 +1210,7 @@
     "claude.ai Mermaid Chart",
     "claude.ai Google Drive"
   ],
-  "closedIssuesLastChecked": 1778665182376,
+  "closedIssuesLastChecked": 1778758219753,
   "ideHintShownCount": 5,
   "lastPlanModeUse": 1778666120064,
   "claudeInChromeDefaultEnabled": false,
@@ -1265,7 +1264,7 @@
         "currency": "USD"
       },
       "remaining_passes": 3,
-      "timestamp": 1778665177481
+      "timestamp": 1778758211866
     }
   },
   "passesUpsellSeenCount": 3,
