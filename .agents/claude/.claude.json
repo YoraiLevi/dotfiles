@@ -27,7 +27,7 @@
     "custom-agents": 130,
     "permissions": 134,
     "rename-conversation": 132,
-    "custom-commands": 121,
+    "custom-commands": 137,
     "desktop-shortcut": 129,
     "web-app": 123,
     "remote-control": 14,
@@ -1158,10 +1158,10 @@
       "lastHintSessionId": "ab149b85-f355-4679-ba9f-983d082fd45e",
       "lastSessionFirstPrompt": "I want to setup zsh on the system with completions and colors etc, how can i do that? aid me",
       "lastSessionModified": 1778576830325,
-      "lastVersionBase": "2.1.139"
+      "lastVersionBase": "2.1.140"
     }
   },
-  "lastReleaseNotesSeen": "2.1.141",
+  "lastReleaseNotesSeen": "2.1.140",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
