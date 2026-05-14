@@ -1,0 +1,20 @@
+{
+  "$schema_note": "Each profile may have windows/macos/linux entries. A profile is visible on an OS only if it has an entry for that OS. Fields per OS: command (array, required), cwd (string, optional, ~/env-var expansion supported), env (object, optional).",
+  "profiles": [
+    {
+      "name": "zsh",
+      "macos": { "command": ["zsh", "-l"] },
+      "linux": { "command": ["zsh", "-l"] }
+    },
+    {
+      "name": "bash",
+      "macos": { "command": ["bash", "-l"] },
+      "linux": { "command": ["bash", "-l"] }
+    },
+    {
+      "name": "fish",
+      "macos": { "command": ["fish", "-l"] },
+      "linux": { "command": ["fish", "-l"] }
+    },
+  ]
+}
