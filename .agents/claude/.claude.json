@@ -1,5 +1,5 @@
 {
-  "numStartups": 136,
+  "numStartups": 137,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -482,7 +482,7 @@
   "sonnet1m45MigrationComplete": true,
   "migrationVersion": 13,
   "userID": "b50944c051a8c32450daad839326b2a8261ad363adee4f8296c9cd82533abb55",
-  "changelogLastFetched": 1778758210898,
+  "changelogLastFetched": 1778758292258,
   "autoUpdatesProtectedForNative": true,
   "oauthAccount": {
     "accountUuid": "59481114-4cf3-4697-a1b6-0e9306a56b6e",
