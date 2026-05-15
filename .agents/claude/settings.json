@@ -36,8 +36,8 @@
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "voice": {
-    "enabled": true,
-    "mode": "tap"
+    "enabled": false,
+    "mode": "hold"
   },
   "autoMemoryEnabled": false,
   "showThinkingSummaries": true,
@@ -52,5 +52,5 @@
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true
+  "voiceEnabled": false
 }
