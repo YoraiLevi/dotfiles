@@ -44,8 +44,9 @@
     "guest-passes": 143,
     "agent-flag": 143
   },
-  "promptQueueUseCount": 99,
+  "promptQueueUseCount": 100,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_kairos_cron": true,
     "tengu_amber_sentinel": true,
