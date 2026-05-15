@@ -399,7 +399,7 @@ function Extract-Archive {
 }
 Set-Alias -Name extract -Value Extract-Archive
 
-
+$env:Path = [Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [Environment]::GetEnvironmentVariable("Path","User")
 function Get-Env {
     Get-ChildItem env:
 }
