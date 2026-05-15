@@ -83,6 +83,9 @@
 	"workbench.editor.limit.enabled": true,
 	"workbench.editor.limit.value": 10,
 	"workbench.editorLargeFileConfirmation": 30,
+	"workbench.editorAssociations": {
+		"*.md": "vscode.markdown.preview.editor"
+	},
 	"workbench.sideBar.location": "right",
 	"indentRainbow.indicatorStyle": "light",
 	"indentRainbow.lightIndicatorStyleLineWidth": 3,
