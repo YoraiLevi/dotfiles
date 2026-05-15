@@ -1,5 +1,5 @@
 {
-  "numStartups": 145,
+  "numStartups": 146,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -46,7 +46,6 @@
   },
   "promptQueueUseCount": 99,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_kairos_cron": true,
     "tengu_amber_sentinel": true,
@@ -1223,9 +1222,22 @@
       "lastHintSessionId": "680b06a2-f7ab-4f95-a5ae-2fc240407c11",
       "lastSessionFirstPrompt": "[POST-COMPACTION ORIENTATION — START HERE]  You are joining a project that has been worked on over many sessions. The conversation has been summarized; authoritative state lives in three repositories ",
       "lastSessionModified": 1778853924497
+    },
+    "C:/Users/devic/source/plan-view": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 1,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "lastGracefulShutdown": false,
+      "lastVersionBase": "2.1.142"
     }
   },
-  "lastReleaseNotesSeen": "2.1.141",
+  "lastReleaseNotesSeen": "2.1.142",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
