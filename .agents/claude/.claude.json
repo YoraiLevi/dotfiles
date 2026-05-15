@@ -13,7 +13,7 @@
     "theme-command": 144,
     "status-line": 92,
     "prompt-queue": 14,
-    "enter-to-steer-in-relatime": 125,
+    "enter-to-steer-in-relatime": 146,
     "default-permission-mode-config": 52,
     "color-when-multi-clauding": 143,
     "todo-list": 129,
@@ -1371,5 +1371,8 @@
     "organizationType": "claude_max",
     "organizationRateLimitTier": "default_claude_max_5x",
     "userRateLimitTier": null
-  }
+  },
+  "voiceLangHintShownCount": 1,
+  "voiceLangHintLastLanguage": "en",
+  "voiceFooterHintSeenCount": 3
 }
