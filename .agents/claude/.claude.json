@@ -1,5 +1,5 @@
 {
-  "numStartups": 143,
+  "numStartups": 144,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -10,7 +10,7 @@
     "plan-mode-for-complex-tasks": 1,
     "terminal-setup": 112,
     "memory-command": 129,
-    "theme-command": 124,
+    "theme-command": 144,
     "status-line": 92,
     "prompt-queue": 14,
     "enter-to-steer-in-relatime": 125,
@@ -1018,12 +1018,12 @@
       "lastHintSessionId": "0d225c5a-8d15-4e35-b0d6-623aea0581a1",
       "lastSessionFirstPrompt": "You are joining a project that follows the agent-project-template philosophy: \"You don't have memory. These files do.\"  PROJECT: two Ansible repositories that manage a pair of NVIDIA DGX Sparks (produ",
       "lastSessionModified": 1778229716898,
-      "lastVersionBase": "2.1.141",
+      "lastVersionBase": "2.1.142",
       "lastCost": 117.34536779999996,
       "lastAPIDuration": 13183588,
       "lastAPIDurationWithoutRetries": 13181044,
       "lastToolDuration": 8209472,
-      "lastDuration": 103777622,
+      "lastDuration": 103812871,
       "lastLinesAdded": 11369,
       "lastLinesRemoved": 560,
       "lastTotalInputTokens": 6137071,
@@ -1031,8 +1031,8 @@
       "lastTotalCacheCreationInputTokens": 10163234,
       "lastTotalCacheReadInputTokens": 46819361,
       "lastTotalWebSearchRequests": 254,
-      "lastFpsAverage": 1.15,
-      "lastFpsLow1Pct": 41.99,
+      "lastFpsAverage": 2.71,
+      "lastFpsLow1Pct": 11.15,
       "lastModelUsage": {
         "claude-haiku-4-5-20251001": {
           "inputTokens": 6007998,
@@ -1230,7 +1230,7 @@
   "penguinModeOrgEnabled": true,
   "groveConfigCache": {
     "59481114-4cf3-4697-a1b6-0e9306a56b6e": {
-      "timestamp": 1778758210115
+      "timestamp": 1778853808421
     }
   },
   "cachedExtraUsageDisabledReason": "org_level_disabled_until",
@@ -1310,7 +1310,7 @@
         "currency": "USD"
       },
       "remaining_passes": 3,
-      "timestamp": 1778758211866
+      "timestamp": 1778853808764
     }
   },
   "passesUpsellSeenCount": 3,
