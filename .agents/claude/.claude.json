@@ -1233,7 +1233,10 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": false,
-      "lastVersionBase": "2.1.142"
+      "lastVersionBase": "2.1.142",
+      "lastHintSessionId": "7857065b-61db-4101-a9e3-204b0d7caa38",
+      "lastSessionFirstPrompt": "How to have an alternative way of executing claude that runs inside a container but also persists files and sessions on disk and can have read access to similar files available on the system such as t",
+      "lastSessionModified": 1778858012614
     }
   },
   "lastReleaseNotesSeen": "2.1.142",
