@@ -42,7 +42,8 @@
     "colorterm-truecolor": 132,
     "desktop-app": 132,
     "guest-passes": 143,
-    "agent-flag": 143
+    "agent-flag": 143,
+    "frontend-design-plugin": 148
   },
   "promptQueueUseCount": 101,
   "btwUseCount": 1,
