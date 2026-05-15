@@ -16,7 +16,7 @@
     "enter-to-steer-in-relatime": 146,
     "default-permission-mode-config": 52,
     "color-when-multi-clauding": 143,
-    "todo-list": 129,
+    "todo-list": 149,
     "install-github-app": 143,
     "install-slack-app": 148,
     "drag-and-drop-images": 143,
@@ -983,9 +983,9 @@
       "lastFpsLow1Pct": 41.21,
       "lastModelUsage": {},
       "lastSessionId": "e5acf9cb-f3bd-4ac7-a53f-7ff9cbde2eb4",
-      "lastHintSessionId": "7361c3ef-7e2b-4a8e-8c75-79fa3d442833",
-      "lastSessionFirstPrompt": "how to install podman as a windows user only for that user? any special steps or issues ahead? https://github.com/containers/podman/blob/main/docs/tutorials/podman-for-windows.md https://podman-deskto",
-      "lastSessionModified": 1778835064436,
+      "lastHintSessionId": "4698eaf5-ea3c-49f9-a7d0-48adcb9427c6",
+      "lastSessionFirstPrompt": "running wsl right now is retuning catastrophic falliure, this is a reccuring issue especiialy after a long time afk (computer locked) I already know a workaround for it which is just shutting down the",
+      "lastSessionModified": 1778871713963,
       "lastVersionBase": "2.1.142"
     },
     "C:/Users/devic/source/dgx-control-plane": {
@@ -1241,7 +1241,7 @@
       "lastSessionModified": 1778858012614
     }
   },
-  "lastReleaseNotesSeen": "2.1.142",
+  "lastReleaseNotesSeen": "2.1.141",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
