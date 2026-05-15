@@ -347,6 +347,33 @@ function Restart-WSL {
 }
 Set-Alias -Name Restart-WSL2 -Value Restart-WSL
 
+function Show-ItemProperties {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+        [Alias('FullName')]
+        [string]$Path
+    )
+
+    process {
+        # Resolve to a literal, absolute path
+        $LiteralPath = Microsoft.PowerShell.Management\Resolve-Path -LiteralPath $Path | Select-Object -ExpandProperty Path
+        
+        $Folder = Split-Path $LiteralPath
+        $File = Split-Path $LiteralPath -Leaf
+
+        $Shell = New-Object -ComObject Shell.Application
+        $ShellFolder = $Shell.Namespace($Folder)
+        $ShellFile = $ShellFolder.ParseName($File)
+        
+        if ($ShellFile) {
+            $ShellFile.InvokeVerb("Properties")
+        } else {
+            Write-Error "Could not find the target file or folder: $LiteralPath"
+        }
+    }
+}
+
 function Extract-Archive {
     param([string]$Path)
     
