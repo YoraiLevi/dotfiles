@@ -1,5 +1,5 @@
 {
-  "numStartups": 147,
+  "numStartups": 148,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -1221,6 +1221,19 @@
       "lastHintSessionId": "a511f7e8-0e3d-4f15-b536-1517f6e7260c",
       "lastSessionFirstPrompt": "Um, okay. So let's talk. I'm really struggling with Claude Court. Like, I like it. The plan one is good because I can review things, and I can, like, point out and we can form ideas well. But after, l",
       "lastSessionModified": 1778855855893
+    },
+    "C:/Users/devic/source/harness-in-container": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "lastGracefulShutdown": false,
+      "lastVersionBase": "2.1.142"
     }
   },
   "lastReleaseNotesSeen": "2.1.142",
