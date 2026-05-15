@@ -9,6 +9,7 @@
     ],
     "defaultMode": "plan"
   },
+  "model": "sonnet",
   "skillOverrides": {
     "Agent": "off",
     "EnterPlanMode": "off",
@@ -36,7 +37,7 @@
   "tui": "fullscreen",
   "voice": {
     "enabled": true,
-    "mode": "hold"
+    "mode": "tap"
   },
   "autoMemoryEnabled": false,
   "showThinkingSummaries": true,
@@ -51,6 +52,5 @@
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true,
-  "model": "sonnet"
+  "voiceEnabled": true
 }

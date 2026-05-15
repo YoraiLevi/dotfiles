@@ -1376,7 +1376,7 @@
     "organizationRateLimitTier": "default_claude_max_5x",
     "userRateLimitTier": null
   },
-  "voiceLangHintShownCount": 1,
+  "voiceLangHintShownCount": 2,
   "voiceLangHintLastLanguage": "en",
   "voiceFooterHintSeenCount": 3
 }
