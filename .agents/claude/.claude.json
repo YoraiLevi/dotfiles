@@ -1200,7 +1200,8 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": false,
-      "lastVersionBase": "2.1.142"
+      "lastVersionBase": "2.1.142",
+      "hasCompletedProjectOnboarding": true
     }
   },
   "lastReleaseNotesSeen": "2.1.142",
