@@ -1,5 +1,5 @@
 {
-  "numStartups": 144,
+  "numStartups": 145,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -1205,6 +1205,23 @@
       "lastHintSessionId": "7a68c9a7-acf2-43ec-bc1e-b5d1d252c97b",
       "lastSessionFirstPrompt": "We are joining into this project, this was made for us for our success, let's try to understand what our ancestors have made for us and where we are heading",
       "lastSessionModified": 1778841942093
+    },
+    "C:/Users/devic/source/dgx-fleet": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "lastGracefulShutdown": false,
+      "lastVersionBase": "2.1.142",
+      "hasCompletedProjectOnboarding": true,
+      "lastHintSessionId": "680b06a2-f7ab-4f95-a5ae-2fc240407c11",
+      "lastSessionFirstPrompt": "[POST-COMPACTION ORIENTATION — START HERE]  You are joining a project that has been worked on over many sessions. The conversation has been summarized; authoritative state lives in three repositories ",
+      "lastSessionModified": 1778853924497
     }
   },
   "lastReleaseNotesSeen": "2.1.142",
