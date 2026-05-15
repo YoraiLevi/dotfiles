@@ -47,6 +47,7 @@
   },
   "promptQueueUseCount": 101,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_kairos_cron": true,
     "tengu_amber_sentinel": true,
