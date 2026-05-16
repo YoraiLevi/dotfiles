@@ -1211,4 +1211,3 @@ if ($env:ZELLIJ_SESSION_NAME) {
         [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
     }
 }
-    
