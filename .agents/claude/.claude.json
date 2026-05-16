@@ -1,5 +1,5 @@
 {
-  "numStartups": 152,
+  "numStartups": 153,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -968,39 +968,39 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": false,
-      "lastCost": 1.6575950000000004,
-      "lastAPIDuration": 615240,
-      "lastAPIDurationWithoutRetries": 615165,
-      "lastToolDuration": 7266,
-      "lastDuration": 55931849,
-      "lastLinesAdded": 119,
+      "lastCost": 0.3538510000000001,
+      "lastAPIDuration": 63593,
+      "lastAPIDurationWithoutRetries": 63507,
+      "lastToolDuration": 25917,
+      "lastDuration": 1553270,
+      "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
-      "lastTotalInputTokens": 1097,
-      "lastTotalOutputTokens": 34478,
-      "lastTotalCacheCreationInputTokens": 89034,
-      "lastTotalCacheReadInputTokens": 477363,
+      "lastTotalInputTokens": 1434,
+      "lastTotalOutputTokens": 3025,
+      "lastTotalCacheCreationInputTokens": 39592,
+      "lastTotalCacheReadInputTokens": 55540,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 4.78,
-      "lastFpsLow1Pct": 80.77,
+      "lastFpsAverage": 0.91,
+      "lastFpsLow1Pct": 123.02,
       "lastModelUsage": {
         "claude-haiku-4-5-20251001": {
-          "inputTokens": 1056,
-          "outputTokens": 38,
+          "inputTokens": 906,
+          "outputTokens": 27,
           "cacheReadInputTokens": 0,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.0012460000000000001
+          "costUSD": 0.001041
         },
         "claude-opus-4-7[1m]": {
-          "inputTokens": 41,
-          "outputTokens": 34440,
-          "cacheReadInputTokens": 477363,
-          "cacheCreationInputTokens": 89034,
+          "inputTokens": 528,
+          "outputTokens": 2998,
+          "cacheReadInputTokens": 55540,
+          "cacheCreationInputTokens": 39592,
           "webSearchRequests": 0,
-          "costUSD": 1.6563490000000003
+          "costUSD": 0.35281
         }
       },
-      "lastSessionId": "4698eaf5-ea3c-49f9-a7d0-48adcb9427c6",
+      "lastSessionId": "eb1c6cc4-420d-4790-b185-e387c8ab2eed",
       "lastHintSessionId": "eb1c6cc4-420d-4790-b185-e387c8ab2eed",
       "lastSessionFirstPrompt": "spawn an internet research agent and ask them what they think of their prompt instructions, anything unclear?",
       "lastSessionModified": 1778940209926,
@@ -1259,7 +1259,7 @@
       "lastSessionModified": 1778858012614
     }
   },
-  "lastReleaseNotesSeen": "2.1.142",
+  "lastReleaseNotesSeen": "2.1.143",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
@@ -1280,7 +1280,7 @@
   "penguinModeOrgEnabled": true,
   "groveConfigCache": {
     "59481114-4cf3-4697-a1b6-0e9306a56b6e": {
-      "timestamp": 1778853808421
+      "timestamp": 1778941735451
     }
   },
   "cachedExtraUsageDisabledReason": "org_level_disabled_until",
@@ -1360,7 +1360,7 @@
         "currency": "USD"
       },
       "remaining_passes": 3,
-      "timestamp": 1778853808764
+      "timestamp": 1778941736234
     }
   },
   "passesUpsellSeenCount": 3,
