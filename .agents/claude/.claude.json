@@ -36,7 +36,7 @@
     "feedback-command": 147,
     "push-notif": 79,
     "shift-enter-setup": 50,
-    "git-worktrees": 143,
+    "git-worktrees": 153,
     "powershell-tool-env": 52,
     "ide-upsell-external-terminal": 151,
     "colorterm-truecolor": 132,
@@ -1233,7 +1233,7 @@
       "enabledMcpjsonServers": [],
       "disabledMcpjsonServers": [],
       "hasTrustDialogAccepted": true,
-      "projectOnboardingSeenCount": 8,
+      "projectOnboardingSeenCount": 9,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": false,
@@ -1259,7 +1259,7 @@
       "lastSessionModified": 1778858012614
     }
   },
-  "lastReleaseNotesSeen": "2.1.143",
+  "lastReleaseNotesSeen": "2.1.142",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
