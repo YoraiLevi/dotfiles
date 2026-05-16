@@ -1,5 +1,5 @@
 {
-  "numStartups": 151,
+  "numStartups": 152,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -1369,7 +1369,7 @@
   "copyOnSelect": false,
   "showSpinnerTree": false,
   "routineFiredWatermark": "2026-05-10T12:36:03.762Z",
-  "autoPermissionsNotificationCount": 2,
+  "autoPermissionsNotificationCount": 3,
   "bridgeOauthDeadExpiresAt": 1778787092414,
   "bridgeOauthDeadFailCount": 1,
   "oauthAccount": {
