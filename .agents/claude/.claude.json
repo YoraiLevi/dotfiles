@@ -1,5 +1,5 @@
 {
-  "numStartups": 149,
+  "numStartups": 150,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -485,7 +485,7 @@
   "sonnet1m45MigrationComplete": true,
   "migrationVersion": 13,
   "userID": "b50944c051a8c32450daad839326b2a8261ad363adee4f8296c9cd82533abb55",
-  "changelogLastFetched": 1778834258734,
+  "changelogLastFetched": 1778930650915,
   "autoUpdatesProtectedForNative": true,
   "claudeCodeFirstTokenDate": "2026-03-23T05:43:44.304727Z",
   "hasCompletedOnboarding": true,
@@ -967,7 +967,7 @@
       "projectOnboardingSeenCount": 7,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "lastCost": 1.6575950000000004,
       "lastAPIDuration": 615240,
       "lastAPIDurationWithoutRetries": 615165,
@@ -1004,7 +1004,7 @@
       "lastHintSessionId": "4698eaf5-ea3c-49f9-a7d0-48adcb9427c6",
       "lastSessionFirstPrompt": "running wsl right now is retuning catastrophic falliure, this is a reccuring issue especiialy after a long time afk (computer locked) I already know a workaround for it which is just shutting down the",
       "lastSessionModified": 1778871713963,
-      "lastVersionBase": "2.1.142"
+      "lastVersionBase": "2.1.143"
     },
     "C:/Users/devic/source/dgx-control-plane": {
       "allowedTools": [],
@@ -1259,7 +1259,7 @@
       "lastSessionModified": 1778858012614
     }
   },
-  "lastReleaseNotesSeen": "2.1.141",
+  "lastReleaseNotesSeen": "2.1.143",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
