@@ -1317,6 +1317,10 @@
     "batch": {
       "usageCount": 1,
       "lastUsedAt": 1778147162461
+    },
+    "agent-pain-points": {
+      "usageCount": 1,
+      "lastUsedAt": 1778943088173
     }
   },
   "githubRepoPaths": {
