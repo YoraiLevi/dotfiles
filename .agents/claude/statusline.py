@@ -815,6 +815,93 @@ def seg_output_style(d: dict[str, Any], uc: bool) -> str | None:
     return _nested_str_field(d, "output_style", "name")
 
 
+def _read_session_tasks(session_id: str) -> list[dict[str, Any]]:
+    """All task dicts persisted under ``~/.claude/tasks/<session_id>/``.
+
+    One ``<task_id>.json`` per task. Files written mid-tick (incomplete JSON)
+    or missing between ``glob`` and ``open`` are skipped silently — statusline
+    must never raise. Sort prefers numeric stems (Claude writes ``1.json``…``N.json``).
+    """
+    sdir = TASKS_DIR / session_id
+    if not sdir.is_dir():
+        return []
+    try:
+        entries = list(sdir.glob("*.json"))
+    except OSError:
+        return []
+
+    def sort_key(p: Path) -> tuple[int, int, str]:
+        try:
+            return (0, int(p.stem), "")
+        except ValueError:
+            return (1, 0, p.stem)
+
+    tasks: list[dict[str, Any]] = []
+    for path in sorted(entries, key=sort_key):
+        try:
+            with path.open("r", encoding="utf-8") as f:
+                obj = json.load(f)
+        except (OSError, json.JSONDecodeError, ValueError):
+            continue
+        if isinstance(obj, dict):
+            tasks.append(obj)
+    return tasks
+
+
+def seg_tasks(d: dict[str, Any], uc: bool) -> str | None:
+    """``tasks <done>✓ <active>▶ <pending>○ · <activeForm>`` for the current session.
+
+    Zero counts are omitted. Active label is the first ``in_progress`` task's
+    ``activeForm`` (fallback ``subject``), truncated to ``TASKS_ACTIVE_LABEL_MAX``.
+    When every task is completed, the suffix becomes ``· all done``.
+    """
+    sid = d.get("session_id")
+    if not sid:
+        return None
+    tasks = _read_session_tasks(str(sid))
+    if not tasks:
+        return None
+
+    done = active = pending = 0
+    active_label: str | None = None
+    for t in tasks:
+        status = t.get("status")
+        if status == "completed":
+            done += 1
+        elif status == "in_progress":
+            active += 1
+            if active_label is None:
+                lbl = t.get("activeForm") or t.get("subject")
+                if lbl:
+                    active_label = str(lbl)
+        else:
+            pending += 1
+
+    bits: list[str] = []
+    if done:
+        bits.append(green(uc, f"{done}✓") if uc else f"{done}✓")
+    if active:
+        bits.append(yellow(uc, f"{active}▶") if uc else f"{active}▶")
+    if pending:
+        bits.append(dim(uc, f"{pending}○") if uc else f"{pending}○")
+    if not bits:
+        return None
+
+    label = dim(uc, "tasks") if uc else "tasks"
+    out = f"{label} {' '.join(bits)}"
+
+    if active_label:
+        if len(active_label) > TASKS_ACTIVE_LABEL_MAX:
+            active_label = active_label[: TASKS_ACTIVE_LABEL_MAX - 1] + "…"
+        suffix = yellow(uc, active_label) if uc else active_label
+        out += f" · {suffix}"
+    elif done == len(tasks):
+        suffix = green(uc, "all done") if uc else "all done"
+        out += f" · {suffix}"
+
+    return out
+
+
 def _bind(uc: bool) -> dict[str, Callable[[dict[str, Any]], str | None]]:
     def w(fn: Callable[[dict[str, Any], bool], str | None]) -> Callable[[dict[str, Any]], str | None]:
         return lambda d: fn(d, uc)
@@ -840,6 +927,7 @@ def _bind(uc: bool) -> dict[str, Callable[[dict[str, Any]], str | None]]:
         "added_dirs": w(seg_added_dirs),
         "version": w(seg_version),
         "output_style": w(seg_output_style),
+        "tasks": w(seg_tasks),
     }
 
 

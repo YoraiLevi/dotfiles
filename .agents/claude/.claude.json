@@ -1,5 +1,5 @@
 {
-  "numStartups": 170,
+  "numStartups": 171,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -47,7 +47,6 @@
   },
   "promptQueueUseCount": 101,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_ccr_bridge_multi_session": true,
     "tengu_workout2": true,
@@ -1062,7 +1061,8 @@
       "lastGracefulShutdown": false,
       "lastHintSessionId": "80b23939-8502-4d84-8b5d-442159bdcf5b",
       "lastSessionFirstPrompt": "read the session at @session_id.txt and let's continue working on it",
-      "lastSessionModified": 1778416579363
+      "lastSessionModified": 1778416579363,
+      "lastVersionBase": "2.1.143"
     },
     "C:/Users/devic/source/dotfiles-template": {
       "allowedTools": [],
@@ -1243,7 +1243,7 @@
       "lastSessionModified": 1778858012614
     }
   },
-  "lastReleaseNotesSeen": "2.1.142",
+  "lastReleaseNotesSeen": "2.1.143",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
