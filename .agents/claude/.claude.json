@@ -10,7 +10,7 @@
     "plan-mode-for-complex-tasks": 1,
     "terminal-setup": 112,
     "memory-command": 176,
-    "theme-command": 164,
+    "theme-command": 184,
     "status-line": 92,
     "prompt-queue": 14,
     "enter-to-steer-in-relatime": 166,
@@ -1349,7 +1349,10 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": false,
-      "lastVersionBase": "2.1.143"
+      "lastVersionBase": "2.1.143",
+      "lastHintSessionId": "aeb91f70-9bda-4c4a-afbe-e9a097092d4c",
+      "lastSessionFirstPrompt": "I'm studying math. Um, The material is in Hebrew, so I need help organizing it. I have four... two courses, and and I need to organize the files and the folders. Just move them around to the correct f",
+      "lastSessionModified": 1779053686570
     }
   },
   "lastReleaseNotesSeen": "2.1.143",
