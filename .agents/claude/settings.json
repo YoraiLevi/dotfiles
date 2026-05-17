@@ -9,6 +9,7 @@
     ],
     "defaultMode": "plan"
   },
+  "model": "opus",
   "skillOverrides": {
     "Agent": "off",
     "EnterPlanMode": "off",
