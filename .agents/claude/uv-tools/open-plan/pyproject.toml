@@ -32,7 +32,7 @@ which logic answered.
 open-plan = "open_plan.cli:main"
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "pyproject.toml"]
+include = ["open_plan", "pyproject.toml"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/open_plan"]
+packages = ["open_plan"]
