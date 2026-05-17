@@ -23,6 +23,7 @@ from .common import (
     get_session_id,
     load_session_tasks,
     partition_by_status,
+    pretty_session,
     session_tasks_dir,
     setup_utf8_stdout,
 )
@@ -48,9 +49,10 @@ def render_dashboard(session_id: str, tasks: list[Task]) -> str:
     total = len(tasks)
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    label = pretty_session(session_id)
 
     out: list[str] = [
-        f"# Session {session_id[:8]} — Task List",
+        f"# Session {label} — Task List",
         "",
         f"*Generated {now}*",
         "",
@@ -122,9 +124,10 @@ def main() -> int:
     sdir.mkdir(parents=True, exist_ok=True)
 
     tasks = load_session_tasks(sid)
+    label = pretty_session(sid)
     if not tasks:
         body = (
-            f"# Session {sid[:8]} — Task List\n\n"
+            f"# Session {label} — Task List\n\n"
             f"*Generated {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n\n"
             f"*No tasks for this session yet.*\n"
         )
@@ -141,7 +144,7 @@ def main() -> int:
     encoded_vault = urllib.parse.quote(OBSIDIAN_VAULT, safe="")
     uri = f"obsidian://open?vault={encoded_vault}&file={encoded_file}"
 
-    print(f"Session:    {sid[:8]}")
+    print(f"Session:    {label}")
     print(f"Dashboard:  {out_path}")
     print(f"Opening:    {uri}")
     _launch(uri)

@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 TASKS_DIR = Path.home() / ".claude" / "tasks"
+SESSIONS_DIR = Path.home() / ".claude" / "sessions"
 
 KNOWN_STATUSES = ("in_progress", "pending", "completed")
 
@@ -35,6 +36,45 @@ def get_session_id() -> str | None:
     """The current Claude Code session UUID, or None when invoked outside Claude Code."""
     sid = os.environ.get("CLAUDE_CODE_SESSION_ID")
     return sid if sid else None
+
+
+def get_session_name(session_id: str) -> str | None:
+    """The human-readable name for ``session_id`` (e.g. ``add-task-progress-statusline``).
+
+    Claude Code writes one ``<pid>.json`` per running session under
+    ``~/.claude/sessions/``. Each file has ``sessionId`` and ``name`` fields;
+    scan them to find the entry matching our session. Returns ``None`` if no
+    matching file exists or no name is recorded — callers should fall back to
+    the bare session id for display.
+    """
+    if not SESSIONS_DIR.is_dir():
+        return None
+    try:
+        entries = list(SESSIONS_DIR.glob("*.json"))
+    except OSError:
+        return None
+    for path in entries:
+        try:
+            with path.open("r", encoding="utf-8") as f:
+                obj = json.load(f)
+        except (OSError, json.JSONDecodeError, ValueError):
+            continue
+        if not isinstance(obj, dict):
+            continue
+        if str(obj.get("sessionId", "")) != session_id:
+            continue
+        name = obj.get("name")
+        if isinstance(name, str) and name:
+            return name
+        return None
+    return None
+
+
+def pretty_session(session_id: str) -> str:
+    """``<short_id> | <name>`` if a name is registered; otherwise just ``<short_id>``."""
+    short = session_id[:8]
+    name = get_session_name(session_id)
+    return f"{short} | {name}" if name else short
 
 
 def setup_utf8_stdout() -> None:

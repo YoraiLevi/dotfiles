@@ -18,6 +18,7 @@ from .common import (
     get_session_id,
     load_session_tasks,
     partition_by_status,
+    pretty_session,
     setup_utf8_stdout,
 )
 
@@ -48,9 +49,10 @@ def main() -> int:
         )
         return 1
 
+    label = pretty_session(sid)
     tasks = load_session_tasks(sid)
     if not tasks:
-        print(f"{dim}Session {sid[:8]}:{reset} no tasks.")
+        print(f"{dim}Session{reset} {label}: no tasks.")
         return 0
 
     parts = partition_by_status(tasks)
@@ -61,7 +63,7 @@ def main() -> int:
     total = len(tasks)
 
     # Header
-    header = f"{dim}Session{reset} {sid[:8]}  —  {green}{done}/{total} ✓{reset}"
+    header = f"{dim}Session{reset} {label}  —  {green}{done}/{total} ✓{reset}"
     if active:
         header += f"  {yellow}{active} ▶{reset}"
     if pending:
