@@ -41,7 +41,7 @@
     "ide-upsell-external-terminal": 151,
     "colorterm-truecolor": 132,
     "desktop-app": 132,
-    "guest-passes": 171,
+    "guest-passes": 177,
     "agent-flag": 174,
     "frontend-design-plugin": 151
   },
@@ -1075,12 +1075,45 @@
         "frame_duration_ms_p95": 12.148069999999825,
         "frame_duration_ms_p99": 12.436733999999815
       },
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastHintSessionId": "e3d5ddb6-d7b8-4bb8-9438-596e38286a1b",
       "lastSessionFirstPrompt": "Okay. So can you clarify me with examples how to use the move and link function scripts? First of all, to move... a file into a specific path of a file a file into a directory without overwriting the ",
       "lastSessionModified": 1779010816257,
       "lastVersionBase": "2.1.143",
-      "hasCompletedProjectOnboarding": true
+      "hasCompletedProjectOnboarding": true,
+      "lastCost": 30.40429479999999,
+      "lastAPIDuration": 4367387,
+      "lastAPIDurationWithoutRetries": 4366862,
+      "lastToolDuration": 280123,
+      "lastDuration": 28136391,
+      "lastLinesAdded": 2651,
+      "lastLinesRemoved": 414,
+      "lastTotalInputTokens": 11582,
+      "lastTotalOutputTokens": 308268,
+      "lastTotalCacheCreationInputTokens": 963982,
+      "lastTotalCacheReadInputTokens": 34018541,
+      "lastTotalWebSearchRequests": 0,
+      "lastFpsAverage": 3.51,
+      "lastFpsLow1Pct": 77.13,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 1605,
+          "outputTokens": 7254,
+          "cacheReadInputTokens": 128508,
+          "cacheCreationInputTokens": 38314,
+          "webSearchRequests": 0,
+          "costUSD": 0.0986183
+        },
+        "claude-opus-4-7[1m]": {
+          "inputTokens": 9977,
+          "outputTokens": 301014,
+          "cacheReadInputTokens": 33890033,
+          "cacheCreationInputTokens": 925668,
+          "webSearchRequests": 0,
+          "costUSD": 30.30567649999999
+        }
+      },
+      "lastSessionId": "e3d5ddb6-d7b8-4bb8-9438-596e38286a1b"
     },
     "C:/Users/devic/source/dotfiles-template": {
       "allowedTools": [],
