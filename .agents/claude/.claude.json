@@ -1,5 +1,5 @@
 {
-  "numStartups": 171,
+  "numStartups": 172,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -1265,7 +1265,7 @@
   "penguinModeOrgEnabled": true,
   "groveConfigCache": {
     "59481114-4cf3-4697-a1b6-0e9306a56b6e": {
-      "timestamp": 1778941735451
+      "timestamp": 1779033072982
     }
   },
   "cachedExtraUsageDisabledReason": "org_level_disabled_until",
@@ -1349,7 +1349,7 @@
         "currency": "USD"
       },
       "remaining_passes": 3,
-      "timestamp": 1778941736234
+      "timestamp": 1779033073920
     }
   },
   "passesUpsellSeenCount": 3,
