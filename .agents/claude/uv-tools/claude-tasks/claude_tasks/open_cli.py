@@ -12,15 +12,14 @@ The dashboard is a snapshot at the moment of invocation; re-run to refresh.
 
 from __future__ import annotations
 
-import os
-import subprocess
 import sys
-import urllib.parse
 from datetime import datetime
 
 from .common import (
     Task,
+    build_obsidian_uri,
     get_session_id,
+    launch_uri,
     load_session_tasks,
     partition_by_status,
     pretty_session,
@@ -28,10 +27,7 @@ from .common import (
     setup_utf8_stdout,
 )
 
-# Hardcoded: every Claude-related uv-tool on this machine opens files inside
-# the ``.claude`` Obsidian vault. Files under this tool's responsibility live
-# under ``tasks/`` relative to the vault root.
-OBSIDIAN_VAULT = ".claude"
+# This tool's files live under ``tasks/`` relative to the ``.claude`` vault.
 OBSIDIAN_PATH_PREFIX = "tasks"
 
 
@@ -98,16 +94,6 @@ def render_dashboard(session_id: str, tasks: list[Task]) -> str:
     return "\n".join(out)
 
 
-def _launch(uri: str) -> None:
-    """Hand off a URI (or file path) to the OS's protocol/file handler."""
-    if sys.platform == "win32":
-        os.startfile(uri)  # type: ignore[attr-defined]  # noqa: S606
-    elif sys.platform == "darwin":
-        subprocess.run(["open", uri], check=False)
-    else:
-        subprocess.run(["xdg-open", uri], check=False)
-
-
 def main() -> int:
     setup_utf8_stdout()
     sid = get_session_id()
@@ -137,17 +123,12 @@ def main() -> int:
     out_path = sdir / "dashboard.md"
     out_path.write_text(body, encoding="utf-8")
 
-    # Build the obsidian:// URI. The file param is the path relative to the
-    # vault root; safe='/' preserves the directory separator inside the URI.
-    vault_relative = f"{OBSIDIAN_PATH_PREFIX}/{sid}/dashboard"
-    encoded_file = urllib.parse.quote(vault_relative, safe="/")
-    encoded_vault = urllib.parse.quote(OBSIDIAN_VAULT, safe="")
-    uri = f"obsidian://open?vault={encoded_vault}&file={encoded_file}"
+    uri = build_obsidian_uri(OBSIDIAN_PATH_PREFIX, f"{sid}/dashboard")
 
     print(f"Session:    {label}")
     print(f"Dashboard:  {out_path}")
     print(f"Opening:    {uri}")
-    _launch(uri)
+    launch_uri(uri)
     return 0
 
 

@@ -11,15 +11,25 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
 import sys
+import urllib.parse
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator
 
 import psutil
 
-TASKS_DIR = Path.home() / ".claude" / "tasks"
+# Per-user Claude Code disk layout.
+PLANS_DIR    = Path.home() / ".claude" / "plans"
+TASKS_DIR    = Path.home() / ".claude" / "tasks"
 SESSIONS_DIR = Path.home() / ".claude" / "sessions"
+PROJECTS_DIR = Path.home() / ".claude" / "projects"
+
+# Every Claude-related uv-tool on this machine opens files inside the
+# ``.claude`` Obsidian vault (registered at ``~/.claude/``). Each tool just
+# supplies its own relative path prefix (``plans``, ``tasks``, etc.).
+OBSIDIAN_VAULT = ".claude"
 
 KNOWN_STATUSES = ("in_progress", "pending", "completed")
 
@@ -188,6 +198,40 @@ def load_session_tasks(session_id: str) -> list[Task]:
             )
         )
     return tasks
+
+
+def find_session_transcript(session_id: str) -> Path | None:
+    """Locate ``~/.claude/projects/<encoded-cwd>/<session_id>.jsonl``."""
+    if not PROJECTS_DIR.is_dir():
+        return None
+    needle = f"{session_id}.jsonl"
+    for path in PROJECTS_DIR.rglob(needle):
+        if path.is_file():
+            return path
+    return None
+
+
+def build_obsidian_uri(prefix: str, file_relative: str) -> str:
+    """``obsidian://open?vault=.claude&file=<prefix>/<file_relative>`` with proper URL encoding.
+
+    ``prefix`` may be empty to address the vault root. ``file_relative`` should
+    NOT contain the ``.md`` extension — Obsidian appends it.
+    """
+    parts = [prefix, file_relative] if prefix else [file_relative]
+    vault_relative = "/".join(p.strip("/") for p in parts if p)
+    encoded_file  = urllib.parse.quote(vault_relative, safe="/")
+    encoded_vault = urllib.parse.quote(OBSIDIAN_VAULT, safe="")
+    return f"obsidian://open?vault={encoded_vault}&file={encoded_file}"
+
+
+def launch_uri(uri: str) -> None:
+    """Hand off a URI (or file path) to the OS's protocol/file handler."""
+    if sys.platform == "win32":
+        os.startfile(uri)  # type: ignore[attr-defined]  # noqa: S606
+    elif sys.platform == "darwin":
+        subprocess.run(["open", uri], check=False)
+    else:
+        subprocess.run(["xdg-open", uri], check=False)
 
 
 def partition_by_status(tasks: list[Task]) -> dict[str, list[Task]]:
