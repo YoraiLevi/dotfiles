@@ -9,6 +9,13 @@ and is invokable from PowerShell, bash, and Claude Code's `!` prefix.
 | Tool | Source | Purpose |
 |---|---|---|
 | `open-plan` | [`./open-plan/`](./open-plan) | Opens the current Claude Code session's plan file in Obsidian (via the harness's `CLAUDE_CODE_SESSION_ID` env var and the JSONL transcript). |
+| `list-tasks` | [`./claude-tasks/`](./claude-tasks) | Prints the current session's task list to stdout — bullet list grouped by status with ANSI colors. Companion to the statusline summary. |
+| `open-tasks` | [`./claude-tasks/`](./claude-tasks) | Renders a markdown dashboard at `~/.claude/tasks/<session_id>/dashboard.md` and opens it in the OS's default `.md` handler (Obsidian, VS Code, etc.). Snapshot, not live — re-run to refresh. |
+
+The `claude-tasks` package ships **two** scripts from one project — see its
+`pyproject.toml` for the two `[project.scripts]` entries pointing at
+`list_cli:main` and `open_cli:main`. Both share the session-loading code in
+`claude_tasks/common.py`.
 
 When you add a new tool, list it here.
 

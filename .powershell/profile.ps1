@@ -800,17 +800,25 @@ function Set-SymlinkRelative {
             return
         }
 
-        # The current absolute target
-        $target = $item.Target
-        # Calculate path from the Link's Parent folder to the Target
-        $relPath = Resolve-Path -Path $target -RelativeBasePath $item.DirectoryName -Relative
+        # Resolve the current absolute target and determine its type
+        $fullTarget = (Resolve-Path -Path $item.Target).Path
+        $isDir = Test-Path -Path $fullTarget -PathType Container
 
-        # Re-create the link with the relative value
-        # This preserves the File vs Directory type automatically because -Value is resolved during creation
-        New-Item -ItemType SymbolicLink -Path $item.FullName -Value $relPath -Force
+        # Compute path from the link's parent folder to the target
+        $relPath = Resolve-Path -Path $fullTarget -RelativeBasePath $item.DirectoryName -Relative
+
+        # Remove the existing reparse point (safe — does not touch the target)
+        $item.Delete()
+
+        # Recreate, preserving directory vs file type.
+        # mklink /D is the only way to set the Directory bit when the stored value is relative.
+        if ($isDir) {
+            cmd /c mklink /D "$($item.FullName)" "$relPath" | Out-Null
+        } else {
+            New-Item -ItemType SymbolicLink -Path $item.FullName -Value $relPath | Out-Null
+        }
     }
 }
-
 function New-Symlink {
     [CmdletBinding()]
     param (
