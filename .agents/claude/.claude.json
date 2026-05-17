@@ -28,7 +28,7 @@
     "permissions": 170,
     "rename-conversation": 163,
     "custom-commands": 167,
-    "desktop-shortcut": 161,
+    "desktop-shortcut": 177,
     "web-app": 168,
     "remote-control": 14,
     "auto-copy-config-hint": 102,
@@ -45,7 +45,7 @@
     "agent-flag": 174,
     "frontend-design-plugin": 151
   },
-  "promptQueueUseCount": 113,
+  "promptQueueUseCount": 114,
   "btwUseCount": 1,
   "cachedGrowthBookFeatures": {
     "tengu_slate_kestrel": false,
