@@ -166,6 +166,28 @@ which is the bug.
 For projects under this directory, you don't need to do anything — the
 umbrella `.gitignore` handles it.
 
+## Companion Claude skill
+
+A Claude Code skill named `make-uv-tool` lives next to this README, at
+[`./make-uv-tool/SKILL.md`](./make-uv-tool/SKILL.md). It scaffolds new tools
+in this directory following the patterns above and uses this README as its
+source of truth.
+
+The skill is exposed to Claude Code's discovery via a symlink:
+
+```
+~/.claude/skills/make-uv-tool  →  ~/.agents/claude/uv-tools/make-uv-tool
+```
+
+Same pattern as the other `~/.claude/` → `~/.agents/claude/` symlinks on this
+machine (`CLAUDE.md`, `settings.json`, `statusline.py`, `agents/`). The skill
+lives next to the README it depends on; Claude Code finds it through the link.
+
+Invoke it by typing `/make-uv-tool` in Claude Code, or by asking in natural
+language ("make a new uv tool", "scaffold a CLI under uv-tools", "I want to
+add a tool installable by uv") — Claude matches the skill's description and
+picks it up.
+
 ## Reference
 
 - Hatchling source we read to diagnose this:
