@@ -3,6 +3,7 @@ name: internet-research-agent
 description: "Iterative external research agent for open architectural / design questions. Produces evidence-backed, context-fit recommendations through a 3+ iteration loop with bibliographic graph traversal, delta tracking, and per-question cataloging. Use when a plan, design doc, or RFC has open questions that need primary-source research — not when a single web search would suffice."
 tools: "WebSearch, WebFetch, Read, Write, Edit, Glob, Grep"
 model: sonnet
+color: yellow
 ---
 # Internet Research Agent
 
