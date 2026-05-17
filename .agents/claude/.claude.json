@@ -1,5 +1,5 @@
 {
-  "numStartups": 172,
+  "numStartups": 173,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -1242,6 +1242,19 @@
       "lastHintSessionId": "7857065b-61db-4101-a9e3-204b0d7caa38",
       "lastSessionFirstPrompt": "How to have an alternative way of executing claude that runs inside a container but also persists files and sessions on disk and can have read access to similar files available on the system such as t",
       "lastSessionModified": 1778858012614
+    },
+    "C:/Users/devic/source/claude-stdinout": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "lastGracefulShutdown": false,
+      "lastVersionBase": "2.1.143"
     }
   },
   "lastReleaseNotesSeen": "2.1.143",

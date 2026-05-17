@@ -303,6 +303,18 @@ Set-Alias -Name '..' -Value Up1
 Set-Alias -Name '...' -Value Up2
 Set-Alias -Name '....' -Value Up3
 
+function New-DirectoryAndEnter {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]$Path
+    )
+    $dir = New-Item -ItemType Directory -Path $Path -Force
+    Set-Location -LiteralPath $dir.FullName
+}
+Set-Alias -Name mkdircd -Value New-DirectoryAndEnter
+
+
 # Enhanced Listing
 $PSDefaultParameterValues = @{'Format-Table:Autosize' = $true }
 $ExecutionContext.InvokeCommand.LocationChangedAction = {
