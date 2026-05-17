@@ -41,7 +41,7 @@
     "ide-upsell-external-terminal": 151,
     "colorterm-truecolor": 132,
     "desktop-app": 132,
-    "guest-passes": 177,
+    "guest-passes": 182,
     "agent-flag": 174,
     "frontend-design-plugin": 151
   },
@@ -1286,7 +1286,7 @@
       "projectOnboardingSeenCount": 0,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastVersionBase": "2.1.143",
       "lastHintSessionId": "fc9c82da-d400-4b18-ad0c-e6f39a75aa32",
       "lastSessionFirstPrompt": "explain me better than me i want to be able to queue up messages for the club code process Currently, in trying to type out a message while it's working, it treats my message as the most important thi",
@@ -1295,7 +1295,7 @@
       "lastAPIDuration": 0,
       "lastAPIDurationWithoutRetries": 0,
       "lastToolDuration": 0,
-      "lastDuration": 3794,
+      "lastDuration": 377724,
       "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
       "lastTotalInputTokens": 0,
@@ -1303,10 +1303,10 @@
       "lastTotalCacheCreationInputTokens": 0,
       "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 5.42,
-      "lastFpsLow1Pct": 19.11,
+      "lastFpsAverage": 0.22,
+      "lastFpsLow1Pct": 3.88,
       "lastModelUsage": {},
-      "lastSessionId": "e851d0e1-a879-4dff-b04a-3d5241e4f260"
+      "lastSessionId": "99824d05-0ce2-4c52-935e-2329a8f50c53"
     },
     "C:/Users/devic": {
       "allowedTools": [],
