@@ -1,5 +1,5 @@
 {
-  "numStartups": 169,
+  "numStartups": 170,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -47,7 +47,6 @@
   },
   "promptQueueUseCount": 101,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_ccr_bridge_multi_session": true,
     "tengu_workout2": true,
@@ -968,7 +967,7 @@
       "projectOnboardingSeenCount": 7,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "lastCost": 0,
       "lastAPIDuration": 0,
       "lastAPIDurationWithoutRetries": 0,
