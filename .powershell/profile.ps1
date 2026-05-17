@@ -794,24 +794,23 @@ function Set-SymlinkRelative {
     )
 
     process {
-        $item = Get-Item -Path $Path
+        # Strip trailing \ or / (from tab-completion) — otherwise Get-Item
+        # either errors or dereferences a directory symlink into its target.
+        $cleanPath = $Path.TrimEnd('\','/')
+
+        $item = Get-Item -LiteralPath $cleanPath
         if ($null -eq $item.LinkType) {
             Write-Warning "'$Path' is not a symbolic link."
             return
         }
 
-        # Resolve the current absolute target and determine its type
-        $fullTarget = (Resolve-Path -Path $item.Target).Path
-        $isDir = Test-Path -Path $fullTarget -PathType Container
+        $fullTarget = (Resolve-Path -LiteralPath $item.Target).Path
+        $isDir = Test-Path -LiteralPath $fullTarget -PathType Container
 
-        # Compute path from the link's parent folder to the target
-        $relPath = Resolve-Path -Path $fullTarget -RelativeBasePath $item.DirectoryName -Relative
+        $relPath = Resolve-Path -LiteralPath $fullTarget -RelativeBasePath $item.DirectoryName -Relative
 
-        # Remove the existing reparse point (safe — does not touch the target)
         $item.Delete()
 
-        # Recreate, preserving directory vs file type.
-        # mklink /D is the only way to set the Directory bit when the stored value is relative.
         if ($isDir) {
             cmd /c mklink /D "$($item.FullName)" "$relPath" | Out-Null
         } else {
