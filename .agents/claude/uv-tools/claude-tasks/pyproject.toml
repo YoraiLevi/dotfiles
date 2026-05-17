@@ -7,7 +7,12 @@ name = "claude-tasks"
 version = "0.1.0"
 description = "View the current Claude Code session's task list (list-tasks) and open it as a markdown dashboard (open-tasks)."
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    # Used by claude_tasks.common to walk the parent process tree and find
+    # the Claude Code process that spawned us, for fast session_id -> name
+    # lookup via ~/.claude/sessions/<pid>.json.
+    "psutil>=5.9",
+]
 authors = [{ name = "devic" }]
 
 [project.scripts]

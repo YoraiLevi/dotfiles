@@ -47,7 +47,6 @@
   },
   "promptQueueUseCount": 110,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_slate_kestrel": false,
     "tengu_slim_subagent_claudemd": true,

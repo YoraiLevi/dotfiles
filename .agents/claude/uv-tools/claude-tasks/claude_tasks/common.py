@@ -14,6 +14,9 @@ import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterator
+
+import psutil
 
 TASKS_DIR = Path.home() / ".claude" / "tasks"
 SESSIONS_DIR = Path.home() / ".claude" / "sessions"
@@ -38,35 +41,86 @@ def get_session_id() -> str | None:
     return sid if sid else None
 
 
+def _ancestor_pids(max_depth: int = 32) -> Iterator[int]:
+    """Yield PIDs walking up the process tree from our parent.
+
+    Stops when no further ancestor exists, on access errors, on cycles, or
+    when ``max_depth`` is reached. Never raises — callers can iterate freely.
+    """
+    try:
+        proc = psutil.Process().parent()
+    except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.Error):
+        return
+    seen: set[int] = set()
+    depth = 0
+    while proc is not None and depth < max_depth:
+        try:
+            pid = proc.pid
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            return
+        if pid in seen:
+            return  # cycle guard — shouldn't happen but cheap insurance
+        seen.add(pid)
+        yield pid
+        depth += 1
+        try:
+            proc = proc.parent()
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.Error):
+            return
+
+
+def _read_pid_session_file(path: Path, expected_session_id: str) -> str | None:
+    """Open a ``<pid>.json`` file. Return its ``name`` iff ``sessionId`` matches."""
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            obj = json.load(f)
+    except (OSError, json.JSONDecodeError, ValueError):
+        return None
+    if not isinstance(obj, dict):
+        return None
+    if str(obj.get("sessionId", "")) != expected_session_id:
+        return None
+    name = obj.get("name")
+    if isinstance(name, str) and name:
+        return name
+    return None
+
+
 def get_session_name(session_id: str) -> str | None:
     """The human-readable name for ``session_id`` (e.g. ``add-task-progress-statusline``).
 
     Claude Code writes one ``<pid>.json`` per running session under
-    ``~/.claude/sessions/``. Each file has ``sessionId`` and ``name`` fields;
-    scan them to find the entry matching our session. Returns ``None`` if no
-    matching file exists or no name is recorded — callers should fall back to
-    the bare session id for display.
+    ``~/.claude/sessions/``. Two-strategy lookup:
+
+    1. **Fast path** — walk our parent processes and check
+       ``~/.claude/sessions/<ancestor_pid>.json``. Returns on first match.
+       Typically finds Claude within 1–5 levels.
+    2. **Fallback** — scan every ``*.json`` in the directory. Handles cases
+       where Claude isn't a direct ancestor (e.g., the env var was set by
+       hand, or this tool was invoked from a detached process).
+
+    Returns ``None`` if no matching file is found or no name is recorded.
     """
     if not SESSIONS_DIR.is_dir():
         return None
+
+    # Fast path: walk parent PIDs.
+    for pid in _ancestor_pids():
+        candidate = SESSIONS_DIR / f"{pid}.json"
+        if candidate.is_file():
+            name = _read_pid_session_file(candidate, session_id)
+            if name is not None:
+                return name
+
+    # Fallback: full directory scan.
     try:
         entries = list(SESSIONS_DIR.glob("*.json"))
     except OSError:
         return None
     for path in entries:
-        try:
-            with path.open("r", encoding="utf-8") as f:
-                obj = json.load(f)
-        except (OSError, json.JSONDecodeError, ValueError):
-            continue
-        if not isinstance(obj, dict):
-            continue
-        if str(obj.get("sessionId", "")) != session_id:
-            continue
-        name = obj.get("name")
-        if isinstance(name, str) and name:
+        name = _read_pid_session_file(path, session_id)
+        if name is not None:
             return name
-        return None
     return None
 
 
