@@ -1081,17 +1081,12 @@ function Show-NativeArgumentCompleters {
 #     return (& chezmoi completion powershell) | Out-String
 # }
 
-function Invoke-Fnm {
-    Remove-Alias -Name fnm -Scope Global
-    if (which 'fnm.exe') {
-        fnm env --use-on-cd | Out-String | Invoke-Expression
-    }
-    else {
-        Write-Error "fnm isn't available on the system, execute:`nchoco install fnm"
-    }
-    fnm @args
+if (Get-Command fnm.exe -ErrorAction SilentlyContinue) {
+    fnm env --use-on-cd --shell powershell | Out-String | Invoke-Expression
 }
-Set-Alias -Name fnm -Value Invoke-Fnm -Scope Global
+else {
+    Write-Error "fnm isn't available on the system, execute:`nchoco install fnm"
+}
 
 Register-LazyArgumentCompleter -CommandName 'uv' -CompletionCodeFactory {
     if (-not (Get-Command 'uv.exe')) { return }
