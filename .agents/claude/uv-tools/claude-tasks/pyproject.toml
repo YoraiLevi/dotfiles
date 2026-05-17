@@ -16,7 +16,6 @@ dependencies = [
 authors = [{ name = "devic" }]
 
 [project.scripts]
-list-tasks   = "claude_tasks.list_cli:main"
 claude-tasks = "claude_tasks.cli:main"
 
 [tool.hatch.build.targets.sdist]
