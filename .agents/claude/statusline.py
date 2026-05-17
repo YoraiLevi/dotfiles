@@ -853,11 +853,13 @@ def _read_session_tasks(session_id: str) -> list[dict[str, Any]]:
 
 
 def seg_tasks(d: dict[str, Any], uc: bool) -> str | None:
-    """``tasks <done>✓ <active>▶ <pending>○ · <activeForm>`` for the current session.
+    """``tasks <done>/<total> ✓ <active>▶ · <activeForm>`` for the current session.
 
-    Zero counts are omitted. Active label is the first ``in_progress`` task's
-    ``activeForm`` (fallback ``subject``), truncated to ``TASKS_ACTIVE_LABEL_MAX``.
-    When every task is completed, the suffix becomes ``· all done``.
+    The fraction is completed-out-of-total (pending is implicit: total − done − active).
+    Active count and ``activeForm`` label appear when at least one task is
+    ``in_progress``; active label uses ``activeForm`` (fallback ``subject``),
+    truncated to ``TASKS_ACTIVE_LABEL_MAX``. When every task is completed, the
+    suffix becomes ``· all done``.
     """
     sid = d.get("session_id")
     if not sid:
@@ -866,7 +868,7 @@ def seg_tasks(d: dict[str, Any], uc: bool) -> str | None:
     if not tasks:
         return None
 
-    done = active = pending = 0
+    done = active = 0
     active_label: str | None = None
     for t in tasks:
         status = t.get("status")
@@ -878,18 +880,12 @@ def seg_tasks(d: dict[str, Any], uc: bool) -> str | None:
                 lbl = t.get("activeForm") or t.get("subject")
                 if lbl:
                     active_label = str(lbl)
-        else:
-            pending += 1
 
-    bits: list[str] = []
-    if done:
-        bits.append(green(uc, f"{done}✓") if uc else f"{done}✓")
+    total = len(tasks)
+    fraction = f"{done}/{total} ✓"
+    bits: list[str] = [green(uc, fraction) if uc else fraction]
     if active:
         bits.append(yellow(uc, f"{active}▶") if uc else f"{active}▶")
-    if pending:
-        bits.append(dim(uc, f"{pending}○") if uc else f"{pending}○")
-    if not bits:
-        return None
 
     label = dim(uc, "tasks") if uc else "tasks"
     out = f"{label} {' '.join(bits)}"
@@ -899,7 +895,7 @@ def seg_tasks(d: dict[str, Any], uc: bool) -> str | None:
             active_label = active_label[: TASKS_ACTIVE_LABEL_MAX - 1] + "…"
         suffix = yellow(uc, active_label) if uc else active_label
         out += f" · {suffix}"
-    elif done == len(tasks):
+    elif done == total:
         suffix = green(uc, "all done") if uc else "all done"
         out += f" · {suffix}"
 
