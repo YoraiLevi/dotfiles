@@ -47,6 +47,10 @@ EXECUTION_LOG_PATH = SCRIPT_DIR / "statusline.log"
 STDIN_ARCHIVE_DIR = SCRIPT_DIR / "statusline_stdin"
 WRITE_LOG = False
 
+# Per-session task files written by Claude Code (one ``<task_id>.json`` per task).
+TASKS_DIR = Path.home() / ".claude" / "tasks"
+TASKS_ACTIVE_LABEL_MAX = 48
+
 # Workspace row: if visible width exceeds this, +dirs / project / cwd use folder leaf names only.
 WORKSPACE_LINE_MAX_VISIBLE = 80
 
