@@ -1,5 +1,5 @@
 {
-  "numStartups": 185,
+  "numStartups": 186,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -13,7 +13,7 @@
     "theme-command": 184,
     "status-line": 92,
     "prompt-queue": 14,
-    "enter-to-steer-in-relatime": 166,
+    "enter-to-steer-in-relatime": 186,
     "default-permission-mode-config": 52,
     "color-when-multi-clauding": 184,
     "todo-list": 169,
@@ -968,20 +968,20 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": false,
-      "lastCost": 3.8542903,
-      "lastAPIDuration": 817886,
-      "lastAPIDurationWithoutRetries": 817785,
-      "lastToolDuration": 156791,
-      "lastDuration": 17656108,
-      "lastLinesAdded": 292,
-      "lastLinesRemoved": 1,
-      "lastTotalInputTokens": 1140,
-      "lastTotalOutputTokens": 56068,
-      "lastTotalCacheCreationInputTokens": 235570,
-      "lastTotalCacheReadInputTokens": 2549178,
+      "lastCost": 5.644914050000001,
+      "lastAPIDuration": 1013372,
+      "lastAPIDurationWithoutRetries": 1013233,
+      "lastToolDuration": 205709,
+      "lastDuration": 18511430,
+      "lastLinesAdded": 330,
+      "lastLinesRemoved": 17,
+      "lastTotalInputTokens": 2256,
+      "lastTotalOutputTokens": 67945,
+      "lastTotalCacheCreationInputTokens": 393665,
+      "lastTotalCacheReadInputTokens": 3572518,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 1.41,
-      "lastFpsLow1Pct": 34.91,
+      "lastFpsAverage": 5.01,
+      "lastFpsLow1Pct": 139.46,
       "lastModelUsage": {
         "claude-opus-4-7[1m]": {
           "inputTokens": 1081,
@@ -992,12 +992,28 @@
           "costUSD": 3.7792875
         },
         "claude-haiku-4-5-20251001": {
-          "inputTokens": 59,
-          "outputTokens": 3816,
+          "inputTokens": 640,
+          "outputTokens": 3835,
           "cacheReadInputTokens": 197113,
           "cacheCreationInputTokens": 28922,
           "webSearchRequests": 0,
-          "costUSD": 0.07500280000000001
+          "costUSD": 0.0756788
+        },
+        "claude-opus-4-7": {
+          "inputTokens": 532,
+          "outputTokens": 11408,
+          "cacheReadInputTokens": 1023340,
+          "cacheCreationInputTokens": 156321,
+          "webSearchRequests": 0,
+          "costUSD": 1.77653625
+        },
+        "claude-sonnet-4-6": {
+          "inputTokens": 3,
+          "outputTokens": 450,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 1774,
+          "webSearchRequests": 0,
+          "costUSD": 0.0134115
         }
       },
       "lastSessionId": "ce30070b-b931-4113-be71-c1877a4f07d1",

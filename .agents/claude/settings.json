@@ -11,7 +11,7 @@
     ],
     "defaultMode": "plan"
   },
-  "model": "opus",
+  "model": "haiku",
   "skillOverrides": {
     "Agent": "off",
     "EnterPlanMode": "off",
