@@ -24,7 +24,12 @@ from pathlib import Path
 
 PLANS_DIR = Path.home() / ".claude" / "plans"
 PROJECTS_DIR = Path.home() / ".claude" / "projects"
-OBSIDIAN_VAULT = "plans"
+
+# Hardcoded: every Claude-related uv-tool on this machine opens files inside
+# the `.claude` Obsidian vault (covers ~/.claude/ — plans, tasks, projects,
+# everything). Files are addressed relative to ~/.claude/ in the URI.
+OBSIDIAN_VAULT = ".claude"
+OBSIDIAN_PATH_PREFIX = "plans"
 
 # Match phrases that ONLY appear in plan-mode system reminders injected by the
 # Claude Code harness:
@@ -114,9 +119,12 @@ def main() -> int:
     except OSError:
         mtime = None
 
-    stem = plan_path.stem
-    encoded_stem = urllib.parse.quote(stem, safe="")
-    uri = f"obsidian://open?vault={OBSIDIAN_VAULT}&file={encoded_stem}"
+    # File parameter is path relative to vault root, e.g. ``plans/<stem>``.
+    # safe='/' preserves the path separator inside the URI's file= value.
+    vault_relative = f"{OBSIDIAN_PATH_PREFIX}/{plan_path.stem}"
+    encoded_file = urllib.parse.quote(vault_relative, safe="/")
+    encoded_vault = urllib.parse.quote(OBSIDIAN_VAULT, safe="")
+    uri = f"obsidian://open?vault={encoded_vault}&file={encoded_file}"
 
     print(f"Plan:       {basename}")
     print(f"Resolution: {resolution}")

@@ -1,8 +1,10 @@
 """``open-tasks`` — render a markdown dashboard for this session and open it.
 
 Writes the dashboard to ``~/.claude/tasks/<session_id>/dashboard.md`` (next to
-the JSON task files Claude Code maintains) and hands the file to the OS's
-default ``.md`` handler — Obsidian, VS Code, whatever the user has registered.
+the JSON task files Claude Code maintains) and launches it in Obsidian via
+the ``obsidian://open?vault=.claude&file=tasks/<session_id>/dashboard`` URI.
+The ``.claude`` vault — registered on this machine at ``~/.claude/`` — covers
+the dashboard location natively, so no file relocation is needed.
 
 Designed to be invoked manually (via Claude Code's ``!`` prefix or any shell).
 The dashboard is a snapshot at the moment of invocation; re-run to refresh.
@@ -13,6 +15,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
+import urllib.parse
 from datetime import datetime
 
 from .common import (
@@ -23,6 +26,12 @@ from .common import (
     session_tasks_dir,
     setup_utf8_stdout,
 )
+
+# Hardcoded: every Claude-related uv-tool on this machine opens files inside
+# the ``.claude`` Obsidian vault. Files under this tool's responsibility live
+# under ``tasks/`` relative to the vault root.
+OBSIDIAN_VAULT = ".claude"
+OBSIDIAN_PATH_PREFIX = "tasks"
 
 
 def _render_task_line(t: Task, marker: str, *, strike: bool = False) -> str:
@@ -87,14 +96,14 @@ def render_dashboard(session_id: str, tasks: list[Task]) -> str:
     return "\n".join(out)
 
 
-def _open_file(path: str) -> None:
-    """Hand off ``path`` to the OS's default handler for the file's extension."""
+def _launch(uri: str) -> None:
+    """Hand off a URI (or file path) to the OS's protocol/file handler."""
     if sys.platform == "win32":
-        os.startfile(path)  # type: ignore[attr-defined]  # noqa: S606
+        os.startfile(uri)  # type: ignore[attr-defined]  # noqa: S606
     elif sys.platform == "darwin":
-        subprocess.run(["open", path], check=False)
+        subprocess.run(["open", uri], check=False)
     else:
-        subprocess.run(["xdg-open", path], check=False)
+        subprocess.run(["xdg-open", uri], check=False)
 
 
 def main() -> int:
@@ -125,10 +134,17 @@ def main() -> int:
     out_path = sdir / "dashboard.md"
     out_path.write_text(body, encoding="utf-8")
 
+    # Build the obsidian:// URI. The file param is the path relative to the
+    # vault root; safe='/' preserves the directory separator inside the URI.
+    vault_relative = f"{OBSIDIAN_PATH_PREFIX}/{sid}/dashboard"
+    encoded_file = urllib.parse.quote(vault_relative, safe="/")
+    encoded_vault = urllib.parse.quote(OBSIDIAN_VAULT, safe="")
+    uri = f"obsidian://open?vault={encoded_vault}&file={encoded_file}"
+
     print(f"Session:    {sid[:8]}")
     print(f"Dashboard:  {out_path}")
-    print(f"Opening with default .md handler...")
-    _open_file(str(out_path))
+    print(f"Opening:    {uri}")
+    _launch(uri)
     return 0
 
 
