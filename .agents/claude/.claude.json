@@ -25,7 +25,7 @@
     "shift-tab": 168,
     "image-paste": 169,
     "custom-agents": 147,
-    "permissions": 160,
+    "permissions": 170,
     "rename-conversation": 163,
     "custom-commands": 167,
     "desktop-shortcut": 161,
@@ -984,9 +984,9 @@
       "lastFpsLow1Pct": 13.32,
       "lastModelUsage": {},
       "lastSessionId": "6936f06f-cded-4451-aac3-5b4731209d1f",
-      "lastHintSessionId": "281fa8c7-bc1a-4289-9476-d8ba97e61b44",
-      "lastSessionFirstPrompt": "I just don't get it. Uh, every time I let the computer go to sleep, then when it wakes up, The WSL starts behaving weird and Catastrophic failure Error code: Wsl/Service/E_UNEXPECTED But the most well",
-      "lastSessionModified": 1778997359217,
+      "lastHintSessionId": "b9a3ee70-300d-4f83-b87a-a55de395992c",
+      "lastSessionFirstPrompt": "claude-code-setup-notes.md I was given this document about Clothe Health and ways to use it, um, more to help me, um, I guess. Um, thing is the task you're in, the Clothe Health, is really, really tin",
+      "lastSessionModified": 1779005727975,
       "lastVersionBase": "2.1.143"
     },
     "C:/Users/devic/source/dgx-control-plane": {
