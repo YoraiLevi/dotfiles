@@ -1515,5 +1515,23 @@
   "voiceFooterHintSeenCount": 3,
   "feedbackSurveyState": {
     "lastShownTime": 1779054092100
+  },
+  "mcpServers": {
+    "ping": {
+      "type": "stdio",
+      "command": "C:\\Users\\devic\\.local\\bin\\mcps-run.exe",
+      "args": [
+        "ping"
+      ],
+      "env": {}
+    },
+    "pong": {
+      "type": "stdio",
+      "command": "C:\\Users\\devic\\.local\\bin\\mcps-run.exe",
+      "args": [
+        "pong"
+      ],
+      "env": {}
+    }
   }
 }

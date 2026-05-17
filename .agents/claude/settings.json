@@ -5,7 +5,9 @@
   },
   "permissions": {
     "allow": [
-      "WebSearch"
+      "WebSearch",
+      "mcp__ping__*",
+      "mcp__pong__*"
     ],
     "defaultMode": "plan"
   },
