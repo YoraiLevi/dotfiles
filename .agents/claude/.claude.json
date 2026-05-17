@@ -41,7 +41,7 @@
     "ide-upsell-external-terminal": 151,
     "colorterm-truecolor": 132,
     "desktop-app": 132,
-    "guest-passes": 168,
+    "guest-passes": 171,
     "agent-flag": 159,
     "frontend-design-plugin": 151
   },
@@ -1059,9 +1059,9 @@
         "frame_duration_ms_p99": 12.436733999999815
       },
       "lastGracefulShutdown": false,
-      "lastHintSessionId": "80b23939-8502-4d84-8b5d-442159bdcf5b",
-      "lastSessionFirstPrompt": "read the session at @session_id.txt and let's continue working on it",
-      "lastSessionModified": 1778416579363,
+      "lastHintSessionId": "e3d5ddb6-d7b8-4bb8-9438-596e38286a1b",
+      "lastSessionFirstPrompt": "Okay. So can you clarify me with examples how to use the move and link function scripts? First of all, to move... a file into a specific path of a file a file into a directory without overwriting the ",
+      "lastSessionModified": 1779010816257,
       "lastVersionBase": "2.1.143"
     },
     "C:/Users/devic/source/dotfiles-template": {
@@ -1382,5 +1382,8 @@
   },
   "voiceLangHintShownCount": 2,
   "voiceLangHintLastLanguage": "en",
-  "voiceFooterHintSeenCount": 3
+  "voiceFooterHintSeenCount": 3,
+  "feedbackSurveyState": {
+    "lastShownTime": 1779010869990
+  }
 }
