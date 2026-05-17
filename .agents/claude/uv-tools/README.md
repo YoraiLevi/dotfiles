@@ -6,26 +6,20 @@ and is invokable from PowerShell, bash, and Claude Code's `!` prefix.
 
 ## Currently installed
 
-Both commands ship from a single package — [`./claude-tasks/`](./claude-tasks) —
-with `[project.scripts]` declaring two entry points. They share session,
-transcript, task-loading, and Obsidian helpers in `claude_tasks/common.py`.
+A single command ships from [`./claude-tasks/`](./claude-tasks):
 
 | Command | Module | Purpose |
 |---|---|---|
-| `list-tasks`   | `claude_tasks.list_cli:main` | Prints the current session's task list to stdout — bullet list grouped by status with ANSI colors. Companion to the statusline summary. |
-| `claude-tasks` | `claude_tasks.cli:main`      | Renders a markdown dashboard at `~/.claude/tasks/<session_id>/dashboard.md` containing **the current session's tasks AND the current plan**, then opens it in Obsidian (`obsidian://open?vault=.claude&file=tasks/<sid>/dashboard`). Snapshot — re-run to refresh. |
+| `claude-tasks` | `claude_tasks.cli:main` | Renders a markdown dashboard at `~/.claude/tasks/<session_id>/dashboard.md` — **tasks on top, plan body below** (separated by a horizontal rule, with the plan's ATX headers demoted by one level so they nest under the dashboard's structure). Then opens it in Obsidian via `obsidian://open?vault=.claude&file=tasks/<sid>/dashboard`. Snapshot — re-run to refresh. |
 
-The `claude-tasks` command replaces the earlier separate `open-tasks` and
-`open-plan` commands. Plan content is appended below the task list (separated
-by a horizontal rule), with the plan's ATX headers demoted by one level so
-they nest cleanly under the dashboard's structure. Plan resolution is the
-same session-aware transcript discriminator (`"You should create your plan at"`
-and `"Your plan has been saved to:"`) with a latest-modified fallback.
+Plan resolution: session-aware transcript discriminator
+(`"You should create your plan at"` and `"Your plan has been saved to:"`)
+with a latest-modified fallback.
 
-**Shared helpers** in `claude_tasks/common.py` used by both CLIs:
-`get_session_id`, `get_session_name`, `pretty_session`, `find_session_transcript`,
-`load_session_tasks`, `partition_by_status`, `build_obsidian_uri`,
-`launch_uri`, `setup_utf8_stdout`, `_ancestor_pids`.
+**Helpers in `claude_tasks/common.py`** (kept generic so future tools can
+reuse them): `get_session_id`, `get_session_name`, `pretty_session`,
+`find_session_transcript`, `load_session_tasks`, `partition_by_status`,
+`build_obsidian_uri`, `launch_uri`, `setup_utf8_stdout`, `_ancestor_pids`.
 
 When you add a new tool, decide: does it slot into `claude-tasks` (shares
 common helpers, related-to-session-state), or does it deserve its own package
