@@ -31,6 +31,12 @@ which logic answered.
 [project.scripts]
 open-plan = "open_plan.cli:main"
 
+[tool.hatch.build]
+# Without this, hatchling honours a parent `~/.gitignore` even though this
+# project has no `.git` directory of its own, and it silently drops the
+# `open_plan/` package from the build.
+ignore-vcs = true
+
 [tool.hatch.build.targets.sdist]
 include = ["open_plan", "pyproject.toml"]
 
