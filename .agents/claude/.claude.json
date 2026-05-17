@@ -1,5 +1,5 @@
 {
-  "numStartups": 178,
+  "numStartups": 179,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -1320,8 +1320,24 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "exampleFiles": [],
-      "lastGracefulShutdown": false,
-      "lastVersionBase": "2.1.143"
+      "lastGracefulShutdown": true,
+      "lastVersionBase": "2.1.143",
+      "lastCost": 0,
+      "lastAPIDuration": 0,
+      "lastAPIDurationWithoutRetries": 0,
+      "lastToolDuration": 0,
+      "lastDuration": 20045,
+      "lastLinesAdded": 0,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 0,
+      "lastTotalOutputTokens": 0,
+      "lastTotalCacheCreationInputTokens": 0,
+      "lastTotalCacheReadInputTokens": 0,
+      "lastTotalWebSearchRequests": 0,
+      "lastFpsAverage": 0.92,
+      "lastFpsLow1Pct": 11.14,
+      "lastModelUsage": {},
+      "lastSessionId": "f301ad65-353d-426c-b3c6-293c96c0e835"
     }
   },
   "lastReleaseNotesSeen": "2.1.143",
