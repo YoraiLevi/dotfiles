@@ -21,6 +21,7 @@ from .common import (
     load_session_tasks,
     partition_by_status,
     session_tasks_dir,
+    setup_utf8_stdout,
 )
 
 
@@ -97,6 +98,7 @@ def _open_file(path: str) -> None:
 
 
 def main() -> int:
+    setup_utf8_stdout()
     sid = get_session_id()
     if not sid:
         print(

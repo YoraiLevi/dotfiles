@@ -18,6 +18,7 @@ from .common import (
     get_session_id,
     load_session_tasks,
     partition_by_status,
+    setup_utf8_stdout,
 )
 
 
@@ -31,6 +32,7 @@ def _use_color() -> bool:
 
 
 def main() -> int:
+    setup_utf8_stdout()
     color = _use_color()
     green = "\033[32m" if color else ""
     yellow = "\033[33m" if color else ""

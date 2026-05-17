@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -34,6 +35,18 @@ def get_session_id() -> str | None:
     """The current Claude Code session UUID, or None when invoked outside Claude Code."""
     sid = os.environ.get("CLAUDE_CODE_SESSION_ID")
     return sid if sid else None
+
+
+def setup_utf8_stdout() -> None:
+    """Reconfigure stdout/stderr to UTF-8 so Unicode glyphs like ``✓ ▶ ○`` work
+    on Windows, whose default cp1252 codec raises ``UnicodeEncodeError`` on them.
+
+    Safe to call from any entry point; no-op if reconfigure isn't supported."""
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")  # type: ignore[attr-defined]
+        except (AttributeError, OSError):
+            pass
 
 
 def session_tasks_dir(session_id: str) -> Path:
