@@ -42,10 +42,10 @@
     "colorterm-truecolor": 132,
     "desktop-app": 132,
     "guest-passes": 171,
-    "agent-flag": 159,
+    "agent-flag": 174,
     "frontend-design-plugin": 151
   },
-  "promptQueueUseCount": 110,
+  "promptQueueUseCount": 111,
   "btwUseCount": 1,
   "cachedGrowthBookFeatures": {
     "tengu_slate_kestrel": false,
@@ -984,9 +984,9 @@
       "lastFpsLow1Pct": 13.32,
       "lastModelUsage": {},
       "lastSessionId": "6936f06f-cded-4451-aac3-5b4731209d1f",
-      "lastHintSessionId": "dcf2e29e-d3cd-4803-aecc-b5ef58356102",
-      "lastSessionFirstPrompt": "help me fix the Relative symlink function to correctly relative path existing symlinks to directories, Full Path -> Relative Path becomes like a file, New-symlink has a work around for that  function ",
-      "lastSessionModified": 1779033150878,
+      "lastHintSessionId": "ce30070b-b931-4113-be71-c1877a4f07d1",
+      "lastSessionFirstPrompt": "Do you know which kind of agents do we have available on the system, uh, on the built in system? because I know which system. The folder that I I got them, of course.",
+      "lastSessionModified": 1779037123335,
       "lastVersionBase": "2.1.143"
     },
     "C:/Users/devic/source/dgx-control-plane": {
