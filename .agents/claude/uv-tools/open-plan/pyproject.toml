@@ -31,5 +31,8 @@ which logic answered.
 [project.scripts]
 open-plan = "open_plan.cli:main"
 
+[tool.hatch.build.targets.sdist]
+include = ["src", "pyproject.toml"]
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/open_plan"]
