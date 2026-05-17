@@ -5,13 +5,17 @@
 # ///
 """Claude Code statusLine command: stdin JSON → ANSI status rows.
 
-Segment types (DEFAULT_LAYOUT): version, session_id, session_name, cost, billing_wall,
-billing_api, cost_session_lines, rate_limits, transcript_path (optional segment;
-default layout uses ``transcript_below`` on the billing line instead),
-model, agent, effort, thinking (includes ``fast_mode`` when on), tokens, context_pct
-(``used/total (pct%)`` with ``K``/``M``-suffixed counts when size is present),
-exceeds_200k, added_dirs, project_dir (``[branch ↑n↓m +a/−r] path``), cwd_or_worktree
+Segment types (DEFAULT_LAYOUT): session_id, session_name, tasks (per-session
+``~/.claude/tasks/<session_id>/`` counts plus the active ``activeForm`` label),
+cost, billing_wall, billing_api, cost_session_lines, rate_limits, transcript_path
+(optional segment; default layout uses ``transcript_below`` on the billing line
+instead), model, agent, effort, thinking (includes ``fast_mode`` when on),
+tokens, context_pct (``used/total (pct%)`` with ``K``/``M``-suffixed counts when
+size is present), exceeds_200k, added_dirs, project_dir
+(``[branch ↑n↓m +a/−r] path``), cwd_or_worktree
 (``[cwd branch ↑n↓m | +a/−r] path``; optional ``[worktree]``), output_style.
+``version`` remains available in ``_bind()`` for custom layouts but is not
+referenced by the default layout.
 
 EOL: STATUSLINE_EOL=lf|crlf (env overrides DEFAULT_LINE_ENDING constant below).
 Colors: enabled by default (Claude Code uses a pipe, not a TTY). Set NO_COLOR=1 to disable.
@@ -936,9 +940,9 @@ DEFAULT_LAYOUT: dict[str, Any] = {
         {
             "separator": " | ",
             "segments": [
-                {"type": "version"},
                 {"type": "session_id"},
                 {"type": "session_name"},
+                {"type": "tasks"},
             ],
         },
         {
