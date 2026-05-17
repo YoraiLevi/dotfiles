@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "claude-tasks"
+version = "0.1.0"
+description = "View the current Claude Code session's task list (list-tasks) and open it as a markdown dashboard (open-tasks)."
+requires-python = ">=3.11"
+dependencies = []
+authors = [{ name = "devic" }]
+
+[project.scripts]
+list-tasks = "claude_tasks.list_cli:main"
+open-tasks = "claude_tasks.open_cli:main"
+
+[tool.hatch.build.targets.sdist]
+include = ["claude_tasks", "pyproject.toml"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["claude_tasks"]
