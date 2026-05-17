@@ -6,18 +6,25 @@ and is invokable from PowerShell, bash, and Claude Code's `!` prefix.
 
 ## Currently installed
 
-| Tool | Source | Purpose |
+All three commands ship from a single package — [`./claude-tasks/`](./claude-tasks) —
+with `[project.scripts]` declaring three entry points. They share session,
+transcript, and Obsidian helpers in `claude_tasks/common.py`.
+
+| Command | Module | Purpose |
 |---|---|---|
-| `open-plan` | [`./open-plan/`](./open-plan) | Opens the current Claude Code session's plan file in Obsidian (via the harness's `CLAUDE_CODE_SESSION_ID` env var and the JSONL transcript). |
-| `list-tasks` | [`./claude-tasks/`](./claude-tasks) | Prints the current session's task list to stdout — bullet list grouped by status with ANSI colors. Companion to the statusline summary. |
-| `open-tasks` | [`./claude-tasks/`](./claude-tasks) | Renders a markdown dashboard at `~/.claude/tasks/<session_id>/dashboard.md` and opens it in the OS's default `.md` handler (Obsidian, VS Code, etc.). Snapshot, not live — re-run to refresh. |
+| `list-tasks` | `claude_tasks.list_cli:main`     | Prints the current session's task list to stdout — bullet list grouped by status with ANSI colors. Companion to the statusline summary. |
+| `open-tasks` | `claude_tasks.open_cli:main`     | Renders a markdown dashboard at `~/.claude/tasks/<session_id>/dashboard.md` and opens it in Obsidian (via `obsidian://open?vault=.claude&file=tasks/<sid>/dashboard`). Snapshot, not live — re-run to refresh. |
+| `open-plan`  | `claude_tasks.open_plan_cli:main` | Opens the current session's plan file in Obsidian. Session-aware: parses the transcript JSONL under `~/.claude/projects/` for harness-injected plan-mode discriminator phrases; falls back to most-recently-modified plan. |
 
-The `claude-tasks` package ships **two** scripts from one project — see its
-`pyproject.toml` for the two `[project.scripts]` entries pointing at
-`list_cli:main` and `open_cli:main`. Both share the session-loading code in
-`claude_tasks/common.py`.
+**Shared helpers** in `claude_tasks/common.py` used by multiple CLIs:
+`get_session_id`, `get_session_name`, `pretty_session`, `find_session_transcript`,
+`load_session_tasks`, `partition_by_status`, `build_obsidian_uri`,
+`launch_uri`, `setup_utf8_stdout`.
 
-When you add a new tool, list it here.
+When you add a new tool, decide: does it slot into `claude-tasks` (shares
+common helpers, three+ entry points already), or does it deserve its own
+package (genuinely independent — different deps, different scope)? List it
+here either way.
 
 ## Creating a new tool
 

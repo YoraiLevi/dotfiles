@@ -18,6 +18,7 @@ authors = [{ name = "devic" }]
 [project.scripts]
 list-tasks = "claude_tasks.list_cli:main"
 open-tasks = "claude_tasks.open_cli:main"
+open-plan  = "claude_tasks.open_plan_cli:main"
 
 [tool.hatch.build.targets.sdist]
 include = ["claude_tasks", "pyproject.toml"]
