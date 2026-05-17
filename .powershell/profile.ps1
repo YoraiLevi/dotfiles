@@ -644,7 +644,19 @@ function Move-AsLink {
             [switch] $Resolve
         )
     
-        $cwd = [Environment]::CurrentDirectory   # Filesystem cwd, not PSDrive cwd.
+        # Use the PSDrive cwd ($PWD / Get-Location), not the .NET filesystem cwd
+        # ([Environment]::CurrentDirectory). These can diverge: Set-Location updates
+        # the former but leaves the latter at the session-start dir. Real users
+        # navigate via Set-Location / cd / Push-Location, so the PSDrive cwd matches
+        # "the directory I'm currently in" and is what relative paths should resolve
+        # against.
+        $cwdLocation = Get-Location
+        if ($cwdLocation.Provider.Name -ne 'FileSystem') {
+            throw ("Move-AsLink: current location is not a filesystem path " +
+                   "($($cwdLocation.Path)). Use an absolute filesystem path, or " +
+                   "Set-Location to a filesystem path first.")
+        }
+        $cwd = $cwdLocation.ProviderPath
     
         function ToAbs([string] $p) {
             if ([IO.Path]::IsPathRooted($p)) { [IO.Path]::GetFullPath($p) }
