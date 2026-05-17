@@ -47,7 +47,6 @@
   },
   "promptQueueUseCount": 118,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_slate_kestrel": false,
     "tengu_slim_subagent_claudemd": true,
@@ -1514,6 +1513,6 @@
   "voiceLangHintLastLanguage": "en",
   "voiceFooterHintSeenCount": 3,
   "feedbackSurveyState": {
-    "lastShownTime": 1779010886183
+    "lastShownTime": 1779054092100
   }
 }
