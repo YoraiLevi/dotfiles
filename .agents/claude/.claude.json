@@ -45,7 +45,7 @@
     "agent-flag": 159,
     "frontend-design-plugin": 151
   },
-  "promptQueueUseCount": 101,
+  "promptQueueUseCount": 102,
   "btwUseCount": 1,
   "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
@@ -1063,7 +1063,8 @@
       "lastHintSessionId": "e3d5ddb6-d7b8-4bb8-9438-596e38286a1b",
       "lastSessionFirstPrompt": "Okay. So can you clarify me with examples how to use the move and link function scripts? First of all, to move... a file into a specific path of a file a file into a directory without overwriting the ",
       "lastSessionModified": 1779010816257,
-      "lastVersionBase": "2.1.143"
+      "lastVersionBase": "2.1.143",
+      "hasCompletedProjectOnboarding": true
     },
     "C:/Users/devic/source/dotfiles-template": {
       "allowedTools": [],
