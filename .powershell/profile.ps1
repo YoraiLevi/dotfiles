@@ -658,6 +658,22 @@ function Move-AsLink {
         }
         $cwd = $cwdLocation.ProviderPath
     
+        # Expand ~ to the user's home directory. PowerShell's parser does NOT
+        # do this automatically — only certain cmdlets (Get-Content, Resolve-Path,
+        # etc.) handle ~ via the FileSystem provider's Home property. Because we
+        # build paths with raw [IO.Path] APIs (which treat ~ as a literal directory
+        # name), we have to expand it ourselves to match the user-facing convention
+        # that ~ means "home" regardless of shell. Bash gets this via the parser.
+        function ExpandTilde([string] $p) {
+            if ($p -eq '~') { return (Get-PSProvider FileSystem).Home }
+            if ($p.StartsWith('~/') -or $p.StartsWith('~\')) {
+                return Join-Path (Get-PSProvider FileSystem).Home $p.Substring(2)
+            }
+            return $p
+        }
+        $Path        = ExpandTilde $Path
+        $Destination = ExpandTilde $Destination
+    
         function ToAbs([string] $p) {
             if ([IO.Path]::IsPathRooted($p)) { [IO.Path]::GetFullPath($p) }
             else { [IO.Path]::GetFullPath([IO.Path]::Combine($cwd, $p)) }
@@ -681,6 +697,14 @@ function Move-AsLink {
                         Where-Object { $_.Name -eq $leaf } | Select-Object -First 1
             if (-not $entry) { throw "Move-AsLink: source does not exist: $Path" }
         }
+    
+        # Strip trailing separator from the source so [IO.Path]::GetFileName returns
+        # the actual leaf (not empty). Without this, "Move-AsLink .\foo\ .\bag\"
+        # leaves srcLeaf empty, which then breaks container-mode destination
+        # resolution (basename-append concatenates "" instead of "foo", producing
+        # .\bag instead of .\bag\foo). Mirrors mvln.sh:50-51. The helper correctly
+        # preserves root paths (C:\, /).
+        $Path = [IO.Path]::TrimEndingDirectorySeparator($Path)
     
         $srcParentRaw = [IO.Path]::GetDirectoryName($Path)
         if ([string]::IsNullOrEmpty($srcParentRaw)) { $srcParentRaw = $cwd }
