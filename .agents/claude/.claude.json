@@ -1,5 +1,5 @@
 {
-  "numStartups": 191,
+  "numStartups": 192,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -18,7 +18,7 @@
     "color-when-multi-clauding": 184,
     "todo-list": 189,
     "install-github-app": 185,
-    "install-slack-app": 181,
+    "install-slack-app": 191,
     "drag-and-drop-images": 185,
     "double-esc-code-restore": 187,
     "continue": 181,
@@ -967,40 +967,23 @@
       "projectOnboardingSeenCount": 7,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": false,
-      "lastCost": 0.09014925,
-      "lastAPIDuration": 16129,
-      "lastAPIDurationWithoutRetries": 16053,
+      "lastGracefulShutdown": true,
+      "lastCost": 0,
+      "lastAPIDuration": 0,
+      "lastAPIDurationWithoutRetries": 0,
       "lastToolDuration": 0,
-      "lastDuration": 65603,
+      "lastDuration": 5519963,
       "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
-      "lastTotalInputTokens": 937,
-      "lastTotalOutputTokens": 666,
-      "lastTotalCacheCreationInputTokens": 21199,
+      "lastTotalInputTokens": 0,
+      "lastTotalOutputTokens": 0,
+      "lastTotalCacheCreationInputTokens": 0,
       "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 3.47,
-      "lastFpsLow1Pct": 16.65,
-      "lastModelUsage": {
-        "claude-haiku-4-5-20251001": {
-          "inputTokens": 934,
-          "outputTokens": 28,
-          "cacheReadInputTokens": 0,
-          "cacheCreationInputTokens": 0,
-          "webSearchRequests": 0,
-          "costUSD": 0.001074
-        },
-        "claude-sonnet-4-6": {
-          "inputTokens": 3,
-          "outputTokens": 638,
-          "cacheReadInputTokens": 0,
-          "cacheCreationInputTokens": 21199,
-          "webSearchRequests": 0,
-          "costUSD": 0.08907525
-        }
-      },
-      "lastSessionId": "9158c919-24f2-421a-bdd3-013de6f73a9d",
+      "lastFpsAverage": 0.01,
+      "lastFpsLow1Pct": 4.02,
+      "lastModelUsage": {},
+      "lastSessionId": "f247a9c9-bcc5-4d1d-b1eb-dbf333a2c146",
       "lastHintSessionId": "5719593c-c78c-4232-8ff3-d72c409d0b4b",
       "lastSessionFirstPrompt": "what is the difference between commands and skills in cc",
       "lastSessionModified": 1779098574253,
@@ -1370,9 +1353,22 @@
       "lastHintSessionId": "aeb91f70-9bda-4c4a-afbe-e9a097092d4c",
       "lastSessionFirstPrompt": "I'm studying math. Um, The material is in Hebrew, so I need help organizing it. I have four... two courses, and and I need to organize the files and the folders. Just move them around to the correct f",
       "lastSessionModified": 1779053686570
+    },
+    "C:/Users/devic/source/marketplace": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 1,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "lastGracefulShutdown": false,
+      "lastVersionBase": "2.1.143"
     }
   },
-  "lastReleaseNotesSeen": "2.1.142",
+  "lastReleaseNotesSeen": "2.1.143",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
@@ -1462,6 +1458,9 @@
     ],
     "dgxsparklabs/dotfiles-template": [
       "C:\\Users\\devic\\source\\dotfiles-template"
+    ],
+    "dgxsparklabs/marketplace": [
+      "C:\\Users\\devic\\source\\marketplace"
     ]
   },
   "passesEligibilityCache": {
