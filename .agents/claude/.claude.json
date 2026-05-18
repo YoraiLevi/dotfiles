@@ -1396,7 +1396,7 @@
       "timestamp": 1779033072982
     }
   },
-  "cachedExtraUsageDisabledReason": null,
+  "cachedExtraUsageDisabledReason": "org_level_disabled_until",
   "overageCreditGrantCache": {
     "899e4e0b-7800-4780-ba3e-3eb32ba7d3fa": {
       "info": {
