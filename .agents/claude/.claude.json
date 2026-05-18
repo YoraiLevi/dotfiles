@@ -1,5 +1,5 @@
 {
-  "numStartups": 193,
+  "numStartups": 194,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -47,7 +47,6 @@
   },
   "promptQueueUseCount": 128,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_slate_kestrel": false,
     "tengu_slim_subagent_claudemd": true,
@@ -1287,7 +1286,7 @@
       "projectOnboardingSeenCount": 3,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "lastVersionBase": "2.1.143",
       "lastHintSessionId": "fc9c82da-d400-4b18-ad0c-e6f39a75aa32",
       "lastSessionFirstPrompt": "explain me better than me i want to be able to queue up messages for the club code process Currently, in trying to type out a message while it's working, it treats my message as the most important thi",
