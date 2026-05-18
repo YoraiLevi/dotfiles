@@ -45,7 +45,7 @@
     "agent-flag": 174,
     "frontend-design-plugin": 151
   },
-  "promptQueueUseCount": 123,
+  "promptQueueUseCount": 124,
   "btwUseCount": 1,
   "cachedGrowthBookFeatures": {
     "tengu_slate_kestrel": false,
@@ -1489,26 +1489,6 @@
   "autoPermissionsNotificationCount": 3,
   "bridgeOauthDeadExpiresAt": 1778787092414,
   "bridgeOauthDeadFailCount": 1,
-  "oauthAccount": {
-    "accountUuid": "59481114-4cf3-4697-a1b6-0e9306a56b6e",
-    "emailAddress": "yorai.email@gmail.com",
-    "organizationUuid": "899e4e0b-7800-4780-ba3e-3eb32ba7d3fa",
-    "hasExtraUsageEnabled": true,
-    "billingType": "stripe_subscription",
-    "accountCreatedAt": "2025-10-27T09:53:34.210862Z",
-    "subscriptionCreatedAt": "2026-03-19T20:45:12.669132Z",
-    "ccOnboardingFlags": {},
-    "claudeCodeTrialEndsAt": null,
-    "claudeCodeTrialDurationDays": null,
-    "seatTier": null,
-    "displayName": "Yorai",
-    "organizationRole": "admin",
-    "workspaceRole": null,
-    "organizationName": "yorai.email@gmail.com's Organization",
-    "organizationType": "claude_max",
-    "organizationRateLimitTier": "default_claude_max_5x",
-    "userRateLimitTier": null
-  },
   "voiceLangHintShownCount": 2,
   "voiceLangHintLastLanguage": "en",
   "voiceFooterHintSeenCount": 3,
@@ -1532,5 +1512,22 @@
       ],
       "env": {}
     }
+  },
+  "oauthAccount": {
+    "accountUuid": "59481114-4cf3-4697-a1b6-0e9306a56b6e",
+    "emailAddress": "yorai.email@gmail.com",
+    "organizationUuid": "899e4e0b-7800-4780-ba3e-3eb32ba7d3fa",
+    "hasExtraUsageEnabled": true,
+    "billingType": "stripe_subscription",
+    "accountCreatedAt": "2025-10-27T09:53:34.210862Z",
+    "subscriptionCreatedAt": "2026-03-19T20:45:12.669132Z",
+    "ccOnboardingFlags": {},
+    "claudeCodeTrialEndsAt": null,
+    "claudeCodeTrialDurationDays": null,
+    "seatTier": null,
+    "displayName": "Yorai",
+    "organizationRole": "admin",
+    "workspaceRole": null,
+    "organizationName": "yorai.email@gmail.com's Organization"
   }
 }
