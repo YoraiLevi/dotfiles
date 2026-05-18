@@ -24,7 +24,7 @@
     "continue": 192,
     "shift-tab": 192,
     "image-paste": 189,
-    "custom-agents": 172,
+    "custom-agents": 192,
     "permissions": 192,
     "rename-conversation": 180,
     "custom-commands": 182,
@@ -1371,7 +1371,7 @@
       "lastSessionModified": 1779108834230
     }
   },
-  "lastReleaseNotesSeen": "2.1.143",
+  "lastReleaseNotesSeen": "2.1.141",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
