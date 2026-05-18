@@ -1,5 +1,5 @@
 {
-  "numStartups": 192,
+  "numStartups": 193,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -36,7 +36,7 @@
     "feedback-command": 192,
     "push-notif": 79,
     "shift-enter-setup": 50,
-    "git-worktrees": 183,
+    "git-worktrees": 193,
     "powershell-tool-env": 52,
     "ide-upsell-external-terminal": 151,
     "colorterm-truecolor": 132,
@@ -580,28 +580,28 @@
       "lastHintSessionId": "1e6fa0f4-cedb-41b1-92d9-428d62a8489e",
       "lastSessionFirstPrompt": "look at the config.kdl of zellij config, it has a few scripts there (named inaccurately to what they're doing right now, this will need to also be changed) but the task is to create a single python wr",
       "lastSessionModified": 1778576160511,
-      "lastCost": 3.77551275,
-      "lastAPIDuration": 243032,
-      "lastAPIDurationWithoutRetries": 242963,
+      "lastCost": 4.17730525,
+      "lastAPIDuration": 260347,
+      "lastAPIDurationWithoutRetries": 260271,
       "lastToolDuration": 104,
-      "lastDuration": 31886170,
+      "lastDuration": 349231376,
       "lastLinesAdded": 51,
       "lastLinesRemoved": 169,
-      "lastTotalInputTokens": 2409,
-      "lastTotalOutputTokens": 20419,
-      "lastTotalCacheCreationInputTokens": 495765,
+      "lastTotalInputTokens": 2415,
+      "lastTotalOutputTokens": 21411,
+      "lastTotalCacheCreationInputTokens": 556079,
       "lastTotalCacheReadInputTokens": 308923,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 0.25,
-      "lastFpsLow1Pct": 70.01,
+      "lastFpsAverage": 0,
+      "lastFpsLow1Pct": 10.16,
       "lastModelUsage": {
         "claude-opus-4-7[1m]": {
-          "inputTokens": 2409,
-          "outputTokens": 20419,
+          "inputTokens": 2415,
+          "outputTokens": 21411,
           "cacheReadInputTokens": 308923,
-          "cacheCreationInputTokens": 495765,
+          "cacheCreationInputTokens": 556079,
           "webSearchRequests": 0,
-          "costUSD": 3.77551275
+          "costUSD": 4.17730525
         }
       },
       "lastSessionId": "1e6fa0f4-cedb-41b1-92d9-428d62a8489e",
@@ -628,7 +628,7 @@
         "hook_duration_ms_p95": 1,
         "hook_duration_ms_p99": 1
       },
-      "lastVersionBase": "2.1.141"
+      "lastVersionBase": "2.1.143"
     },
     "C:/Users/devic/source/agent-project-template": {
       "allowedTools": [],
@@ -1371,7 +1371,7 @@
       "lastSessionModified": 1779108834230
     }
   },
-  "lastReleaseNotesSeen": "2.1.141",
+  "lastReleaseNotesSeen": "2.1.143",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
