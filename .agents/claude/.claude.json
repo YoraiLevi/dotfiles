@@ -47,6 +47,7 @@
   },
   "promptQueueUseCount": 128,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_slate_kestrel": false,
     "tengu_slim_subagent_claudemd": true,
@@ -1395,7 +1396,7 @@
       "timestamp": 1779033072982
     }
   },
-  "cachedExtraUsageDisabledReason": "org_level_disabled_until",
+  "cachedExtraUsageDisabledReason": null,
   "overageCreditGrantCache": {
     "899e4e0b-7800-4780-ba3e-3eb32ba7d3fa": {
       "info": {
