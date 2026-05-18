@@ -8,5 +8,4 @@ vmIdleTimeout=180000
 guiApplications=false
 
 [experimental]
-autoMemoryReclaim=gradual
 sparseVhd=true
