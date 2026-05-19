@@ -33,7 +33,7 @@
   },
   "outputStyle": "Explanatory",
   "viewMode": "verbose",
-  "effortLevel": "xhigh",
+  "effortLevel": "high",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "voice": {
