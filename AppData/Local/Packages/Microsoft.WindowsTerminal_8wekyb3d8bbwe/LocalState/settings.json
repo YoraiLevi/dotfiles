@@ -16,8 +16,16 @@
             "id": "User.moveTab.EA39957B"
         },
         {
-            "command": "tabSearch",
-            "id": "User.tabSearch"
+            "command": 
+            {
+                "action": "sendInput",
+                "input": "\u001b[68;5u"
+            },
+            "id": "User.sendInput.AltShiftD"
+        },
+        {
+            "command": "selectAll",
+            "id": "User.selectAll"
         },
         {
             "command": 
@@ -29,16 +37,8 @@
             "id": "User.splitPane.FEF0D40B"
         },
         {
-            "command": 
-            {
-                "action": "sendInput",
-                "input": "\u001b[68;5u"
-            },
-            "id": "User.sendInput.AltShiftD"
-        },
-        {
-            "command": "selectAll",
-            "id": "User.selectAll"
+            "command": "tabSearch",
+            "id": "User.tabSearch"
         },
         {
             "command": 
@@ -77,16 +77,16 @@
             "id": "User.sendInput.CtrlShiftTab"
         },
         {
-            "command": "paste",
-            "id": "User.paste"
-        },
-        {
             "command": 
             {
                 "action": "sendInput",
                 "input": "\u001b[78;6u"
             },
             "id": "User.sendInput.CtrlShiftN"
+        },
+        {
+            "command": "paste",
+            "id": "User.paste"
         },
         {
             "command": 
@@ -177,6 +177,18 @@
             "keys": "ctrl+shift+c"
         },
         {
+            "id": null,
+            "keys": "ctrl+t"
+        },
+        {
+            "id": null,
+            "keys": "ctrl+p"
+        },
+        {
+            "id": "User.paste",
+            "keys": "ctrl+shift+v"
+        },
+        {
             "id": "User.sendInput.CtrlShiftTab",
             "keys": "ctrl+shift+tab"
         },
@@ -185,16 +197,8 @@
             "keys": "ctrl+c"
         },
         {
-            "id": "User.paste",
-            "keys": "ctrl+shift+v"
-        },
-        {
             "id": null,
-            "keys": "ctrl+p"
-        },
-        {
-            "id": null,
-            "keys": "ctrl+t"
+            "keys": "ctrl+comma"
         },
         {
             "id": null,
@@ -206,10 +210,6 @@
         },
         {
             "id": null,
-            "keys": "ctrl+comma"
-        },
-        {
-            "id": null,
             "keys": "ctrl+f"
         },
         {
@@ -218,27 +218,27 @@
         },
         {
             "id": null,
-            "keys": "ctrl+shift+space"
-        },
-        {
-            "id": null,
             "keys": "ctrl+\\"
         },
         {
-            "id": "Terminal.DuplicatePaneAuto",
-            "keys": "alt+shift+d"
-        },
-        {
-            "id": "User.moveTab.EA39957B",
-            "keys": "alt+n"
+            "id": null,
+            "keys": "ctrl+shift+space"
         },
         {
             "id": null,
             "keys": "ctrl+shift+3"
         },
         {
+            "id": "User.moveTab.EA39957B",
+            "keys": "alt+n"
+        },
+        {
+            "id": "Terminal.DuplicatePaneAuto",
+            "keys": "alt+shift+d"
+        },
+        {
             "id": null,
-            "keys": "ctrl+shift+comma"
+            "keys": "ctrl+shift+5"
         },
         {
             "id": null,
@@ -246,7 +246,7 @@
         },
         {
             "id": null,
-            "keys": "ctrl+shift+5"
+            "keys": "ctrl+shift+comma"
         },
         {
             "id": null,
@@ -269,28 +269,20 @@
             "keys": "ctrl+shift+\\"
         },
         {
-            "id": "User.openNewTabDropdown",
-            "keys": "ctrl+`"
-        },
-        {
             "id": null,
             "keys": "shift+insert"
-        },
-        {
-            "id": null,
-            "keys": "ctrl+shift+4"
         },
         {
             "id": "User.sendInput.CtrlShiftT",
             "keys": "ctrl+shift+t"
         },
         {
-            "id": "Terminal.OpenNewWindow",
-            "keys": "ctrl+shift+n"
+            "id": null,
+            "keys": "ctrl+shift+4"
         },
         {
-            "id": "User.sendInput.CtrlShiftBacktick",
-            "keys": "ctrl+shift+`"
+            "id": "Terminal.OpenNewWindow",
+            "keys": "ctrl+shift+n"
         },
         {
             "id": "User.sendInput.CtrlShiftW",
@@ -396,20 +388,22 @@
                 "startingDirectory": "~"
             },
             {
-              "colorScheme": "Campbell",
-              "commandline": "tssh",
-              "cursorShape": "filledBox",
-              "environment": {
-                "TERM": "xterm-256color"
-              },
-              "font": {
-                "size": 13
-              },
-              "guid": "{a222541a-d636-451f-a59c-68f79fea7799}",
-              "hidden": false,
-              "icon": "%USERPROFILE%/.ssh/ssh-logo.png",
-              "name": "ssh (tssh)",
-              "startingDirectory": "~"
+                "colorScheme": "Campbell",
+                "commandline": "tssh",
+                "cursorShape": "filledBox",
+                "environment": 
+                {
+                    "TERM": "xterm-256color"
+                },
+                "font": 
+                {
+                    "size": 13
+                },
+                "guid": "{a222541a-d636-451f-a59c-68f79fea7799}",
+                "hidden": false,
+                "icon": "%USERPROFILE%/.ssh/ssh-logo.png",
+                "name": "ssh (tssh)",
+                "startingDirectory": "~"
             },
             {
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
@@ -454,6 +448,12 @@
                 "hidden": false,
                 "name": "Developer PowerShell for VS 2022",
                 "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{5eb5a1c9-ba39-5f3b-99d6-b6684144a042}",
+                "hidden": false,
+                "name": "podman-machine-default",
+                "source": "Microsoft.WSL"
             }
         ]
     },
