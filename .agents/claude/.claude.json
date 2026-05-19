@@ -47,6 +47,7 @@
   },
   "promptQueueUseCount": 140,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_code_diff_cli": true,
     "tengu_amber_lynx": false,
@@ -1425,7 +1426,7 @@
   ],
   "closedIssuesLastChecked": 1779199702808,
   "ideHintShownCount": 5,
-  "lastPlanModeUse": 1779204647832,
+  "lastPlanModeUse": 1779215922444,
   "claudeInChromeDefaultEnabled": false,
   "hasCompletedClaudeInChromeOnboarding": true,
   "remoteControlUpsellSeenCount": 1,
