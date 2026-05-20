@@ -47,6 +47,7 @@
   },
   "promptQueueUseCount": 142,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_crystal_beam": {
       "budgetTokens": 0
