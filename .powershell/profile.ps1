@@ -1143,7 +1143,7 @@ function Open-ObsidianVault {
         throw "No registered Obsidian vault found for: $($Vault ?? (Get-Location).Path)"
     }
 
-    Start-Process "obsidian://open?path=$([uri]::EscapeDataString($match.Path))" -OutBuffer $null
+    Start-Process "obsidian://open?path=$([uri]::EscapeDataString($match.Path))"
     return
 }
 
