@@ -1219,7 +1219,7 @@ function Open-ObsidianVaultEntry {
 
     # Use executable + folder path instead of obsidian://open?path=...
     # The URI route is unreliable for vault roots / newly created vaults on Windows.
-    $null = Start-Process -FilePath $obsidianExe -ArgumentList "`"$($Vault.Path)`""
+    $null = Start-Process -FilePath $obsidianExe -ArgumentList "`"$($Vault.Path)`"" &
 }
 
 function New-ObsidianVault {
