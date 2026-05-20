@@ -1222,7 +1222,7 @@ function Open-ObsidianVault {
     }
 
     $uri = "obsidian://open?path=$([uri]::EscapeDataString($match.Path))"
-    $null = Start-Process $uri
+    $null = Start-Process $uri &
 }
 
 Register-ArgumentCompleter `
