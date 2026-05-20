@@ -1074,7 +1074,125 @@ function Show-NativeArgumentCompleters {
         }
     }
 }
+function Get-ObsidianVaults {
+    $configPath = Join-Path $env:APPDATA "obsidian\obsidian.json"
 
+    if (!(Test-Path $configPath)) {
+        return @()
+    }
+
+    $config = Get-Content $configPath -Raw | ConvertFrom-Json
+
+    $config.vaults.PSObject.Properties | ForEach-Object {
+        $path = $_.Value.path
+
+        [pscustomobject]@{
+            Id   = $_.Name
+            Name = Split-Path $path -Leaf
+            Path = [System.IO.Path]::GetFullPath($path)
+        }
+    }
+}
+
+function Open-ObsidianVault {
+    param(
+        [string]$Vault
+    )
+
+    $vaults = @(Get-ObsidianVaults)
+
+    if (!$Vault) {
+        $target = [System.IO.Path]::GetFullPath((Get-Location).Path)
+
+        $match = $vaults |
+            Where-Object {
+                $target.StartsWith(
+                    $_.Path,
+                    [System.StringComparison]::OrdinalIgnoreCase
+                )
+            } |
+            Sort-Object { $_.Path.Length } -Descending |
+            Select-Object -First 1
+    }
+    else {
+        $match = $vaults |
+            Where-Object {
+                $_.Name -eq $Vault -or
+                $_.Path -eq $Vault -or
+                $_.Id -eq $Vault
+            } |
+            Select-Object -First 1
+
+        if (!$match -and (Test-Path $Vault)) {
+            $resolved = [System.IO.Path]::GetFullPath((Resolve-Path $Vault).Path)
+
+            $match = $vaults |
+                Where-Object {
+                    $_.Path -eq $resolved -or
+                    $resolved.StartsWith(
+                        $_.Path,
+                        [System.StringComparison]::OrdinalIgnoreCase
+                    )
+                } |
+                Sort-Object { $_.Path.Length } -Descending |
+                Select-Object -First 1
+        }
+    }
+
+    if (!$match) {
+        throw "No registered Obsidian vault found for: $($Vault ?? (Get-Location).Path)"
+    }
+
+    Start-Process "obsidian://open?path=$([uri]::EscapeDataString($match.Path))"
+}
+
+Register-ArgumentCompleter `
+    -CommandName Open-ObsidianVault `
+    -ParameterName Vault `
+    -ScriptBlock {
+        param($commandName, $parameterName, $wordToComplete)
+
+        Get-ObsidianVaults |
+            Where-Object {
+                $_.Name -like "$wordToComplete*" -or
+                $_.Path -like "$wordToComplete*"
+            } |
+            ForEach-Object {
+                $completionText = "'" + $_.Name.Replace("'", "''") + "'"
+
+                [System.Management.Automation.CompletionResult]::new(
+                    $completionText,
+                    $_.Name,
+                    "ParameterValue",
+                    $_.Path
+                )
+            }
+    }
+
+Set-Alias ov Open-ObsidianVault
+
+Register-ArgumentCompleter `
+    -CommandName ov `
+    -ParameterName Vault `
+    -ScriptBlock {
+        param($commandName, $parameterName, $wordToComplete)
+
+        Get-ObsidianVaults |
+            Where-Object {
+                $_.Name -like "$wordToComplete*" -or
+                $_.Path -like "$wordToComplete*"
+            } |
+            ForEach-Object {
+                $completionText = "'" + $_.Name.Replace("'", "''") + "'"
+
+                [System.Management.Automation.CompletionResult]::new(
+                    $completionText,
+                    $_.Name,
+                    "ParameterValue",
+                    $_.Path
+                )
+            }
+}
 # Register-LazyArgumentCompleter -CommandName 'chezmoi' -CompletionCodeFactory {
 #     if (-not (Get-Command chezmoi.exe -ErrorAction SilentlyContinue)) { return }
 #     # this needs to stay in the global scope, probably should report the error to the developer
