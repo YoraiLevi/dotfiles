@@ -1074,7 +1074,371 @@ function Show-NativeArgumentCompleters {
         }
     }
 }
+# -----------------------------
+# Obsidian vault helpers
+# -----------------------------
 
+function Get-ObsidianConfigPath {
+    Join-Path $env:APPDATA "Obsidian\obsidian.json"
+}
+
+function Get-ObsidianExecutable {
+    $candidates = @(
+        "$env:LOCALAPPDATA\Programs\Obsidian\Obsidian.exe",
+        "$env:ProgramFiles\Obsidian\Obsidian.exe"
+    )
+
+    $obsidianExe = $candidates |
+        Where-Object { Test-Path -LiteralPath $_ } |
+        Select-Object -First 1
+
+    if (-not $obsidianExe) {
+        $cmd = Get-Command Obsidian -ErrorAction SilentlyContinue
+        if ($cmd) {
+            $obsidianExe = $cmd.Source
+        }
+    }
+
+    if (-not $obsidianExe) {
+        throw "Could not find Obsidian.exe"
+    }
+
+    return $obsidianExe
+}
+
+function Resolve-ObsidianFullPath {
+    param(
+        [string]$Path = "."
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        $Path = "."
+    }
+
+    [System.IO.Path]::GetFullPath(
+        $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+    )
+}
+
+function Normalize-ObsidianPath {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Path
+    )
+
+    [System.IO.Path]::TrimEndingDirectorySeparator(
+        [System.IO.Path]::GetFullPath($Path)
+    )
+}
+
+function Test-PathIsSameOrChild {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Child,
+
+        [Parameter(Mandatory)]
+        [string]$Parent
+    )
+
+    $childFull = Normalize-ObsidianPath $Child
+    $parentFull = Normalize-ObsidianPath $Parent
+
+    if ([string]::Equals(
+        $childFull,
+        $parentFull,
+        [System.StringComparison]::OrdinalIgnoreCase
+    )) {
+        return $true
+    }
+
+    $parentWithSlash = $parentFull + [System.IO.Path]::DirectorySeparatorChar
+
+    return $childFull.StartsWith(
+        $parentWithSlash,
+        [System.StringComparison]::OrdinalIgnoreCase
+    )
+}
+
+function Get-ObsidianVaults {
+    $configPath = Get-ObsidianConfigPath
+
+    if (!(Test-Path -LiteralPath $configPath)) {
+        return @()
+    }
+
+    $config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
+
+    if (-not $config.PSObject.Properties["vaults"]) {
+        return @()
+    }
+
+    $config.vaults.PSObject.Properties |
+        Where-Object { $_.Value.path } |
+        ForEach-Object {
+            $path = Normalize-ObsidianPath $_.Value.path
+
+            [pscustomobject]@{
+                Id   = $_.Name
+                Name = Split-Path $path -Leaf
+                Path = $path
+            }
+        }
+}
+
+function Open-ObsidianVaultEntry {
+    param(
+        [Parameter(Mandatory)]
+        $Vault,
+
+        [switch]$ColdStart,
+
+        [switch]$ForceRestart
+    )
+
+    if ($ColdStart) {
+        $obsidianExe = Get-ObsidianExecutable
+        $running = @(Get-Process Obsidian -ErrorAction SilentlyContinue)
+
+        if ($running.Count -gt 0) {
+            if (-not $ForceRestart) {
+                $answer = Read-Host "Obsidian is currently running. Restart it to open/register vault '$($Vault.Name)'? [y/N]"
+
+                if ($answer -notin @("y", "Y", "yes", "YES")) {
+                    Write-Host "Vault was created, but Obsidian was not restarted."
+                    Write-Host "Open it manually once from Obsidian:"
+                    Write-Host "Manage vaults -> Open folder as vault -> $($Vault.Path)"
+                    return
+                }
+            }
+
+            $running | Stop-Process -Force
+            Start-Sleep -Seconds 2
+        }
+
+        # Only use executable + path for newly created vaults.
+        $null = Start-Process -FilePath $obsidianExe -ArgumentList "`"$($Vault.Path)`""
+        return
+    }
+
+    # For existing vaults, use Obsidian URI by vault NAME.
+    # Using Obsidian.exe "path" while Obsidian is already running often just focuses the current vault.
+    $uri = "obsidian://open?vault=$([uri]::EscapeDataString($Vault.Name))"
+    $null = Start-Process $uri
+}
+
+function New-ObsidianVault {
+    param(
+        [string]$Path = ".",
+        [switch]$NoOpen
+    )
+
+    $fullPath = Normalize-ObsidianPath (Resolve-ObsidianFullPath $Path)
+
+    New-Item -ItemType Directory -Path $fullPath -Force | Out-Null
+    New-Item -ItemType Directory -Path (Join-Path $fullPath ".obsidian") -Force | Out-Null
+
+    $configDir = Join-Path $env:APPDATA "Obsidian"
+    $configPath = Get-ObsidianConfigPath
+
+    New-Item -ItemType Directory -Path $configDir -Force | Out-Null
+
+    if (Test-Path -LiteralPath $configPath) {
+        $config = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
+    }
+    else {
+        $config = [pscustomobject]@{
+            vaults = [pscustomobject]@{}
+        }
+    }
+
+    if (-not $config.PSObject.Properties["vaults"]) {
+        $config | Add-Member -MemberType NoteProperty -Name vaults -Value ([pscustomobject]@{})
+    }
+
+    $existing = $config.vaults.PSObject.Properties |
+        Where-Object {
+            [string]::Equals(
+                (Normalize-ObsidianPath $_.Value.path),
+                $fullPath,
+                [System.StringComparison]::OrdinalIgnoreCase
+            )
+        } |
+        Select-Object -First 1
+
+    if ($existing) {
+        $id = $existing.Name
+    }
+    else {
+        do {
+            $id = -join ((1..16) | ForEach-Object {
+                "{0:x}" -f (Get-Random -Minimum 0 -Maximum 16)
+            })
+        } while ($config.vaults.PSObject.Properties.Name -contains $id)
+
+        $ts = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+
+        $config.vaults | Add-Member -MemberType NoteProperty -Name $id -Value ([pscustomobject]@{
+            path = $fullPath
+            ts   = $ts
+            open = $true
+        })
+
+        $config |
+            ConvertTo-Json -Depth 10 |
+            Set-Content -LiteralPath $configPath -Encoding UTF8
+    }
+
+    $vault = [pscustomobject]@{
+        Id   = $id
+        Name = Split-Path $fullPath -Leaf
+        Path = $fullPath
+    }
+
+    if (-not $NoOpen) {
+        Open-ObsidianVaultEntry -Vault $vault -ColdStart
+    }
+
+    return $vault
+}
+
+function Open-ObsidianVault {
+    param(
+        [Parameter(Position = 0)]
+        [string]$VaultOrPath,
+
+        [switch]$Yes,
+
+        [switch]$ForceRestart
+    )
+
+    $vaults = @(Get-ObsidianVaults)
+    $match = $null
+    $targetPath = $null
+    $createdNewVault = $false
+
+    if ([string]::IsNullOrWhiteSpace($VaultOrPath)) {
+        $targetPath = Normalize-ObsidianPath (Resolve-ObsidianFullPath ".")
+    }
+    else {
+        # Exact vault name/id first
+        $match = $vaults |
+            Where-Object {
+                $_.Name -eq $VaultOrPath -or
+                $_.Id -eq $VaultOrPath
+            } |
+            Select-Object -First 1
+
+        if (-not $match) {
+            $currentPath = Normalize-ObsidianPath (Resolve-ObsidianFullPath ".")
+            $currentName = Split-Path $currentPath -Leaf
+
+            if ($VaultOrPath -eq $currentName) {
+                # If inside C:\...\test2 and typing `ov test2`,
+                # treat it as current folder, not .\test2\test2.
+                $targetPath = $currentPath
+            }
+            elseif (Test-Path -LiteralPath $VaultOrPath) {
+                $item = Get-Item -LiteralPath $VaultOrPath
+
+                if ($item.PSIsContainer) {
+                    $targetPath = Normalize-ObsidianPath $item.FullName
+                }
+                else {
+                    # If user passes a file, use its containing folder.
+                    $targetPath = Normalize-ObsidianPath $item.Directory.FullName
+                }
+            }
+            else {
+                # Unknown value becomes a new folder path relative to cwd.
+                $targetPath = Normalize-ObsidianPath (Resolve-ObsidianFullPath $VaultOrPath)
+            }
+
+            # Exact resolved path match
+            $match = $vaults |
+                Where-Object {
+                    [string]::Equals(
+                        $_.Path,
+                        $targetPath,
+                        [System.StringComparison]::OrdinalIgnoreCase
+                    )
+                } |
+                Select-Object -First 1
+        }
+    }
+
+    # If target path is inside an existing registered vault, open that vault.
+    # Uses path-boundary check, so "test2" will not match sibling vault "test".
+    if (-not $match -and $targetPath) {
+        $match = $vaults |
+            Where-Object {
+                Test-PathIsSameOrChild -Child $targetPath -Parent $_.Path
+            } |
+            Sort-Object { $_.Path.Length } -Descending |
+            Select-Object -First 1
+    }
+
+    # If no vault exists, ask before creating one.
+    if (-not $match) {
+        if (-not $Yes) {
+            $answer = Read-Host "No registered Obsidian vault found at '$targetPath'. Create one? [y/N]"
+
+            if ($answer -notin @("y", "Y", "yes", "YES")) {
+                Write-Host "Cancelled."
+                return
+            }
+        }
+
+        $match = New-ObsidianVault -Path $targetPath -NoOpen
+        $createdNewVault = $true
+    }
+
+    if ($createdNewVault) {
+        Open-ObsidianVaultEntry -Vault $match -ColdStart -ForceRestart:$ForceRestart
+    }
+    else {
+        Open-ObsidianVaultEntry -Vault $match
+    }
+}
+
+Set-Alias ov Open-ObsidianVault
+
+# -----------------------------
+# Tab completion
+# -----------------------------
+
+$obsidianVaultCompleter = {
+    param($commandName, $parameterName, $wordToComplete)
+
+    Get-ObsidianVaults |
+        Where-Object {
+            $_.Name -like "$wordToComplete*" -or
+            $_.Path -like "$wordToComplete*"
+        } |
+        ForEach-Object {
+            $completionText = "'" + $_.Name.Replace("'", "''") + "'"
+
+            [System.Management.Automation.CompletionResult]::new(
+                $completionText,
+                $_.Name,
+                "ParameterValue",
+                $_.Path
+            )
+        }
+}
+
+Register-ArgumentCompleter `
+    -CommandName Open-ObsidianVault `
+    -ParameterName VaultOrPath `
+    -ScriptBlock $obsidianVaultCompleter
+
+Register-ArgumentCompleter `
+    -CommandName ov `
+    -ParameterName VaultOrPath `
+    -ScriptBlock $obsidianVaultCompleter
+
+# Optional, but nicer:
+# makes Tab show a selectable menu instead of old-school cycling.
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 # Register-LazyArgumentCompleter -CommandName 'chezmoi' -CompletionCodeFactory {
 #     if (-not (Get-Command chezmoi.exe -ErrorAction SilentlyContinue)) { return }
 #     # this needs to stay in the global scope, probably should report the error to the developer
