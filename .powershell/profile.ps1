@@ -1216,7 +1216,7 @@ function Open-ObsidianVaultEntry {
         }
 
         # Only use executable + path for newly created vaults.
-        $null = Start-Process -FilePath $obsidianExe -ArgumentList "`"$($Vault.Path)`""
+        $null = Start-Process -FilePath $obsidianExe -ArgumentList "`"$($Vault.Path)`"" &
         return
     }
 
