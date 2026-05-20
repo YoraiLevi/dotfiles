@@ -1396,7 +1396,7 @@
       "lastAPIDuration": 0,
       "lastAPIDurationWithoutRetries": 0,
       "lastToolDuration": 0,
-      "lastDuration": 113475,
+      "lastDuration": 537915,
       "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
       "lastTotalInputTokens": 0,
@@ -1404,10 +1404,19 @@
       "lastTotalCacheCreationInputTokens": 0,
       "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 4.09,
-      "lastFpsLow1Pct": 75.99,
+      "lastFpsAverage": 2.02,
+      "lastFpsLow1Pct": 5.75,
       "lastModelUsage": {},
-      "lastSessionId": "bbbbd4cb-bd49-4b13-9928-6d8474fd28e2"
+      "lastSessionId": "4b865d99-27a5-4f6e-a928-d3660e15df82",
+      "lastSessionMetrics": {
+        "frame_duration_ms_count": 89,
+        "frame_duration_ms_min": 1.2927999999992608,
+        "frame_duration_ms_max": 174.0020999999997,
+        "frame_duration_ms_avg": 11.847938202247166,
+        "frame_duration_ms_p50": 3.9605999999985215,
+        "frame_duration_ms_p95": 50.03709999999987,
+        "frame_duration_ms_p99": 159.3899639999999
+      }
     }
   },
   "lastReleaseNotesSeen": "2.1.145",
