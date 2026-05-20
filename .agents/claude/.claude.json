@@ -1,5 +1,5 @@
 {
-  "numStartups": 196,
+  "numStartups": 198,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -27,7 +27,7 @@
     "custom-agents": 192,
     "permissions": 192,
     "rename-conversation": 195,
-    "custom-commands": 182,
+    "custom-commands": 198,
     "desktop-shortcut": 192,
     "web-app": 183,
     "remote-control": 14,
@@ -1391,7 +1391,23 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": false,
-      "lastVersionBase": "2.1.145"
+      "lastVersionBase": "2.1.145",
+      "lastCost": 0,
+      "lastAPIDuration": 0,
+      "lastAPIDurationWithoutRetries": 0,
+      "lastToolDuration": 0,
+      "lastDuration": 113475,
+      "lastLinesAdded": 0,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 0,
+      "lastTotalOutputTokens": 0,
+      "lastTotalCacheCreationInputTokens": 0,
+      "lastTotalCacheReadInputTokens": 0,
+      "lastTotalWebSearchRequests": 0,
+      "lastFpsAverage": 4.09,
+      "lastFpsLow1Pct": 75.99,
+      "lastModelUsage": {},
+      "lastSessionId": "bbbbd4cb-bd49-4b13-9928-6d8474fd28e2"
     }
   },
   "lastReleaseNotesSeen": "2.1.145",
@@ -1561,5 +1577,9 @@
     "organizationType": "claude_max",
     "organizationRateLimitTier": "default_claude_max_20x",
     "userRateLimitTier": null
-  }
+  },
+  "agentLastUsed": {
+    "bg": 1779274381420
+  },
+  "hasUsedAgentsFleet": true
 }
