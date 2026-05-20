@@ -1093,20 +1093,90 @@ function Get-ObsidianVaults {
         }
     }
 }
+function New-ObsidianVault {
+    param(
+        [string]$Path = (Get-Location).Path,
+        [switch]$NoOpen
+    )
 
+    $fullPath = [System.IO.Path]::GetFullPath(
+        [System.IO.Path]::Combine((Get-Location).Path, $Path)
+    )
+
+    New-Item -ItemType Directory -Path $fullPath -Force | Out-Null
+    New-Item -ItemType Directory -Path (Join-Path $fullPath ".obsidian") -Force | Out-Null
+
+    $configDir = Join-Path $env:APPDATA "Obsidian"
+    $configPath = Join-Path $configDir "obsidian.json"
+
+    New-Item -ItemType Directory -Path $configDir -Force | Out-Null
+
+    if (Test-Path $configPath) {
+        $config = Get-Content $configPath -Raw | ConvertFrom-Json
+    }
+    else {
+        $config = [pscustomobject]@{
+            vaults = [pscustomobject]@{}
+        }
+    }
+
+    if (-not $config.PSObject.Properties["vaults"]) {
+        $config | Add-Member -MemberType NoteProperty -Name vaults -Value ([pscustomobject]@{})
+    }
+
+    $existing = $config.vaults.PSObject.Properties |
+        Where-Object {
+            [System.IO.Path]::GetFullPath($_.Value.path) -eq $fullPath
+        } |
+        Select-Object -First 1
+
+    if (-not $existing) {
+        $id = -join ((1..16) | ForEach-Object { "{0:x}" -f (Get-Random -Minimum 0 -Maximum 16) })
+        $ts = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+
+        $config.vaults | Add-Member -MemberType NoteProperty -Name $id -Value ([pscustomobject]@{
+            path = $fullPath
+            ts   = $ts
+            open = $true
+        })
+
+        $config |
+            ConvertTo-Json -Depth 10 |
+            Set-Content -Path $configPath -Encoding UTF8
+    }
+
+    if (-not $NoOpen) {
+        $uri = "obsidian://open?path=$([uri]::EscapeDataString($fullPath))"
+        $null = Start-Process $uri &
+    }
+}
 function Open-ObsidianVault {
     param(
-        [string]$Vault
+        [string]$VaultOrPath = (Get-Location).Path,
+        [switch]$Yes
     )
 
     $vaults = @(Get-ObsidianVaults)
 
-    if (!$Vault) {
-        $target = [System.IO.Path]::GetFullPath((Get-Location).Path)
+    $targetPath = $null
+    $match = $null
+
+    # Case 1: explicit vault name/id/path match
+    $match = $vaults |
+        Where-Object {
+            $_.Name -eq $VaultOrPath -or
+            $_.Id -eq $VaultOrPath -or
+            $_.Path -eq $VaultOrPath
+        } |
+        Select-Object -First 1
+
+    # Case 2: path exists, find containing registered vault
+    if (!$match -and (Test-Path $VaultOrPath)) {
+        $targetPath = [System.IO.Path]::GetFullPath((Resolve-Path $VaultOrPath).Path)
 
         $match = $vaults |
             Where-Object {
-                $target.StartsWith(
+                $targetPath.StartsWith(
                     $_.Path,
                     [System.StringComparison]::OrdinalIgnoreCase
                 )
@@ -1114,37 +1184,45 @@ function Open-ObsidianVault {
             Sort-Object { $_.Path.Length } -Descending |
             Select-Object -First 1
     }
-    else {
-        $match = $vaults |
-            Where-Object {
-                $_.Name -eq $Vault -or
-                $_.Path -eq $Vault -or
-                $_.Id -eq $Vault
-            } |
-            Select-Object -First 1
 
-        if (!$match -and (Test-Path $Vault)) {
-            $resolved = [System.IO.Path]::GetFullPath((Resolve-Path $Vault).Path)
-
-            $match = $vaults |
-                Where-Object {
-                    $_.Path -eq $resolved -or
-                    $resolved.StartsWith(
-                        $_.Path,
-                        [System.StringComparison]::OrdinalIgnoreCase
-                    )
-                } |
-                Sort-Object { $_.Path.Length } -Descending |
-                Select-Object -First 1
+    # Case 3: no argument, use cwd as candidate path
+    if (!$targetPath) {
+        if ($VaultOrPath -eq (Get-Location).Path) {
+            $targetPath = [System.IO.Path]::GetFullPath((Get-Location).Path)
+        }
+        else {
+            # Treat unknown value as a path relative to cwd
+            $targetPath = [System.IO.Path]::GetFullPath(
+                [System.IO.Path]::Combine((Get-Location).Path, $VaultOrPath)
+            )
         }
     }
 
     if (!$match) {
-        throw "No registered Obsidian vault found for: $($Vault ?? (Get-Location).Path)"
+        if (!$Yes) {
+            $answer = Read-Host "No registered Obsidian vault found at '$targetPath'. Create one? [y/N]"
+            if ($answer -notin @("y", "Y", "yes", "YES")) {
+                Write-Host "Cancelled."
+                return
+            }
+        }
+
+        New-ObsidianVault -Path $targetPath -NoOpen
+        $vaults = @(Get-ObsidianVaults)
+
+        $match = $vaults |
+            Where-Object {
+                $_.Path -eq $targetPath
+            } |
+            Select-Object -First 1
+
+        if (!$match) {
+            throw "Vault was created, but could not be found in Obsidian config."
+        }
     }
 
-    $null = Start-Process "obsidian://open?path=$([uri]::EscapeDataString($match.Path))" &
-    return
+    $uri = "obsidian://open?path=$([uri]::EscapeDataString($match.Path))"
+    $null = Start-Process $uri
 }
 
 Register-ArgumentCompleter `
