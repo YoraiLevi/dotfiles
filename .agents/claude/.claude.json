@@ -1,5 +1,5 @@
 {
-  "numStartups": 198,
+  "numStartups": 199,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -29,7 +29,7 @@
     "rename-conversation": 195,
     "custom-commands": 198,
     "desktop-shortcut": 192,
-    "web-app": 183,
+    "web-app": 198,
     "remote-control": 14,
     "auto-copy-config-hint": 102,
     "voice-mode": 143,
