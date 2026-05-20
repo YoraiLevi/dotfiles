@@ -1223,7 +1223,7 @@ function Open-ObsidianVaultEntry {
     # For existing vaults, use Obsidian URI by vault NAME.
     # Using Obsidian.exe "path" while Obsidian is already running often just focuses the current vault.
     $uri = "obsidian://open?vault=$([uri]::EscapeDataString($Vault.Name))"
-    $null = Start-Process $uri
+    $null = Start-Process $uri &
 }
 
 function New-ObsidianVault {
