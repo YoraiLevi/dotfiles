@@ -1315,7 +1315,8 @@
       "lastFpsAverage": 0.62,
       "lastFpsLow1Pct": 10.45,
       "lastModelUsage": {},
-      "lastSessionId": "ae1c05ab-2fb1-4dcd-9411-125d0ee33ff0"
+      "lastSessionId": "ae1c05ab-2fb1-4dcd-9411-125d0ee33ff0",
+      "hasCompletedProjectOnboarding": true
     },
     "C:/Users/devic": {
       "allowedTools": [],
