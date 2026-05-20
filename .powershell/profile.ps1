@@ -1144,6 +1144,7 @@ function Open-ObsidianVault {
     }
 
     Start-Process "obsidian://open?path=$([uri]::EscapeDataString($match.Path))"
+    return
 }
 
 Register-ArgumentCompleter `
