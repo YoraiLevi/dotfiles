@@ -20,7 +20,7 @@
     "install-github-app": 195,
     "install-slack-app": 191,
     "drag-and-drop-images": 195,
-    "double-esc-code-restore": 187,
+    "double-esc-code-restore": 199,
     "continue": 192,
     "shift-tab": 192,
     "image-paste": 189,
@@ -47,7 +47,6 @@
   },
   "promptQueueUseCount": 144,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_crimson_echo": {},
     "tengu_cork_m4q": true,
