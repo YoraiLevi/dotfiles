@@ -1075,7 +1075,7 @@ function Show-NativeArgumentCompleters {
     }
 }
 function Get-ObsidianVaults {
-    $configPath = Join-Path $env:APPDATA "obsidian\obsidian.json"
+    $configPath = Join-Path $env:APPDATA "Obsidian\obsidian.json"
 
     if (!(Test-Path $configPath)) {
         return @()
@@ -1083,25 +1083,70 @@ function Get-ObsidianVaults {
 
     $config = Get-Content $configPath -Raw | ConvertFrom-Json
 
-    $config.vaults.PSObject.Properties | ForEach-Object {
-        $path = $_.Value.path
-
-        [pscustomobject]@{
-            Id   = $_.Name
-            Name = Split-Path $path -Leaf
-            Path = [System.IO.Path]::GetFullPath($path)
-        }
+    if (-not $config.PSObject.Properties["vaults"]) {
+        return @()
     }
+
+    $config.vaults.PSObject.Properties |
+        Where-Object { $_.Value.path } |
+        ForEach-Object {
+            $path = [System.IO.Path]::GetFullPath($_.Value.path)
+
+            [pscustomobject]@{
+                Id   = $_.Name
+                Name = Split-Path $path -Leaf
+                Path = $path
+            }
+        }
 }
+
+function Test-PathIsSameOrChild {
+    param(
+        [string]$Child,
+        [string]$Parent
+    )
+
+    $childFull = [System.IO.Path]::TrimEndingDirectorySeparator(
+        [System.IO.Path]::GetFullPath($Child)
+    )
+
+    $parentFull = [System.IO.Path]::TrimEndingDirectorySeparator(
+        [System.IO.Path]::GetFullPath($Parent)
+    )
+
+    if ([string]::Equals(
+        $childFull,
+        $parentFull,
+        [System.StringComparison]::OrdinalIgnoreCase
+    )) {
+        return $true
+    }
+
+    $parentWithSlash = $parentFull + [System.IO.Path]::DirectorySeparatorChar
+
+    return $childFull.StartsWith(
+        $parentWithSlash,
+        [System.StringComparison]::OrdinalIgnoreCase
+    )
+}
+
+function Resolve-FullPath {
+    param(
+        [string]$Path
+    )
+
+    return [System.IO.Path]::GetFullPath(
+        $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+    )
+}
+
 function New-ObsidianVault {
     param(
         [string]$Path = (Get-Location).Path,
         [switch]$NoOpen
     )
 
-    $fullPath = [System.IO.Path]::GetFullPath(
-        [System.IO.Path]::Combine((Get-Location).Path, $Path)
-    )
+    $fullPath = Resolve-FullPath $Path
 
     New-Item -ItemType Directory -Path $fullPath -Force | Out-Null
     New-Item -ItemType Directory -Path (Join-Path $fullPath ".obsidian") -Force | Out-Null
@@ -1126,12 +1171,21 @@ function New-ObsidianVault {
 
     $existing = $config.vaults.PSObject.Properties |
         Where-Object {
-            [System.IO.Path]::GetFullPath($_.Value.path) -eq $fullPath
+            [string]::Equals(
+                [System.IO.Path]::GetFullPath($_.Value.path),
+                $fullPath,
+                [System.StringComparison]::OrdinalIgnoreCase
+            )
         } |
         Select-Object -First 1
 
     if (-not $existing) {
-        $id = -join ((1..16) | ForEach-Object { "{0:x}" -f (Get-Random -Minimum 0 -Maximum 16) })
+        do {
+            $id = -join ((1..16) | ForEach-Object {
+                "{0:x}" -f (Get-Random -Minimum 0 -Maximum 16)
+            })
+        } while ($config.vaults.PSObject.Properties[$id])
+
         $ts = [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
 
         $config.vaults | Add-Member -MemberType NoteProperty -Name $id -Value ([pscustomobject]@{
@@ -1147,60 +1201,74 @@ function New-ObsidianVault {
 
     if (-not $NoOpen) {
         $uri = "obsidian://open?path=$([uri]::EscapeDataString($fullPath))"
-        $null = Start-Process $uri &
+        $null = Start-Process $uri
     }
 }
+
 function Open-ObsidianVault {
     param(
-        [string]$VaultOrPath = (Get-Location).Path,
+        [Parameter(Position = 0)]
+        [string]$VaultOrPath,
+
         [switch]$Yes
     )
 
     $vaults = @(Get-ObsidianVaults)
-
-    $targetPath = $null
     $match = $null
+    $targetPath = $null
 
-    # Case 1: explicit vault name/id/path match
-    $match = $vaults |
-        Where-Object {
-            $_.Name -eq $VaultOrPath -or
-            $_.Id -eq $VaultOrPath -or
-            $_.Path -eq $VaultOrPath
-        } |
-        Select-Object -First 1
-
-    # Case 2: path exists, find containing registered vault
-    if (!$match -and (Test-Path $VaultOrPath)) {
-        $targetPath = [System.IO.Path]::GetFullPath((Resolve-Path $VaultOrPath).Path)
-
+    if ([string]::IsNullOrWhiteSpace($VaultOrPath)) {
+        $targetPath = Resolve-FullPath "."
+    }
+    else {
+        # Exact vault name/id/path match first
         $match = $vaults |
             Where-Object {
-                $targetPath.StartsWith(
-                    $_.Path,
-                    [System.StringComparison]::OrdinalIgnoreCase
-                )
+                $_.Name -eq $VaultOrPath -or
+                $_.Id -eq $VaultOrPath -or
+                [string]::Equals($_.Path, $VaultOrPath, [System.StringComparison]::OrdinalIgnoreCase)
+            } |
+            Select-Object -First 1
+
+        if (-not $match) {
+            $currentPath = Resolve-FullPath "."
+            $currentName = Split-Path $currentPath -Leaf
+
+            if ($VaultOrPath -eq $currentName) {
+                # If you are inside C:\...\test2 and type `ov test2`, treat it as cwd.
+                $targetPath = $currentPath
+            }
+            elseif (Test-Path -LiteralPath $VaultOrPath) {
+                $item = Get-Item -LiteralPath $VaultOrPath
+
+                if ($item.PSIsContainer) {
+                    $targetPath = Resolve-FullPath $VaultOrPath
+                }
+                else {
+                    # If a file is passed, use its containing folder.
+                    $targetPath = $item.Directory.FullName
+                }
+            }
+            else {
+                # Unknown value becomes a new folder path relative to cwd.
+                $targetPath = Resolve-FullPath $VaultOrPath
+            }
+        }
+    }
+
+    if (-not $match -and $targetPath) {
+        $match = $vaults |
+            Where-Object {
+                Test-PathIsSameOrChild -Child $targetPath -Parent $_.Path
             } |
             Sort-Object { $_.Path.Length } -Descending |
             Select-Object -First 1
     }
 
-    # Case 3: no argument, use cwd as candidate path
-    if (!$targetPath) {
-        if ($VaultOrPath -eq (Get-Location).Path) {
-            $targetPath = [System.IO.Path]::GetFullPath((Get-Location).Path)
-        }
-        else {
-            # Treat unknown value as a path relative to cwd
-            $targetPath = [System.IO.Path]::GetFullPath(
-                [System.IO.Path]::Combine((Get-Location).Path, $VaultOrPath)
-            )
-        }
-    }
-
-    if (!$match) {
-        if (!$Yes) {
+    if (-not $match) {
+        if (-not $Yes) {
             $answer = Read-Host "No registered Obsidian vault found at '$targetPath'. Create one? [y/N]"
+
             if ($answer -notin @("y", "Y", "yes", "YES")) {
                 Write-Host "Cancelled."
                 return
@@ -1208,70 +1276,59 @@ function Open-ObsidianVault {
         }
 
         New-ObsidianVault -Path $targetPath -NoOpen
+
         $vaults = @(Get-ObsidianVaults)
 
         $match = $vaults |
             Where-Object {
-                $_.Path -eq $targetPath
+                [string]::Equals(
+                    $_.Path,
+                    $targetPath,
+                    [System.StringComparison]::OrdinalIgnoreCase
+                )
             } |
             Select-Object -First 1
 
-        if (!$match) {
+        if (-not $match) {
             throw "Vault was created, but could not be found in Obsidian config."
         }
     }
 
     $uri = "obsidian://open?path=$([uri]::EscapeDataString($match.Path))"
-    $null = Start-Process $uri &
+    $null = Start-Process $uri
+}
+
+Set-Alias ov Open-ObsidianVault
+
+$obsidianVaultCompleter = {
+    param($commandName, $parameterName, $wordToComplete)
+
+    Get-ObsidianVaults |
+        Where-Object {
+            $_.Name -like "$wordToComplete*" -or
+            $_.Path -like "$wordToComplete*"
+        } |
+        ForEach-Object {
+            $completionText = "'" + $_.Name.Replace("'", "''") + "'"
+
+            [System.Management.Automation.CompletionResult]::new(
+                $completionText,
+                $_.Name,
+                "ParameterValue",
+                $_.Path
+            )
+        }
 }
 
 Register-ArgumentCompleter `
     -CommandName Open-ObsidianVault `
-    -ParameterName Vault `
-    -ScriptBlock {
-        param($commandName, $parameterName, $wordToComplete)
-
-        Get-ObsidianVaults |
-            Where-Object {
-                $_.Name -like "$wordToComplete*" -or
-                $_.Path -like "$wordToComplete*"
-            } |
-            ForEach-Object {
-                $completionText = "'" + $_.Name.Replace("'", "''") + "'"
-
-                [System.Management.Automation.CompletionResult]::new(
-                    $completionText,
-                    $_.Name,
-                    "ParameterValue",
-                    $_.Path
-                )
-            }
-    }
-
-Set-Alias ov Open-ObsidianVault
+    -ParameterName VaultOrPath `
+    -ScriptBlock $obsidianVaultCompleter
 
 Register-ArgumentCompleter `
     -CommandName ov `
-    -ParameterName Vault `
-    -ScriptBlock {
-        param($commandName, $parameterName, $wordToComplete)
-
-        Get-ObsidianVaults |
-            Where-Object {
-                $_.Name -like "$wordToComplete*" -or
-                $_.Path -like "$wordToComplete*"
-            } |
-            ForEach-Object {
-                $completionText = "'" + $_.Name.Replace("'", "''") + "'"
-
-                [System.Management.Automation.CompletionResult]::new(
-                    $completionText,
-                    $_.Name,
-                    "ParameterValue",
-                    $_.Path
-                )
-            }
-}
+    -ParameterName VaultOrPath `
+    -ScriptBlock $obsidianVaultCompleter
 # Register-LazyArgumentCompleter -CommandName 'chezmoi' -CompletionCodeFactory {
 #     if (-not (Get-Command chezmoi.exe -ErrorAction SilentlyContinue)) { return }
 #     # this needs to stay in the global scope, probably should report the error to the developer
