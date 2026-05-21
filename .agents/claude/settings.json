@@ -31,14 +31,7 @@
     "type": "command",
     "command": "uv run  ~/.claude/statusline.py"
   },
-  "extraKnownMarketplaces": {
-    "marketplace": {
-      "source": {
-        "source": "directory",
-        "path": "C:\\Users\\devic\\source\\marketplace"
-      }
-    }
-  },
+  "extraKnownMarketplaces": {},
   "outputStyle": "Explanatory",
   "viewMode": "verbose",
   "effortLevel": "high",
