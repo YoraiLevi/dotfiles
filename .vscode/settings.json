@@ -512,6 +512,7 @@
 	},
 	"terminal.integrated.defaultProfile.windows": "integrated-pwsh",
 	"cursor.composer.shouldChimeAfterChatFinishes": false,
-	"search.quickOpen.includeHistory": false
+	"search.quickOpen.includeHistory": false,
+	"git.openRepositoryInParentFolders": "never"
 	
 }
