@@ -31,6 +31,7 @@
     "type": "command",
     "command": "uv run  ~/.claude/statusline.py"
   },
+  "extraKnownMarketplaces": {},
   "outputStyle": "Explanatory",
   "viewMode": "verbose",
   "effortLevel": "high",
