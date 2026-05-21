@@ -1375,11 +1375,44 @@
       "projectOnboardingSeenCount": 19,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastVersionBase": "2.1.143",
       "lastHintSessionId": "aeb91f70-9bda-4c4a-afbe-e9a097092d4c",
       "lastSessionFirstPrompt": "I'm studying math. Um, The material is in Hebrew, so I need help organizing it. I have four... two courses, and and I need to organize the files and the folders. Just move them around to the correct f",
-      "lastSessionModified": 1779053686570
+      "lastSessionModified": 1779053686570,
+      "lastCost": 33.846525,
+      "lastAPIDuration": 5196391,
+      "lastAPIDurationWithoutRetries": 5195738,
+      "lastToolDuration": 120831,
+      "lastDuration": 271774911,
+      "lastLinesAdded": 6976,
+      "lastLinesRemoved": 1256,
+      "lastTotalInputTokens": 7335,
+      "lastTotalOutputTokens": 422683,
+      "lastTotalCacheCreationInputTokens": 1530552,
+      "lastTotalCacheReadInputTokens": 27363002,
+      "lastTotalWebSearchRequests": 0,
+      "lastFpsAverage": 2.74,
+      "lastFpsLow1Pct": 36.17,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 1024,
+          "outputTokens": 29,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.001169
+        },
+        "claude-opus-4-7": {
+          "inputTokens": 6311,
+          "outputTokens": 422654,
+          "cacheReadInputTokens": 27363002,
+          "cacheCreationInputTokens": 1530552,
+          "webSearchRequests": 0,
+          "costUSD": 33.845356
+        }
+      },
+      "lastSessionId": "aeb91f70-9bda-4c4a-afbe-e9a097092d4c"
     },
     "C:/Users/devic/source/marketplace": {
       "allowedTools": [],
