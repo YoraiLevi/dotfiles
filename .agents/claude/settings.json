@@ -61,5 +61,8 @@
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true
+  "voiceEnabled": true,
+  "enabledPlugins": {
+    "skill-telegram-notify@dgxsparklabs-marketplace": true
+  }
 }
