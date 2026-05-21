@@ -1246,12 +1246,45 @@
       "projectOnboardingSeenCount": 45,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastVersionBase": "2.1.142",
       "hasCompletedProjectOnboarding": true,
       "lastHintSessionId": "7a68c9a7-acf2-43ec-bc1e-b5d1d252c97b",
       "lastSessionFirstPrompt": "We are joining into this project, this was made for us for our success, let's try to understand what our ancestors have made for us and where we are heading",
-      "lastSessionModified": 1778841942093
+      "lastSessionModified": 1778841942093,
+      "lastCost": 9.247008950000003,
+      "lastAPIDuration": 2290856,
+      "lastAPIDurationWithoutRetries": 2290602,
+      "lastToolDuration": 368934,
+      "lastDuration": 491292008,
+      "lastLinesAdded": 1203,
+      "lastLinesRemoved": 47,
+      "lastTotalInputTokens": 37952,
+      "lastTotalOutputTokens": 162362,
+      "lastTotalCacheCreationInputTokens": 401033,
+      "lastTotalCacheReadInputTokens": 5950571,
+      "lastTotalWebSearchRequests": 1,
+      "lastFpsAverage": 0.2,
+      "lastFpsLow1Pct": 8.06,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 35379,
+          "outputTokens": 4603,
+          "cacheReadInputTokens": 164967,
+          "cacheCreationInputTokens": 38796,
+          "webSearchRequests": 1,
+          "costUSD": 0.1333857
+        },
+        "claude-opus-4-7[1m]": {
+          "inputTokens": 2573,
+          "outputTokens": 157759,
+          "cacheReadInputTokens": 5785604,
+          "cacheCreationInputTokens": 362237,
+          "webSearchRequests": 0,
+          "costUSD": 9.113623250000003
+        }
+      },
+      "lastSessionId": "7a68c9a7-acf2-43ec-bc1e-b5d1d252c97b"
     },
     "C:/Users/devic/source/dgx-fleet": {
       "allowedTools": [],
@@ -1263,12 +1296,53 @@
       "projectOnboardingSeenCount": 0,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastVersionBase": "2.1.142",
       "hasCompletedProjectOnboarding": true,
       "lastHintSessionId": "680b06a2-f7ab-4f95-a5ae-2fc240407c11",
       "lastSessionFirstPrompt": "[POST-COMPACTION ORIENTATION — START HERE]  You are joining a project that has been worked on over many sessions. The conversation has been summarized; authoritative state lives in three repositories ",
-      "lastSessionModified": 1778853924497
+      "lastSessionModified": 1778853924497,
+      "lastCost": 270.4994244000001,
+      "lastAPIDuration": 28947378,
+      "lastAPIDurationWithoutRetries": 28934501,
+      "lastToolDuration": 13782817,
+      "lastDuration": 471692359,
+      "lastLinesAdded": 27146,
+      "lastLinesRemoved": 1492,
+      "lastTotalInputTokens": 79344,
+      "lastTotalOutputTokens": 1881345,
+      "lastTotalCacheCreationInputTokens": 23338710,
+      "lastTotalCacheReadInputTokens": 200307839,
+      "lastTotalWebSearchRequests": 0,
+      "lastFpsAverage": 0.81,
+      "lastFpsLow1Pct": 7.78,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 8011,
+          "outputTokens": 35967,
+          "cacheReadInputTokens": 3669689,
+          "cacheCreationInputTokens": 295759,
+          "webSearchRequests": 0,
+          "costUSD": 0.92451365
+        },
+        "claude-opus-4-7[1m]": {
+          "inputTokens": 36855,
+          "outputTokens": 1307907,
+          "cacheReadInputTokens": 169318915,
+          "cacheCreationInputTokens": 19704467,
+          "webSearchRequests": 0,
+          "costUSD": 240.6943262499998
+        },
+        "claude-sonnet-4-6": {
+          "inputTokens": 34478,
+          "outputTokens": 537471,
+          "cacheReadInputTokens": 27319235,
+          "cacheCreationInputTokens": 3338484,
+          "webSearchRequests": 0,
+          "costUSD": 28.880584499999962
+        }
+      },
+      "lastSessionId": "680b06a2-f7ab-4f95-a5ae-2fc240407c11"
     },
     "C:/Users/devic/source/plan-view": {
       "allowedTools": [],
@@ -1280,11 +1354,44 @@
       "projectOnboardingSeenCount": 66,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastVersionBase": "2.1.142",
       "lastHintSessionId": "a511f7e8-0e3d-4f15-b536-1517f6e7260c",
       "lastSessionFirstPrompt": "Um, okay. So let's talk. I'm really struggling with Claude Court. Like, I like it. The plan one is good because I can review things, and I can, like, point out and we can form ideas well. But after, l",
-      "lastSessionModified": 1778855855893
+      "lastSessionModified": 1778855855893,
+      "lastCost": 94.32789249999989,
+      "lastAPIDuration": 10950796,
+      "lastAPIDurationWithoutRetries": 10947798,
+      "lastToolDuration": 1026250,
+      "lastDuration": 470050368,
+      "lastLinesAdded": 14078,
+      "lastLinesRemoved": 1167,
+      "lastTotalInputTokens": 467948,
+      "lastTotalOutputTokens": 722639,
+      "lastTotalCacheCreationInputTokens": 2597748,
+      "lastTotalCacheReadInputTokens": 118889689,
+      "lastTotalWebSearchRequests": 28,
+      "lastFpsAverage": 0.45,
+      "lastFpsLow1Pct": 14.7,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 441573,
+          "outputTokens": 13615,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 28,
+          "costUSD": 0.7896480000000001
+        },
+        "claude-opus-4-7[1m]": {
+          "inputTokens": 26375,
+          "outputTokens": 709024,
+          "cacheReadInputTokens": 118889689,
+          "cacheCreationInputTokens": 2597748,
+          "webSearchRequests": 0,
+          "costUSD": 93.53824449999995
+        }
+      },
+      "lastSessionId": "a511f7e8-0e3d-4f15-b536-1517f6e7260c"
     },
     "C:/Users/devic/source/harness-in-container": {
       "allowedTools": [],
@@ -1296,11 +1403,44 @@
       "projectOnboardingSeenCount": 55,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastVersionBase": "2.1.142",
       "lastHintSessionId": "7857065b-61db-4101-a9e3-204b0d7caa38",
       "lastSessionFirstPrompt": "How to have an alternative way of executing claude that runs inside a container but also persists files and sessions on disk and can have read access to similar files available on the system such as t",
-      "lastSessionModified": 1778858012614
+      "lastSessionModified": 1778858012614,
+      "lastCost": 1.2078223499999996,
+      "lastAPIDuration": 652080,
+      "lastAPIDurationWithoutRetries": 651933,
+      "lastToolDuration": 227648,
+      "lastDuration": 467796770,
+      "lastLinesAdded": 1605,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 165329,
+      "lastTotalOutputTokens": 42724,
+      "lastTotalCacheCreationInputTokens": 75731,
+      "lastTotalCacheReadInputTokens": 786407,
+      "lastTotalWebSearchRequests": 4,
+      "lastFpsAverage": 0.02,
+      "lastFpsLow1Pct": 15.49,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 159269,
+          "outputTokens": 17040,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 4,
+          "costUSD": 0.28446899999999997
+        },
+        "claude-sonnet-4-6": {
+          "inputTokens": 6060,
+          "outputTokens": 25684,
+          "cacheReadInputTokens": 786407,
+          "cacheCreationInputTokens": 75731,
+          "webSearchRequests": 0,
+          "costUSD": 0.92335335
+        }
+      },
+      "lastSessionId": "7857065b-61db-4101-a9e3-204b0d7caa38"
     },
     "C:/Users/devic/source/claude-stdinout": {
       "allowedTools": [],
