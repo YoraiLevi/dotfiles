@@ -1752,7 +1752,7 @@
   "passesUpsellSeenCount": 3,
   "hasVisitedPasses": false,
   "passesLastSeenRemaining": 3,
-  "copyOnSelect": false,
+  "copyOnSelect": true,
   "showSpinnerTree": false,
   "routineFiredWatermark": "2026-05-10T12:36:03.762Z",
   "autoPermissionsNotificationCount": 3,
