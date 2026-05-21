@@ -1,5 +1,5 @@
 {
-  "numStartups": 199,
+  "numStartups": 200,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -39,8 +39,8 @@
     "git-worktrees": 193,
     "powershell-tool-env": 52,
     "ide-upsell-external-terminal": 193,
-    "colorterm-truecolor": 132,
-    "desktop-app": 132,
+    "colorterm-truecolor": 200,
+    "desktop-app": 200,
     "guest-passes": 199,
     "agent-flag": 190,
     "frontend-design-plugin": 199
@@ -495,7 +495,7 @@
   "sonnet1m45MigrationComplete": true,
   "migrationVersion": 13,
   "userID": "b50944c051a8c32450daad839326b2a8261ad363adee4f8296c9cd82533abb55",
-  "changelogLastFetched": 1779274269495,
+  "changelogLastFetched": 1779391471056,
   "autoUpdatesProtectedForNative": true,
   "claudeCodeFirstTokenDate": "2026-03-23T05:43:44.304727Z",
   "hasCompletedOnboarding": true,
@@ -1208,11 +1208,11 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "exampleFiles": [],
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastHintSessionId": "ab149b85-f355-4679-ba9f-983d082fd45e",
       "lastSessionFirstPrompt": "I want to setup zsh on the system with completions and colors etc, how can i do that? aid me",
       "lastSessionModified": 1778576830325,
-      "lastVersionBase": "2.1.141",
+      "lastVersionBase": "2.1.142",
       "lastSessionMetrics": {
         "frame_duration_ms_count": 8408,
         "frame_duration_ms_min": 0.12600000016391277,
@@ -1240,7 +1240,7 @@
       "lastAPIDuration": 0,
       "lastAPIDurationWithoutRetries": 0,
       "lastToolDuration": 0,
-      "lastDuration": 4479,
+      "lastDuration": 20914,
       "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
       "lastTotalInputTokens": 0,
@@ -1248,10 +1248,10 @@
       "lastTotalCacheCreationInputTokens": 0,
       "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 2.39,
-      "lastFpsLow1Pct": 72.9,
+      "lastFpsAverage": 2.45,
+      "lastFpsLow1Pct": 61.6,
       "lastModelUsage": {},
-      "lastSessionId": "a5cd3203-dd4e-4e08-bc96-8f0bda28420b"
+      "lastSessionId": "abfaf00b-b803-4dd9-9d8c-938eba25f62f"
     },
     "C:/Users/devic/source/notebooklm-py-container": {
       "allowedTools": [],
@@ -1643,7 +1643,7 @@
       }
     }
   },
-  "lastReleaseNotesSeen": "2.1.143",
+  "lastReleaseNotesSeen": "2.1.142",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
@@ -1663,7 +1663,7 @@
   "penguinModeOrgEnabled": true,
   "groveConfigCache": {
     "59481114-4cf3-4697-a1b6-0e9306a56b6e": {
-      "timestamp": 1779199703623
+      "timestamp": 1779391474378
     }
   },
   "cachedExtraUsageDisabledReason": "org_level_disabled_until",
@@ -1742,18 +1742,11 @@
   },
   "passesEligibilityCache": {
     "899e4e0b-7800-4780-ba3e-3eb32ba7d3fa": {
-      "eligible": true,
-      "referral_code_details": {
-        "code": "V6UYg0B_eA",
-        "campaign": "claude_code_guest_pass_a47c",
-        "referral_link": "https://claude.ai/referral/V6UYg0B_eA"
-      },
-      "referrer_reward": {
-        "amount_minor_units": 1000,
-        "currency": "USD"
-      },
-      "remaining_passes": 3,
-      "timestamp": 1779199704686
+      "eligible": false,
+      "referral_code_details": null,
+      "referrer_reward": null,
+      "remaining_passes": null,
+      "timestamp": 1779391474656
     }
   },
   "passesUpsellSeenCount": 3,
