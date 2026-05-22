@@ -46,8 +46,9 @@
     "frontend-design-plugin": 199,
     "team-onboarding-share": 201
   },
-  "promptQueueUseCount": 163,
+  "promptQueueUseCount": 164,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_fennel_kite_model": "",
     "tengu_sedge_lantern": true,
