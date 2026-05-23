@@ -31,6 +31,9 @@
     "type": "command",
     "command": "uv run  ~/.claude/statusline.py"
   },
+  "enabledPlugins": {
+    "skill-telegram-notify@dgxsparklabs-marketplace": true
+  },
   "extraKnownMarketplaces": {
     "dgxsparklabs-marketplace": {
       "source": {
@@ -41,7 +44,7 @@
   },
   "outputStyle": "Explanatory",
   "viewMode": "verbose",
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "voice": {
@@ -61,8 +64,5 @@
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true,
-  "enabledPlugins": {
-    "skill-telegram-notify@dgxsparklabs-marketplace": true
-  }
+  "voiceEnabled": true
 }
