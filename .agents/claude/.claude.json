@@ -26,7 +26,7 @@
     "image-paste": 209,
     "custom-agents": 192,
     "permissions": 202,
-    "rename-conversation": 195,
+    "rename-conversation": 210,
     "custom-commands": 198,
     "desktop-shortcut": 207,
     "web-app": 198,
@@ -41,7 +41,7 @@
     "ide-upsell-external-terminal": 209,
     "colorterm-truecolor": 200,
     "desktop-app": 200,
-    "guest-passes": 207,
+    "guest-passes": 210,
     "agent-flag": 205,
     "frontend-design-plugin": 199,
     "team-onboarding-share": 208
