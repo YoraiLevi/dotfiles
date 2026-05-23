@@ -108,3 +108,9 @@ alias dotfiles-timer='bash $HOME/.dotfiles/dotfiles-timer.sh'
 
 
 TODO HISTFILE CONFIGURATION
+
+
+setopt AUTO_CD                 # `cd foo` optional — bare dir name cd's
+setopt AUTO_PUSHD              # cd pushes to dir stack
+setopt PUSHD_IGNORE_DUPS
+setopt PUSHD_SILENT
