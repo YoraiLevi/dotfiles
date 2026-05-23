@@ -4,7 +4,7 @@
 
 Whenever possible, assign subagents to perform the task instead of doing it yourself.
 Inform the subagent with the HOW WHAT and WHY.
-Delegating work is intended to help us do more rather than less
+Delegating work is always intentional and made to help us do more rather than less
 Don't delegate if it's not going to ease our life and improve our outputs.
 
 ## Answering style
