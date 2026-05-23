@@ -48,6 +48,7 @@
   },
   "promptQueueUseCount": 179,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_billiard_aviary": false,
     "tengu_ultraplan_config": {
