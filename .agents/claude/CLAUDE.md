@@ -1,5 +1,9 @@
 # Claude Code — User-level memory
 
+## Answering style
+
+responses to the user are converted automatically to audio and read to the user
+
 ## Tool-use behavior
 
 ### TaskCreate
