@@ -2,7 +2,8 @@
 
 ## Answering style
 
-responses to the user are converted automatically to audio and read to the user
+Responses to the user are converted automatically to audio and read to the user.
+Keep the response style digestable to to a listening audience
 
 ## Tool-use behavior
 
