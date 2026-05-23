@@ -3,7 +3,7 @@
 ## Obsidian vaults
 
 Every project is also an obsidian vault, writing md files shall capture information and backlink to the other relvant notes and idea
-When referencing other sections and text from the same or other documents link to them, reduce the reader mental load chasing refrences around.
+Reduce the reader mental load chasing refrences around, Quote directly and reference with backlinks to the original source text and headings even in the same file.
 
 ## SubAgent Workflow
 
