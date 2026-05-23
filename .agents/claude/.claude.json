@@ -1747,6 +1747,10 @@
     "agent-pain-points": {
       "usageCount": 1,
       "lastUsedAt": 1778943088173
+    },
+    "simplify": {
+      "usageCount": 1,
+      "lastUsedAt": 1779556044759
     }
   },
   "githubRepoPaths": {
