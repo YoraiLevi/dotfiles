@@ -114,3 +114,15 @@ setopt AUTO_CD                 # `cd foo` optional — bare dir name cd's
 setopt AUTO_PUSHD              # cd pushes to dir stack
 setopt PUSHD_IGNORE_DUPS
 setopt PUSHD_SILENT
+
+
+
+
+
+
+
+
+
+
+export GTK_THEME=Adwaita:dark
+export PIP_REQUIRE_VIRTUALENV=true        # guard against accidental system-pip
