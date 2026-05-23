@@ -1,5 +1,5 @@
 {
-  "numStartups": 204,
+  "numStartups": 205,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -42,13 +42,12 @@
     "colorterm-truecolor": 200,
     "desktop-app": 200,
     "guest-passes": 204,
-    "agent-flag": 190,
+    "agent-flag": 205,
     "frontend-design-plugin": 199,
     "team-onboarding-share": 201
   },
   "promptQueueUseCount": 176,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_coral_beacon": true,
     "tengu_plank_river_frost": "user_intent",
@@ -1003,7 +1002,7 @@
       "projectOnboardingSeenCount": 7,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "lastCost": 1.23149175,
       "lastAPIDuration": 231386,
       "lastAPIDurationWithoutRetries": 231298,
@@ -1040,7 +1039,7 @@
       "lastHintSessionId": "5719593c-c78c-4232-8ff3-d72c409d0b4b",
       "lastSessionFirstPrompt": "what is the difference between commands and skills in cc",
       "lastSessionModified": 1779098574253,
-      "lastVersionBase": "2.1.146"
+      "lastVersionBase": "2.1.150"
     },
     "C:/Users/devic/source/dgx-control-plane": {
       "allowedTools": [],
@@ -1669,7 +1668,7 @@
       }
     }
   },
-  "lastReleaseNotesSeen": "2.1.148",
+  "lastReleaseNotesSeen": "2.1.150",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
