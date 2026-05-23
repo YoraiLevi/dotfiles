@@ -105,3 +105,6 @@ source $ZSH/oh-my-zsh.sh
 
 alias dotfiles='git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
 alias dotfiles-timer='bash $HOME/.dotfiles/dotfiles-timer.sh'
+
+
+TODO HISTFILE CONFIGURATION
