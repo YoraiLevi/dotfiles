@@ -48,6 +48,7 @@
   },
   "promptQueueUseCount": 176,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_coral_beacon": true,
     "tengu_plank_river_frost": "user_intent",
