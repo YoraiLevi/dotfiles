@@ -1,6 +1,8 @@
 # Claude Code — User-level memory
 
-## Obvisdian 
+## Obsidian vaults
+
+Every project is also an obsidian vault, writing md files shall capture information and backlink to the other relvant notes and ideas
 
 ## SubAgent Workflow
 
