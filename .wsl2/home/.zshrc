@@ -120,7 +120,15 @@ export LESS='-R' # color-pass-through for pagers
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
-
+# enable color support of ls and also add handy aliases
+export CLICOLOR=1
+if command -v dircolors >/dev/null; then
+    if [ -r "$HOME/.dircolors" ]; then
+        eval "$(dircolors -b "$HOME/.dircolors")"
+    else
+        eval "$(dircolors -b)"
+    fi
+fi
 
 
 
