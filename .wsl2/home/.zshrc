@@ -276,8 +276,21 @@ if [ -d "$HOME/.auth" ]; then
     done
 fi
 
-[ -f "$HOME/.local/bin/env" ] && source "$HOME/.local/bin/env"
-[ -f "$HOME/.env"           ] && source "$HOME/.env"
+if [ -f "$HOME/.local/bin/env" ] ; then
+    . "$HOME/.local/bin/env"
+fi
+
+if [ -f "$HOME/.env" ] ; then
+    . "$HOME/.env"
+fi
+
+# zellij
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && . "$HOME/.cargo/env"
+# cargo install --locked zellij
+if [ -f "$HOME/.cargo/env" ] ; then
+    . "$HOME/.cargo/env"
+
+
 
 alias edit-profile='${EDITOR:-nano} ~/.zshrc'
 alias edp='edit-profile'
