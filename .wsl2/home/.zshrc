@@ -262,6 +262,24 @@ extract() {
 
 nop() { return }
 
+
+if [ -d "$HOME/.auth" ]; then
+    set -a
+    for f in "$HOME/.auth"/*.env(N); do
+        [ -f "$f" ] && source "$f" 2>/dev/null
+    done
+    set +a
+    # Other credential scripts (skip .json data and *.env — loaded above)
+    for f in "$HOME/.auth"/*(N); do
+        case "$f" in *.json|*.env) continue ;; esac
+        [ -f "$f" ] && source "$f" 2>/dev/null
+    done
+fi
+
+
+
+
+
 alias edit-profile='${EDITOR:-nano} ~/.zshrc'
 alias edp='edit-profile'
 
