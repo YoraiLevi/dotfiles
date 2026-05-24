@@ -5,11 +5,9 @@
 Every project is also an Obsidian vault. When writing .md files, keep the reader put — they  shouldn't chase references to understand the current note.
 
 - `[[Note]]` — plain link. Use only when the target is *further reading*, not required to understand here.
-- `![[Note]]` or `![[Note#Heading]]` — transclude. Use when the target's  content is needed *in place*. Embed instead of paraphrasing.
-- `^block-id` (in the source) + `![[Note#^id]]` (elsewhere) — quote a
-  single block. Edits in the source update everywhere.
-- `![[#Heading]]` — same-file transclusion. Use to avoid restating a
-  definition or quote written earlier in the same note.
+- `![[Note]]` or `![[Note#Heading]]` — transclude. Use when the target's content is needed *in place*. Embed instead of paraphrasing.
+- `^block-id` (in the source) + `![[Note#^id]]` (elsewhere) — quote a single block. Edits in the source update everywhere.
+- `![[#Heading]]` — same-file transclusion. Use to avoid restating a definition or quote written earlier in the same note.
 
 ## Subagent Workflow
 
