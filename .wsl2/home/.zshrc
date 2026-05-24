@@ -271,4 +271,28 @@ claude() {
 
 
 typeset -U path      # de-dup PATH entries
+
+if grep -qi microsoft /proc/version 2>/dev/null || [ -n "$WSL_DISTRO_NAME" ]; then
+    # echo "Running inside WSL"
+    alias explorer="explorer.exe"
+    # alias chezmoi="chezmoi.exe"
+    alias wsl="wsl.exe"
+    alias pwsh="pwsh.exe"
+    alias powershell="powershell.exe"
+    alias cmd="cmd.exe"
+    alias zellij="zellij.exe"
+    command -v tssh >/dev/null 2>&1 && alias ssh='tssh'
+    # export SHELL="wsl.exe"
+    export BROWSER=/mnt/c/PROGRA~2/Microsoft/Edge/Application/msedge.exe
+    # alias tssh="tssh.exe"
+    # NOT calling: . "$HOME/.local/bin/setup-wsl2-symlinks" -q  (bashrc does this)
+else
+    # echo "Running outside WSL"
+    export SHELL="zsh"
+fi
+
 export GTK_THEME=Adwaita:dark
+
+if [ -n "$SSH_CONNECTION" ] && [ -z "$DISPLAY" ]; then
+    export BROWSER="$HOME/.local/bin/ssh-copy-text-to-clipboard"
+fi
