@@ -128,8 +128,17 @@ if command -v dircolors >/dev/null; then
     else
         eval "$(dircolors -b)"
     fi
+
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+    alias egrep='egrep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias diff='diff --color=auto'
+    alias ip='ip -color=auto'
+
 fi
 
+# some more ls aliases
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
