@@ -276,6 +276,8 @@ if [ -d "$HOME/.auth" ]; then
     done
 fi
 
+[ -f "$HOME/.local/bin/env" ] && source "$HOME/.local/bin/env"
+[ -f "$HOME/.env"           ] && source "$HOME/.env"
 
 alias edit-profile='${EDITOR:-nano} ~/.zshrc'
 alias edp='edit-profile'
