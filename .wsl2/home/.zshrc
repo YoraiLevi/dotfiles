@@ -204,6 +204,18 @@ uvx() {
 # set PATH so it includes user's private bin if it exists
 [ -d "$HOME/.local/bin" ] && path=("$HOME/.local/bin" $path)
 
+# https://www.youtube.com/watch?v=Wl7CDe9jsuo
+alias mv="mv -iv"
+alias cp="cp -riv"
+alias mkdir='mkdir -vp'
+
+# Directory navigation improvements
+alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias bd='cd "$OLDPWD"'  # cd into the old directory
 
 
 typeset -U path      # de-dup PATH entries
