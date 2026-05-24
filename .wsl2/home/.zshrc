@@ -262,7 +262,7 @@ extract() {
 
 nop() { return }
 
-
+# ~/.auth/*.env — dotenv-style (KEY=value) and export KEY=value lines (allexport)
 if [ -d "$HOME/.auth" ]; then
     set -a
     for f in "$HOME/.auth"/*.env(N); do
