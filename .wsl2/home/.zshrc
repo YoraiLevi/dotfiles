@@ -180,6 +180,23 @@ if command -v pyenv >/dev/null 2>&1; then
     eval "$(pyenv init - zsh)"
 fi
 
+# uv / uvx — lazy-load shell completions on first invocation
+uv() {
+    unset -f uv uvx
+    if command -v uv >/dev/null 2>&1; then
+        eval "$(command uv generate-shell-completion zsh 2>/dev/null)"
+        eval "$(command uvx --generate-shell-completion zsh 2>/dev/null)"
+    fi
+    command uv "$@"
+}
+uvx() {
+    unset -f uv uvx
+    if command -v uv >/dev/null 2>&1; then
+        eval "$(command uv generate-shell-completion zsh 2>/dev/null)"
+        eval "$(command uvx --generate-shell-completion zsh 2>/dev/null)"
+    fi
+    command uvx "$@"
+}
 
 
 
