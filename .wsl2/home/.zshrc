@@ -284,13 +284,11 @@ if [ -f "$HOME/.env" ] ; then
     . "$HOME/.env"
 fi
 
-# zellij
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && . "$HOME/.cargo/env"
 # cargo install --locked zellij
 if [ -f "$HOME/.cargo/env" ] ; then
     . "$HOME/.cargo/env"
-
-
+fi
 
 alias edit-profile='${EDITOR:-nano} ~/.zshrc'
 alias edp='edit-profile'
@@ -327,6 +325,8 @@ export GTK_THEME=Adwaita:dark
 if [ -n "$SSH_CONNECTION" ] && [ -z "$DISPLAY" ]; then
     export BROWSER="$HOME/.local/bin/ssh-copy-text-to-clipboard"
 fi
+# zellij
+
 
 # zellij da -y > /dev/null # delete dead sessions
 
