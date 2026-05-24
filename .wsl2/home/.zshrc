@@ -167,8 +167,21 @@ if [ -f ~/.zsh_aliases ]; then
     . ~/.zsh_aliases
 fi
 
+# Prevent accidental pip install into system Python
+export PIP_REQUIRE_VIRTUALENV=true
+# Load pyenv automatically by appending
+# the following to
+# ~/.bash_profile if it exists, otherwise ~/.profile (for login shells)
+# and ~/.bashrc (for interactive shells) :
+
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv >/dev/null 2>&1
+then
+    eval "$(pyenv init - bash)"
+fi
+
 
 
 
 export GTK_THEME=Adwaita:dark
-export PIP_REQUIRE_VIRTUALENV=true        # guard against accidental system-pip
