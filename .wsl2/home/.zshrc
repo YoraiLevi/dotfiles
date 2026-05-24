@@ -261,6 +261,14 @@ extract() {
 
 nop() { return }
 
+alias edit-profile='${EDITOR:-nano} ~/.zshrc'
+alias edp='edit-profile'
+
+claude() {
+    IS_SANDBOX=1 CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE=10000000 \
+        command claude --enable-auto-mode --allow-dangerously-skip-permissions "$@"
+}
+
 
 typeset -U path      # de-dup PATH entries
 export GTK_THEME=Adwaita:dark
