@@ -197,6 +197,12 @@ uvx() {
     fi
     command uvx "$@"
 }
+
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && . "$HOME/.cargo/env"
+if [ -f "$HOME/.cargo/env" ] ; then
+    . "$HOME/.cargo/env"
+fi
+
 # set PATH so it includes user's private bin if it exists
 [ -d "$HOME/bin"        ] && path=("$HOME/bin"        $path)
 # set PATH so it includes user's private .bin if it exists
@@ -284,11 +290,7 @@ if [ -f "$HOME/.env" ] ; then
     . "$HOME/.env"
 fi
 
-# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh && . "$HOME/.cargo/env"
-# cargo install --locked zellij
-if [ -f "$HOME/.cargo/env" ] ; then
-    . "$HOME/.cargo/env"
-fi
+
 
 alias edit-profile='${EDITOR:-nano} ~/.zshrc'
 alias edp='edit-profile'
@@ -326,6 +328,7 @@ if [ -n "$SSH_CONNECTION" ] && [ -z "$DISPLAY" ]; then
     export BROWSER="$HOME/.local/bin/ssh-copy-text-to-clipboard"
 fi
 # zellij
+# cargo install --locked zellij
 
 
 # zellij da -y > /dev/null # delete dead sessions
