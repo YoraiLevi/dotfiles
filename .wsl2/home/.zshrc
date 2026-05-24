@@ -205,9 +205,10 @@ uvx() {
 [ -d "$HOME/.local/bin" ] && path=("$HOME/.local/bin" $path)
 
 # https://www.youtube.com/watch?v=Wl7CDe9jsuo
-alias mv="mv -iv"
-alias cp="cp -riv"
+alias mv='mv -iv'
+alias cp='cp -riv'
 alias mkdir='mkdir -vp'
+
 
 # Directory navigation improvements
 alias cd..='cd ..'
