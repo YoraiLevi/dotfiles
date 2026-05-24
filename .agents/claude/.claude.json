@@ -1,5 +1,5 @@
 {
-  "numStartups": 210,
+  "numStartups": 211,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -46,9 +46,8 @@
     "frontend-design-plugin": 199,
     "team-onboarding-share": 208
   },
-  "promptQueueUseCount": 182,
+  "promptQueueUseCount": 183,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_pewter_brook": false,
     "tengu_gouda_loop": true,
@@ -1704,7 +1703,7 @@
       }
     }
   },
-  "lastReleaseNotesSeen": "2.1.148",
+  "lastReleaseNotesSeen": "2.1.150",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
@@ -1753,7 +1752,7 @@
   ],
   "closedIssuesLastChecked": 1779544891592,
   "ideHintShownCount": 5,
-  "lastPlanModeUse": 1779553762286,
+  "lastPlanModeUse": 1779589030415,
   "claudeInChromeDefaultEnabled": false,
   "hasCompletedClaudeInChromeOnboarding": true,
   "remoteControlUpsellSeenCount": 1,
