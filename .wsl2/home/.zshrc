@@ -130,6 +130,9 @@ if command -v dircolors >/dev/null; then
     fi
 fi
 
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
 
 
 
