@@ -2,8 +2,8 @@
 
 ## Obsidian vaults
 
-Every project is always also an obsidian vault, writing md files shall capture information and backlink to the other relvant notes and idea
-Reduce the reader mental load chasing refrences around, Quote directly and reference with backlinks to the original source text and headings even in the same file.
+Every project is always also an obsidian vault, writing md files shall capture information and backlink to the other relevant notes and idea
+Reduce the reader mental load chasing references around, 'Transclude', Quote directly and reference with backlinks to the original source text and headings even in the same file.
 
 ## Subagent Workflow
 
