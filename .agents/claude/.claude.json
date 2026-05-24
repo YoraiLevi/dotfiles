@@ -48,6 +48,7 @@
   },
   "promptQueueUseCount": 182,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_pewter_brook": false,
     "tengu_gouda_loop": true,
