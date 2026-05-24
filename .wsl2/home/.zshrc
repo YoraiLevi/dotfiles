@@ -115,7 +115,7 @@ rescue_history() { fc -W 2>/dev/null }
 trap rescue_history SIGHUP
 
 # https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c Frees Ctrl-S from XOFF flow control.
-[[ -t 0 ]] && stty -ixon 2>/dev/null
+# [[ -t 0 ]] && stty -ixon 2>/dev/null
 
 
 
