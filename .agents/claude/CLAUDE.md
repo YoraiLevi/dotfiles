@@ -2,12 +2,26 @@
 
 ## Obsidian vaults
 
-Every project is also an Obsidian vault. When writing .md files, keep the reader put — they  shouldn't chase references to understand the current note.
+Every project is also an Obsidian vault. When writing .md files, keep the
+reader put — they shouldn't chase references to understand the current note.
 
-- `[[Note]]` — plain link. Use only when the target is *further reading*, not required to understand here.
-- `![[Note]]` or `![[Note#Heading]]` — transclude. Use when the target's content is needed *in place*. Embed instead of paraphrasing.
-- `^block-id` (in the source) + `![[Note#^id]]` (elsewhere) — quote a single block. Edits in the source update everywhere.
-- `![[#Heading]]` — same-file transclusion. Use to avoid restating a definition or quote written earlier in the same note.
+Choose constructs by intent:
+
+- `[[Note]]` — link for *further reading*. Each link should mean something;
+  don't link every mention of a word.
+- `![[Note]]` / `![[Note#Heading]]` / `![[Note#^id]]` — transclude when
+  content is needed *in place*. Embed instead of paraphrasing.
+- `#tag` (nested `#topic/sub` welcome) — group by topic. Tag consistently,
+  sparingly, memorably.
+- Properties (frontmatter) — for facts *about* the note (status, type,
+  date). Use these instead of tags for anything typed or queryable.
+- Folders — group by type, not topic. A file has many tags but one
+  location; folders are the coarse first filter.
+
+Maps (MOCs) are workbenches, not indexes — write what you think about a
+topic and let links emerge. Don't auto-sprinkle links just because the
+target exists. Let folder and tag structure evolve from use, not from a
+prescribed layout.
 
 ## Subagent Workflow
 
