@@ -165,12 +165,12 @@
               "title": "Outline of CLAUDE"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -183,6 +183,6 @@
       "bases:Create new base": false
     }
   },
-  "active": "ac2d52045543fafd",
+  "active": "6b9f40fa855a4440",
   "lastOpenFiles": []
 }
