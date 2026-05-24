@@ -12,7 +12,7 @@ Choose constructs by intent:
 - `![[Note]]` / `![[Note#Heading]]` / `![[Note#^id]]` — transclude when
   content is needed *in place*. Embed instead of paraphrasing.
 - `#tag` (nested `#topic/sub` welcome) — group by topic. Tag consistently,
-  sparingly, memorably.
+  sparingly, memorably. lowercase, singular.
 - Properties (frontmatter) — for facts *about* the note (status, type,
   date). Use these instead of tags for anything typed or queryable.
 - Folders — group by type, not topic. A file has many tags but one
