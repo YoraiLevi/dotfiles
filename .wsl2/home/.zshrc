@@ -197,7 +197,14 @@ uvx() {
     fi
     command uvx "$@"
 }
+# set PATH so it includes user's private bin if it exists
+[ -d "$HOME/bin"        ] && path=("$HOME/bin"        $path)
+# set PATH so it includes user's private .bin if it exists
+[ -d "$HOME/.bin"       ] && path=("$HOME/.bin"       $path)
+# set PATH so it includes user's private bin if it exists
+[ -d "$HOME/.local/bin" ] && path=("$HOME/.local/bin" $path)
 
 
 
+typeset -U path      # de-dup PATH entries
 export GTK_THEME=Adwaita:dark
