@@ -114,6 +114,10 @@ TODO HISTFILE CONFIGURATION
 rescue_history() { fc -W 2>/dev/null }
 trap rescue_history SIGHUP
 
+# https://gist.github.com/zachbrowne/8bc414c9f30192067831fafebd14255c Frees Ctrl-S from XOFF flow control.
+[[ -t 0 ]] && stty -ixon 2>/dev/null
+
+
 
 setopt AUTO_CD # `cd foo` optional — bare dir name cd's
 setopt AUTO_PUSHD # cd pushes to dir stack
