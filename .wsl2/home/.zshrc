@@ -217,6 +217,50 @@ alias ....='cd ../../..'
 alias .....='cd ../../../..'
 alias bd='cd "$OLDPWD"'  # cd into the old directory
 
+up() {
+    local d="" i limit=$1
+    for ((i=1; i <= limit; i++)); do d="$d/.."; done
+    d="${d#/}"
+    [ -z "$d" ] && d=..
+    cd "$d"
+}
+
+cd() {
+    builtin cd "$@" && {
+        local count
+        count=$(command ls -go 2>/dev/null | wc -l)
+        if [ "$count" -lt 15 ]; then
+            command ls -go --color=auto -F
+        fi
+    }
+}
+
+extract() {
+    local archive
+    for archive in "$@"; do
+        if [ -f "$archive" ]; then
+            case "$archive" in
+                *.tar.bz2)   tar xvjf "$archive"    ;;
+                *.tar.gz)    tar xvzf "$archive"    ;;
+                *.bz2)       bunzip2  "$archive"    ;;
+                *.rar)       rar x    "$archive"    ;;
+                *.gz)        gunzip   "$archive"    ;;
+                *.tar)       tar xvf  "$archive"    ;;
+                *.tbz2)      tar xvjf "$archive"    ;;
+                *.tgz)       tar xvzf "$archive"    ;;
+                *.zip)       unzip    "$archive"    ;;
+                *.Z)         uncompress "$archive"  ;;
+                *.7z)        7z x     "$archive"    ;;
+                *)           echo "extract: don't know how to handle '$archive'" >&2 ;;
+            esac
+        else
+            echo "extract: '$archive' is not a valid file" >&2
+        fi
+    done
+}
+
+nop() { return }
+
 
 typeset -U path      # de-dup PATH entries
 export GTK_THEME=Adwaita:dark
