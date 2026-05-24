@@ -296,3 +296,40 @@ export GTK_THEME=Adwaita:dark
 if [ -n "$SSH_CONNECTION" ] && [ -z "$DISPLAY" ]; then
     export BROWSER="$HOME/.local/bin/ssh-copy-text-to-clipboard"
 fi
+
+# zellij da -y > /dev/null # delete dead sessions
+
+# ---- Session timestamp updater
+if [ -n "$ZELLIJ_SESSION_NAME" ]; then
+    if [ -n "$USERPROFILE" ] && command -v wslpath >/dev/null 2>&1; then
+        _ZELLIJ_TIMEDIR="$(wslpath -u "$USERPROFILE" 2>/dev/null)/AppData/Local/Temp/zellij-session-times"
+    else
+        _ZELLIJ_TIMEDIR="/tmp/zellij-session-times"
+    fi
+    command mkdir -p "$_ZELLIJ_TIMEDIR" 2>/dev/null
+
+    _zellij_update_timestamp() {
+        local ns
+        ns=$(date +%s%N 2>/dev/null)
+        printf '%s' "$(( ns / 100 + 621355968000000000 ))" \
+            > "$_ZELLIJ_TIMEDIR/$ZELLIJ_SESSION_NAME" 2>/dev/null
+    }
+
+    autoload -Uz add-zsh-hook
+    add-zsh-hook precmd _zellij_update_timestamp
+fi
+
+# ---- SSH auto-attach + first-pane MOTD
+if [[ -z "$ZELLIJ" ]]; then
+    if [ -n "$SSH_CONNECTION" ] && [[ -t 0 ]] && command -v zellij >/dev/null 2>&1; then
+        zellij attach main -c
+    fi
+elif [[ "$ZELLIJ_PANE_ID" == "0" ]]; then
+    local_motd="/tmp/.motd-shown-$(id -u)"
+    today=$(date +%Y-%m-%d)
+    if [[ ! -f "$local_motd" || "$(cat "$local_motd")" != "$today" ]]; then
+        run-parts /etc/update-motd.d/ 2>/dev/null
+        echo "$today" > "$local_motd"
+    fi
+    unset local_motd today
+fi
