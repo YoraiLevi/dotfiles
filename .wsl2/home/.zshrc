@@ -210,6 +210,9 @@ fi
 # set PATH so it includes user's private bin if it exists
 [ -d "$HOME/.local/bin" ] && path=("$HOME/.local/bin" $path)
 
+alias edit-profile='${EDITOR:-nano} ~/.zshrc'
+alias edp='edit-profile'
+
 # https://www.youtube.com/watch?v=Wl7CDe9jsuo
 alias mv='mv -iv'
 alias cp='cp -riv'
@@ -290,10 +293,15 @@ if [ -f "$HOME/.env" ] ; then
     . "$HOME/.env"
 fi
 
-
-
-alias edit-profile='${EDITOR:-nano} ~/.zshrc'
-alias edp='edit-profile'
+# If running in VSCode/Cursor terminal, exit bashrc early to avoid double-session (mirrors pwsh logic)
+if [[ "$TERM_PROGRAM" == "vscode" || "$VSCODE_INJECTION" == "1" ]]; then
+    # echo "VSCode/Cursor terminal detected, exiting bashrc"
+    nop
+fi
+if [[ "$VSCODE_CLI" == "1" || "$CURSOR_AGENT" == "1" || -n "$VSCODE_PID" ]]; then
+    # echo "VSCode/Cursor AI agent terminal detected, exiting bashrc"
+    return
+fi
 
 claude() {
     IS_SANDBOX=1 CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE=10000000 \
