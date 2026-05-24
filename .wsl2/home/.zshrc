@@ -277,9 +277,6 @@ if [ -d "$HOME/.auth" ]; then
 fi
 
 
-
-
-
 alias edit-profile='${EDITOR:-nano} ~/.zshrc'
 alias edp='edit-profile'
 
