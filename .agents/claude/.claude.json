@@ -46,8 +46,9 @@
     "frontend-design-plugin": 199,
     "team-onboarding-share": 208
   },
-  "promptQueueUseCount": 188,
+  "promptQueueUseCount": 189,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_willow_refresh_ttl_hours": 0,
     "tengu_bridge_poll_interval_ms": 0,
