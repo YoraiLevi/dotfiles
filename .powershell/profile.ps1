@@ -1115,7 +1115,7 @@ function Resolve-ObsidianFullPath {
         $Path = "."
     }
 
-    [System.IO.Path]::GetFullPath(
+    return [System.IO.Path]::GetFullPath(
         $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
     )
 }
@@ -1126,9 +1126,16 @@ function Normalize-ObsidianPath {
         [string]$Path
     )
 
-    [System.IO.Path]::TrimEndingDirectorySeparator(
-        [System.IO.Path]::GetFullPath($Path)
-    )
+    $fullPath = [System.IO.Path]::GetFullPath($Path)
+
+    while (
+        $fullPath.Length -gt 3 -and
+        ($fullPath.EndsWith("\") -or $fullPath.EndsWith("/"))
+    ) {
+        $fullPath = $fullPath.TrimEnd([char[]]@("\", "/"))
+    }
+
+    return $fullPath
 }
 
 function Test-PathIsSameOrChild {
@@ -1162,7 +1169,7 @@ function Test-PathIsSameOrChild {
 function Get-ObsidianVaults {
     $configPath = Get-ObsidianConfigPath
 
-    if (!(Test-Path -LiteralPath $configPath)) {
+    if (-not (Test-Path -LiteralPath $configPath)) {
         return @()
     }
 
@@ -1183,6 +1190,136 @@ function Get-ObsidianVaults {
                 Path = $path
             }
         }
+}
+
+function Get-ObsidianVaultForPath {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Path
+    )
+
+    $fullPath = Normalize-ObsidianPath (Resolve-ObsidianFullPath $Path)
+
+    Get-ObsidianVaults |
+        Where-Object {
+            Test-PathIsSameOrChild -Child $fullPath -Parent $_.Path
+        } |
+        Sort-Object { $_.Path.Length } -Descending |
+        Select-Object -First 1
+}
+
+function Get-ObsidianRelativePath {
+    param(
+        [Parameter(Mandatory)]
+        [string]$Root,
+
+        [Parameter(Mandatory)]
+        [string]$Path
+    )
+
+    $rootFull = Normalize-ObsidianPath $Root
+    $pathFull = Normalize-ObsidianPath $Path
+
+    if (-not (Test-PathIsSameOrChild -Child $pathFull -Parent $rootFull)) {
+        throw "Path is not inside vault root. Root: $rootFull Path: $pathFull"
+    }
+
+    if ([string]::Equals(
+        $rootFull,
+        $pathFull,
+        [System.StringComparison]::OrdinalIgnoreCase
+    )) {
+        return ""
+    }
+
+    $relativePath = $pathFull.Substring($rootFull.Length)
+    $relativePath = $relativePath.TrimStart([char[]]@("\", "/"))
+    $relativePath = $relativePath -replace "\\", "/"
+
+    return $relativePath
+}
+
+function Get-ObsidianInputKind {
+    param(
+        [string]$InputPath
+    )
+
+    if ([string]::IsNullOrWhiteSpace($InputPath)) {
+        return "Vault"
+    }
+
+    if (Test-Path -LiteralPath $InputPath -PathType Container) {
+        return "Vault"
+    }
+
+    if (Test-Path -LiteralPath $InputPath -PathType Leaf) {
+        return "Note"
+    }
+
+    if ($InputPath -match "(?i)\.md$") {
+        return "Note"
+    }
+
+    if ($InputPath.Contains("\") -or $InputPath.Contains("/")) {
+        return "AmbiguousPath"
+    }
+
+    return "Vault"
+}
+
+function Resolve-ObsidianNotePath {
+    param(
+        [Parameter(Mandatory)]
+        [string]$FilePath
+    )
+
+    $fullPath = Resolve-ObsidianFullPath $FilePath
+
+    if (Test-Path -LiteralPath $fullPath -PathType Container) {
+        throw "Expected a markdown file path, but got a directory: $fullPath"
+    }
+
+    $extension = [System.IO.Path]::GetExtension($fullPath)
+
+    if ([string]::IsNullOrWhiteSpace($extension)) {
+        $fullPath = "$fullPath.md"
+    }
+    elseif ($extension -ne ".md") {
+        throw "Expected a markdown file path ending in .md, got: $fullPath"
+    }
+
+    return Normalize-ObsidianPath $fullPath
+}
+
+function New-ObsidianMarkdownFileIfMissing {
+    param(
+        [Parameter(Mandatory)]
+        [string]$FilePath
+    )
+
+    $parent = Split-Path $FilePath -Parent
+
+    New-Item -ItemType Directory -Path $parent -Force | Out-Null
+
+    if (-not (Test-Path -LiteralPath $FilePath)) {
+        New-Item -ItemType File -Path $FilePath -Force | Out-Null
+    }
+}
+
+function Get-ProposedVaultRootForNotePath {
+    param(
+        [Parameter(Mandatory)]
+        [string]$NotePath
+    )
+
+    $cwd = Normalize-ObsidianPath (Resolve-ObsidianFullPath ".")
+    $noteFullPath = Normalize-ObsidianPath $NotePath
+
+    if (Test-PathIsSameOrChild -Child $noteFullPath -Parent $cwd) {
+        return $cwd
+    }
+
+    return Normalize-ObsidianPath (Split-Path $noteFullPath -Parent)
 }
 
 function Open-ObsidianVaultEntry {
@@ -1207,7 +1344,7 @@ function Open-ObsidianVaultEntry {
                     Write-Host "Vault was created, but Obsidian was not restarted."
                     Write-Host "Open it manually once from Obsidian:"
                     Write-Host "Manage vaults -> Open folder as vault -> $($Vault.Path)"
-                    return
+                    return $false
                 }
             }
 
@@ -1215,15 +1352,36 @@ function Open-ObsidianVaultEntry {
             Start-Sleep -Seconds 2
         }
 
-        # Only use executable + path for newly created vaults.
-        $null = Start-Process -FilePath $obsidianExe -ArgumentList "`"$($Vault.Path)`"" &
-        return
+        $null = Start-Process -FilePath $obsidianExe -ArgumentList "`"$($Vault.Path)`""
+        return $true
     }
 
-    # For existing vaults, use Obsidian URI by vault NAME.
-    # Using Obsidian.exe "path" while Obsidian is already running often just focuses the current vault.
     $uri = "obsidian://open?vault=$([uri]::EscapeDataString($Vault.Name))"
-    $null = Start-Process $uri &
+    $null = Start-Process $uri
+
+    return $true
+}
+
+function Open-ObsidianFileInVault {
+    param(
+        [Parameter(Mandatory)]
+        $Vault,
+
+        [Parameter(Mandatory)]
+        [string]$FilePath
+    )
+
+    $relativePath = Get-ObsidianRelativePath -Root $Vault.Path -Path $FilePath
+
+    if ([string]::IsNullOrWhiteSpace($relativePath)) {
+        throw "Cannot open vault root as a markdown file."
+    }
+
+    $vaultEncoded = [uri]::EscapeDataString($Vault.Name)
+    $fileEncoded = [uri]::EscapeDataString($relativePath)
+
+    $uri = "obsidian://open?vault=$vaultEncoded&file=$fileEncoded"
+    $null = Start-Process $uri
 }
 
 function New-ObsidianVault {
@@ -1295,10 +1453,58 @@ function New-ObsidianVault {
     }
 
     if (-not $NoOpen) {
-        Open-ObsidianVaultEntry -Vault $vault -ColdStart
+        $null = Open-ObsidianVaultEntry -Vault $vault -ColdStart
     }
 
     return $vault
+}
+
+function Open-ObsidianMarkdownFile {
+    param(
+        [Parameter(Mandatory)]
+        [string]$FilePath,
+
+        [switch]$Yes,
+
+        [switch]$ForceRestart
+    )
+
+    $notePath = Resolve-ObsidianNotePath $FilePath
+    $vault = Get-ObsidianVaultForPath -Path $notePath
+    $createdNewVault = $false
+
+    if (-not $vault) {
+        $vaultRoot = Get-ProposedVaultRootForNotePath -NotePath $notePath
+        $relativePreview = Get-ObsidianRelativePath -Root $vaultRoot -Path $notePath
+
+        if (-not $Yes) {
+            $answer = Read-Host "No registered Obsidian vault contains '$notePath'. Create a vault at '$vaultRoot' and open '$relativePreview'? [y/N]"
+
+            if ($answer -notin @("y", "Y", "yes", "YES")) {
+                Write-Host "Cancelled."
+                return
+            }
+        }
+
+        $vault = New-ObsidianVault -Path $vaultRoot -NoOpen
+        $createdNewVault = $true
+    }
+
+    New-ObsidianMarkdownFileIfMissing -FilePath $notePath
+
+    if ($createdNewVault) {
+        $started = Open-ObsidianVaultEntry -Vault $vault -ColdStart -ForceRestart:$ForceRestart
+
+        if (-not $started) {
+            Write-Host "Markdown file was created:"
+            Write-Host $notePath
+            return
+        }
+
+        Start-Sleep -Seconds 4
+    }
+
+    Open-ObsidianFileInVault -Vault $vault -FilePath $notePath
 }
 
 function Open-ObsidianVault {
@@ -1306,10 +1512,39 @@ function Open-ObsidianVault {
         [Parameter(Position = 0)]
         [string]$VaultOrPath,
 
+        [switch]$Note,
+
         [switch]$Yes,
 
         [switch]$ForceRestart
     )
+
+    if ($Note) {
+        if ([string]::IsNullOrWhiteSpace($VaultOrPath)) {
+            throw "The -Note switch requires a note path."
+        }
+
+        Open-ObsidianMarkdownFile -FilePath $VaultOrPath -Yes:$Yes -ForceRestart:$ForceRestart
+        return
+    }
+
+    $inputKind = Get-ObsidianInputKind -InputPath $VaultOrPath
+
+    if ($inputKind -eq "Note") {
+        Open-ObsidianMarkdownFile -FilePath $VaultOrPath -Yes:$Yes -ForceRestart:$ForceRestart
+        return
+    }
+
+    if ($inputKind -eq "AmbiguousPath") {
+        $answer = Read-Host "Path '$VaultOrPath' does not exist and has no .md extension. Open/create it as a note? [y/N]"
+
+        if ($answer -in @("y", "Y", "yes", "YES")) {
+            Open-ObsidianMarkdownFile -FilePath $VaultOrPath -Yes:$Yes -ForceRestart:$ForceRestart
+            return
+        }
+
+        Write-Host "Treating '$VaultOrPath' as a vault/folder path."
+    }
 
     $vaults = @(Get-ObsidianVaults)
     $match = $null
@@ -1320,7 +1555,6 @@ function Open-ObsidianVault {
         $targetPath = Normalize-ObsidianPath (Resolve-ObsidianFullPath ".")
     }
     else {
-        # Exact vault name/id first
         $match = $vaults |
             Where-Object {
                 $_.Name -eq $VaultOrPath -or
@@ -1333,8 +1567,6 @@ function Open-ObsidianVault {
             $currentName = Split-Path $currentPath -Leaf
 
             if ($VaultOrPath -eq $currentName) {
-                # If inside C:\...\test2 and typing `ov test2`,
-                # treat it as current folder, not .\test2\test2.
                 $targetPath = $currentPath
             }
             elseif (Test-Path -LiteralPath $VaultOrPath) {
@@ -1344,16 +1576,13 @@ function Open-ObsidianVault {
                     $targetPath = Normalize-ObsidianPath $item.FullName
                 }
                 else {
-                    # If user passes a file, use its containing folder.
                     $targetPath = Normalize-ObsidianPath $item.Directory.FullName
                 }
             }
             else {
-                # Unknown value becomes a new folder path relative to cwd.
                 $targetPath = Normalize-ObsidianPath (Resolve-ObsidianFullPath $VaultOrPath)
             }
 
-            # Exact resolved path match
             $match = $vaults |
                 Where-Object {
                     [string]::Equals(
@@ -1366,8 +1595,6 @@ function Open-ObsidianVault {
         }
     }
 
-    # If target path is inside an existing registered vault, open that vault.
-    # Uses path-boundary check, so "test2" will not match sibling vault "test".
     if (-not $match -and $targetPath) {
         $match = $vaults |
             Where-Object {
@@ -1377,7 +1604,6 @@ function Open-ObsidianVault {
             Select-Object -First 1
     }
 
-    # If no vault exists, ask before creating one.
     if (-not $match) {
         if (-not $Yes) {
             $answer = Read-Host "No registered Obsidian vault found at '$targetPath'. Create one? [y/N]"
@@ -1393,14 +1619,144 @@ function Open-ObsidianVault {
     }
 
     if ($createdNewVault) {
-        Open-ObsidianVaultEntry -Vault $match -ColdStart -ForceRestart:$ForceRestart
+        $null = Open-ObsidianVaultEntry -Vault $match -ColdStart -ForceRestart:$ForceRestart
     }
     else {
-        Open-ObsidianVaultEntry -Vault $match
+        $null = Open-ObsidianVaultEntry -Vault $match
     }
 }
 
 Set-Alias ov Open-ObsidianVault
+
+# -----------------------------
+# Tab completion
+# -----------------------------
+
+function New-ObsidianCompletionResult {
+    param(
+        [Parameter(Mandatory)]
+        [string]$CompletionText,
+
+        [Parameter(Mandatory)]
+        [string]$ListItemText,
+
+        [Parameter(Mandatory)]
+        [string]$ToolTip
+    )
+
+    $safeCompletionText = $CompletionText
+
+    if ($safeCompletionText -match "[\s']") {
+        $safeCompletionText = "'" + $safeCompletionText.Replace("'", "''") + "'"
+    }
+
+    [System.Management.Automation.CompletionResult]::new(
+        $safeCompletionText,
+        $ListItemText,
+        "ParameterValue",
+        $ToolTip
+    )
+}
+
+function Get-ObsidianPathCompletions {
+    param(
+        [string]$WordToComplete
+    )
+
+    if ([string]::IsNullOrWhiteSpace($WordToComplete)) {
+        return @()
+    }
+
+    $raw = $WordToComplete.Trim("'`"")
+
+    $looksPathLike =
+        $raw.Contains("\") -or
+        $raw.Contains("/") -or
+        $raw.StartsWith(".") -or
+        $raw -like "*.md"
+
+    if (-not $looksPathLike) {
+        return @()
+    }
+
+    $parentInput = Split-Path -Path $raw -Parent
+    $leafPrefix = Split-Path -Path $raw -Leaf
+
+    if ([string]::IsNullOrWhiteSpace($parentInput)) {
+        $parentInput = "."
+    }
+
+    try {
+        $parentFull = Resolve-ObsidianFullPath $parentInput
+    }
+    catch {
+        return @()
+    }
+
+    if (-not (Test-Path -LiteralPath $parentFull -PathType Container)) {
+        return @()
+    }
+
+    Get-ChildItem -LiteralPath $parentFull -Force |
+        Where-Object {
+            $_.PSIsContainer -or $_.Extension -eq ".md"
+        } |
+        Where-Object {
+            [string]::IsNullOrWhiteSpace($leafPrefix) -or
+            $_.Name -like "$leafPrefix*"
+        } |
+        ForEach-Object {
+            $completionPath = if ($parentInput -eq ".") {
+                $_.Name
+            }
+            else {
+                Join-Path $parentInput $_.Name
+            }
+
+            if ($_.PSIsContainer) {
+                $completionPath = $completionPath + [System.IO.Path]::DirectorySeparatorChar
+            }
+
+            New-ObsidianCompletionResult `
+                -CompletionText $completionPath `
+                -ListItemText $_.Name `
+                -ToolTip $_.FullName
+        }
+}
+
+$obsidianVaultCompleter = {
+    param($commandName, $parameterName, $wordToComplete)
+
+    $rawWord = $wordToComplete.Trim("'`"")
+
+    $vaultResults = Get-ObsidianVaults |
+        Where-Object {
+            [string]::IsNullOrWhiteSpace($rawWord) -or
+            $_.Name -like "$rawWord*" -or
+            $_.Path -like "$rawWord*"
+        } |
+        ForEach-Object {
+            New-ObsidianCompletionResult `
+                -CompletionText $_.Name `
+                -ListItemText $_.Name `
+                -ToolTip $_.Path
+        }
+
+    $pathResults = Get-ObsidianPathCompletions -WordToComplete $wordToComplete
+
+    @($vaultResults) + @($pathResults)
+}
+
+Register-ArgumentCompleter `
+    -CommandName Open-ObsidianVault `
+    -ParameterName VaultOrPath `
+    -ScriptBlock $obsidianVaultCompleter
+
+Register-ArgumentCompleter `
+    -CommandName ov `
+    -ParameterName VaultOrPath `
+    -ScriptBlock $obsidianVaultCompleter
+
 
 # -----------------------------
 # Tab completion
