@@ -1367,12 +1367,12 @@ function Open-ObsidianVaultEntry {
             Start-Sleep -Seconds 2
         }
 
-        $null = Start-Process -FilePath $obsidianExe -ArgumentList "`"$($Vault.Path)`""
+        $null = Start-Process -FilePath $obsidianExe -ArgumentList "`"$($Vault.Path)`"" &
         return $true
     }
 
     $uri = "obsidian://open?vault=$([uri]::EscapeDataString($Vault.Name))"
-    $null = Start-Process $uri
+    $null = Start-Process $uri  &
 
     return $true
 }
@@ -1396,7 +1396,7 @@ function Open-ObsidianFileInVault {
     $fileEncoded = [uri]::EscapeDataString($relativePath)
 
     $uri = "obsidian://open?vault=$vaultEncoded&file=$fileEncoded"
-    $null = Start-Process $uri
+    $null = Start-Process $uri &
 }
 
 function Open-ObsidianFileInVaultAfterColdStart {
