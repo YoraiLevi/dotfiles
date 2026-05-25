@@ -22,6 +22,21 @@ Maps (MOCs) are workbenches, not indexes — write what you think about a
 topic and let links emerge. Don't auto-sprinkle links just because the
 target exists. Let folder and tag structure evolve from use, not from a
 prescribed layout.
+### Colored text (fast-text-color plugin)
+
+When writing documentation, mark text that falls into one of five semantic
+categories using the fast-text-color plugin. Always include the category
+label as a text prefix so meaning survives when color is stripped
+(GitHub renders, CVD readers, plugin uninstalled).
+
+| Category | Syntax | Use for |
+|---|---|---|
+| blocker | `~={blocker} BLOCKER: ... =~` | hard stop, must-fix |
+| caution | `~={caution} CAUTION: ... =~` | warning, risk, decision needed |
+| done | `~={done} DONE: ... =~` | confirmed fact, verified outcome |
+| info | `~={info} NOTE: ... =~` | definition, neutral annotation |
+| action | `~={action} TODO: ... =~` | next step, owner-assigned action |
+
 
 ## Subagent Workflow
 
