@@ -1,5 +1,5 @@
 {
-  "numStartups": 219,
+  "numStartups": 220,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -1055,7 +1055,7 @@
       "projectOnboardingSeenCount": 0,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "hasCompletedProjectOnboarding": true,
       "lastHintSessionId": "0d225c5a-8d15-4e35-b0d6-623aea0581a1",
       "lastSessionFirstPrompt": "You are joining a project that follows the agent-project-template philosophy: \"You don't have memory. These files do.\"  PROJECT: two Ansible repositories that manage a pair of NVIDIA DGX Sparks (produ",
