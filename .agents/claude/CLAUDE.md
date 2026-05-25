@@ -2,7 +2,7 @@
 
 ## Obsidian vaults
 
-Every project is also an Obsidian vault. When writing .md files, keep the
+Every project is also an Obsidian vault. When writing .md files in the fau, keep the
 reader put — they shouldn't chase references to understand the current note.
 
 Choose constructs by intent:
