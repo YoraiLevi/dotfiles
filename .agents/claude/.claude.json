@@ -1,5 +1,5 @@
 {
-  "numStartups": 213,
+  "numStartups": 216,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -15,7 +15,7 @@
     "prompt-queue": 14,
     "enter-to-steer-in-relatime": 206,
     "default-permission-mode-config": 52,
-    "color-when-multi-clauding": 204,
+    "color-when-multi-clauding": 214,
     "todo-list": 209,
     "install-github-app": 207,
     "install-slack-app": 211,
@@ -1055,12 +1055,12 @@
       "projectOnboardingSeenCount": 0,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "hasCompletedProjectOnboarding": true,
       "lastHintSessionId": "0d225c5a-8d15-4e35-b0d6-623aea0581a1",
       "lastSessionFirstPrompt": "You are joining a project that follows the agent-project-template philosophy: \"You don't have memory. These files do.\"  PROJECT: two Ansible repositories that manage a pair of NVIDIA DGX Sparks (produ",
       "lastSessionModified": 1778229716898,
-      "lastVersionBase": "2.1.142",
+      "lastVersionBase": "2.1.150",
       "lastCost": 117.34536779999996,
       "lastAPIDuration": 13183588,
       "lastAPIDurationWithoutRetries": 13181044,
@@ -1327,52 +1327,27 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": true,
-      "lastVersionBase": "2.1.142",
+      "lastVersionBase": "2.1.150",
       "hasCompletedProjectOnboarding": true,
       "lastHintSessionId": "680b06a2-f7ab-4f95-a5ae-2fc240407c11",
       "lastSessionFirstPrompt": "[POST-COMPACTION ORIENTATION — START HERE]  You are joining a project that has been worked on over many sessions. The conversation has been summarized; authoritative state lives in three repositories ",
       "lastSessionModified": 1778853924497,
-      "lastCost": 270.4994244000001,
-      "lastAPIDuration": 28947378,
-      "lastAPIDurationWithoutRetries": 28934501,
-      "lastToolDuration": 13782817,
-      "lastDuration": 471692359,
-      "lastLinesAdded": 27146,
-      "lastLinesRemoved": 1492,
-      "lastTotalInputTokens": 79344,
-      "lastTotalOutputTokens": 1881345,
-      "lastTotalCacheCreationInputTokens": 23338710,
-      "lastTotalCacheReadInputTokens": 200307839,
+      "lastCost": 0,
+      "lastAPIDuration": 0,
+      "lastAPIDurationWithoutRetries": 0,
+      "lastToolDuration": 0,
+      "lastDuration": 7439,
+      "lastLinesAdded": 0,
+      "lastLinesRemoved": 0,
+      "lastTotalInputTokens": 0,
+      "lastTotalOutputTokens": 0,
+      "lastTotalCacheCreationInputTokens": 0,
+      "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 0.81,
-      "lastFpsLow1Pct": 7.78,
-      "lastModelUsage": {
-        "claude-haiku-4-5-20251001": {
-          "inputTokens": 8011,
-          "outputTokens": 35967,
-          "cacheReadInputTokens": 3669689,
-          "cacheCreationInputTokens": 295759,
-          "webSearchRequests": 0,
-          "costUSD": 0.92451365
-        },
-        "claude-opus-4-7[1m]": {
-          "inputTokens": 36855,
-          "outputTokens": 1307907,
-          "cacheReadInputTokens": 169318915,
-          "cacheCreationInputTokens": 19704467,
-          "webSearchRequests": 0,
-          "costUSD": 240.6943262499998
-        },
-        "claude-sonnet-4-6": {
-          "inputTokens": 34478,
-          "outputTokens": 537471,
-          "cacheReadInputTokens": 27319235,
-          "cacheCreationInputTokens": 3338484,
-          "webSearchRequests": 0,
-          "costUSD": 28.880584499999962
-        }
-      },
-      "lastSessionId": "680b06a2-f7ab-4f95-a5ae-2fc240407c11"
+      "lastFpsAverage": 2.36,
+      "lastFpsLow1Pct": 34.5,
+      "lastModelUsage": {},
+      "lastSessionId": "2b61bb05-3a63-47b0-b3cd-335a015ede1d"
     },
     "C:/Users/devic/source/plan-view": {
       "allowedTools": [],
@@ -1704,9 +1679,23 @@
         "frame_duration_ms_p95": 50.03709999999987,
         "frame_duration_ms_p99": 159.3899639999999
       }
+    },
+    "C:/Users/devic/source/DgxSparkLabs-documents": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "lastGracefulShutdown": false,
+      "lastVersionBase": "2.1.150",
+      "hasUnseenTeamArtifacts": false
     }
   },
-  "lastReleaseNotesSeen": "2.1.143",
+  "lastReleaseNotesSeen": "2.1.150",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
@@ -1807,6 +1796,9 @@
     ],
     "anthropics/claude-code": [
       "C:\\Users\\devic\\source\\claude-code"
+    ],
+    "dgxsparklabs/documents": [
+      "C:\\Users\\devic\\source\\DgxSparkLabs-documents"
     ]
   },
   "passesEligibilityCache": {
