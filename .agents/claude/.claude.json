@@ -1456,7 +1456,7 @@
       "enabledMcpjsonServers": [],
       "disabledMcpjsonServers": [],
       "hasTrustDialogAccepted": true,
-      "projectOnboardingSeenCount": 43,
+      "projectOnboardingSeenCount": 44,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "lastGracefulShutdown": true,
@@ -1722,7 +1722,7 @@
       }
     }
   },
-  "lastReleaseNotesSeen": "2.1.150",
+  "lastReleaseNotesSeen": "2.1.143",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
