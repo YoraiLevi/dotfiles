@@ -17,7 +17,7 @@
     "default-permission-mode-config": 52,
     "color-when-multi-clauding": 214,
     "todo-list": 209,
-    "install-github-app": 207,
+    "install-github-app": 220,
     "install-slack-app": 211,
     "drag-and-drop-images": 207,
     "double-esc-code-restore": 209,
@@ -42,7 +42,7 @@
     "colorterm-truecolor": 200,
     "desktop-app": 200,
     "guest-passes": 216,
-    "agent-flag": 205,
+    "agent-flag": 220,
     "frontend-design-plugin": 213,
     "team-onboarding-share": 213
   },
