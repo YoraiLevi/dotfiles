@@ -1,0 +1,115 @@
+{
+  "themes": [
+    {
+      "name": "claude-semantic",
+      "colors": [
+        {
+          "color": "#D55E00",
+          "id": "blocker",
+          "italic": false,
+          "bold": true,
+          "cap_mode": {
+            "states": ["normal", "all_caps", "small_caps"],
+            "state": "normal",
+            "index": 0
+          },
+          "line_mode": {
+            "states": ["none", "underline", "overline", "line-through"],
+            "state": "none",
+            "index": 0
+          },
+          "keybind": "b",
+          "useCssColorVariable": false,
+          "colorVariable": "--color-base-00",
+          "className": "ftc-color-claude-semantic-blocker"
+        },
+        {
+          "color": "#E69F00",
+          "id": "caution",
+          "italic": false,
+          "bold": true,
+          "cap_mode": {
+            "states": ["normal", "all_caps", "small_caps"],
+            "state": "normal",
+            "index": 0
+          },
+          "line_mode": {
+            "states": ["none", "underline", "overline", "line-through"],
+            "state": "none",
+            "index": 0
+          },
+          "keybind": "c",
+          "useCssColorVariable": false,
+          "colorVariable": "--color-base-00",
+          "className": "ftc-color-claude-semantic-caution"
+        },
+        {
+          "color": "#648FFF",
+          "id": "done",
+          "italic": false,
+          "bold": true,
+          "cap_mode": {
+            "states": ["normal", "all_caps", "small_caps"],
+            "state": "normal",
+            "index": 0
+          },
+          "line_mode": {
+            "states": ["none", "underline", "overline", "line-through"],
+            "state": "none",
+            "index": 0
+          },
+          "keybind": "d",
+          "useCssColorVariable": false,
+          "colorVariable": "--color-base-00",
+          "className": "ftc-color-claude-semantic-done"
+        },
+        {
+          "color": "#56B4E9",
+          "id": "info",
+          "italic": false,
+          "bold": true,
+          "cap_mode": {
+            "states": ["normal", "all_caps", "small_caps"],
+            "state": "normal",
+            "index": 0
+          },
+          "line_mode": {
+            "states": ["none", "underline", "overline", "line-through"],
+            "state": "none",
+            "index": 0
+          },
+          "keybind": "i",
+          "useCssColorVariable": false,
+          "colorVariable": "--color-base-00",
+          "className": "ftc-color-claude-semantic-info"
+        },
+        {
+          "color": "#CC79A7",
+          "id": "action",
+          "italic": false,
+          "bold": true,
+          "cap_mode": {
+            "states": ["normal", "all_caps", "small_caps"],
+            "state": "normal",
+            "index": 0
+          },
+          "line_mode": {
+            "states": ["none", "underline", "overline", "line-through"],
+            "state": "none",
+            "index": 0
+          },
+          "keybind": "a",
+          "useCssColorVariable": false,
+          "colorVariable": "--color-base-00",
+          "className": "ftc-color-claude-semantic-action"
+        }
+      ]
+    }
+  ],
+  "themeIndex": 0,
+  "version": "3",
+  "interactiveDelimiters": true,
+  "useKeybindings": true,
+  "useNodeRebuilding": false,
+  "colorCodeSection": false
+}
