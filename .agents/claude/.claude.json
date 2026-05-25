@@ -41,13 +41,14 @@
     "ide-upsell-external-terminal": 220,
     "colorterm-truecolor": 200,
     "desktop-app": 200,
-    "guest-passes": 220,
+    "guest-passes": 223,
     "agent-flag": 220,
     "frontend-design-plugin": 220,
     "team-onboarding-share": 220
   },
   "promptQueueUseCount": 225,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_prompt_cache_1h_config": {
       "allowlist": [
