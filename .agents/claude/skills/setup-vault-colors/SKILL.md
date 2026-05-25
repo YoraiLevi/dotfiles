@@ -62,9 +62,75 @@ Tell the user three things:
 | info | `#56B4E9` | Okabe-Ito sky blue | Definition, neutral annotation |
 | action | `#CC79A7` | Okabe-Ito reddish purple | TODO, next step, owner-assigned action |
 
-Note: "done" is blue, not green, deliberately. Red-green is the most common color-vision-deficient confusion pair (~8% of men); pairing the vermillion blocker against a green done would silently break for those readers. Sourcing: Wong 2011 (Nature Methods), Okabe & Ito 2008 (jfly.uni-koeln.de), IBM Carbon design language.
+## Design rationale
 
-All five colors are set to `bold: true` in the config to improve light-theme contrast — the Okabe-Ito hex values were designed for chart marks on white paper, not for text strokes, and bold roughly doubles the perceived contrast without shifting the hue.
+This palette was chosen against published research, not intuition. The decisions below explain *why each color was picked* and, just as importantly, *why other obvious choices were rejected*. If the palette is ever revised, revisit this section first — most "obvious improvements" are alternatives that were already considered and ruled out for documented reasons.
+
+### Why these hex values, not standard CSS reds and greens
+
+Sourced from the Okabe-Ito palette (8 colorblind-safe categorical colors), with one substitution from IBM Carbon for the "done" category. Primary sources:
+
+- Wong, B. (2011). "Points of View: Color blindness." *Nature Methods* 8:441. https://www.nature.com/articles/nmeth.1618 — the canonical publication of the palette in a peer-reviewed venue.
+- Okabe, M. & Ito, K. (2008). "Color Universal Design (CUD)." https://jfly.uni-koeln.de/color/ — the originating source, with explicit CVD simulation and per-color rationale.
+- IBM Carbon Design Language data-vis palettes (Shixie, IBM Carbon team, Medium): https://medium.com/carbondesign/color-palettes-and-accessibility-features-for-data-visualization-7869f4874fca — source for the ultramarine `#648FFF` used for "done".
+
+Standard CSS color names (`red`, `green`, `blue`, `orange`, `purple`) and pure-channel hex values (`#FF0000`, `#00FF00`, `#FFFF00`) were rejected because they have not been tested under CVD simulation, have inconsistent perceived luminance across hues, and were designed for 1990s color displays rather than accessibility-aware semantic marking.
+
+### Why blue for "done", not green — the most important decision in the palette
+
+Conventional UI (Material Design 3, Apple HIG, GitHub success states) maps green to success/confirmed. This palette deviates from convention deliberately:
+
+- **Prevalence of red-green deficiency:** approximately 8% of men and 0.5% of women have some form of protanopia or deuteranopia (combined including milder anomalous variants). Source: https://colorblind.io/learn/statistics
+- **The confusion pair:** red vs. green is *the single most commonly confused pair* under both protanopia and deuteranopia. Source: Okabe & Ito (2008), Tableau data viz team.
+- **The specific risk in this palette:** "blocker" is vermillion-red and "done" is the semantically *opposite* category. If "done" were green, ~1 in 12 male readers would silently misread the most semantically loaded color pair in the palette, without ever knowing.
+- **Industry precedent for the same swap:** Tableau's design guidance and GitHub's CI status indicators both replace green with blue in red-green contexts. Source: https://www.tableau.com/blog/examining-data-viz-rules-dont-use-red-green-together
+- **Robustness of blue:** blue-family colors are the most reliably preserved across all CVD types (protanopia, deuteranopia, *and* tritanopia).
+
+The cultural friction (readers expecting green) is one-time — a reader adapts after seeing the convention once. The accessibility cost of green-paired-with-red is permanent and silent. Asymmetric costs, asymmetric decision.
+
+### Why these specific five categories, not more or fewer
+
+Five is the upper bound for reliable application by an AI writer:
+
+- Each additional category increases miscategorization risk. Fewer categories with broader semantic coverage produce more consistent vault state than many narrow ones.
+- The Okabe-Ito palette provides eight colors total, but using all eight reduces inter-color distinguishability under CVD simulation and adds memorization burden for the writer.
+- Yellow (`#F0E442` in Okabe-Ito) was explicitly *excluded* — it has approximately 1.3:1 contrast against a white background, far below the WCAG AA 4.5:1 threshold for small text. Source: easystats/see R package documentation (https://easystats.github.io/see/reference/scale_color_okabeito.html), which provides `#F5C710` as the light-background-safe variant; we still don't use it because adding a sixth category exceeds the AI-reliability bound above.
+- Black, gray, and white are reserved for plain prose. Coloring text "black" against an already-black-text default conveys nothing.
+
+### Why `bold: true` on every color
+
+The Okabe-Ito hex values were designed for chart *areas* on white paper — filled regions where contrast comes from coverage, not stroke weight. Used as inline text on a light theme, several colors fall below WCAG AA 4.5:1 contrast for small text: vermillion, sky blue, and reddish purple all fail at the default text weight against white. Bold roughly doubles perceived contrast without shifting hue, restoring readability without redesigning the palette. Sources: W3C WCAG 2.0 SC 1.4.3 Contrast (Minimum) https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast and the Okabe-Ito documentation noting the chart-area design context.
+
+If a future user prefers non-bold and accepts the light-theme contrast tradeoff, flip all five `bold` fields to `false` in `data.json` — this is a personal-comfort knob, not a research-mandated requirement.
+
+### Why the BLOCKER: / CAUTION: / DONE: / NOTE: / TODO: text prefix is required
+
+Color alone is not allowed to carry semantic meaning under any modern accessibility standard. The requirement comes from:
+
+- W3C WCAG 2.0 Success Criterion 1.4.1 "Use of Color" (Level A, the most basic tier): https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-without-color.html — "color is not used as the only visual means of conveying information."
+
+Beyond the formal accessibility requirement, the prefix survives every degraded-rendering case the plugin can encounter:
+
+- Color stripping when files render on GitHub/GitLab (the platform's Markdown engine drops the plugin's CSS classes entirely).
+- Plugin uninstallation or version migration breaks.
+- Reading the file as plain text via `cat`, `bat`, or any non-Obsidian viewer.
+- Color vision deficiency in the reader.
+
+The prefix costs four to seven characters per use and pays off in every one of those cases.
+
+### Palettes considered and explicitly rejected
+
+- **ColorBrewer qualitative palettes** (Cynthia Brewer, Penn State, https://colorbrewer2.org): well-researched for cartography. Some palettes are flagged "colorblind safe" but support a maximum of 5–6 categories in that mode, with provenance optimized for filled map regions rather than text. Okabe-Ito has cleaner provenance for non-cartographic use and equivalent CVD safety.
+- **Viridis / Cividis** (Berkeley Visualization Lab): designed for *sequential* (ordered) data — gradients. Categorical use is an explicit anti-pattern in the documentation. Wrong tool entirely.
+- **Material Design 3 semantic colors** (Google): well-designed for UI, but uses the conventional red-error / green-success pairing this palette specifically rejects for the CVD reason above. We borrowed the *naming convention* (error / warning / success / info) but not the colors.
+- **Apple HIG semantic colors:** same red-green confusion as Material; rejected for the same reason.
+- **Bright "primary" CSS values** (`#FF0000`, `#00FF00`, `#0000FF`): no CVD testing, inconsistent perceived luminance, designed for 1990s CRT displays. Rejected.
+
+### Formatting choices considered and rejected
+
+- **Italic-only emphasis:** italic does not survive screen readers consistently and is harder to read at small sizes (Source: NN/g, "Typography for the Web"). Rejected as the sole signal.
+- **All-caps for category labels:** discouraged by WCAG 1.4.8 (Visual Presentation) when applied to blocks of text. Acceptable for the short prefix word ("BLOCKER") but not for the body of the colored span — which is why the plugin's `cap_mode` is left at `normal` in `data.json` and only the prefix is uppercased manually in the convention.
+- **Underline:** historically reserved for hyperlinks in web contexts (Source: Nielsen Norman Group, "Guidelines for Visualizing Links"). Using underline as a non-link signal causes false-affordance confusion. Rejected.
 
 ## Notes for the executing agent
 
