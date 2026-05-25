@@ -1,5 +1,5 @@
 {
-  "numStartups": 222,
+  "numStartups": 223,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -8,7 +8,7 @@
   "tipsHistory": {
     "new-user-warmup": 1,
     "plan-mode-for-complex-tasks": 1,
-    "terminal-setup": 112,
+    "terminal-setup": 223,
     "memory-command": 222,
     "theme-command": 204,
     "status-line": 92,
@@ -36,7 +36,7 @@
     "feedback-command": 222,
     "push-notif": 79,
     "shift-enter-setup": 221,
-    "git-worktrees": 213,
+    "git-worktrees": 223,
     "powershell-tool-env": 52,
     "ide-upsell-external-terminal": 220,
     "colorterm-truecolor": 200,
@@ -48,7 +48,6 @@
   },
   "promptQueueUseCount": 223,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_prompt_cache_1h_config": {
       "allowlist": [
@@ -1062,22 +1061,39 @@
       "lastSessionFirstPrompt": "You are joining a project that follows the agent-project-template philosophy: \"You don't have memory. These files do.\"  PROJECT: two Ansible repositories that manage a pair of NVIDIA DGX Sparks (produ",
       "lastSessionModified": 1778229716898,
       "lastVersionBase": "2.1.150",
-      "lastCost": 0,
-      "lastAPIDuration": 0,
-      "lastAPIDurationWithoutRetries": 0,
-      "lastToolDuration": 0,
-      "lastDuration": 63844,
-      "lastLinesAdded": 0,
-      "lastLinesRemoved": 0,
-      "lastTotalInputTokens": 0,
-      "lastTotalOutputTokens": 0,
-      "lastTotalCacheCreationInputTokens": 0,
-      "lastTotalCacheReadInputTokens": 0,
+      "lastCost": 28.5774687,
+      "lastAPIDuration": 3039966,
+      "lastAPIDurationWithoutRetries": 3039563,
+      "lastToolDuration": 463438,
+      "lastDuration": 8878408,
+      "lastLinesAdded": 1962,
+      "lastLinesRemoved": 391,
+      "lastTotalInputTokens": 5458,
+      "lastTotalOutputTokens": 217696,
+      "lastTotalCacheCreationInputTokens": 1708434,
+      "lastTotalCacheReadInputTokens": 28906190,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 0.25,
-      "lastFpsLow1Pct": 61.53,
-      "lastModelUsage": {},
-      "lastSessionId": "0f8ff414-f0c6-4e1b-8b5c-dfc24abaa4a5",
+      "lastFpsAverage": 9.78,
+      "lastFpsLow1Pct": 74.33,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 3623,
+          "outputTokens": 14938,
+          "cacheReadInputTokens": 1091442,
+          "cacheCreationInputTokens": 254640,
+          "webSearchRequests": 0,
+          "costUSD": 0.5057572
+        },
+        "claude-opus-4-7": {
+          "inputTokens": 1835,
+          "outputTokens": 202758,
+          "cacheReadInputTokens": 27814748,
+          "cacheCreationInputTokens": 1453794,
+          "webSearchRequests": 0,
+          "costUSD": 28.071711500000003
+        }
+      },
+      "lastSessionId": "680b06a2-f7ab-4f95-a5ae-2fc240407c11",
       "lastSessionMetrics": {
         "frame_duration_ms_count": 8,
         "frame_duration_ms_min": 0.8497999999999593,
@@ -1086,7 +1102,16 @@
         "frame_duration_ms_p50": 2.0713499999999385,
         "frame_duration_ms_p95": 14.315145000000218,
         "frame_duration_ms_p99": 16.755989000000355
-      }
+      },
+      "hasUnseenTeamArtifacts": false,
+      "loggedAuthoredArtifactPaths": [
+        ".claude/skills/handoff/SKILL.md",
+        ".claude/skills/pitfall/SKILL.md",
+        ".claude/skills/rfe/SKILL.md",
+        ".claude/skills/runbook/SKILL.md",
+        ".claude/skills/start/SKILL.md",
+        ".claude/skills/wind-down/SKILL.md"
+      ]
     },
     "C:/Users/devic/source/move-and-link": {
       "allowedTools": [],
@@ -1830,6 +1855,9 @@
     ],
     "dgxsparklabs/documents": [
       "C:\\Users\\devic\\source\\DgxSparkLabs-documents"
+    ],
+    "dgxsparklabs/dgx-control-plane": [
+      "C:\\Users\\devic\\source\\dgx-control-plane"
     ]
   },
   "passesEligibilityCache": {
