@@ -9,7 +9,7 @@
     "new-user-warmup": 1,
     "plan-mode-for-complex-tasks": 1,
     "terminal-setup": 112,
-    "memory-command": 207,
+    "memory-command": 222,
     "theme-command": 204,
     "status-line": 92,
     "prompt-queue": 14,
@@ -28,7 +28,7 @@
     "permissions": 212,
     "rename-conversation": 210,
     "custom-commands": 213,
-    "desktop-shortcut": 207,
+    "desktop-shortcut": 222,
     "web-app": 213,
     "remote-control": 14,
     "auto-copy-config-hint": 102,
@@ -1805,6 +1805,10 @@
     "simplify": {
       "usageCount": 1,
       "lastUsedAt": 1779556044759
+    },
+    "setup-vault-colors": {
+      "usageCount": 1,
+      "lastUsedAt": 1779747109409
     }
   },
   "githubRepoPaths": {
