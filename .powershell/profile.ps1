@@ -1258,6 +1258,7 @@ function Invoke-Claude {
         Set-Location $tmpDir
     }
     $ENV:CLAUDE_CODE_BLOCKING_LIMIT_OVERRIDE = 10 * 1024 * 1024
+    $ENV:CLAUDE_CODE_STOP_HOOK_BLOCK_CAP = 100
     [Console]::Write("`e[?1003l`e[?1002l`e[?1000l`e[?1006l")
     & claude.exe --enable-auto-mode --allow-dangerously-skip-permissions --strict-mcp-config @Args
     Set-Location $currentPath
