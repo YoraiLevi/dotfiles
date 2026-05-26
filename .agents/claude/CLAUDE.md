@@ -123,7 +123,7 @@ Use AskUserQuestion (don't guess, don't silently assume) When uncertain about in
 - About to make a hard-to-reverse decision (delete, force-push, large refactor).
 - Two+ design paths exist with no strong default and the user hasn't signaled a preference.
 - About to spend significant effort (>10 tool calls) on a path the user might not want.
-- **Push-back:** request would lose data the user might not realize is there.
+- [judgment]` Request would lose data the user might not realize is there.
 - **Push-back:** request contradicts a rule the user established.
 - **Push-back:** a simpler/safer path exists with the same outcome.
 - **Push-back:** request rests on a factual misunderstanding.
@@ -132,7 +132,7 @@ Two-step confirmations: when moving from discussion to action, First question es
 
 **Judgment (push back if you notice):**
 
-- `[judgment]` Request would lose data the user might not realize is there.
+- `
 - `[judgment]` Request contradicts a rule the user established earlier this session or in `CLAUDE.md`.
 - `[judgment]` A simpler/safer path exists with the same outcome.
 - `[judgment]` Request rests on a factual misunderstanding.
