@@ -1,4 +1,10 @@
-# Claude Code — User-level memory
+> **You don't have memory. These files do.** Everything you learn this session
+> is lost when it ends. Write to `HANDOFF.md` (current state) and `PITFALLS.md`
+> (lessons learned). History lives in `git log`. The question isn't "did I
+> complete the task?" — it's "would the next agent thank me for how I left
+> this project?"
+
+Read first: `HANDOFF.md`, then `PITFALLS.md`, then this file. Or just run `/start`.
 
 ## Obsidian vaults
 
