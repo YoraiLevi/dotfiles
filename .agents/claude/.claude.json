@@ -48,6 +48,7 @@
   },
   "promptQueueUseCount": 229,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_ultraplan_prompt_identifier": "visual_plan",
     "tengu_marble_whisper2": true,
