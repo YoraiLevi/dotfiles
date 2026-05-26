@@ -4,7 +4,15 @@
 > The question isn't "did I complete the task?" — it's "would the next agent thank me for how I left when they came for their shift?"
 
 ---
+# Subagent workflow
 
+Delegate when a subagent gives you something you can't easily get yourself: parallel work, isolated context, specialized tools, or fresh eyes.
+
+Don't delegate when the round-trip costs more than just doing it. A two-file edit is not a delegation candidate.
+
+Every delegation includes HOW, WHAT, and WHY. The subagent has no session context — brief it like a new hire.
+
+---
 # Git etiquette
 
 `git log` is the historical truth. Treat it as documentation for the next agent.
@@ -35,11 +43,11 @@
 
 The three-file memory model compensates for the no-memory gap. Each file has one job.
 
-| File          | Lifetime         | Purpose                                          | Updated                            | If missing, create with header                                                |
-| ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- | ----------------------------------------------------------------------------- |
-| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       | `# Session State` + one bullet on where you are now.                          |
-| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session | `# Handoff to Next Agent` + "Nothing in flight" if the session ended cleanly. |
-| `PITFALLS.md` | cross-session    | lessons learned, append-only                     | when surprised                     | `# Lessons Learned (append-only)`                                             |
+| File          | Lifetime         | Purpose                                         | Updated                            | If missing, create with header                                                |
+| ------------- | ---------------- | ----------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- |
+| `STATE.md`    | within-session   | live truth: current step, what's done, blockers | continuously                       | `# Session State` + one bullet on where you are now.                          |
+| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast         | periodically and by end of session | `# Handoff to Next Agent` + "Nothing in flight" if the session ended cleanly. |
+| `PITFALLS.md` | cross-session    | lessons learned, append-only                    | when surprised                     | `# Lessons Learned (append-only)`                                             |
 
 All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
 
