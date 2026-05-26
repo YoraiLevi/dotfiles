@@ -48,7 +48,7 @@ Append-only doesn't mean append-forever. Prune when:
 - An entry references a library/API/tool version that's been superseded and the new version doesn't have the same failure mode.
 - The same pitfall hasn't been hit in three+ sessions touching the relevant area, suggesting the underlying cause is gone.
 
-Don't delete pruned entries — move them to a `## Archived` section at the bottom of the file. Preserves the lesson for posterity while removing it from the active smoke-detector scan.
+Don't delete pruned entries — move them to a `PITFALLS-ARCHIVED.md` file. this preserves the lesson for posterity while removing it from the active smoke-detector scan.
 
 ---
 
