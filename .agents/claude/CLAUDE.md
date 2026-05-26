@@ -57,8 +57,6 @@ Every project is also an Obsidian vault. When writing .md files in the vault, ke
 - `docs/.discussion/` — pending arguments and open questions shaping the vault's direction.
 - `.archive/` — once-useful, no longer load-bearing. Move here instead of deleting.
 
-The leading dot on `.research/` and `.discussion/` sorts them to the top of Obsidian's file explorer without hiding them from search.
-
 ### Vault constructs (choose by intent)
 
 - `[[Note]]` — link for *further reading*. Each link should mean something; don't link every mention of a word.
