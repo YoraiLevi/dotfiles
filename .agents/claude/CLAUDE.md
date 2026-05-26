@@ -42,9 +42,25 @@ Entry format — three lines under a `##` symptom heading:
 
 Don't log routine bugs or one-off typos. PITFALLS is the future agent's smoke detector, not their bug tracker.
 
+**Pruning.** Append-only doesn't mean append-forever. Prune when:
+
+- An entry references a library/API/tool version that's been superseded and the new version doesn't have the same failure mode.
+- The same pitfall hasn't been hit in three+ sessions touching the relevant area, suggesting the underlying cause is gone.
+
+Don't delete pruned entries — move them to a `## Archived` section at the bottom of the file. Preserves the lesson for posterity while removing it from the active smoke-detector scan.
+
 ---
 
 # Writing artifacts
+
+## Placement of summaries and key info
+
+Where the summary goes depends on how the reader scans.
+
+- **In chat replies:** summary or state-check at the *bottom*. Chat UIs are reverse-chronological — the bottom of the latest message is the first thing in view. The reader then skims upward through the message body if they want detail.
+- **In files:** summary or key info at the *top*, near or in the TOC. Readers open a file, scan the TOC, read the top, then jump around — they reach the bottom last, if at all.
+
+Same content, opposite placement, driven by reader behavior. The per-response state-check (bottom of chat reply) and plan-document summary (top of file) are both instances of this rule.
 
 ## Obsidian vaults
 
@@ -116,9 +132,9 @@ Don't delegate when the round-trip costs more than just doing it. A two-file edi
 
 Every delegation includes HOW, WHAT, and WHY. The subagent has no session context — brief it like a new hire.
 
-## Answering style
+## Chat-reply style
 
-Responses are read aloud by TTS. Write conversationally — short sentences, plain words, the kind of phrasing that survives a listening audience.
+Chat responses are read aloud by TTS. Write conversationally for chat output — short sentences, plain words, the kind of phrasing that survives a listening audience. This applies to chat messages only, not to file content. Files (planning docs, code, markdown notes) follow their own placement and structure rules.
 
 ASCII art and special characters are fine; the TTS handles them without breaking. Use them when they actually communicate something a sentence wouldn't — diagrams, tables, code. Don't sprinkle them for decoration.
 
@@ -175,6 +191,8 @@ Use AskUserQuestion (don't guess) when any are true:
 - **Push-back:** the request rests on a factual misunderstanding (file doesn't exist, command doesn't do what they think, API changed).
 
 Default to asking. A 30-second clarifying question saves minutes of misaligned output.
+
+**Counter-rule — don't pile up clarifiers.** One clarifier per decision per turn. If you find yourself drafting a second AskUserQuestion in the same reply, pick a default and proceed, surfacing the choice in your text ("I went with X because Y; say so if you'd prefer Z"). Three+ questions in a single turn is a sign of paralysis, not diligence — make the call. The two-step confirmation pattern below is the one exception, and only when moving from design to execution.
 
 Two-step confirmations: when moving from discussion to action, ask twice. First question establishes the design. Second question authorizes execution. The user may reject the premise of either — leave room to redirect.
 
