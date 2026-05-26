@@ -78,11 +78,9 @@ Default to asking, not assuming. A 30-second clarifying question saves minutes o
 
 ## Project-progression discipline (STATE-check protocol)
 
-**Trigger:** This applies whenever you are working in a project directory that contains a top-level `INDEX.md` with a `## STATE` section.
-
 ### Per-response protocol
 
-1. **Before responding** to any message that constitutes a project-progression — executing a phase, completing a task, proposing a next step, asking for clarification on what to do next — **READ** the `INDEX.md` `STATE` section first.
+1. **Before responding** to any message that constitutes a project-progression — executing a phase, completing a task, proposing a next step, asking for clarification on what to do next
 
 2. **Open the response** with a one-line state-check of the form:
 
