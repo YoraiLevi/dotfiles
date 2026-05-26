@@ -54,7 +54,7 @@ All three live at repo root. They are operator-facing — not vault content, not
 
 Don't pre-populate templates or section scaffolding. A nearly-empty file with the right header is more honest than a structured file with no real content.
 
-Produce a state-check confirming where you're picking up. If any file is missing, bootstrap it per above and note "fresh start."
+**Bootstrap trigger.** Produce a state-check confirming where you're picking up. If any file is missing, create it with just the header and note "fresh start."
 ## PITFALLS write criteria
 
 Append when a future agent would be misled or burn time without the lesson. That's the test.
