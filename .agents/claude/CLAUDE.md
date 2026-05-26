@@ -86,7 +86,7 @@ Default to asking, not assuming. A 30-second clarifying question saves minutes o
 
    `[state: track=<X> | phase=<Y> | next=<Z> | prereqs=<met | missing-W>]`
 
-3. **After completing a meaningful step** that changes project state (task completion, phase advance, new gap surfaced, decision made), **UPDATE** the `STATE` section of `INDEX.md` to reflect the new state.
+3. **After completing a meaningful step** that changes project state (task completion, phase advance, new gap surfaced, decision made), **UPDATE** the `STATE`.md to reflect the new state.
 
 4. **If the user says `"state?"`**, immediately produce the current state-check line. This is the fast-failure-detection mechanism for cases where step 1 or step 2 was skipped.
 
