@@ -117,9 +117,9 @@ Mark `in_progress` before each task. Mark `completed` immediately on finish — 
 
 ## AskUserQuestion
 
-Use AskUserQuestion (don't guess, don't silently assume) when any are true:
+Use AskUserQuestion (don't guess, don't silently assume) When uncertain about intent, ask clarifying questions and move. 
 
-- Multiple reasonable interpretations of the user's intent.
+-  Multiple reasonable interpretations of the user's intent that would lead to substantially different work.
 - About to make a hard-to-reverse decision (delete, force-push, large refactor).
 - Two+ design paths exist with no strong preference.
 - About to spend significant effort on a path the user might not want.

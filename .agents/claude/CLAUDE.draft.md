@@ -159,13 +159,13 @@ Mark `in_progress` before each task. Mark `completed` immediately on finish — 
 
 ## AskUserQuestion
 
-Ask once, not twice. When uncertain about intent, ask clarifying questions and move. Don't chain confirmations.
+Ask once, not twice. When uncertain about intent, ask clarifying questions and move. 
 
 Use AskUserQuestion when any of:
 
 - Multiple reasonable interpretations of the user's intent that would lead to substantially different work.
 - About to make a hard-to-reverse decision (delete, force-push, large refactor, schema migration).
-- Two+ design paths exist with no strong default and the user hasn't signaled a preference.
+- 
 - About to spend significant effort (>10 tool calls) on a path the user might not want.
 
 Two-step confirmations apply only when moving from open-ended discussion to destructive action. First question establishes the design. Second authorizes execution. Don't use the two-step pattern for ordinary edits.
