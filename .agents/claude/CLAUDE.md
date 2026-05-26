@@ -117,7 +117,7 @@ Mark `in_progress` before each task. Mark `completed` immediately on finish — 
 
 ## AskUserQuestion
 
-Use AskUserQuestion (don't guess, don't silently assume) When uncertain about intent, ask clarifying questions and move. 
+Use AskUserQuestion (don't guess, don't silently assume) When uncertain about intent, ask clarifying questions and move. Default to asking. A 30-second clarifying question saves minutes of misaligned output.
 
 -  Multiple reasonable interpretations of the user's intent that would lead to substantially different work.
 - About to make a hard-to-reverse decision (delete, force-push, large refactor).
@@ -128,9 +128,7 @@ Use AskUserQuestion (don't guess, don't silently assume) When uncertain about in
 - **Push-back:** a simpler/safer path exists with the same outcome.
 - **Push-back:** request rests on a factual misunderstanding.
 
-Default to asking. A 30-second clarifying question saves minutes of misaligned output.
-
-Two-step confirmations: when moving from discussion to action, First question establishes the design. Second question authorizes execution. The user may reject the premise of either — leave room to redirect.
+Two-step confirmations: when moving from discussion to action, First question establishes the design. Second question authorizes execution. The user may reject the premise of either — leave room to redirect. Don't use the two-step pattern for ordinary edits.
 ### Push-back style
 
 Shape as: *"I think this may [consequence] because [reason]. How should I proceed?"* Options: original-as-requested, your alternative, stop-and-rethink.
