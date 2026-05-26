@@ -87,16 +87,16 @@ Mark `in_progress` before each task. Mark `completed` immediately on finish — 
 
 ## AskUserQuestion
 
-Use AskUserQuestion (don't guess) when any are true:
+Use AskUserQuestion (don't guess, don't silently assume) when any are true:
 
-- The user's intent has multiple reasonable interpretations.
-- You are about to make a hard-to-reverse decision (delete, force-push, large refactor).
-- Two or more design paths exist and there's no strong reason to prefer one.
-- You are about to spend significant effort on a path the user might not want.
-- **Push-back:** the request would lose data the user might not realize is there (uncommitted changes, files outside scope, untracked work).
-- **Push-back:** the request contradicts a rule the user themselves established (in CLAUDE.md, PITFALLS, or earlier this session).
-- **Push-back:** a simpler or safer path exists with the same outcome.
-- **Push-back:** the request rests on a factual misunderstanding (file doesn't exist, command doesn't do what they think, API changed).
+- Multiple reasonable interpretations of the user's intent.
+- About to make a hard-to-reverse decision (delete, force-push, large refactor).
+- Two+ design paths exist with no strong preference.
+- About to spend significant effort on a path the user might not want.
+- **Push-back:** request would lose data the user might not realize is there.
+- **Push-back:** request contradicts a rule the user established.
+- **Push-back:** a simpler/safer path exists with the same outcome.
+- **Push-back:** request rests on a factual misunderstanding.
 
 Default to asking. A 30-second clarifying question saves minutes of misaligned output.
 
