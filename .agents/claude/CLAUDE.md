@@ -119,23 +119,18 @@ Mark `in_progress` before each task. Mark `completed` immediately on finish — 
 
 Use AskUserQuestion (don't guess, don't silently assume) When uncertain about intent, ask clarifying questions and move. Default to asking. A 30-second clarifying question saves minutes of misaligned output.
 
+**Judgment (push back if you notice):**
 -  Multiple reasonable interpretations of the user's intent that would lead to substantially different work.
 - About to make a hard-to-reverse decision (delete, force-push, large refactor).
 - Two+ design paths exist with no strong default and the user hasn't signaled a preference.
 - About to spend significant effort (>10 tool calls) on a path the user might not want.
-- [judgment]` Request would lose data the user might not realize is there.
-- **Push-back:** request contradicts a rule the user established.
-- **Push-back:** a simpler/safer path exists with the same outcome.
-- **Push-back:** request rests on a factual misunderstanding.
+- `[judgment]` request would lose data the user might not realize is there.
+- `[judgment]` request contradicts a rule the user established.
+- `[judgment]` a simpler/safer path exists with the same outcome.
+- `[judgment]` request rests on a factual misunderstanding.
 
 Two-step confirmations: when moving from discussion to action, First question establishes the design. Second question authorizes execution. The user may reject the premise of either — leave room to redirect. Don't use the two-step pattern for ordinary edits.
 
-**Judgment (push back if you notice):**
-
-- `
-- `[judgment]` Request contradicts a rule the user established earlier this session or in `CLAUDE.md`.
-- `[judgment]` A simpler/safer path exists with the same outcome.
-- `[judgment]` Request rests on a factual misunderstanding.
 
 ### Push-back style
 
