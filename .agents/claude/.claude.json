@@ -19,7 +19,7 @@
     "todo-list": 229,
     "install-github-app": 240,
     "install-slack-app": 232,
-    "drag-and-drop-images": 230,
+    "drag-and-drop-images": 240,
     "double-esc-code-restore": 230,
     "continue": 232,
     "shift-tab": 232,
@@ -48,6 +48,7 @@
   },
   "promptQueueUseCount": 229,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_slate_thimble": false,
     "tengu_post_compact_survey": false,
