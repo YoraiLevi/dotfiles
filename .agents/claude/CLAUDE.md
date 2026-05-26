@@ -88,11 +88,11 @@ Default to asking, not assuming. A 30-second clarifying question saves minutes o
 
 ### Why this discipline exists
 
-This protocol was installed because methodology-skipping recurred three times in the session that produced these instructions — each catch came from the user, not from any structural mechanism. Without enforcement, the recurrence pattern continues. The state-check converts invisible methodology skips into visible *missing lines* the user can call out in one word.
+This protocol was installed because methodology-skipping recurred three times in the session that produced these instructions — each catch came from the user, not from any structural mechanism. Without enforcement, the recurrence pattern continues. The state-check converts invisible methodology skips into visible *missing lines* the user can call out
 
 The protocol is **fast-failure detection, not failure prevention.** Real prevention would require hooks or wrapper agents that can mechanically block non-compliant responses; those don't exist yet. The state-check is the realistic ceiling until they do.
 
-### What counts as "project-progression"
+### What counts as "progression"
 
 - Executing or completing a task
 - Proposing the next concrete step
