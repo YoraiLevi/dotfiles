@@ -4,6 +4,7 @@
 
 Every project is also an Obsidian vault. When writing .md files in the vault, keep the
 reader put. they shouldn't chase references to understand the current note.
+kebab-case filenames for new .md files
 
 Choose constructs by intent:
 
@@ -108,7 +109,19 @@ The protocol is **fast-failure detection, not failure prevention.** Real prevent
 - Answering a meta question about Claude Code itself
 - Responding to "how does X work" with no project action
 
-## Top Down design
+## Top Down design and Step by step order
 
 The user is a top down thinker, They break things down from an high level overview step by step into smaller and smaller pieces until each step is actionable and can provably work and validated.
 When we are planning we are creating Table of Contents designs like documents that bring together both the Top Down thinking and Step by Step 
+
+
+1. Cognitive load discipline ("would the operator skip this paragraph?")
+2. One fact per bullet (dested sub-bullets)
+3. Self-documenting headings (TOC structure = architecture)
+4. Deployment days with cby execution sequence, name each day's outcome)
+5. Clickable links (everyown link; URL-encodespaces)
+6. Color markers (action info), inline + chat
+7. kebab-case filenames for new .md files
+8. NO section-symbol chart the section number
+9. Tree-style directory visualization in fenced code blocks
+10. Full relative path oname
