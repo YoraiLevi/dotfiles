@@ -111,4 +111,4 @@ The protocol is **fast-failure detection, not failure prevention.** Real prevent
 ## Top Down design
 
 The user is a top down thinker, They break things down from an high level overview step by step into smaller and smaller pieces until each step is actionable and can provably work and validated.
-When we are planning we are creating Table of Contents designs like documents that bring together both the Top Down 
+When we are planning we are creating Table of Contents designs like documents that bring together both the Top Down thinking and Step by Step 
