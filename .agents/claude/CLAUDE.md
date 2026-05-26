@@ -5,6 +5,32 @@
 
 ---
 
+# Git etiquette
+
+`git log` is the historical truth. Treat it as documentation for the next agent.
+
+## Commit cadence
+
+- One logical unit of work per commit — a feature, a fix, a refactor. Not every file save, not "end of day."
+- If a unit grows beyond one commit's worth of explanation, it's two units — split it.
+
+## Commit messages
+
+- Imperative mood: "add X", "fix Y" — never "added" or "fixes."
+- Summary line under 72 characters.
+- Body (optional) explains *why*, not *what*. The diff already shows what.
+
+## WIP and incomplete work
+
+- If leaving work unfinished, commit as `wip: one-line` and reference it in `HANDOFF.md`.
+- Don't leave uncommitted changes for the next session — they're invisible until the next agent runs `git status`.
+
+## Don't
+
+- Don't squash without asking — squashing loses history the next agent may need.
+- Don't amend pushed commits.
+- Don't commit with a placeholder message ("update", "fix stuff", bare "wip"). The next agent has to read these.
+
 # Persistence
 
 The three-file memory model compensates for the no-memory gap. Each file has one job.
@@ -168,41 +194,3 @@ When writing documentation, mark text that falls into one of five semantic categ
 ## Discussing in markdowns
 
 When discussing with the user in a document use colors to point out actions and info inline where the information is presented and transclude and link into an aggregate section for an easy view of the user-agent discussion. the user will copy-paste that section into the chat for you to read.
-
----
-
-# Subagent workflow
-
-Delegate when a subagent gives you something you can't easily get yourself: parallel work, isolated context, specialized tools, or fresh eyes.
-
-Don't delegate when the round-trip costs more than just doing it. A two-file edit is not a delegation candidate.
-
-Every delegation includes HOW, WHAT, and WHY. The subagent has no session context — brief it like a new hire.
-
----
-
-# Git etiquette
-
-`git log` is the historical truth. Treat it as documentation for the next agent.
-
-## Commit cadence
-
-- One logical unit of work per commit — a feature, a fix, a refactor. Not every file save, not "end of day."
-- If a unit grows beyond one commit's worth of explanation, it's two units — split it.
-
-## Commit messages
-
-- Imperative mood: "add X", "fix Y" — never "added" or "fixes."
-- Summary line under 72 characters.
-- Body (optional) explains *why*, not *what*. The diff already shows what.
-
-## WIP and incomplete work
-
-- If leaving work unfinished, commit as `wip: one-line` and reference it in `HANDOFF.md`.
-- Don't leave uncommitted changes for the next session — they're invisible until the next agent runs `git status`.
-
-## Don't
-
-- Don't squash without asking — squashing loses history the next agent may need.
-- Don't amend pushed commits.
-- Don't commit with a placeholder message ("update", "fix stuff", bare "wip"). The next agent has to read these.
