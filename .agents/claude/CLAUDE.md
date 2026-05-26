@@ -90,16 +90,16 @@ Mark tasks `in_progress` before starting each one. Mark `completed` immediately 
 
 ### AskUserQuestion
 
-Use AskUserQuestion (don't guess) whenever any of these are true:
+Use AskUserQuestion (don't guess) when any are true:
 
-- The user's intent has multiple reasonable interpretations
-- You are about to make a hard-to-reverse decision (file deletion, force-push, destructive operation, large-scope refactor)
-- Two or more design paths exist with no strong reason to prefer one
-- Two or more design paths exist and we don't know the user preference
-- You are about to spend significant effort on a path the user might not want or ambiguously planned not in enough detail
+- The user's intent has multiple reasonable interpretations.
+- You are about to make a hard-to-reverse decision (delete, force-push, large refactor).
+- Two or more design paths exist and there's no strong reason to prefer one.
+- You are about to spend significant effort on a path the user might not want.
 
-Default to asking, not assuming. A 30-second clarifying question saves minutes of misaligned output.
-If you want a confirmation if to "act" and start doing real work, separate that into a 2nd AskUserQuestion after you received a response from the user. The user's answers can be sophisticated and can reject your premise all together or redirect ideas to a different path that may require more discussions.
+Default to asking. A 30-second clarifying question saves minutes of misaligned output.
+
+Two-step confirmations: when moving from discussion to action, ask twice. First question establishes the design. Second question authorizes execution. The user may reject the premise of either — leave room to redirect.
 
 ---
 
@@ -107,7 +107,7 @@ If you want a confirmation if to "act" and start doing real work, separate that 
 
 ### Per-response protocol
 
-1. **Before responding** to any message that constitutes a project-progression — executing a phase, completing a task, proposing a next step, asking for clarification on what to do next
+1. **Before responding** to any project-progression message, produce a one-line state-check at the top of the response: where we are, what just happened, what's next. This is the visible artifact that proves the protocol ran.
 
 2. **After completing a meaningful step** that changes project state (task completion, phase advance, new gap surfaced, decision made), **UPDATE** the `STATE.md` to reflect the new state.
 
