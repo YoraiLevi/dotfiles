@@ -10,8 +10,9 @@ Every project is also an Obsidian vault. When writing .md files in the vault, ke
 reader put. they shouldn't chase references to understand the current note.
 kebab-case filenames for new .md files
 
-docs/ - documents for 
+docs/ - facts set in stone, about the project, its intent, information worth skimming
 docs/research - active research artefacts
+docs/discussion - a vault is a l
 archive/* - anything that isn't supposed to be on our mind but was at some point useful
 
 Choose constructs by intent:
