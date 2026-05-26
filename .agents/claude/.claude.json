@@ -1,5 +1,5 @@
 {
-  "numStartups": 233,
+  "numStartups": 234,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -1006,7 +1006,7 @@
       "projectOnboardingSeenCount": 7,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "lastCost": 0.1500575,
       "lastAPIDuration": 47478,
       "lastAPIDurationWithoutRetries": 47454,
