@@ -37,6 +37,7 @@ label as a text prefix so meaning survives when color is stripped
 | done     | `~={done} DONE: ... =~`       | confirmed fact, verified outcome |
 | info     | `~={info} NOTE: ... =~`       | definition, neutral annotation   |
 | action   | `~={action} TODO: ... =~`     | next step, owner-assigned action |
+When discussing with the user use colors to point out Color markers (action info), inline + chat
 ## Subagent Workflow
 
 Whenever possible, assign subagents to perform the task instead of doing it yourself.
