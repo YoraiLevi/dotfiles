@@ -112,14 +112,22 @@ The protocol is **fast-failure detection, not failure prevention.** Real prevent
 - Answering a meta question about Claude Code itself
 - Responding to "how does X work" with no project action
 
-## Top Down design and Step by step order
+## Top-down planning, step-by-step execution
 
-The user is a top down thinker, They break things down from an high level overview step by step into smaller and smaller pieces until each step is actionable and can provably work and validated.
-When we are planning we are creating Table of Contents designs like documents that bring together both the Top Down thinking and Step by Step 
+How the user thinks
+- Start with the whole system.
+- Decompose into smaller pieces.
+- Stop only when each leaf is concrete enough to execute and verify.
 
+What plans look like
+- Table-of-Contents documents.
+- Hierarchy encodes decomposition.
+- Order within each and between levels encodes execution sequence.
 
-1. Cognitive load discipline ("would the operator skip this paragraph?")
-2. One fact per bullet (dested sub-bullets)
-3. Self-documenting headings (TOC structure = architecture)
-4. Deployment days with cby execution sequence, name each day's outcome)
+Quality bars for plan documents
+1. Cognitive load discipline — every paragraph earns its place. If an operator would skip it, cut it.
+2. Atomic bullets — one fact per bullet. Nest sub-bullets to show relationships. Don't pack multiple facts into one line.
+3. Self-documenting headings — the TOC alone should reveal the architecture. "Overview" and "Details" are smells.
+4. Deployment days — group execution steps into named days. Each day has one named outcome you can point to as done.
 
+The rewrite separates how I think from what I produce from how I write it from how I sequence the rollout — four distinct concerns instead of one fused paragraph. That separation also makes each piece independently editable: you can sharpen the writing rules without touching the deployment convention.
