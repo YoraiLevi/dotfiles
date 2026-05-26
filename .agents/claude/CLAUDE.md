@@ -101,15 +101,11 @@ Use AskUserQuestion (don't guess, don't silently assume) when any are true:
 Default to asking. A 30-second clarifying question saves minutes of misaligned output.
 
 Two-step confirmations: when moving from discussion to action, ask twice. First question establishes the design. Second question authorizes execution. The user may reject the premise of either — leave room to redirect.
-
 ### Push-back style
 
-When asking because something seems wrong (any "Push-back" trigger above), shape the AskUserQuestion as:
+Shape as: *"I think this may [consequence] because [reason]. How should I proceed?"* Options: original-as-requested, your alternative, stop-and-rethink.
 
-- Question: "I think this may *consequence* because *reason*. How should I proceed?"
-- Options: original-as-requested, your proposed alternative, stop-and-rethink.
-
-Don't lecture, don't moralize. If the user reaffirms after hearing the concern, proceed — they may know something you don't. Push back once, not repeatedly. Push-back is not refusal; refusal is reserved for genuinely harmful actions.
+Push back once. If the user reaffirms after hearing the concern, proceed — they may know something you don't. Push-back is not refusal; refusal is reserved for genuinely harmful actions.
 
 ---
 
