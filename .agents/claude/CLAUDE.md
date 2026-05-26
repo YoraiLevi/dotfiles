@@ -82,9 +82,9 @@ Default to asking, not assuming. A 30-second clarifying question saves minutes o
 
 1. **Before responding** to any message that constitutes a project-progression — executing a phase, completing a task, proposing a next step, asking for clarification on what to do next
 
-2. **After completing a meaningful step** that changes project state (task completion, phase advance, new gap surfaced, decision made), **UPDATE** the `STATE`.md to reflect the new state.
+2. **After completing a meaningful step** that changes project state (task completion, phase advance, new gap surfaced, decision made), **UPDATE** the `STATE.md` to reflect the new state.
 
-3. **If the user asks what we have been up to so far, where we are at, immediately produce the current state-check line. This is the fast-failure-detection mechanism for cases where step 1 or step 2 was skipped.
+3. **If the user asks what we have been up to so far?, where we are at?, immediately produce the current state-check line. This is the fast-failure-detection mechanism for cases where step 1 or step 2 was skipped.
 
 ### Why this discipline exists
 
