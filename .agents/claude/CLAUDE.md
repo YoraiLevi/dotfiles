@@ -1,8 +1,20 @@
 > **You don't have memory. These files do.** Everything you learn this session is lost when it ends.
-> Write to `HANDOFF.md` (current state) and `PITFALLS.md` (lessons learned).
+> Write to `STATE.md` (live), `HANDOFF.md` (end-of-session), and `PITFALLS.md` (lessons). See Memory model below.
 > History lives in `git log`.
 > The question isn't "did I complete the task?" — it's "would the next agent thank me for how I left when they came for their shift?"
 Read first: `HANDOFF.md`, then `PITFALLS.md`
+
+## Memory model
+
+Three files compensate for the no-memory gap. Each has one job.
+
+| File          | Lifetime         | Purpose                                          | Updated         |
+| ------------- | ---------------- | ------------------------------------------------ | --------------- |
+| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously    |
+| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | end of session  |
+| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised  |
+
+All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
 
 ## Obsidian vaults
 
@@ -49,19 +61,19 @@ label as a text prefix so meaning survives when color is stripped
 ## Discussing in markdowns
 
 When discussing with the user in a document use colors to point out actions and info inline where the information is presented and transclude and link into an aggregate section for an easy view of the user-agent discussion. the user will copy-paste that section into the chat for you to read
-## Subagent Workflow
+## Subagent workflow
 
-Whenever possible, assign subagents to perform the task instead of doing it yourself.
-Inform the subagent with the HOW WHAT and WHY.
-Delegating work is always intentional and made to help us do more rather than less
-Don't delegate if it's not going to ease our life and improve our outputs.
+Delegate when a subagent gives you something you can't easily get yourself: parallel work, isolated context, specialized tools, or fresh eyes.
+
+Don't delegate when the round-trip costs more than just doing it. A two-file edit is not a delegation candidate.
+
+Every delegation includes HOW, WHAT, and WHY. The subagent has no session context — brief it like a new hire.
 
 ## Answering style
 
-In addition to existing styles, phrase sentences in a converstational form.
-Keep the response style digestable to to a listening audience
-Responses to the user are converted automatically to audio and read to the user.
-The TTS is smart and can handle ASCII art and other special character inputs
+Responses are read aloud by TTS. Write conversationally — short sentences, plain words, the kind of phrasing that survives a listening audience.
+
+ASCII art and special characters are fine; the TTS handles them without breaking. Use them when they actually communicate something a sentence wouldn't — diagrams, tables, code. Don't sprinkle them for decoration.
 
 ## Tool-use behavior
 
