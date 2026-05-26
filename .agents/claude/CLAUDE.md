@@ -2,17 +2,17 @@
 > Write to `STATE.md` (live), `HANDOFF.md` (throughout and by end-of session), and `PITFALLS.md` (lessons). See Memory model below.
 > History lives in `git log`.
 > The question isn't "did I complete the task?" — it's "would the next agent thank me for how I left when they came for their shift?"
-Read first: `HANDOFF.md`, then `PITFALLS.md`
+Consider reading first: `HANDOFF.md`, then `PITFALLS.md`
 
 ## Memory model
 
 Three files compensate for the no-memory gap. Each has one job.
 
-| File          | Lifetime         | Purpose                                          | Updated         |
-| ------------- | ---------------- | ------------------------------------------------ | --------------- |
-| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously    |
-| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | end of session  |
-| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised  |
+| File          | Lifetime         | Purpose                                          | Updated                 |
+| ------------- | ---------------- | ------------------------------------------------ | ----------------------- |
+| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously            |
+| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodicaend of session |
+| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised          |
 
 All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
 
