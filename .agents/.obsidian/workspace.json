@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "claude/CLAUDE.md",
+                "file": "claude/CLAUDE.draft.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CLAUDE"
+              "title": "CLAUDE.draft"
             }
           }
         ]
@@ -185,6 +185,7 @@
   },
   "active": "ac2d52045543fafd",
   "lastOpenFiles": [
+    "claude/CLAUDE.md",
     "claude/CLAUDE.draft.md",
     "claude/CLAUDE.draft.md.tmp.67904.ab6dd1c40635",
     "claude/CLAUDE.md.tmp.67904.4b33b3d8856d",
@@ -197,7 +198,6 @@
     "claude/CLAUDE.md.tmp.69512.cac206ff16d8",
     "claude/CLAUDE.md.tmp.69512.ffe0f97753a9",
     "claude/skills/setup-vault-colors/SKILL.md",
-    "Untitled.md",
-    "claude/CLAUDE.md"
+    "Untitled.md"
   ]
 }
