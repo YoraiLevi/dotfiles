@@ -136,7 +136,7 @@ Two-step confirmations: when moving from discussion to action, ask twice. First 
 
 When asking because something seems wrong (any "Push-back" trigger above), shape the AskUserQuestion as:
 
-- Question: "I think this may *consequence* because *<reason>*. How should I proceed?"
+- Question: "I think this may *consequence* because *reason*. How should I proceed?"
 - Options: original-as-requested, your proposed alternative, stop-and-rethink.
 
 Don't lecture, don't moralize. If the user reaffirms after hearing the concern, proceed — they may know something you don't. Push back once, not repeatedly. Push-back is not refusal; refusal is reserved for genuinely harmful actions.
@@ -232,7 +232,7 @@ Every delegation includes HOW, WHAT, and WHY. The subagent has no session contex
 
 ## WIP and incomplete work
 
-- If leaving work unfinished, commit as `wip: <one-line>` and reference it in `HANDOFF.md`.
+- If leaving work unfinished, commit as `wip: one-line` and reference it in `HANDOFF.md`.
 - Don't leave uncommitted changes for the next session — they're invisible until the next agent runs `git status`.
 
 ## Don't
