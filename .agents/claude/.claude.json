@@ -1,5 +1,5 @@
 {
-  "numStartups": 237,
+  "numStartups": 239,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -42,7 +42,7 @@
     "colorterm-truecolor": 200,
     "desktop-app": 200,
     "guest-passes": 233,
-    "agent-flag": 220,
+    "agent-flag": 238,
     "frontend-design-plugin": 226,
     "team-onboarding-share": 225
   },
@@ -1475,8 +1475,8 @@
       "projectOnboardingSeenCount": 48,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
-      "lastVersionBase": "2.1.143",
+      "lastGracefulShutdown": false,
+      "lastVersionBase": "2.1.150",
       "lastHintSessionId": "776fcf7f-03fb-4acf-94a0-c1d5eef8e2ea",
       "lastSessionFirstPrompt": "there was an issue, the user didn't see the question prompt. Can you prompt the user for the questions again?",
       "lastSessionModified": 1779121016533,
@@ -1484,7 +1484,7 @@
       "lastAPIDuration": 33027318,
       "lastAPIDurationWithoutRetries": 33017282,
       "lastToolDuration": 6585454,
-      "lastDuration": 644519660,
+      "lastDuration": 644540979,
       "lastLinesAdded": 24163,
       "lastLinesRemoved": 476,
       "lastTotalInputTokens": 7793857,
@@ -1492,8 +1492,8 @@
       "lastTotalCacheCreationInputTokens": 19685725,
       "lastTotalCacheReadInputTokens": 154884515,
       "lastTotalWebSearchRequests": 407,
-      "lastFpsAverage": 0.73,
-      "lastFpsLow1Pct": 123.94,
+      "lastFpsAverage": 4.17,
+      "lastFpsLow1Pct": 56.21,
       "lastModelUsage": {
         "claude-opus-4-7[1m]": {
           "inputTokens": 17899,
