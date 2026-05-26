@@ -8,9 +8,8 @@
 # Persistence
 
 The three-file memory model compensates for the no-memory gap. Each file has one job.
-If any of the three memory files is missing, create it on first write — no permission needed. Each file opens with a one-line header that says what it is:
 
-| File          | Lifetime         | Purpose                                          | Updated                            | If missing, create it on first write                                                    |
+| File          | Lifetime         | Purpose                                          | Updated                            | If missing, create it on first write with a one-line header                             |
 | ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- | --------------------------------------------------------------------------------------- |
 | `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       | `# Session State` followed by one bullet describing where you are right now.            |
 | `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session | `# Handoff to Next Agent` followed by "Nothing in flight" if the session ended cleanly. |
@@ -26,10 +25,6 @@ Before any other action in a new session:
 2. Read `PITFALLS.md` — what's already been tried and didn't work.
 3. Read `STATE.md` if it exists — the previous session's live truth.
 4. Produce a state-check (see Per-response behavior) confirming where you're picking up. If any file is missing, bootstrap it per above and note "fresh start".
-
-
-
-
 ## PITFALLS write criteria
 
 Append to PITFALLS when any of these are true:
@@ -46,7 +41,7 @@ Entry format — three lines under a `##` symptom heading:
 
 Don't log routine bugs or one-off typos. PITFALLS is the future agent's smoke detector, not their bug tracker.
 
-## PITFALLS pruning
+### PITFALLS pruning
 
 Append-only doesn't mean append-forever. Prune when:
 
