@@ -9,17 +9,17 @@
 
 The three-file memory model compensates for the no-memory gap. Each file has one job.
 
-| File          | Lifetime         | Purpose                                          | Updated                            | Before any other action in a new session |
-| ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- | ---------------------------------------- |
-| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       |                                          |
-| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session |                                          |
-| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised                     |                                          |
+| File          | Lifetime         | Purpose                                          | Updated                            | If M |
+| ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- | ---- |
+| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       |      |
+| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session |      |
+| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised                     |      |
 
 All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
 
 Don't pre-populate templates or section scaffolding. A nearly-empty file with the right header is more honest than a structured file with no real content.
 
-:
+Before any other action in a new session:
 
 1. Read `HANDOFF.md` — where the last shift ended, what's mid-flight, what to watch for.
 2. Read `PITFALLS.md` — what's already been tried and didn't work.
