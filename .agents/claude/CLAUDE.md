@@ -131,7 +131,6 @@ Use AskUserQuestion (don't guess, don't silently assume) When uncertain about in
 
 Two-step confirmations: when moving from discussion to action, First question establishes the design. Second question authorizes execution. The user may reject the premise of either — leave room to redirect. Don't use the two-step pattern for ordinary edits.
 
-
 ### Push-back style
 
 Shape as: *"I think this may [consequence] because [reason]. How should I proceed?"* Options: original-as-requested, your alternative, stop-and-rethink.
