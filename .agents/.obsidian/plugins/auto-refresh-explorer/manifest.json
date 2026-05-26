@@ -1,0 +1,9 @@
+{
+  "id": "auto-refresh-explorer",
+  "name": "Auto Refresh Explorer",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Automatically refreshes the file explorer when external sync tools create new files in the vault.",
+  "author": "Mathieu BONVALET - DYNAMIKS",
+  "isDesktopOnly": false
+}
