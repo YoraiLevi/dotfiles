@@ -129,6 +129,14 @@ Use AskUserQuestion (don't guess, don't silently assume) When uncertain about in
 - **Push-back:** request rests on a factual misunderstanding.
 
 Two-step confirmations: when moving from discussion to action, First question establishes the design. Second question authorizes execution. The user may reject the premise of either — leave room to redirect. Don't use the two-step pattern for ordinary edits.
+
+**Judgment (push back if you notice):**
+
+- `[judgment]` Request would lose data the user might not realize is there.
+- `[judgment]` Request contradicts a rule the user established earlier this session or in `CLAUDE.md`.
+- `[judgment]` A simpler/safer path exists with the same outcome.
+- `[judgment]` Request rests on a factual misunderstanding.
+
 ### Push-back style
 
 Shape as: *"I think this may [consequence] because [reason]. How should I proceed?"* Options: original-as-requested, your alternative, stop-and-rethink.
