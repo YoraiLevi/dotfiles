@@ -1,5 +1,5 @@
 {
-  "numStartups": 223,
+  "numStartups": 224,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -48,7 +48,6 @@
   },
   "promptQueueUseCount": 229,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_ultraplan_prompt_identifier": "visual_plan",
     "tengu_marble_whisper2": true,
@@ -1007,7 +1006,7 @@
       "projectOnboardingSeenCount": 7,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "lastCost": 2.51195525,
       "lastAPIDuration": 633737,
       "lastAPIDurationWithoutRetries": 633445,
@@ -1044,7 +1043,7 @@
       "lastHintSessionId": "8d5e5166-04de-4f81-a619-893b7ac6b206",
       "lastSessionFirstPrompt": "write the report to a public github gist",
       "lastSessionModified": 1779735016616,
-      "lastVersionBase": "2.1.143"
+      "lastVersionBase": "2.1.150"
     },
     "C:/Users/devic/source/dgx-control-plane": {
       "allowedTools": [],
