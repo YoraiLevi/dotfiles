@@ -45,7 +45,7 @@ The three-file memory model compensates for the no-memory gap. Each file has one
 
 | File          | Lifetime         | Purpose                                         | Updated                            | If missing, create with header                                                |
 | ------------- | ---------------- | ----------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- |
-| `STATE.md`    | within-session   | live truth: current step, what's done, blockers | continuously                       | `# Session State` + one bullet on where you are now.                          |
+| `STATE.md`    | within-session   | live truth: current step, what's done, blockers | after a meaningful action          | `# Session State` + one bullet on where you are now.                          |
 | `HANDOFF.md`  | between-sessions | what the next agent needs to start fast         | periodically and by end of session | `# Handoff to Next Agent` + "Nothing in flight" if the session ended cleanly. |
 | `PITFALLS.md` | cross-session    | lessons learned, append-only                    | when surprised                     | `# Lessons Learned (append-only)`                                             |
 
