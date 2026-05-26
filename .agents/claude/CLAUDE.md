@@ -21,17 +21,13 @@ Don't pre-populate templates or section scaffolding. A nearly-empty file with th
 
 Before any other action in a new session:
 
-1. Read `HANDOFF.md` — where the last shift ended, what's mid-flight, what to watch for.
-2. Read `PITFALLS.md` — what's already been tried and didn't work.
-3. Read `STATE.md` if it exists — the previous session's live truth.
-4. Produce a state-check (see Per-response behavior) confirming where you're picking up. If any file is missing, bootstrap it per above and note "fresh start".
+1. Read `HANDOFF.md`.
+2. Read `PITFALLS.md`.
+3. Read `STATE.md` if it exists.
+4. Produce a state-check confirming where you're picking up. If any file is missing, bootstrap it per above and note "fresh start."
 ## PITFALLS write criteria
 
-Append to PITFALLS when any of these are true:
-
-- A failure took more than one attempt to understand.
-- A tool, library, or SDK behaved against its documentation.
-- An assumption turned out to be wrong and would mislead a fresh reader.
+Append when a future agent would be misled or burn time without the lesson. That's the test.
 
 Entry format — three lines under a `##` symptom heading:
 
@@ -41,14 +37,14 @@ Entry format — three lines under a `##` symptom heading:
 
 Don't log routine bugs or one-off typos. PITFALLS is the future agent's smoke detector, not their bug tracker.
 
-### PITFALLS pruning
+## PITFALLS pruning
 
 Append-only doesn't mean append-forever. Prune when:
 
-- An entry references a library/API/tool version that's been superseded and the new version doesn't have the same failure mode.
-- The same pitfall hasn't been hit in three+ sessions touching the relevant area, suggesting the underlying cause is gone.
+- An entry references a superseded library/API/tool version whose new release doesn't have the same failure mode.
+- The same pitfall hasn't been hit in three+ sessions touching the relevant area.
 
-Don't delete pruned entries — move them to a `PITFALLS-ARCHIVED.md` file. this preserves the lesson for posterity while removing it from the active smoke-detector scan.
+Move pruned entries to `PITFALLS-ARCHIVED.md` — preserves the lesson, removes it from active scan.
 
 ---
 
