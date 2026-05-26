@@ -1481,55 +1481,39 @@
       "lastHintSessionId": "776fcf7f-03fb-4acf-94a0-c1d5eef8e2ea",
       "lastSessionFirstPrompt": "there was an issue, the user didn't see the question prompt. Can you prompt the user for the questions again?",
       "lastSessionModified": 1779121016533,
-      "lastCost": 256.61777329999984,
-      "lastAPIDuration": 36819501,
-      "lastAPIDurationWithoutRetries": 36809063,
-      "lastToolDuration": 7194566,
-      "lastDuration": 686801495,
-      "lastLinesAdded": 25728,
-      "lastLinesRemoved": 624,
-      "lastTotalInputTokens": 7800329,
-      "lastTotalOutputTokens": 2402270,
-      "lastTotalCacheCreationInputTokens": 21205656,
-      "lastTotalCacheReadInputTokens": 171039420,
-      "lastTotalWebSearchRequests": 407,
-      "lastFpsAverage": 1.51,
-      "lastFpsLow1Pct": 106.87,
+      "lastCost": 2.9422212999999995,
+      "lastAPIDuration": 649843,
+      "lastAPIDurationWithoutRetries": 649464,
+      "lastToolDuration": 310499,
+      "lastDuration": 86406252,
+      "lastLinesAdded": 545,
+      "lastLinesRemoved": 4,
+      "lastTotalInputTokens": 1697,
+      "lastTotalOutputTokens": 45178,
+      "lastTotalCacheCreationInputTokens": 238938,
+      "lastTotalCacheReadInputTokens": 2250534,
+      "lastTotalWebSearchRequests": 0,
+      "lastFpsAverage": 0.1,
+      "lastFpsLow1Pct": 37.1,
       "lastModelUsage": {
-        "claude-opus-4-7[1m]": {
-          "inputTokens": 17899,
-          "outputTokens": 1463250,
-          "cacheReadInputTokens": 123807804,
-          "cacheCreationInputTokens": 15582134,
-          "webSearchRequests": 0,
-          "costUSD": 195.96298449999978
-        },
-        "claude-sonnet-4-6": {
-          "inputTokens": 149179,
-          "outputTokens": 310646,
-          "cacheReadInputTokens": 21401261,
-          "cacheCreationInputTokens": 1937179,
-          "webSearchRequests": 0,
-          "costUSD": 18.792026549999996
-        },
         "claude-haiku-4-5-20251001": {
-          "inputTokens": 7627471,
-          "outputTokens": 341277,
-          "cacheReadInputTokens": 9675450,
-          "cacheCreationInputTokens": 2166412,
-          "webSearchRequests": 407,
-          "costUSD": 17.079416000000016
-        },
-        "claude-opus-4-7": {
-          "inputTokens": 5780,
-          "outputTokens": 287097,
-          "cacheReadInputTokens": 16154905,
-          "cacheCreationInputTokens": 1519931,
+          "inputTokens": 1542,
+          "outputTokens": 10459,
+          "cacheReadInputTokens": 723238,
+          "cacheCreationInputTokens": 61940,
           "webSearchRequests": 0,
-          "costUSD": 24.783346249999994
+          "costUSD": 0.20358579999999996
+        },
+        "claude-opus-4-7[1m]": {
+          "inputTokens": 155,
+          "outputTokens": 34719,
+          "cacheReadInputTokens": 1527296,
+          "cacheCreationInputTokens": 176998,
+          "webSearchRequests": 0,
+          "costUSD": 2.7386355
         }
       },
-      "lastSessionId": "776fcf7f-03fb-4acf-94a0-c1d5eef8e2ea",
+      "lastSessionId": "8045979a-c6e9-43d6-b4c8-130b4b8fe235",
       "hasCompletedProjectOnboarding": true
     },
     "C:/Users/devic": {
