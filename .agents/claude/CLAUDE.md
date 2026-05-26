@@ -122,9 +122,4 @@ When we are planning we are creating Table of Contents designs like documents th
 2. One fact per bullet (dested sub-bullets)
 3. Self-documenting headings (TOC structure = architecture)
 4. Deployment days with cby execution sequence, name each day's outcome)
-5. Clickable links (everyown link; URL-encodespaces)
-6. Color markers (action info), inline + chat
-7. kebab-case filenames for new .md files
-8. NO section-symbol chart the section number
-9. Tree-style directory visualization in fenced code blocks
-10. Full relative path oname
+
