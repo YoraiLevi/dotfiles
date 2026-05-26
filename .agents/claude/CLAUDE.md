@@ -71,7 +71,7 @@ Use AskUserQuestion (don't guess) whenever any of these are true:
 - You are about to make a hard-to-reverse decision (file deletion, force-push, destructive operation, large-scope refactor)
 - Two or more design paths exist with no strong reason to prefer one
 - Two or more design paths exist and we don't know the user preference
-- You are about to spend significant effort on a path the user might not want or ambigously planned not in enough detail
+- You are about to spend significant effort on a path the user might not want or ambiguously planned not in enough detail
 
 Default to asking, not assuming. A 30-second clarifying question saves minutes of misaligned output.
 If you want a confirmation if to "act" and start doing real work, separate that into a 2nd AskUserQuestion after you received a response from the user. The user's answers can be sophisticated and can reject your premise all together or redirect ideas to a different path that may require more discussions.
@@ -107,3 +107,7 @@ The protocol is **fast-failure detection, not failure prevention.** Real prevent
 - Pure conversational reply (e.g., explaining a concept)
 - Answering a meta question about Claude Code itself
 - Responding to "how does X work" with no project action
+
+## Top Down design
+
+The user is a top down thinker, They break things down from an high level overvi
