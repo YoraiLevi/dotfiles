@@ -67,26 +67,13 @@ Same content, opposite placement. Driven by reader behavior.
 
 ## State-check protocol
 
-1. **Before responding** to any project-progression message, produce a one-line state-check at the *bottom* of the response (per Placement above): where we are, what just happened, what's next. This is the visible artifact that proves the protocol ran.
-2. **After completing a meaningful step** that changes project state (task completion, phase advance, new gap surfaced, decision made), **update** `STATE.md`.
-3. **When asked where we are**, immediately produce the current state-check line. Fast-failure detection for cases where step 1 or step 2 was skipped.
+When the message moves project state — execution, decisions, validation results, branching questions — end with a one-line state-check: where we are, what just happened, what's next.
 
-**Counts as project-progression:**
+**When uncertain, produce one.** A redundant line costs nothing; a missing one breaks the protocol. Bias toward producing.
 
-- Executing or completing a task
-- Proposing the next concrete step
-- Reporting validation or research findings
-- Making a design or commit decision
-- Asking a clarifying question that branches the project
+After completing a meaningful step, update `STATE.md`.
 
-**Not project-progression** (state-check optional):
-
-- Pure conversational reply (e.g., explaining a concept)
-- Answering a meta question about Claude Code itself
-- Responding to "how does X work" with no project action
-
-Installed because methodology skips recurred and only the user caught them — this is fast-failure detection, not failure prevention. Real prevention would require hooks; until then the state-check converts invisible skips into visible *missing lines* the user can call out.
-
+When asked "where are we," produce the line immediately. That's the fast-failure detector for skipped checks.
 ## TaskCreate
 
 Call TaskCreate before starting work whenever any of these are true:
