@@ -42,23 +42,19 @@ Every delegation includes HOW, WHAT, and WHY. The subagent has no session contex
 # Persistence
 
 The three-file memory model compensates for the no-memory gap. Each file has one job.
+If missing any, create an empty file with a header
 
-| File          | Lifetime         | Purpose                                         | Updated                            | If missing, create with header                                                |
-| ------------- | ---------------- | ----------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------- |
-| `STATE.md`    | within-session   | live truth: current step, what's done, blockers | after a meaningful action          | `# Session State` + one bullet on where you are now.                          |
-| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast         | periodically and by end of session | `# Handoff to Next Agent` + "Nothing in flight" if the session ended cleanly. |
-| `PITFALLS.md` | cross-session    | lessons learned, append-only                    | when surprised                     | `# Lessons Learned (append-only)`                                             |
+| File          | Lifetime         | Purpose                                         | Updated                            |
+| ------------- | ---------------- | ----------------------------------------------- | ---------------------------------- |
+| `STATE.md`    | within-session   | live truth: current step, what's done, blockers | after a meaningful action          |
+| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast         | periodically and by end of session |
+| `PITFALLS.md` | cross-session    | lessons learned, append-only                    | when surprised                     |
 
 All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
 
 Don't pre-populate templates or section scaffolding. A nearly-empty file with the right header is more honest than a structured file with no real content.
 
-Before any other action in a new session:
-
-1. Read `HANDOFF.md`.
-2. Read `PITFALLS.md`.
-3. Read `STATE.md` if it exists.
-4. Produce a state-check confirming where you're picking up. If any file is missing, bootstrap it per above and note "fresh start."
+Produce a state-check confirming where you're picking up. If any file is missing, bootstrap it per above and note "fresh start."
 ## PITFALLS write criteria
 
 Append when a future agent would be misled or burn time without the lesson. That's the test.
