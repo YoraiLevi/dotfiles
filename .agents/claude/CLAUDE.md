@@ -16,40 +16,36 @@ Three files compensate for the no-memory gap. Each has one job.
 
 All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
 
+---
+
+# Writing artifacts
+
 ## Obsidian vaults
 
-Every project is also an Obsidian vault. When writing .md files in the vault, keep the
-reader put. they shouldn't chase references to understand the current note.
-kebab-case filenames for new .md files
+Every project is also an Obsidian vault. When writing .md files in the vault, keep the reader put. they shouldn't chase references to understand the current note. kebab-case filenames for new .md files.
 
-docs/ - facts set in stone, about the project, its intent, information worth skimming
-docs/.research - active research artefacts
-docs/.discussion - a vault is a living being, it changes and grows and it has pending and active discussions growing through it determining to where it's heading
-.archive/* - anything that isn't supposed to be on our mind but was at some point useful
+### Folder lifecycle (cold → hot → cold)
 
-Choose constructs by intent:
+- `docs/` — settled facts: project intent, decisions, anything stable enough to skim.
+- `docs/.research/` — active research artifacts. Promote to `docs/` when settled.
+- `docs/.discussion/` — pending arguments and open questions shaping the vault's direction.
+- `.archive/` — once-useful, no longer load-bearing. Move here instead of deleting.
 
-- `[[Note]]` — link for *further reading*. Each link should mean something;
-  don't link every mention of a word.
-- `![[Note]]` / `![[Note#Heading]]` / `![[Note#^id]]` — transclude when
-  content is needed *in place*. Embed instead of paraphrasing.
-- `#tag` (nested `#topic/sub` welcome) — group by topic. Tag consistently,
-  sparingly, memorably. lowercase, singular.
-- Properties (frontmatter) — for facts *about* the note (status, type,
-  date). Use these instead of tags for anything typed or queryable.
-- Folders — group by type, not topic. A file has many tags but one
-  location; folders are the coarse first filter.
+The leading dot on `.research/` and `.discussion/` sorts them to the top of Obsidian's file explorer without hiding them from search.
 
-Maps (MOCs) are workbenches, not indexes — write what you think about a
-topic and let links emerge. Don't auto-sprinkle links just because the
-target exists. Let folder and tag structure evolve from use, not from a
-prescribed layout.
+### Vault constructs (choose by intent)
+
+- `[[Note]]` — link for *further reading*. Each link should mean something; don't link every mention of a word.
+- `![[Note]]` / `![[Note#Heading]]` / `![[Note#^id]]` — transclude when content is needed *in place*. Embed instead of paraphrasing.
+- `#tag` (nested `#topic/sub` welcome) — group by topic. Tag consistently, sparingly, memorably. lowercase, singular.
+- Properties (frontmatter) — for facts *about* the note (status, type, date). Use these instead of tags for anything typed or queryable.
+- Folders — group by type, not topic. A file has many tags but one location; folders are the coarse first filter.
+
+Maps (MOCs) are workbenches, not indexes — write what you think about a topic and let links emerge. Don't auto-sprinkle links just because the target exists. Let folder and tag structure evolve from use, not from a prescribed layout.
+
 ### Colored text (fast-text-color plugin)
 
-When writing documentation, mark text that falls into one of five semantic
-categories using the fast-text-color plugin. Always include the category
-label as a text prefix so meaning survives when color is stripped
-(GitHub renders, CVD readers, plugin uninstalled).
+When writing documentation, mark text that falls into one of five semantic categories using the fast-text-color plugin. Always include the category label as a text prefix so meaning survives when color is stripped (GitHub renders, CVD readers, plugin uninstalled).
 
 | Category | Syntax                        | Use for                          |
 | -------- | ----------------------------- | -------------------------------- |
@@ -58,9 +54,36 @@ label as a text prefix so meaning survives when color is stripped
 | done     | `~={done} DONE: ... =~`       | confirmed fact, verified outcome |
 | info     | `~={info} NOTE: ... =~`       | definition, neutral annotation   |
 | action   | `~={action} TODO: ... =~`     | next step, owner-assigned action |
+
 ## Discussing in markdowns
 
-When discussing with the user in a document use colors to point out actions and info inline where the information is presented and transclude and link into an aggregate section for an easy view of the user-agent discussion. the user will copy-paste that section into the chat for you to read
+When discussing with the user in a document use colors to point out actions and info inline where the information is presented and transclude and link into an aggregate section for an easy view of the user-agent discussion. the user will copy-paste that section into the chat for you to read.
+
+## Top-down planning, step-by-step execution
+
+How the user thinks
+
+- Start with the whole system.
+- Decompose into smaller pieces.
+- Stop only when each leaf is concrete enough to execute and verify.
+
+What plans look like
+
+- Table-of-Contents documents.
+- Hierarchy encodes decomposition.
+- Order within each and between levels encodes execution sequence.
+
+Quality bars for plan documents
+
+1. Cognitive load discipline — every paragraph earns its place. If an operator would skip it, cut it.
+2. Atomic bullets — one fact per bullet. Nest sub-bullets to show relationships. Don't pack multiple facts into one line.
+3. Self-documenting headings — the TOC alone should reveal the architecture. "Overview" and "Details" are smells.
+4. Deployment days — group execution steps into named days. Each day has one named outcome you can point to as done.
+
+---
+
+# Session behavior
+
 ## Subagent workflow
 
 Delegate when a subagent gives you something you can't easily get yourself: parallel work, isolated context, specialized tools, or fresh eyes.
@@ -101,8 +124,6 @@ Default to asking. A 30-second clarifying question saves minutes of misaligned o
 
 Two-step confirmations: when moving from discussion to action, ask twice. First question establishes the design. Second question authorizes execution. The user may reject the premise of either — leave room to redirect.
 
----
-
 ## Project-progression discipline (STATE-check protocol)
 
 ### Per-response protocol
@@ -111,11 +132,11 @@ Two-step confirmations: when moving from discussion to action, ask twice. First 
 
 2. **After completing a meaningful step** that changes project state (task completion, phase advance, new gap surfaced, decision made), **UPDATE** the `STATE.md` to reflect the new state.
 
-3. **If the user asks what we have been up to so far?, where we are at?, immediately produce the current state-check line. This is the fast-failure-detection mechanism for cases where step 1 or step 2 was skipped.
+3. **When asked where we are**, immediately produce the current state-check line. This is the fast-failure-detection mechanism for cases where step 1 or step 2 was skipped.
 
 ### Why this discipline exists
 
-This protocol was installed because methodology-skipping recurred three times in the session that produced these instructions — each catch came from the user, not from any structural mechanism. Without enforcement, the recurrence pattern continues. The state-check converts invisible methodology skips into visible *missing lines* the user can call out
+This protocol was installed because methodology-skipping recurred three times in the session that produced these instructions — each catch came from the user, not from any structural mechanism. Without enforcement, the recurrence pattern continues. The state-check converts invisible methodology skips into visible *missing lines* the user can call out.
 
 The protocol is **fast-failure detection, not failure prevention.** Real prevention would require hooks or wrapper agents that can mechanically block non-compliant responses; those don't exist yet. The state-check is the realistic ceiling until they do.
 
@@ -132,21 +153,3 @@ The protocol is **fast-failure detection, not failure prevention.** Real prevent
 - Pure conversational reply (e.g., explaining a concept)
 - Answering a meta question about Claude Code itself
 - Responding to "how does X work" with no project action
-
-## Top-down planning, step-by-step execution
-
-How the user thinks
-- Start with the whole system.
-- Decompose into smaller pieces.
-- Stop only when each leaf is concrete enough to execute and verify.
-
-What plans look like
-- Table-of-Contents documents.
-- Hierarchy encodes decomposition.
-- Order within each and between levels encodes execution sequence.
-
-Quality bars for plan documents
-1. Cognitive load discipline — every paragraph earns its place. If an operator would skip it, cut it.
-2. Atomic bullets — one fact per bullet. Nest sub-bullets to show relationships. Don't pack multiple facts into one line.
-3. Self-documenting headings — the TOC alone should reveal the architecture. "Overview" and "Details" are smells.
-4. Deployment days — group execution steps into named days. Each day has one named outcome you can point to as done.
