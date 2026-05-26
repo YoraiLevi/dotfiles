@@ -9,11 +9,11 @@
 
 The three-file memory model compensates for the no-memory gap. Each file has one job.
 
-| File          | Lifetime         | Purpose                                          | Updated                            | If missing, create it on first write with a one-line header                             |
-| ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- | --------------------------------------------------------------------------------------- |
-| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       | `# Session State` followed by one bullet describing where you are right now.            |
-| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session | `# Handoff to Next Agent` followed by "Nothing in flight" if the session ended cleanly. |
-| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised                     | `# Lessons Learned (append-only)` and nothing else. Entries accumulate from below.      |
+| File          | Lifetime         | Purpose                                          | Updated                            | If missing, create with header                                                |
+| ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- | ----------------------------------------------------------------------------- |
+| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       | `# Session State` + one bullet on where you are now.                          |
+| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session | `# Handoff to Next Agent` + "Nothing in flight" if the session ended cleanly. |
+| `PITFALLS.md` | cross-session    | lessons learned, append-only                     | when surprised                     | `# Lessons Learned (append-only)`                                             |
 
 All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
 
