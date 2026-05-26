@@ -1,5 +1,5 @@
 > **You don't have memory. These files do.** Everything you learn this session is lost when it ends.
-> Write to `STATE.md` (live), `HANDOFF.md` (end-of-session), and `PITFALLS.md` (lessons). See Memory model below.
+> Write to `STATE.md` (live), `HANDOFF.md` (throughout and by end-of session), and `PITFALLS.md` (lessons). See Memory model below.
 > History lives in `git log`.
 > The question isn't "did I complete the task?" — it's "would the next agent thank me for how I left when they came for their shift?"
 Read first: `HANDOFF.md`, then `PITFALLS.md`
