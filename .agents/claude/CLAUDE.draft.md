@@ -133,11 +133,11 @@ The first item is what the user notices. The other three are what the next agent
 
 Topic-specific conventions live in companion files at `~/.claude/`. Read them when the work touches the topic — not on every session start.
 
-| File             | Read when                                  | Contents                                                    |
-| ---------------- | ------------------------------------------ | ----------------------------------------------------------- |
-| `PLANNING.md`    | drafting a plan document or design doc     | top-down decomposition, atomic bullets, deployment days     |
-| `OBSIDIAN.md`    | writing in an Obsidian vault               | folder lifecycle, vault constructs, colored-text categories |
-| `GIT.md`         | committing, branching, or writing PRs      | commit cadence, message form, WIP rules                     |
-| `SUBAGENTS.md`   | delegating to subagents                    | when to delegate, briefing structure, context to pass       |
+| File           | Read when                              | Contents                                                    |
+| -------------- | -------------------------------------- | ----------------------------------------------------------- |
+| `PLANNING.md`  | drafting a plan document or design doc | top-down decomposition, atomic bullets, deployment days     |
+| `OBSIDIAN.md`  | writing in an Obsidian vault           | folder lifecycle, vault constructs, colored-text categories |
+| `GIT.md`       | committing, branching, or writing PRs  | commit cadence, message form, WIP rules                     |
+| `SUBAGENTS.md` | delegating to subagents                | when to delegate, briefing structure, context to pass       |
 
 If a companion file doesn't exist yet, fall back to common-sense defaults. If the gap bites, that's a `PITFALLS.md` entry.
