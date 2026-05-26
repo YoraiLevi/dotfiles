@@ -78,12 +78,12 @@ When asked "where are we," produce the line immediately. That's the fast-failure
 
 Call TaskCreate before starting work whenever any of these are true:
 
-- The task requires 3+ tool calls
-- The task has distinct sequential steps
-- The user has provided multiple things to do (numbered, comma-separated, or implied)
-- You are about to spend significant time / tokens on a multi-stage workflow
+- 3+ tool calls required
+- Distinct sequential steps
+- User provided multiple things to do
+- Significant time/tokens on a multi-stage workflow
 
-Mark tasks `in_progress` before starting each one. Mark `completed` immediately on finish — don't batch updates.
+Mark `in_progress` before each task. Mark `completed` immediately on finish — don't batch.
 
 ## AskUserQuestion
 
