@@ -8,11 +8,11 @@ Consider reading first: `HANDOFF.md`, then `PITFALLS.md`
 
 Three files compensate for the no-memory gap. Each has one job.
 
-| File          | Lifetime         | Purpose                                          | Updated                 |
-| ------------- | ---------------- | ------------------------------------------------ | ----------------------- |
-| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously            |
-| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodicaend of session |
-| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised          |
+| File          | Lifetime         | Purpose                                          | Updated                            |
+| ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- |
+| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       |
+| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session |
+| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised                     |
 
 All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
 
