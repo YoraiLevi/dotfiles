@@ -39,7 +39,7 @@ label as a text prefix so meaning survives when color is stripped
 | action   | `~={action} TODO: ... =~`     | next step, owner-assigned action |
 ## Discussing in markdowns
 
-When discussing with the user in a document use colors to point out actions and info inline where the information is presented and transclude and link into an aggregate section 
+When discussing with the user in a document use colors to point out actions and info inline where the information is presented and transclude and link into an aggregate section for an easy view of the user-agent discussion. the user will copy-paste that section into the chat for you to read
 ## Subagent Workflow
 
 Whenever possible, assign subagents to perform the task instead of doing it yourself.
