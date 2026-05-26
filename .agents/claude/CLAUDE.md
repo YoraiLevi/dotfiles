@@ -12,7 +12,7 @@ kebab-case filenames for new .md files
 
 docs/ - facts set in stone, about the project, its intent, information worth skimming
 docs/research - active research artefacts
-docs/discussion - a vault is a l
+docs/discussion - a vault is a living being, it changes and grows and it has pending and active discussions growing through it determining to where it's heading
 archive/* - anything that isn't supposed to be on our mind but was at some point useful
 
 Choose constructs by intent:
