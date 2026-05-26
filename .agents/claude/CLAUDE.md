@@ -57,7 +57,7 @@ Don't pre-populate templates or section scaffolding. A nearly-empty file with th
 **Bootstrap trigger.** Produce a state-check confirming where you're picking up. If any file is missing, create it with just the header and note "fresh start."
 ## PITFALLS write criteria
 
-Append when a future agent would be misled or burn time without the lesson. That's the test.
+ A future agent would clearly burn time without this lesson, even though none of the trip-wires above fired.
 
 Entry format — three lines under a `##` symptom heading:
 
@@ -65,7 +65,7 @@ Entry format — three lines under a `##` symptom heading:
 - **Fix:** what worked, or what to avoid.
 - **Detect:** how to recognize this next time before it bites.
 
-Don't log routine bugs or one-off typos. PITFALLS is the future agent's smoke detector, not their bug tracker.
+Do not append for: syntax errors, typos, first-try recoverable failures, or anything the docs already say plainly.
 
 ## PITFALLS pruning
 
