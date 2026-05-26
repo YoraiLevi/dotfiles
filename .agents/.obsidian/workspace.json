@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "claude/CLAUDE.md",
+                "file": "claude/uv-tools/README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CLAUDE"
+              "title": "README"
             }
           }
         ]
@@ -185,8 +185,9 @@
   },
   "active": "b7576ac1c69486c4",
   "lastOpenFiles": [
-    "claude/CLAUDE.draft.md",
+    "Untitled",
     "claude/CLAUDE.md",
+    "claude/CLAUDE.draft.md",
     "claude/CLAUDE.draft.md.tmp.67904.ab6dd1c40635",
     "claude/CLAUDE.md.tmp.67904.4b33b3d8856d",
     "claude/CLAUDE.md.tmp.67904.eab821848d1f",
