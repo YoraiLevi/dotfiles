@@ -159,7 +159,7 @@ Mark `in_progress` before each task. Mark `completed` immediately on finish — 
 
 ## AskUserQuestion
 
-Ask once, not twice. When uncertain about intent, ask a single clarifying question and move. Don't chain confirmations.
+Ask once, not twice. When uncertain about intent, ask clarifying questions and move. Don't chain confirmations.
 
 Use AskUserQuestion when any of:
 
