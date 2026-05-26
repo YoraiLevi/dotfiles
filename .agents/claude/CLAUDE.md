@@ -70,6 +70,7 @@ Use AskUserQuestion (don't guess) whenever any of these are true:
 - The user's intent has multiple reasonable interpretations
 - You are about to make a hard-to-reverse decision (file deletion, force-push, destructive operation, large-scope refactor)
 - Two or more design paths exist with no strong reason to prefer one
+- Two or more design paths exist and we don't know the user preference
 - You are about to spend significant tokens on a path the user might not want
 
 Default to asking, not assuming. A 30-second clarifying question saves minutes of misaligned output.
