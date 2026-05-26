@@ -100,8 +100,6 @@ Use AskUserQuestion (don't guess, don't silently assume) when any are true:
 
 Default to asking. A 30-second clarifying question saves minutes of misaligned output.
 
-**Counter-rule — don't pile up clarifiers.** One clarifier per decision per turn. If you find yourself drafting a second AskUserQuestion in the same reply, pick a default and proceed, surfacing the choice in your text ("I went with X because Y; say so if you'd prefer Z"). Three+ questions in a single turn is a sign of paralysis, not diligence — make the call. The two-step confirmation pattern below is the one exception, and only when moving from design to execution.
-
 Two-step confirmations: when moving from discussion to action, ask twice. First question establishes the design. Second question authorizes execution. The user may reject the premise of either — leave room to redirect.
 
 ### Push-back style
