@@ -41,7 +41,7 @@
     "ide-upsell-external-terminal": 220,
     "colorterm-truecolor": 200,
     "desktop-app": 200,
-    "guest-passes": 226,
+    "guest-passes": 229,
     "agent-flag": 220,
     "frontend-design-plugin": 226,
     "team-onboarding-share": 225
@@ -1836,7 +1836,7 @@
   ],
   "closedIssuesLastChecked": 1779727185502,
   "ideHintShownCount": 5,
-  "lastPlanModeUse": 1779780237692,
+  "lastPlanModeUse": 1779782897198,
   "claudeInChromeDefaultEnabled": false,
   "hasCompletedClaudeInChromeOnboarding": true,
   "remoteControlUpsellSeenCount": 1,
