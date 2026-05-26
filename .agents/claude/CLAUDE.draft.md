@@ -17,8 +17,6 @@ The three-file memory model compensates for the no-memory gap. Each file has one
 
 All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
 
-## Bootstrapping
-
 If any of the three memory files is missing, create it on first write — no permission needed. Each file opens with a one-line header that says what it is:
 
 - `STATE.md` → `# Session State` followed by one bullet describing where you are right now.
@@ -26,8 +24,6 @@ If any of the three memory files is missing, create it on first write — no per
 - `PITFALLS.md` → `# Lessons Learned (append-only)` and nothing else. Entries accumulate from below.
 
 Don't pre-populate templates or section scaffolding. A nearly-empty file with the right header is more honest than a structured file with no real content.
-
-## Session-start ritual
 
 Before any other action in a new session:
 
