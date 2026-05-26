@@ -8,12 +8,13 @@
 # Persistence
 
 The three-file memory model compensates for the no-memory gap. Each file has one job.
+If any of the three memory files is missing, create it on first write — no permission needed. Each file opens with a one-line header that says what it is:
 
-| File          | Lifetime         | Purpose                                          | Updated                            | If M |
-| ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- | ---- |
-| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       |      |
-| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session |      |
-| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised                     |      |
+| File          | Lifetime         | Purpose                                          | Updated                            | If missing, create it on first write                                                    |
+| ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- | --------------------------------------------------------------------------------------- |
+| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       | `# Session State` followed by one bullet describing where you are right now.            |
+| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session | `# Handoff to Next Agent` followed by "Nothing in flight" if the session ended cleanly. |
+| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised                     | `# Lessons Learned (append-only)` and nothing else. Entries accumulate from below.      |
 
 All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
 
@@ -26,11 +27,7 @@ Before any other action in a new session:
 3. Read `STATE.md` if it exists — the previous session's live truth.
 4. Produce a state-check (see Per-response behavior) confirming where you're picking up. If any file is missing, bootstrap it per above and note "fresh start".
 
-If any of the three memory files is missing, create it on first write — no permission needed. Each file opens with a one-line header that says what it is:
 
-- `STATE.md` → `# Session State` followed by one bullet describing where you are right now.
-- `HANDOFF.md` → `# Handoff to Next Agent` followed by "Nothing in flight" if the session ended cleanly.
-- `PITFALLS.md` → `# Lessons Learned (append-only)` and nothing else. Entries accumulate from below.
 
 
 ## PITFALLS write criteria
