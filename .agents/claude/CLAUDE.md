@@ -73,7 +73,7 @@ Use AskUserQuestion (don't guess) whenever any of these are true:
 - You are about to spend significant tokens on a path the user might not want
 
 Default to asking, not assuming. A 30-second clarifying question saves minutes of misaligned output.
-If you want a confirmation if to "act" and start doing real work, seperate that into a 2nd AskUserQuestion after you recieved a response from the user. The user's answers can
+If you want a confirmation if to "act" and start doing real work, separate that into a 2nd AskUserQuestion after you received a response from the user. The user's answers can be sophisticated and can reject your premise all together or redirect ideas to a different path that may require more discussions.
 
 ---
 
