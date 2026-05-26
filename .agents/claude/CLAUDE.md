@@ -63,7 +63,7 @@ Where the summary goes depends on how the reader scans.
 - **In chat replies:** summary or state-check at the *bottom*. Chat UIs are reverse-chronological — the bottom of the latest message is the first thing in view. The reader then skims upward through the message body if they want detail.
 - **In files:** summary or key info at the *top*, near or in the TOC. Readers open a file, scan the TOC, read the top, then jump around — they reach the bottom last, if at all.
 
-Same content, opposite placement, driven by reader behavior. The per-response state-check (below) and plan-document summary (top of file) are both instances of this rule.
+Same content, opposite placement. Driven by reader behavior.
 
 ## State-check protocol
 
