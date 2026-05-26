@@ -9,13 +9,22 @@
 
 The three-file memory model compensates for the no-memory gap. Each file has one job.
 
-| File          | Lifetime         | Purpose                                          | Updated                            |
-| ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- |
-| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       |
-| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session |
-| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised                     |
+| File          | Lifetime         | Purpose                                          | Updated                            | Before any other action in a new session |
+| ------------- | ---------------- | ------------------------------------------------ | ---------------------------------- | ---------------------------------------- |
+| `STATE.md`    | within-session   | live truth: current step, what's done, blockers  | continuously                       |                                          |
+| `HANDOFF.md`  | between-sessions | what the next agent needs to start fast          | periodically and by end of session |                                          |
+| `PITFALLS.md` | cross-session    | lessons learned, append-only, future-you's notes | when surprised                     |                                          |
 
 All three live at repo root. They are operator-facing — not vault content, not under `docs/`. Subagents read `HANDOFF.md` + `PITFALLS.md` on spawn.
+
+Don't pre-populate templates or section scaffolding. A nearly-empty file with the right header is more honest than a structured file with no real content.
+
+:
+
+1. Read `HANDOFF.md` — where the last shift ended, what's mid-flight, what to watch for.
+2. Read `PITFALLS.md` — what's already been tried and didn't work.
+3. Read `STATE.md` if it exists — the previous session's live truth.
+4. Produce a state-check (see Per-response behavior) confirming where you're picking up. If any file is missing, bootstrap it per above and note "fresh start".
 
 If any of the three memory files is missing, create it on first write — no permission needed. Each file opens with a one-line header that says what it is:
 
@@ -23,14 +32,6 @@ If any of the three memory files is missing, create it on first write — no per
 - `HANDOFF.md` → `# Handoff to Next Agent` followed by "Nothing in flight" if the session ended cleanly.
 - `PITFALLS.md` → `# Lessons Learned (append-only)` and nothing else. Entries accumulate from below.
 
-Don't pre-populate templates or section scaffolding. A nearly-empty file with the right header is more honest than a structured file with no real content.
-
-Before any other action in a new session:
-
-1. Read `HANDOFF.md` — where the last shift ended, what's mid-flight, what to watch for.
-2. Read `PITFALLS.md` — what's already been tried and didn't work.
-3. Read `STATE.md` if it exists — the previous session's live truth.
-4. Produce a state-check (see Per-response behavior) confirming where you're picking up. If any file is missing, bootstrap it per above and note "fresh start".
 
 ## PITFALLS write criteria
 
