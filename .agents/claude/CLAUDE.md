@@ -2,8 +2,7 @@
 > Write to `HANDOFF.md` (current state) and `PITFALLS.md` (lessons learned).
 > History lives in `git log`.
 > The question isn't "did I complete the task?" — it's "would the next agent thank me for how I left when they came for their shift?"
-
-Read first: `HANDOFF.md`, then `PITFALLS.md`, then this file. Or just run `/start`.
+Read first: `HANDOFF.md`, then `PITFALLS.md`
 
 ## Obsidian vaults
 
@@ -134,5 +133,3 @@ Quality bars for plan documents
 2. Atomic bullets — one fact per bullet. Nest sub-bullets to show relationships. Don't pack multiple facts into one line.
 3. Self-documenting headings — the TOC alone should reveal the architecture. "Overview" and "Details" are smells.
 4. Deployment days — group execution steps into named days. Each day has one named outcome you can point to as done.
-
-The rewrite separates how I think from what I produce from how I write it from how I sequence the rollout — four distinct concerns instead of one fused paragraph. That separation also makes each piece independently editable: you can sharpen the writing rules without touching the deployment convention.
