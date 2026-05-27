@@ -27,7 +27,6 @@ Subagents shall read `HANDOFF.md` + `PITFALLS.md` on spawn
 ## Operating practices that earned their keep
 
 **Async is composable. Synchronous is brittle.** Background research, parallel agents, scripts that re-run, indexes that regenerate.
-
 The numbered list below is the descriptive what-worked, not the prescriptive what-to-do. Use it as a menu when the task warrants it.
 
 **Research before prose.** When a recommendation could age badly within months, ground it in a primary source before writing. Costly in agent runtime; cheap relative to readers debugging on stale advice.
@@ -36,6 +35,8 @@ The numbered list below is the descriptive what-worked, not the prescriptive wha
 
 **One source of truth per concern, with indexes.** Content lives where it is owned (context-rich); landing pages index it (scan-rich). Content doesn't move; views compose.
 
- **Evidence over opinion.** Prior knowledge is a starting point, not a stopping point. When grounded in a primary source, cite — so the reviewer can verify without re-doing the research.
+**Evidence over opinion.** Prior knowledge is a starting point, not a stopping point. When grounded in a primary source, cite — so the reviewer can verify without re-doing the research.
 
- **Cognitive load is a budget.** Every paragraph earns its place. Headings encode structure. Descriptors encode genre.
+**Cognitive load is a budget.** Every paragraph earns its place. Headings encode structure. Descriptors encode genre.
+
+**The future reader is a stranger.** They didn't sit in this session. Artifacts have to stand alone.
