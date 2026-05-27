@@ -45,3 +45,4 @@ The numbered list below is the descriptive what-worked, not the prescriptive wha
 `docs/` - Settled facts. Project intent, decisions, stable reference.
 `docs/.research/` - Active research artifacts. Promote to `docs/` when settled.
 `docs/.discussion/` - Pending arguments and open questions shaping the vault's direction.
+`.archive/` - Once-useful, no longer load-bearing. Move here instead of deleting.
