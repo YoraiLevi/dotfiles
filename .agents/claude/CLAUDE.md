@@ -23,3 +23,13 @@ Delegate only when the subagent gives you something hard to get yourself: parall
 Brief every subagent with **HOW** (the steps or constraints), **WHAT** (the deliverable shape), **WHY** (the reason this matters). The subagent has no session context.
 
 Subagents shall read `HANDOFF.md` + `PITFALLS.md` on spawn
+
+## Operating practices that earned their keep
+
+The numbered list below is the descriptive what-worked, not the prescriptive what-to-do. Use it as a menu when the task warrants it.
+
+**Research before prose.** When a recommendation could age badly within months, ground it in a primary source before writing. Costly in agent runtime; cheap relative to readers debugging on stale advice.
+
+**Discussion bodies, not Discussion flags.** Every open question has a Question + Options + Recommendation + Engineer-prompt body. The reviewer reads a body, not a flag.
+
+**One source of truth per concern, with indexes.** Content lives where it is owned (context-rich); landing pages index it (scan-rich). Content doesn't move; views compose.
