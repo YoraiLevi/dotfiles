@@ -1,0 +1,2 @@
+# dotfiles config --local core.excludesFile .gitignore.local
+# .gitignore.local
