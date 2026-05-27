@@ -40,3 +40,8 @@ The numbered list below is the descriptive what-worked, not the prescriptive wha
 **Cognitive load is a budget.** Every paragraph earns its place. Headings encode structure. Descriptors encode genre.
 
 **The future reader is a stranger.** They didn't sit in this session. Artifacts have to stand alone.
+
+## Folder lifecycle — cold → hot → cold
+`docs/` - Settled facts. Project intent, decisions, stable reference.
+`docs/.research/` - Active research artifacts. Promote to `docs/` when settled.
+`docs/.discussion/` - Pending arguments and open questions shaping the vault's direction.
