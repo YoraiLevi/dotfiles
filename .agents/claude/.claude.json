@@ -23,7 +23,7 @@
     "double-esc-code-restore": 240,
     "continue": 244,
     "shift-tab": 244,
-    "image-paste": 229,
+    "image-paste": 249,
     "custom-agents": 192,
     "permissions": 244,
     "rename-conversation": 240,
@@ -48,7 +48,6 @@
   },
   "promptQueueUseCount": 242,
   "btwUseCount": 1,
-  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_chair_sermon": false,
     "tengu_pewter_lark": "off",
