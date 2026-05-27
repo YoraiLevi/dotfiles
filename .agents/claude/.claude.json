@@ -46,8 +46,9 @@
     "frontend-design-plugin": 226,
     "team-onboarding-share": 225
   },
-  "promptQueueUseCount": 240,
+  "promptQueueUseCount": 241,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_chair_sermon": false,
     "tengu_pewter_lark": "off",
