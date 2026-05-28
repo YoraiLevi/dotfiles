@@ -18,7 +18,7 @@
     {
       "text": "Tier 2 has explicit IN: and OUT: scope lists",
       "passed": true,
-      "evidence": "IN: x3, OUT: x5"
+      "evidence": "found Scope IN + Scope OUT (or equivalent)"
     },
     {
       "text": "Plan has a Tier 3 / Per-change overview with at least 2 sub-sections",

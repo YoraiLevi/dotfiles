@@ -17,8 +17,8 @@
     },
     {
       "text": "Tier 2 has explicit IN: and OUT: scope lists",
-      "passed": false,
-      "evidence": "IN: x0, OUT: x1"
+      "passed": true,
+      "evidence": "found Scope IN + Scope OUT (or equivalent)"
     },
     {
       "text": "Plan has a Tier 3 / Per-change overview with at least 2 sub-sections",
@@ -57,9 +57,9 @@
     }
   ],
   "summary": {
-    "passed": 10,
-    "failed": 1,
+    "passed": 11,
+    "failed": 0,
     "total": 11,
-    "pass_rate": 0.9091
+    "pass_rate": 1.0
   }
 }

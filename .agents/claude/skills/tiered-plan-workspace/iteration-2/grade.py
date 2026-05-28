@@ -84,11 +84,25 @@ def check_tier_2_approach(text: str) -> tuple[bool, str]:
 
 
 def check_in_out_scope(text: str) -> tuple[bool, str]:
-    in_hits = re.findall(r"(?<![A-Za-z])IN[:\s]", text)
-    out_hits = re.findall(r"(?<![A-Za-z])OUT[:\s]", text)
-    if in_hits and out_hits:
-        return True, f"IN: x{len(in_hits)}, OUT: x{len(out_hits)}"
-    return False, f"IN: x{len(in_hits)}, OUT: x{len(out_hits)}"
+    # Accept any of: "Scope IN", "IN:", "**Scope IN**:", "## In scope", etc.
+    # The skill template uses "**Scope IN**:" and "**Scope OUT**:" by default.
+    in_patterns = [
+        r"\bScope\s+IN\b",
+        r"\bIN\s*[:\*]",
+        r"\bIN\s+scope\b",
+        r"^[*-]?\s*\**\s*IN\b",
+    ]
+    out_patterns = [
+        r"\bScope\s+OUT\b",
+        r"\bOUT\s*[:\*]",
+        r"\bOUT\s+of\s+scope\b",
+        r"^[*-]?\s*\**\s*OUT\b",
+    ]
+    has_in = any(re.search(p, text, re.MULTILINE) for p in in_patterns)
+    has_out = any(re.search(p, text, re.MULTILINE) for p in out_patterns)
+    if has_in and has_out:
+        return True, "found Scope IN + Scope OUT (or equivalent)"
+    return False, f"has_in={has_in}, has_out={has_out}"
 
 
 def check_tier_3_per_change(text: str) -> tuple[bool, str]:
