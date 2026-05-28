@@ -1856,6 +1856,10 @@
     "code-review": {
       "usageCount": 1,
       "lastUsedAt": 1779926197860
+    },
+    "tiered-plan": {
+      "usageCount": 1,
+      "lastUsedAt": 1779971711816
     }
   },
   "githubRepoPaths": {
