@@ -1,0 +1,18 @@
+{
+  "eval_id": 1,
+  "eval_name": "logging-refactor",
+  "prompt": "I need to move my logging module from src/utils/log.py to a new src/observability/log.py and update all callers. There's also a stale `Logger` class in there that should be renamed to `StructuredLogger` since that's what it actually does. Plan this for me — I want a clean migration with backwards-compat for one release (the old import path should keep working for one version with a deprecation warning).",
+  "assertions": [
+    "Plan has a Tier 1 / Objective section (worthwhileness, why now, success criteria)",
+    "Tier 1 contains 4-8 bullets",
+    "Plan has a Tier 2 / Approach section",
+    "Tier 2 has explicit IN: and OUT: scope lists",
+    "Plan has a Tier 3 / Per-change overview section with at least one Change subsection",
+    "Plan has a Tier 4 / Implementer guide section",
+    "Tier 4 steps include rationale (this step lands here because / one-sentence opener per step)",
+    "Tier 4 has Checkpoint: markers",
+    "Plan contains no markdown tables",
+    "Plan does NOT include a Meta / prompt template section (dropped per skill update)",
+    "No multi-sentence prose paragraphs longer than 200 chars"
+  ]
+}
