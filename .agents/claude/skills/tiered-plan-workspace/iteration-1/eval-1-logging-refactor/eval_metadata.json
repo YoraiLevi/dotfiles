@@ -1,0 +1,6 @@
+{
+  "eval_id": 1,
+  "eval_name": "logging-refactor",
+  "prompt": "I need to move my logging module from src/utils/log.py to a new src/observability/log.py and update all callers. There's also a stale `Logger` class in there that should be renamed to `StructuredLogger` since that's what it actually does. Plan this for me — I want a clean migration with backwards-compat for one release (the old import path should keep working for one version with a deprecation warning).",
+  "assertions": []
+}

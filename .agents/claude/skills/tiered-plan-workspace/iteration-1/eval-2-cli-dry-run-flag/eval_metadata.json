@@ -1,0 +1,6 @@
+{
+  "eval_id": 2,
+  "eval_name": "cli-dry-run-flag",
+  "prompt": "Plan adding a --dry-run flag to my data-migration CLI script (scripts/migrate.py). When set, the script should print what it would do (which rows to update, which to delete) without actually mutating the database. I want to update the help text, add a couple of tests for the new flag, and make sure the README mentions it. Solo project, one PR.",
+  "assertions": []
+}

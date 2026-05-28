@@ -48,6 +48,7 @@
   },
   "promptQueueUseCount": 243,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_ccr_bridge_multi_session": true,
     "tengu_prompt_cache_diagnostics": true,

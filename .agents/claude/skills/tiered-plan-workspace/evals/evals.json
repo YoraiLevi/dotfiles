@@ -1,0 +1,26 @@
+{
+  "skill_name": "tiered-plan",
+  "evals": [
+    {
+      "id": 1,
+      "name": "logging-refactor",
+      "prompt": "I need to move my logging module from src/utils/log.py to a new src/observability/log.py and update all callers. There's also a stale `Logger` class in there that should be renamed to `StructuredLogger` since that's what it actually does. Plan this for me — I want a clean migration with backwards-compat for one release (the old import path should keep working for one version with a deprecation warning).",
+      "expected_output": "A three-tier plan markdown document with Tier 1 summary, Tier 2 overview (Change 1: file move, Change 2: rename, scope decisions), Tier 3 implementer guide (git mv steps, find/replace patterns for imports, deprecation shim, verification commands). Bullets only, no tables, IN/OUT scope list, single PR delivery.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "cli-dry-run-flag",
+      "prompt": "Plan adding a --dry-run flag to my data-migration CLI script (scripts/migrate.py). When set, the script should print what it would do (which rows to update, which to delete) without actually mutating the database. I want to update the help text, add a couple of tests for the new flag, and make sure the README mentions it. Solo project, one PR.",
+      "expected_output": "A three-tier plan covering the code change in migrate.py, the test additions, and the README update. Each change as a separate Tier 2 section. Tier 3 with the specific arg-parser modification, the dry-run branch logic, test case shapes, and README placement. Verification per checkpoint.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "settings-consolidation",
+      "prompt": "My project's settings system is currently a bunch of individual JSON files under config/ (one per environment: dev.json, staging.json, prod.json). I want to consolidate them into a single TOML file with environment sections. Need migration for existing settings, one-release backwards-compat (read old JSONs if present, log deprecation warning), and a CLI flag to dump the merged config. Plan this. Solo.",
+      "expected_output": "A three-tier plan with multiple Changes (TOML schema design, loader code, migration script, backwards-compat shim, CLI flag, deprecation logging). Tier 2 should honestly acknowledge that backwards-compat adds complexity and may not stick beyond one release. Scope IN/OUT explicit. Tier 3 with file paths + the exact migration command.",
+      "files": []
+    }
+  ]
+}

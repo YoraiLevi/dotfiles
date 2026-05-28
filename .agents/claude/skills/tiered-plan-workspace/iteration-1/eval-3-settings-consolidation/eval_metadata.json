@@ -1,0 +1,6 @@
+{
+  "eval_id": 3,
+  "eval_name": "settings-consolidation",
+  "prompt": "My project's settings system is currently a bunch of individual JSON files under config/ (one per environment: dev.json, staging.json, prod.json). I want to consolidate them into a single TOML file with environment sections. Need migration for existing settings, one-release backwards-compat (read old JSONs if present, log deprecation warning), and a CLI flag to dump the merged config. Plan this. Solo.",
+  "assertions": []
+}
