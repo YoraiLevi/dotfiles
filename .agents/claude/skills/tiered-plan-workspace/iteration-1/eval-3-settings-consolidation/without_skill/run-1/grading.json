@@ -1,7 +1,5 @@
 {
-  "eval_dir": "eval-3-settings-consolidation",
-  "condition": "without_skill",
-  "assertions": [
+  "expectations": [
     {
       "text": "Plan has a Tier 1 / Summary section",
       "passed": false,
@@ -49,7 +47,9 @@
     }
   ],
   "summary": {
+    "passed": 0,
+    "failed": 9,
     "total": 9,
-    "passed": 0
+    "pass_rate": 0.0
   }
 }

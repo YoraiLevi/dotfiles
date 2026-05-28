@@ -4,16 +4,439 @@
     "skill_path": "<path/to/skill>",
     "executor_model": "<model-name>",
     "analyzer_model": "<model-name>",
-    "timestamp": "2026-05-28T13:36:53Z",
-    "evals_run": [],
+    "timestamp": "2026-05-28T13:37:56Z",
+    "evals_run": [
+      1,
+      2,
+      3
+    ],
     "runs_per_configuration": 3
   },
-  "runs": [],
+  "runs": [
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 94.8,
+        "tokens": 29316,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan has a Tier 1 / Summary section",
+          "passed": true,
+          "evidence": "found heading: '## Tier 1'"
+        },
+        {
+          "text": "Tier 1 contains 5-12 bullets",
+          "passed": true,
+          "evidence": "7 bullets (want 5-12)"
+        },
+        {
+          "text": "Plan has a Tier 2 / Overview section",
+          "passed": true,
+          "evidence": "found heading: '## Tier 2'"
+        },
+        {
+          "text": "Plan has a Tier 3 / Implementer section",
+          "passed": true,
+          "evidence": "found heading: '## Tier 3'"
+        },
+        {
+          "text": "Plan has explicit IN: and OUT: scope lists",
+          "passed": true,
+          "evidence": "IN: x2, OUT: x7"
+        },
+        {
+          "text": "Plan has Checkpoint: markers in Tier 3",
+          "passed": true,
+          "evidence": "x8 Checkpoint: markers"
+        },
+        {
+          "text": "Plan contains no markdown tables",
+          "passed": true,
+          "evidence": "no table separators found"
+        },
+        {
+          "text": "Plan ends with a Meta section / prompt template",
+          "passed": true,
+          "evidence": "found in last 40%: '## Meta'"
+        },
+        {
+          "text": "No multi-sentence prose paragraphs longer than 200 chars",
+          "passed": true,
+          "evidence": "no long prose paragraphs"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 86.9,
+        "tokens": 28209,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan has a Tier 1 / Summary section",
+          "passed": true,
+          "evidence": "found heading: '## Tier 1'"
+        },
+        {
+          "text": "Tier 1 contains 5-12 bullets",
+          "passed": true,
+          "evidence": "7 bullets (want 5-12)"
+        },
+        {
+          "text": "Plan has a Tier 2 / Overview section",
+          "passed": true,
+          "evidence": "found heading: '## Tier 2'"
+        },
+        {
+          "text": "Plan has a Tier 3 / Implementer section",
+          "passed": true,
+          "evidence": "found heading: '## Tier 3'"
+        },
+        {
+          "text": "Plan has explicit IN: and OUT: scope lists",
+          "passed": true,
+          "evidence": "IN: x1, OUT: x4"
+        },
+        {
+          "text": "Plan has Checkpoint: markers in Tier 3",
+          "passed": true,
+          "evidence": "x6 Checkpoint: markers"
+        },
+        {
+          "text": "Plan contains no markdown tables",
+          "passed": true,
+          "evidence": "no table separators found"
+        },
+        {
+          "text": "Plan ends with a Meta section / prompt template",
+          "passed": true,
+          "evidence": "found in last 40%: '## Meta'"
+        },
+        {
+          "text": "No multi-sentence prose paragraphs longer than 200 chars",
+          "passed": true,
+          "evidence": "no long prose paragraphs"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 99.8,
+        "tokens": 29517,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan has a Tier 1 / Summary section",
+          "passed": true,
+          "evidence": "found heading: '## Tier 1'"
+        },
+        {
+          "text": "Tier 1 contains 5-12 bullets",
+          "passed": true,
+          "evidence": "7 bullets (want 5-12)"
+        },
+        {
+          "text": "Plan has a Tier 2 / Overview section",
+          "passed": true,
+          "evidence": "found heading: '## Tier 2'"
+        },
+        {
+          "text": "Plan has a Tier 3 / Implementer section",
+          "passed": true,
+          "evidence": "found heading: '## Tier 3'"
+        },
+        {
+          "text": "Plan has explicit IN: and OUT: scope lists",
+          "passed": true,
+          "evidence": "IN: x3, OUT: x7"
+        },
+        {
+          "text": "Plan has Checkpoint: markers in Tier 3",
+          "passed": true,
+          "evidence": "x7 Checkpoint: markers"
+        },
+        {
+          "text": "Plan contains no markdown tables",
+          "passed": true,
+          "evidence": "no table separators found"
+        },
+        {
+          "text": "Plan ends with a Meta section / prompt template",
+          "passed": true,
+          "evidence": "found in last 40%: '## Meta'"
+        },
+        {
+          "text": "No multi-sentence prose paragraphs longer than 200 chars",
+          "passed": true,
+          "evidence": "no long prose paragraphs"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.1111,
+        "passed": 1,
+        "failed": 8,
+        "total": 9,
+        "time_seconds": 74.3,
+        "tokens": 23867,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan has a Tier 1 / Summary section",
+          "passed": false,
+          "evidence": "no Tier 1 / Summary heading"
+        },
+        {
+          "text": "Tier 1 contains 5-12 bullets",
+          "passed": false,
+          "evidence": "no Tier 1 section to count"
+        },
+        {
+          "text": "Plan has a Tier 2 / Overview section",
+          "passed": false,
+          "evidence": "no Tier 2 / Overview heading"
+        },
+        {
+          "text": "Plan has a Tier 3 / Implementer section",
+          "passed": false,
+          "evidence": "no Tier 3 / Implementer heading"
+        },
+        {
+          "text": "Plan has explicit IN: and OUT: scope lists",
+          "passed": false,
+          "evidence": "IN: x0, OUT: x0"
+        },
+        {
+          "text": "Plan has Checkpoint: markers in Tier 3",
+          "passed": false,
+          "evidence": "no Checkpoint: marker"
+        },
+        {
+          "text": "Plan contains no markdown tables",
+          "passed": true,
+          "evidence": "no table separators found"
+        },
+        {
+          "text": "Plan ends with a Meta section / prompt template",
+          "passed": false,
+          "evidence": "no Meta / Prompt template section"
+        },
+        {
+          "text": "No multi-sentence prose paragraphs longer than 200 chars",
+          "passed": false,
+          "evidence": "x5 long paragraphs: 4 sentences / 220 chars; 4 sentences / 301 chars; 5 sentences / 382 chars"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.1111,
+        "passed": 1,
+        "failed": 8,
+        "total": 9,
+        "time_seconds": 51.1,
+        "tokens": 21621,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan has a Tier 1 / Summary section",
+          "passed": false,
+          "evidence": "no Tier 1 / Summary heading"
+        },
+        {
+          "text": "Tier 1 contains 5-12 bullets",
+          "passed": false,
+          "evidence": "no Tier 1 section to count"
+        },
+        {
+          "text": "Plan has a Tier 2 / Overview section",
+          "passed": false,
+          "evidence": "no Tier 2 / Overview heading"
+        },
+        {
+          "text": "Plan has a Tier 3 / Implementer section",
+          "passed": false,
+          "evidence": "no Tier 3 / Implementer heading"
+        },
+        {
+          "text": "Plan has explicit IN: and OUT: scope lists",
+          "passed": false,
+          "evidence": "IN: x0, OUT: x0"
+        },
+        {
+          "text": "Plan has Checkpoint: markers in Tier 3",
+          "passed": false,
+          "evidence": "no Checkpoint: marker"
+        },
+        {
+          "text": "Plan contains no markdown tables",
+          "passed": true,
+          "evidence": "no table separators found"
+        },
+        {
+          "text": "Plan ends with a Meta section / prompt template",
+          "passed": false,
+          "evidence": "no Meta / Prompt template section"
+        },
+        {
+          "text": "No multi-sentence prose paragraphs longer than 200 chars",
+          "passed": false,
+          "evidence": "x1 long paragraphs: 8 sentences / 372 chars"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 9,
+        "total": 9,
+        "time_seconds": 70.6,
+        "tokens": 22954,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan has a Tier 1 / Summary section",
+          "passed": false,
+          "evidence": "no Tier 1 / Summary heading"
+        },
+        {
+          "text": "Tier 1 contains 5-12 bullets",
+          "passed": false,
+          "evidence": "no Tier 1 section to count"
+        },
+        {
+          "text": "Plan has a Tier 2 / Overview section",
+          "passed": false,
+          "evidence": "no Tier 2 / Overview heading"
+        },
+        {
+          "text": "Plan has a Tier 3 / Implementer section",
+          "passed": false,
+          "evidence": "no Tier 3 / Implementer heading"
+        },
+        {
+          "text": "Plan has explicit IN: and OUT: scope lists",
+          "passed": false,
+          "evidence": "IN: x0, OUT: x0"
+        },
+        {
+          "text": "Plan has Checkpoint: markers in Tier 3",
+          "passed": false,
+          "evidence": "no Checkpoint: marker"
+        },
+        {
+          "text": "Plan contains no markdown tables",
+          "passed": false,
+          "evidence": "x1 table separator lines"
+        },
+        {
+          "text": "Plan ends with a Meta section / prompt template",
+          "passed": false,
+          "evidence": "no Meta / Prompt template section"
+        },
+        {
+          "text": "No multi-sentence prose paragraphs longer than 200 chars",
+          "passed": false,
+          "evidence": "x1 long paragraphs: 5 sentences / 531 chars"
+        }
+      ],
+      "notes": []
+    }
+  ],
   "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 93.8333,
+        "stddev": 6.5041,
+        "min": 86.9,
+        "max": 99.8
+      },
+      "tokens": {
+        "mean": 29014.0,
+        "stddev": 704.3572,
+        "min": 28209,
+        "max": 29517
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.0741,
+        "stddev": 0.0641,
+        "min": 0.0,
+        "max": 0.1111
+      },
+      "time_seconds": {
+        "mean": 65.3333,
+        "stddev": 12.4645,
+        "min": 51.1,
+        "max": 74.3
+      },
+      "tokens": {
+        "mean": 22814.0,
+        "stddev": 1129.526,
+        "min": 21621,
+        "max": 23867
+      }
+    },
     "delta": {
-      "pass_rate": "+0.00",
-      "time_seconds": "+0.0",
-      "tokens": "+0"
+      "pass_rate": "+0.93",
+      "time_seconds": "+28.5",
+      "tokens": "+6200"
     }
   },
   "notes": []

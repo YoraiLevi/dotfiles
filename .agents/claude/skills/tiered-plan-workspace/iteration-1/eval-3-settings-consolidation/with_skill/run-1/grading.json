@@ -1,36 +1,34 @@
 {
-  "eval_dir": "eval-2-cli-dry-run-flag",
-  "condition": "without_skill",
-  "assertions": [
+  "expectations": [
     {
       "text": "Plan has a Tier 1 / Summary section",
-      "passed": false,
-      "evidence": "no Tier 1 / Summary heading"
+      "passed": true,
+      "evidence": "found heading: '## Tier 1'"
     },
     {
       "text": "Tier 1 contains 5-12 bullets",
-      "passed": false,
-      "evidence": "no Tier 1 section to count"
+      "passed": true,
+      "evidence": "7 bullets (want 5-12)"
     },
     {
       "text": "Plan has a Tier 2 / Overview section",
-      "passed": false,
-      "evidence": "no Tier 2 / Overview heading"
+      "passed": true,
+      "evidence": "found heading: '## Tier 2'"
     },
     {
       "text": "Plan has a Tier 3 / Implementer section",
-      "passed": false,
-      "evidence": "no Tier 3 / Implementer heading"
+      "passed": true,
+      "evidence": "found heading: '## Tier 3'"
     },
     {
       "text": "Plan has explicit IN: and OUT: scope lists",
-      "passed": false,
-      "evidence": "IN: x0, OUT: x0"
+      "passed": true,
+      "evidence": "IN: x3, OUT: x7"
     },
     {
       "text": "Plan has Checkpoint: markers in Tier 3",
-      "passed": false,
-      "evidence": "no Checkpoint: marker"
+      "passed": true,
+      "evidence": "x7 Checkpoint: markers"
     },
     {
       "text": "Plan contains no markdown tables",
@@ -39,17 +37,19 @@
     },
     {
       "text": "Plan ends with a Meta section / prompt template",
-      "passed": false,
-      "evidence": "no Meta / Prompt template section"
+      "passed": true,
+      "evidence": "found in last 40%: '## Meta'"
     },
     {
       "text": "No multi-sentence prose paragraphs longer than 200 chars",
-      "passed": false,
-      "evidence": "x1 long paragraphs: 8 sentences / 372 chars"
+      "passed": true,
+      "evidence": "no long prose paragraphs"
     }
   ],
   "summary": {
+    "passed": 9,
+    "failed": 0,
     "total": 9,
-    "passed": 1
+    "pass_rate": 1.0
   }
 }

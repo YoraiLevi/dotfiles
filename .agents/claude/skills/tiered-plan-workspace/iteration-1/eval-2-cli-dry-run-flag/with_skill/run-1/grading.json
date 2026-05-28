@@ -1,7 +1,5 @@
 {
-  "eval_dir": "eval-1-logging-refactor",
-  "condition": "with_skill",
-  "assertions": [
+  "expectations": [
     {
       "text": "Plan has a Tier 1 / Summary section",
       "passed": true,
@@ -25,12 +23,12 @@
     {
       "text": "Plan has explicit IN: and OUT: scope lists",
       "passed": true,
-      "evidence": "IN: x2, OUT: x7"
+      "evidence": "IN: x1, OUT: x4"
     },
     {
       "text": "Plan has Checkpoint: markers in Tier 3",
       "passed": true,
-      "evidence": "x8 Checkpoint: markers"
+      "evidence": "x6 Checkpoint: markers"
     },
     {
       "text": "Plan contains no markdown tables",
@@ -49,7 +47,9 @@
     }
   ],
   "summary": {
+    "passed": 9,
+    "failed": 0,
     "total": 9,
-    "passed": 9
+    "pass_rate": 1.0
   }
 }

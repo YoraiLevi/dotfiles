@@ -1,7 +1,5 @@
 {
-  "eval_dir": "eval-1-logging-refactor",
-  "condition": "without_skill",
-  "assertions": [
+  "expectations": [
     {
       "text": "Plan has a Tier 1 / Summary section",
       "passed": false,
@@ -45,11 +43,13 @@
     {
       "text": "No multi-sentence prose paragraphs longer than 200 chars",
       "passed": false,
-      "evidence": "x5 long paragraphs: 4 sentences / 220 chars; 4 sentences / 301 chars; 5 sentences / 382 chars"
+      "evidence": "x1 long paragraphs: 8 sentences / 372 chars"
     }
   ],
   "summary": {
+    "passed": 1,
+    "failed": 8,
     "total": 9,
-    "passed": 1
+    "pass_rate": 0.1111
   }
 }
