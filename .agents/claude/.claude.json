@@ -1843,6 +1843,10 @@
     "tiered-plan": {
       "usageCount": 2,
       "lastUsedAt": 1779972406535
+    },
+    "skill-creator:skill-creator": {
+      "usageCount": 1,
+      "lastUsedAt": 1779974177288
     }
   },
   "githubRepoPaths": {
