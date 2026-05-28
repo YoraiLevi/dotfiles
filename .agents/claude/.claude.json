@@ -1751,7 +1751,8 @@
         "frame_duration_ms_p50": 1.309500000000071,
         "frame_duration_ms_p95": 12.971675000000005,
         "frame_duration_ms_p99": 14.07969500000004
-      }
+      },
+      "hasCompletedProjectOnboarding": true
     }
   },
   "lastReleaseNotesSeen": "2.1.152",
