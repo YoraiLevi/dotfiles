@@ -1,0 +1,55 @@
+{
+  "eval_dir": "eval-1-logging-refactor",
+  "condition": "with_skill",
+  "assertions": [
+    {
+      "text": "Plan has a Tier 1 / Summary section",
+      "passed": true,
+      "evidence": "found heading: '## Tier 1'"
+    },
+    {
+      "text": "Tier 1 contains 5-12 bullets",
+      "passed": true,
+      "evidence": "7 bullets (want 5-12)"
+    },
+    {
+      "text": "Plan has a Tier 2 / Overview section",
+      "passed": true,
+      "evidence": "found heading: '## Tier 2'"
+    },
+    {
+      "text": "Plan has a Tier 3 / Implementer section",
+      "passed": true,
+      "evidence": "found heading: '## Tier 3'"
+    },
+    {
+      "text": "Plan has explicit IN: and OUT: scope lists",
+      "passed": true,
+      "evidence": "IN: x2, OUT: x7"
+    },
+    {
+      "text": "Plan has Checkpoint: markers in Tier 3",
+      "passed": true,
+      "evidence": "x8 Checkpoint: markers"
+    },
+    {
+      "text": "Plan contains no markdown tables",
+      "passed": true,
+      "evidence": "no table separators found"
+    },
+    {
+      "text": "Plan ends with a Meta section / prompt template",
+      "passed": true,
+      "evidence": "found in last 40%: '## Meta'"
+    },
+    {
+      "text": "No multi-sentence prose paragraphs longer than 200 chars",
+      "passed": true,
+      "evidence": "no long prose paragraphs"
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 9
+  }
+}

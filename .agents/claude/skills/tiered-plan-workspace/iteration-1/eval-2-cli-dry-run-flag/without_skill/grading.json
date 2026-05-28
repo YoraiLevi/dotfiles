@@ -1,0 +1,55 @@
+{
+  "eval_dir": "eval-2-cli-dry-run-flag",
+  "condition": "without_skill",
+  "assertions": [
+    {
+      "text": "Plan has a Tier 1 / Summary section",
+      "passed": false,
+      "evidence": "no Tier 1 / Summary heading"
+    },
+    {
+      "text": "Tier 1 contains 5-12 bullets",
+      "passed": false,
+      "evidence": "no Tier 1 section to count"
+    },
+    {
+      "text": "Plan has a Tier 2 / Overview section",
+      "passed": false,
+      "evidence": "no Tier 2 / Overview heading"
+    },
+    {
+      "text": "Plan has a Tier 3 / Implementer section",
+      "passed": false,
+      "evidence": "no Tier 3 / Implementer heading"
+    },
+    {
+      "text": "Plan has explicit IN: and OUT: scope lists",
+      "passed": false,
+      "evidence": "IN: x0, OUT: x0"
+    },
+    {
+      "text": "Plan has Checkpoint: markers in Tier 3",
+      "passed": false,
+      "evidence": "no Checkpoint: marker"
+    },
+    {
+      "text": "Plan contains no markdown tables",
+      "passed": true,
+      "evidence": "no table separators found"
+    },
+    {
+      "text": "Plan ends with a Meta section / prompt template",
+      "passed": false,
+      "evidence": "no Meta / Prompt template section"
+    },
+    {
+      "text": "No multi-sentence prose paragraphs longer than 200 chars",
+      "passed": false,
+      "evidence": "x1 long paragraphs: 8 sentences / 372 chars"
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 1
+  }
+}

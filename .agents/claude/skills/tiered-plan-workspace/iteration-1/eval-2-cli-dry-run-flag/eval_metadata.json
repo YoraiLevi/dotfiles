@@ -2,5 +2,15 @@
   "eval_id": 2,
   "eval_name": "cli-dry-run-flag",
   "prompt": "Plan adding a --dry-run flag to my data-migration CLI script (scripts/migrate.py). When set, the script should print what it would do (which rows to update, which to delete) without actually mutating the database. I want to update the help text, add a couple of tests for the new flag, and make sure the README mentions it. Solo project, one PR.",
-  "assertions": []
+  "assertions": [
+    "Plan has a Tier 1 / Summary section",
+    "Tier 1 contains 5-12 bullets",
+    "Plan has a Tier 2 / Overview section",
+    "Plan has a Tier 3 / Implementer section",
+    "Plan has explicit IN: and OUT: scope lists",
+    "Plan has Checkpoint: markers in Tier 3",
+    "Plan contains no markdown tables",
+    "Plan ends with a Meta section / prompt template",
+    "No multi-sentence prose paragraphs longer than 200 chars"
+  ]
 }
