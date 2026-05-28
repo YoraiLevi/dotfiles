@@ -4,7 +4,7 @@
     "skill_path": "<path/to/skill>",
     "executor_model": "<model-name>",
     "analyzer_model": "<model-name>",
-    "timestamp": "2026-05-28T14:20:36Z",
+    "timestamp": "2026-05-28T15:34:33Z",
     "evals_run": [
       1,
       2,
@@ -234,15 +234,15 @@
     },
     {
       "eval_id": 1,
-      "configuration": "old_skill",
+      "configuration": "without_skill",
       "run_number": 1,
       "result": {
-        "pass_rate": 0.6364,
-        "passed": 7,
-        "failed": 4,
+        "pass_rate": 0.2727,
+        "passed": 3,
+        "failed": 8,
         "total": 11,
-        "time_seconds": 106.2,
-        "tokens": 30074,
+        "time_seconds": 80.1,
+        "tokens": 24497,
         "tool_calls": 0,
         "errors": 0
       },
@@ -250,27 +250,27 @@
         {
           "text": "Plan has a Tier 1 / Objective section (problem, why now, success, risk)",
           "passed": false,
-          "evidence": "found: none (want \u22653)"
+          "evidence": "no Tier 1 / Objective heading"
         },
         {
           "text": "Tier 1 contains 4-12 bullets",
-          "passed": true,
-          "evidence": "8 bullets (want 4-12)"
+          "passed": false,
+          "evidence": "no Tier 1 section"
         },
         {
           "text": "Plan has a Tier 2 / Approach section",
-          "passed": true,
-          "evidence": "found: '## Tier 2'"
+          "passed": false,
+          "evidence": "no Tier 2 / Approach heading"
         },
         {
           "text": "Tier 2 has explicit IN: and OUT: scope lists",
-          "passed": true,
-          "evidence": "found Scope IN + Scope OUT (or equivalent)"
+          "passed": false,
+          "evidence": "has_in=False, has_out=False"
         },
         {
           "text": "Plan has a Tier 3 / Per-change overview with at least 2 sub-sections",
-          "passed": true,
-          "evidence": "11 ### subsections (no 'Change' label but \u22652 found)"
+          "passed": false,
+          "evidence": "no Tier 3 / Per-change heading"
         },
         {
           "text": "Plan has a Tier 4 / Implementer section",
@@ -284,8 +284,8 @@
         },
         {
           "text": "Plan has Checkpoint: markers in Tier 4",
-          "passed": true,
-          "evidence": "x8 Checkpoint: markers"
+          "passed": false,
+          "evidence": "no Checkpoint: marker"
         },
         {
           "text": "Plan contains no markdown tables",
@@ -294,8 +294,8 @@
         },
         {
           "text": "Plan does NOT include a Meta / prompt template section",
-          "passed": false,
-          "evidence": "unwanted Meta section found: '## Meta'"
+          "passed": true,
+          "evidence": "no Meta section"
         },
         {
           "text": "No multi-sentence prose paragraphs longer than 200 chars",
@@ -307,15 +307,15 @@
     },
     {
       "eval_id": 2,
-      "configuration": "old_skill",
+      "configuration": "without_skill",
       "run_number": 1,
       "result": {
-        "pass_rate": 0.6364,
-        "passed": 7,
-        "failed": 4,
+        "pass_rate": 0.2727,
+        "passed": 3,
+        "failed": 8,
         "total": 11,
-        "time_seconds": 87.4,
-        "tokens": 28653,
+        "time_seconds": 43.1,
+        "tokens": 21403,
         "tool_calls": 0,
         "errors": 0
       },
@@ -323,27 +323,27 @@
         {
           "text": "Plan has a Tier 1 / Objective section (problem, why now, success, risk)",
           "passed": false,
-          "evidence": "found: none (want \u22653)"
+          "evidence": "no Tier 1 / Objective heading"
         },
         {
           "text": "Tier 1 contains 4-12 bullets",
-          "passed": true,
-          "evidence": "7 bullets (want 4-12)"
+          "passed": false,
+          "evidence": "no Tier 1 section"
         },
         {
           "text": "Plan has a Tier 2 / Approach section",
-          "passed": true,
-          "evidence": "found: '## Tier 2'"
+          "passed": false,
+          "evidence": "no Tier 2 / Approach heading"
         },
         {
           "text": "Tier 2 has explicit IN: and OUT: scope lists",
-          "passed": true,
-          "evidence": "found Scope IN + Scope OUT (or equivalent)"
+          "passed": false,
+          "evidence": "has_in=False, has_out=False"
         },
         {
           "text": "Plan has a Tier 3 / Per-change overview with at least 2 sub-sections",
-          "passed": true,
-          "evidence": "8 ### subsections (no 'Change' label but \u22652 found)"
+          "passed": false,
+          "evidence": "no Tier 3 / Per-change heading"
         },
         {
           "text": "Plan has a Tier 4 / Implementer section",
@@ -357,8 +357,8 @@
         },
         {
           "text": "Plan has Checkpoint: markers in Tier 4",
-          "passed": true,
-          "evidence": "x5 Checkpoint: markers"
+          "passed": false,
+          "evidence": "no Checkpoint: marker"
         },
         {
           "text": "Plan contains no markdown tables",
@@ -367,8 +367,8 @@
         },
         {
           "text": "Plan does NOT include a Meta / prompt template section",
-          "passed": false,
-          "evidence": "unwanted Meta section found: '## Meta'"
+          "passed": true,
+          "evidence": "no Meta section"
         },
         {
           "text": "No multi-sentence prose paragraphs longer than 200 chars",
@@ -380,15 +380,15 @@
     },
     {
       "eval_id": 3,
-      "configuration": "old_skill",
+      "configuration": "without_skill",
       "run_number": 1,
       "result": {
-        "pass_rate": 0.6364,
-        "passed": 7,
-        "failed": 4,
+        "pass_rate": 0.2727,
+        "passed": 3,
+        "failed": 8,
         "total": 11,
-        "time_seconds": 115.7,
-        "tokens": 30639,
+        "time_seconds": 67.1,
+        "tokens": 22652,
         "tool_calls": 0,
         "errors": 0
       },
@@ -396,27 +396,27 @@
         {
           "text": "Plan has a Tier 1 / Objective section (problem, why now, success, risk)",
           "passed": false,
-          "evidence": "found: none (want \u22653)"
+          "evidence": "no Tier 1 / Objective heading"
         },
         {
           "text": "Tier 1 contains 4-12 bullets",
-          "passed": true,
-          "evidence": "7 bullets (want 4-12)"
+          "passed": false,
+          "evidence": "no Tier 1 section"
         },
         {
           "text": "Plan has a Tier 2 / Approach section",
-          "passed": true,
-          "evidence": "found: '## Tier 2'"
+          "passed": false,
+          "evidence": "no Tier 2 / Approach heading"
         },
         {
           "text": "Tier 2 has explicit IN: and OUT: scope lists",
-          "passed": true,
-          "evidence": "found Scope IN + Scope OUT (or equivalent)"
+          "passed": false,
+          "evidence": "has_in=False, has_out=False"
         },
         {
           "text": "Plan has a Tier 3 / Per-change overview with at least 2 sub-sections",
-          "passed": true,
-          "evidence": "10 ### subsections (no 'Change' label but \u22652 found)"
+          "passed": false,
+          "evidence": "no Tier 3 / Per-change heading"
         },
         {
           "text": "Plan has a Tier 4 / Implementer section",
@@ -430,8 +430,8 @@
         },
         {
           "text": "Plan has Checkpoint: markers in Tier 4",
-          "passed": true,
-          "evidence": "x8 Checkpoint: markers"
+          "passed": false,
+          "evidence": "no Checkpoint: marker"
         },
         {
           "text": "Plan contains no markdown tables",
@@ -440,8 +440,8 @@
         },
         {
           "text": "Plan does NOT include a Meta / prompt template section",
-          "passed": false,
-          "evidence": "unwanted Meta section found: '## Meta'"
+          "passed": true,
+          "evidence": "no Meta section"
         },
         {
           "text": "No multi-sentence prose paragraphs longer than 200 chars",
@@ -473,30 +473,30 @@
         "max": 32770
       }
     },
-    "old_skill": {
+    "without_skill": {
       "pass_rate": {
-        "mean": 0.6364,
+        "mean": 0.2727,
         "stddev": 0.0,
-        "min": 0.6364,
-        "max": 0.6364
+        "min": 0.2727,
+        "max": 0.2727
       },
       "time_seconds": {
-        "mean": 103.1,
-        "stddev": 14.4024,
-        "min": 87.4,
-        "max": 115.7
+        "mean": 63.4333,
+        "stddev": 18.7705,
+        "min": 43.1,
+        "max": 80.1
       },
       "tokens": {
-        "mean": 29788.6667,
-        "stddev": 1023.2841,
-        "min": 28653,
-        "max": 30639
+        "mean": 22850.6667,
+        "stddev": 1556.5379,
+        "min": 21403,
+        "max": 24497
       }
     },
     "delta": {
-      "pass_rate": "+0.36",
-      "time_seconds": "+19.2",
-      "tokens": "+2031"
+      "pass_rate": "+0.73",
+      "time_seconds": "+58.9",
+      "tokens": "+8969"
     }
   },
   "notes": []

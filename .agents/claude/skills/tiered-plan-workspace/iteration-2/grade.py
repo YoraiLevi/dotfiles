@@ -21,7 +21,7 @@ EVALS = [
     "eval-2-cli-dry-run-flag",
     "eval-3-settings-consolidation",
 ]
-CONDITIONS = ["new_skill", "old_skill"]
+CONDITIONS = ["new_skill", "without_skill"]
 
 
 # ─── per-assertion check functions ────────────────────────────────────────────
