@@ -1,0 +1,65 @@
+{
+  "expectations": [
+    {
+      "text": "Plan has a Tier 1 / Objective section (problem, why now, success, risk)",
+      "passed": false,
+      "evidence": "found: none (want \u22653)"
+    },
+    {
+      "text": "Tier 1 contains 4-12 bullets",
+      "passed": true,
+      "evidence": "7 bullets (want 4-12)"
+    },
+    {
+      "text": "Plan has a Tier 2 / Approach section",
+      "passed": true,
+      "evidence": "found: '## Tier 2'"
+    },
+    {
+      "text": "Tier 2 has explicit IN: and OUT: scope lists",
+      "passed": true,
+      "evidence": "IN: x3, OUT: x5"
+    },
+    {
+      "text": "Plan has a Tier 3 / Per-change overview with at least 2 sub-sections",
+      "passed": true,
+      "evidence": "10 ### subsections (no 'Change' label but \u22652 found)"
+    },
+    {
+      "text": "Plan has a Tier 4 / Implementer section",
+      "passed": false,
+      "evidence": "no Tier 4 / Implementer heading"
+    },
+    {
+      "text": "Tier 4 steps include rationale (because\u2026)",
+      "passed": false,
+      "evidence": "no Tier 4 section"
+    },
+    {
+      "text": "Plan has Checkpoint: markers in Tier 4",
+      "passed": true,
+      "evidence": "x8 Checkpoint: markers"
+    },
+    {
+      "text": "Plan contains no markdown tables",
+      "passed": true,
+      "evidence": "no table separators"
+    },
+    {
+      "text": "Plan does NOT include a Meta / prompt template section",
+      "passed": false,
+      "evidence": "unwanted Meta section found: '## Meta'"
+    },
+    {
+      "text": "No multi-sentence prose paragraphs longer than 200 chars",
+      "passed": true,
+      "evidence": "no long prose paragraphs"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 4,
+    "total": 11,
+    "pass_rate": 0.6364
+  }
+}
