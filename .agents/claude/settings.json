@@ -32,7 +32,6 @@
     "command": "uv run  ~/.claude/statusline.py"
   },
   "enabledPlugins": {
-    "skill-telegram-notify@dgxsparklabs-marketplace": true,
     "skill-creator@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
