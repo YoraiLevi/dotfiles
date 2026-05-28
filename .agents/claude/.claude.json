@@ -48,6 +48,7 @@
   },
   "promptQueueUseCount": 243,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_cork_m4q": true,
     "tengu_scratch": false,
