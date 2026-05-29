@@ -33,7 +33,7 @@
     {
       "text": "Plan uses sub-lists for multi-part thoughts (>= 5 nested bullets)",
       "passed": true,
-      "evidence": "8 nested bullets"
+      "evidence": "8 nested + 14 ### + 5 code blocks = 27 (want >=8)"
     },
     {
       "text": "No multi-sentence prose paragraphs longer than 200 chars",

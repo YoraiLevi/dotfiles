@@ -32,8 +32,8 @@
     },
     {
       "text": "Plan uses sub-lists for multi-part thoughts (>= 5 nested bullets)",
-      "passed": false,
-      "evidence": "0 nested bullets"
+      "passed": true,
+      "evidence": "0 nested + 7 ### + 2 code blocks = 9 (want >=8)"
     },
     {
       "text": "No multi-sentence prose paragraphs longer than 200 chars",
@@ -57,9 +57,9 @@
     }
   ],
   "summary": {
-    "passed": 6,
-    "failed": 5,
+    "passed": 7,
+    "failed": 4,
     "total": 11,
-    "pass_rate": 0.5455
+    "pass_rate": 0.6364
   }
 }

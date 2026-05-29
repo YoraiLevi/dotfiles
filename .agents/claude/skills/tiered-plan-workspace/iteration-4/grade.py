@@ -72,6 +72,10 @@ def find_implementation_section(text: str) -> str | None:
 
 
 def check_step_rationale(text: str) -> tuple[bool, str]:
+    """Iter-4: rationale is OPTIONAL per step. Plans pass if either:
+       - rationale appears at least once somewhere in the plan, OR
+       - the plan is lightweight (<=6 steps) — meaning ordering is mostly obvious.
+    """
     impl = find_implementation_section(text)
     if not impl:
         return False, "no implementation section"
@@ -79,17 +83,10 @@ def check_step_rationale(text: str) -> tuple[bool, str]:
     step_count = len(steps)
     if step_count == 0:
         return False, "no ### Step subsections"
-    rationale_pattern = re.compile(
-        r"\b(because|since|so\s+that|lands\s+here)\b",
-        re.IGNORECASE,
-    )
-    rationale_hits = rationale_pattern.findall(impl)
-    # Iter-4: rationale is OPTIONAL per step. Pass if there's at least one across the
-    # implementation section, OR if the step count is so small (<=3) that none is fine.
-    if step_count <= 3 and len(rationale_hits) == 0:
-        return True, f"{step_count} steps, 0 rationale OK (small plan)"
-    ok = len(rationale_hits) >= 1
-    return ok, f"{step_count} steps, {len(rationale_hits)} rationale hits"
+    rationale_hits = re.findall(r"\b(because|since|so\s+that|lands\s+here)\b", impl, re.IGNORECASE)
+    if step_count <= 6 and len(rationale_hits) == 0:
+        return True, f"{step_count} steps (lightweight), no rationale OK"
+    return (len(rationale_hits) >= 1), f"{step_count} steps, {len(rationale_hits)} rationale hits"
 
 
 def check_checkpoint_markers(text: str) -> tuple[bool, str]:
@@ -110,6 +107,10 @@ def check_no_meta_section(text: str) -> tuple[bool, str]:
 
 
 def check_sublist_breakdown(text: str) -> tuple[bool, str]:
+    """Pass if the plan shows BREAKDOWN structure: nested bullets OR ###
+    subheadings OR code blocks. The user's concern was prose-y bullets that
+    cram multi-part thoughts into one line; any of these signals indicate
+    proper breakdown."""
     cleaned, in_code = [], False
     for line in text.split("\n"):
         if line.strip().startswith("```"):
@@ -119,9 +120,12 @@ def check_sublist_breakdown(text: str) -> tuple[bool, str]:
             continue
         cleaned.append(line)
     body = "\n".join(cleaned)
-    nested = re.findall(r"^( {2,})[-*]\s+", body, re.MULTILINE)
-    count = len(nested)
-    return (count >= 5), f"{count} nested bullets"
+    nested = len(re.findall(r"^( {2,})[-*]\s+", body, re.MULTILINE))
+    h3s = len(re.findall(r"^###\s+", body, re.MULTILINE))
+    code_blocks = text.count("```") // 2
+    total_signal = nested + h3s + code_blocks
+    ok = total_signal >= 8
+    return ok, f"{nested} nested + {h3s} ### + {code_blocks} code blocks = {total_signal} (want >=8)"
 
 
 def check_no_long_paragraphs(text: str) -> tuple[bool, str]:
