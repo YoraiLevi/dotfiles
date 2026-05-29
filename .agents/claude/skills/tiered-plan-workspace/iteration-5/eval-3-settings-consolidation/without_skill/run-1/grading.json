@@ -1,0 +1,65 @@
+{
+  "expectations": [
+    {
+      "text": "First top-level section is goal-oriented",
+      "passed": true,
+      "evidence": "first ##: 'Goal & non-goals'"
+    },
+    {
+      "text": "Plan has explicit Scope IN and Scope OUT lists",
+      "passed": false,
+      "evidence": "in=False, out=False"
+    },
+    {
+      "text": "Implementer steps include rationale where needed",
+      "passed": false,
+      "evidence": "no ### Step subsections"
+    },
+    {
+      "text": "Plan has Checkpoint or verification markers per step",
+      "passed": false,
+      "evidence": "no Checkpoint/Verify markers"
+    },
+    {
+      "text": "Plan contains no markdown tables",
+      "passed": true,
+      "evidence": "no table separators"
+    },
+    {
+      "text": "Plan does NOT include a Meta / prompt-template section",
+      "passed": true,
+      "evidence": "no Meta"
+    },
+    {
+      "text": "Plan uses sub-lists for multi-part thoughts (>= 5 nested bullets)",
+      "passed": true,
+      "evidence": "0 nested + 7 ### + 2 code blocks = 9 (want >=8)"
+    },
+    {
+      "text": "No multi-sentence prose paragraphs longer than 200 chars",
+      "passed": true,
+      "evidence": "no long prose"
+    },
+    {
+      "text": "Plan does NOT include 'Why not [alternative]' subsection",
+      "passed": true,
+      "evidence": "no 'Why not' patterns"
+    },
+    {
+      "text": "Plan does NOT include 'Why this matters for the goal' filler tags",
+      "passed": true,
+      "evidence": "no 'Why this matters' filler"
+    },
+    {
+      "text": "Implementer section contains at least one inline code block",
+      "passed": false,
+      "evidence": "0 code block(s) in implementation"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 4,
+    "total": 11,
+    "pass_rate": 0.6364
+  }
+}
