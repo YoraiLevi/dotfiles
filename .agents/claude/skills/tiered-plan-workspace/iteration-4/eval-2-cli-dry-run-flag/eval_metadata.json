@@ -1,0 +1,18 @@
+{
+  "eval_id": 2,
+  "eval_name": "cli-dry-run-flag",
+  "prompt": "Plan adding a --dry-run flag to my data-migration CLI script (scripts/migrate.py). When set, the script should print what it would do (which rows to update, which to delete) without actually mutating the database. I want to update the help text, add a couple of tests for the new flag, and make sure the README mentions it. Solo project, one PR.",
+  "assertions": [
+    "First top-level section is goal-oriented (Goal/Objective/Problem/Why)",
+    "Plan has explicit Scope IN and Scope OUT lists",
+    "Implementer steps include rationale where needed (because/since/so that)",
+    "Plan has Checkpoint or verification markers per step",
+    "Plan contains no markdown tables",
+    "Plan does NOT include a Meta / prompt-template section",
+    "Plan uses sub-lists for multi-part thoughts (>=5 nested bullets)",
+    "No multi-sentence prose paragraphs longer than 200 chars",
+    "Plan does NOT include 'Why not [alternative]' subsection in Approach",
+    "Plan does NOT include 'Why this matters for the goal' tag on per-change subsections",
+    "Implementer section contains at least one inline code block"
+  ]
+}

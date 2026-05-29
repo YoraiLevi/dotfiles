@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "First top-level section is goal-oriented (Goal/Objective/Problem/Why)",
+      "passed": true,
+      "evidence": "first ## is goal-oriented: '1. Goal & non-goals'"
+    },
+    {
+      "text": "Plan has explicit Scope IN and Scope OUT (or equivalent) lists",
+      "passed": false,
+      "evidence": "has_in=False, has_out=False"
+    },
+    {
+      "text": "Implementer steps include rationale (because/since/so that)",
+      "passed": false,
+      "evidence": "no ### Step subsections in implementation"
+    },
+    {
+      "text": "Plan has Checkpoint: or verification markers per step",
+      "passed": false,
+      "evidence": "no Checkpoint/Verification markers"
+    },
+    {
+      "text": "Plan contains no markdown tables",
+      "passed": true,
+      "evidence": "no table separators"
+    },
+    {
+      "text": "Plan does NOT include a Meta / prompt-template section",
+      "passed": true,
+      "evidence": "no Meta section"
+    },
+    {
+      "text": "Plan uses sub-lists for multi-part thoughts (>= 5 nested bullets)",
+      "passed": false,
+      "evidence": "0 nested bullets (want >= 5)"
+    },
+    {
+      "text": "No multi-sentence prose paragraphs longer than 200 chars",
+      "passed": true,
+      "evidence": "no long prose"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 4,
+    "total": 8,
+    "pass_rate": 0.5
+  }
+}
