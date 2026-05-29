@@ -21,8 +21,8 @@
     "install-slack-app": 252,
     "drag-and-drop-images": 250,
     "double-esc-code-restore": 250,
-    "continue": 244,
-    "shift-tab": 244,
+    "continue": 254,
+    "shift-tab": 254,
     "image-paste": 249,
     "custom-agents": 249,
     "permissions": 254,
@@ -1910,7 +1910,7 @@
   "voiceLangHintLastLanguage": "en",
   "voiceFooterHintSeenCount": 3,
   "feedbackSurveyState": {
-    "lastShownTime": 1779965682962
+    "lastShownTime": 1780090693754
   },
   "mcpServers": {
     "ping": {
