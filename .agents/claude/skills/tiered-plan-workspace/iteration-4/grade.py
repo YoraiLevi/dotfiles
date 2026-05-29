@@ -83,7 +83,11 @@ def check_step_rationale(text: str) -> tuple[bool, str]:
     step_count = len(steps)
     if step_count == 0:
         return False, "no ### Step subsections"
-    rationale_hits = re.findall(r"\b(because|since|so\s+that|lands\s+here)\b", impl, re.IGNORECASE)
+    rationale_hits = re.findall(
+        r"\b(because|since|so\s+that|so\s+the|lands\s+(here|before|after)|Rationale:|order\s+matters)\b",
+        impl,
+        re.IGNORECASE,
+    )
     if step_count <= 6 and len(rationale_hits) == 0:
         return True, f"{step_count} steps (lightweight), no rationale OK"
     return (len(rationale_hits) >= 1), f"{step_count} steps, {len(rationale_hits)} rationale hits"

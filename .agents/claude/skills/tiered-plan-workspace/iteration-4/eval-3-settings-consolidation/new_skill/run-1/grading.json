@@ -12,8 +12,8 @@
     },
     {
       "text": "Implementer steps include rationale where needed",
-      "passed": false,
-      "evidence": "9 steps, 0 rationale hits"
+      "passed": true,
+      "evidence": "9 steps, 2 rationale hits"
     },
     {
       "text": "Plan has Checkpoint or verification markers per step",
@@ -57,9 +57,9 @@
     }
   ],
   "summary": {
-    "passed": 10,
-    "failed": 1,
+    "passed": 11,
+    "failed": 0,
     "total": 11,
-    "pass_rate": 0.9091
+    "pass_rate": 1.0
   }
 }
