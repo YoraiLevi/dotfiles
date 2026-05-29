@@ -1,44 +1,24 @@
 {
   "expectations": [
     {
-      "text": "Plan has a Tier 1 / Objective section (problem, why now, success, risk)",
-      "passed": false,
-      "evidence": "no Tier 1 / Objective heading"
+      "text": "First top-level section is goal-oriented (Goal/Objective/Problem/Why)",
+      "passed": true,
+      "evidence": "first ## is goal-oriented: '1. Objective'"
     },
     {
-      "text": "Tier 1 contains 4-12 bullets",
-      "passed": false,
-      "evidence": "no Tier 1 section"
-    },
-    {
-      "text": "Plan has a Tier 2 / Approach section",
-      "passed": false,
-      "evidence": "no Tier 2 / Approach heading"
-    },
-    {
-      "text": "Tier 2 has explicit IN: and OUT: scope lists",
+      "text": "Plan has explicit Scope IN and Scope OUT (or equivalent) lists",
       "passed": false,
       "evidence": "has_in=False, has_out=False"
     },
     {
-      "text": "Plan has a Tier 3 / Per-change overview with at least 2 sub-sections",
+      "text": "Implementer steps include rationale (because/since/so that)",
       "passed": false,
-      "evidence": "no Tier 3 / Per-change heading"
+      "evidence": "no ### Step subsections in implementation"
     },
     {
-      "text": "Plan has a Tier 4 / Implementer section",
+      "text": "Plan has Checkpoint: or verification markers per step",
       "passed": false,
-      "evidence": "no Tier 4 / Implementer heading"
-    },
-    {
-      "text": "Tier 4 steps include rationale (because\u2026)",
-      "passed": false,
-      "evidence": "no Tier 4 section"
-    },
-    {
-      "text": "Plan has Checkpoint: markers in Tier 4",
-      "passed": false,
-      "evidence": "no Checkpoint: marker"
+      "evidence": "no Checkpoint/Verification markers"
     },
     {
       "text": "Plan contains no markdown tables",
@@ -46,20 +26,25 @@
       "evidence": "no table separators"
     },
     {
-      "text": "Plan does NOT include a Meta / prompt template section",
+      "text": "Plan does NOT include a Meta / prompt-template section",
       "passed": true,
       "evidence": "no Meta section"
     },
     {
+      "text": "Plan uses sub-lists for multi-part thoughts (>= 5 nested bullets)",
+      "passed": true,
+      "evidence": "12 nested bullets (want >= 5)"
+    },
+    {
       "text": "No multi-sentence prose paragraphs longer than 200 chars",
       "passed": true,
-      "evidence": "no long prose paragraphs"
+      "evidence": "no long prose"
     }
   ],
   "summary": {
-    "passed": 3,
-    "failed": 8,
-    "total": 11,
-    "pass_rate": 0.2727
+    "passed": 5,
+    "failed": 3,
+    "total": 8,
+    "pass_rate": 0.625
   }
 }

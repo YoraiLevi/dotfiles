@@ -2,23 +2,23 @@
   "expectations": [
     {
       "text": "First top-level section is goal-oriented (Goal/Objective/Problem/Why)",
-      "passed": false,
-      "evidence": "first ## is neither goal nor obvious HOW: 'Context'"
+      "passed": true,
+      "evidence": "first ## is goal-oriented: 'Goal & worthwhileness'"
     },
     {
       "text": "Plan has explicit Scope IN and Scope OUT (or equivalent) lists",
-      "passed": false,
-      "evidence": "has_in=False, has_out=False"
+      "passed": true,
+      "evidence": "found Scope IN + Scope OUT (or equivalent)"
     },
     {
       "text": "Implementer steps include rationale (because/since/so that)",
-      "passed": false,
-      "evidence": "no ### Step subsections in implementation"
+      "passed": true,
+      "evidence": "7 steps, 26 rationale markers (want >= half)"
     },
     {
       "text": "Plan has Checkpoint: or verification markers per step",
-      "passed": false,
-      "evidence": "no Checkpoint/Verification markers"
+      "passed": true,
+      "evidence": "x7 verification markers"
     },
     {
       "text": "Plan contains no markdown tables",
@@ -33,7 +33,7 @@
     {
       "text": "Plan uses sub-lists for multi-part thoughts (>= 5 nested bullets)",
       "passed": true,
-      "evidence": "9 nested bullets (want >= 5)"
+      "evidence": "43 nested bullets (want >= 5)"
     },
     {
       "text": "No multi-sentence prose paragraphs longer than 200 chars",
@@ -42,9 +42,9 @@
     }
   ],
   "summary": {
-    "passed": 4,
-    "failed": 4,
+    "passed": 8,
+    "failed": 0,
     "total": 8,
-    "pass_rate": 0.5
+    "pass_rate": 1.0
   }
 }
