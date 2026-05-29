@@ -1,0 +1,503 @@
+{
+  "metadata": {
+    "skill_name": "tiered-plan",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-05-29T01:24:50Z",
+    "evals_run": [
+      1,
+      2,
+      3
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "time_seconds": 106.9,
+        "tokens": 33000,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "First top-level section is goal-oriented",
+          "passed": true,
+          "evidence": "first ##: 'Objective'"
+        },
+        {
+          "text": "Plan has Definition of Done in the Objective section (always)",
+          "passed": true,
+          "evidence": "Definition of Done found in Objective"
+        },
+        {
+          "text": "Open Questions, if present, are in the Objective section (not at end)",
+          "passed": true,
+          "evidence": "Open Questions at position 1719 (in top 33%)"
+        },
+        {
+          "text": "Plan has explicit Scope IN and Scope OUT lists",
+          "passed": true,
+          "evidence": "found IN + OUT"
+        },
+        {
+          "text": "Scope OUT items have brief reasons + tracking pointers",
+          "passed": true,
+          "evidence": "5/5 OUT items have tracker pointers"
+        },
+        {
+          "text": "Plan has Checkpoint or verification markers per implementer step",
+          "passed": true,
+          "evidence": "x9 markers"
+        },
+        {
+          "text": "Implementer section contains at least one inline code block",
+          "passed": true,
+          "evidence": "5 code blocks in implementation"
+        },
+        {
+          "text": "Plan does NOT include 'Non-goals' as a subsection title",
+          "passed": true,
+          "evidence": "no Non-goals subsection"
+        },
+        {
+          "text": "Plan does NOT include 'Why not [alternative]' subsection",
+          "passed": true,
+          "evidence": "no 'Why not' patterns"
+        },
+        {
+          "text": "Plan does NOT include 'Why this matters for the goal' filler tags",
+          "passed": true,
+          "evidence": "no 'Why this matters' filler"
+        },
+        {
+          "text": "Plan contains no markdown tables, no Meta section, no long prose paragraphs",
+          "passed": true,
+          "evidence": "no tables, no Meta, no long prose"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "time_seconds": 54.2,
+        "tokens": 29105,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "First top-level section is goal-oriented",
+          "passed": true,
+          "evidence": "first ##: 'Objective'"
+        },
+        {
+          "text": "Plan has Definition of Done in the Objective section (always)",
+          "passed": true,
+          "evidence": "Definition of Done found in Objective"
+        },
+        {
+          "text": "Open Questions, if present, are in the Objective section (not at end)",
+          "passed": true,
+          "evidence": "no Open Questions section (skip allowed)"
+        },
+        {
+          "text": "Plan has explicit Scope IN and Scope OUT lists",
+          "passed": true,
+          "evidence": "found IN + OUT"
+        },
+        {
+          "text": "Scope OUT items have brief reasons + tracking pointers",
+          "passed": true,
+          "evidence": "4/4 OUT items have tracker pointers"
+        },
+        {
+          "text": "Plan has Checkpoint or verification markers per implementer step",
+          "passed": true,
+          "evidence": "x4 markers"
+        },
+        {
+          "text": "Implementer section contains at least one inline code block",
+          "passed": true,
+          "evidence": "5 code blocks in implementation"
+        },
+        {
+          "text": "Plan does NOT include 'Non-goals' as a subsection title",
+          "passed": true,
+          "evidence": "no Non-goals subsection"
+        },
+        {
+          "text": "Plan does NOT include 'Why not [alternative]' subsection",
+          "passed": true,
+          "evidence": "no 'Why not' patterns"
+        },
+        {
+          "text": "Plan does NOT include 'Why this matters for the goal' filler tags",
+          "passed": true,
+          "evidence": "no 'Why this matters' filler"
+        },
+        {
+          "text": "Plan contains no markdown tables, no Meta section, no long prose paragraphs",
+          "passed": true,
+          "evidence": "no tables, no Meta, no long prose"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "new_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 11,
+        "failed": 0,
+        "total": 11,
+        "time_seconds": 116.9,
+        "tokens": 34421,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "First top-level section is goal-oriented",
+          "passed": true,
+          "evidence": "first ##: 'Objective'"
+        },
+        {
+          "text": "Plan has Definition of Done in the Objective section (always)",
+          "passed": true,
+          "evidence": "Definition of Done found in Objective"
+        },
+        {
+          "text": "Open Questions, if present, are in the Objective section (not at end)",
+          "passed": true,
+          "evidence": "Open Questions at position 1888 (in top 33%)"
+        },
+        {
+          "text": "Plan has explicit Scope IN and Scope OUT lists",
+          "passed": true,
+          "evidence": "found IN + OUT"
+        },
+        {
+          "text": "Scope OUT items have brief reasons + tracking pointers",
+          "passed": true,
+          "evidence": "5/5 OUT items have tracker pointers"
+        },
+        {
+          "text": "Plan has Checkpoint or verification markers per implementer step",
+          "passed": true,
+          "evidence": "x7 markers"
+        },
+        {
+          "text": "Implementer section contains at least one inline code block",
+          "passed": true,
+          "evidence": "8 code blocks in implementation"
+        },
+        {
+          "text": "Plan does NOT include 'Non-goals' as a subsection title",
+          "passed": true,
+          "evidence": "no Non-goals subsection"
+        },
+        {
+          "text": "Plan does NOT include 'Why not [alternative]' subsection",
+          "passed": true,
+          "evidence": "no 'Why not' patterns"
+        },
+        {
+          "text": "Plan does NOT include 'Why this matters for the goal' filler tags",
+          "passed": true,
+          "evidence": "no 'Why this matters' filler"
+        },
+        {
+          "text": "Plan contains no markdown tables, no Meta section, no long prose paragraphs",
+          "passed": true,
+          "evidence": "no tables, no Meta, no long prose"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.3636,
+        "passed": 4,
+        "failed": 7,
+        "total": 11,
+        "time_seconds": 80.1,
+        "tokens": 24497,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "First top-level section is goal-oriented",
+          "passed": true,
+          "evidence": "first ##: 'Objective'"
+        },
+        {
+          "text": "Plan has Definition of Done in the Objective section (always)",
+          "passed": false,
+          "evidence": "Definition of Done missing from Objective"
+        },
+        {
+          "text": "Open Questions, if present, are in the Objective section (not at end)",
+          "passed": false,
+          "evidence": "Open Questions only at position 11998 (after top 33%, document len=12690)"
+        },
+        {
+          "text": "Plan has explicit Scope IN and Scope OUT lists",
+          "passed": false,
+          "evidence": "in=False, out=False"
+        },
+        {
+          "text": "Scope OUT items have brief reasons + tracking pointers",
+          "passed": false,
+          "evidence": "no Scope OUT section found"
+        },
+        {
+          "text": "Plan has Checkpoint or verification markers per implementer step",
+          "passed": false,
+          "evidence": "no Checkpoint markers"
+        },
+        {
+          "text": "Implementer section contains at least one inline code block",
+          "passed": true,
+          "evidence": "7 code blocks in implementation"
+        },
+        {
+          "text": "Plan does NOT include 'Non-goals' as a subsection title",
+          "passed": false,
+          "evidence": "unwanted 'Non-goals' subsection: 'Non-goals:'"
+        },
+        {
+          "text": "Plan does NOT include 'Why not [alternative]' subsection",
+          "passed": false,
+          "evidence": "unwanted 'Why not' pattern: 'Alternatives considered'"
+        },
+        {
+          "text": "Plan does NOT include 'Why this matters for the goal' filler tags",
+          "passed": true,
+          "evidence": "no 'Why this matters' filler"
+        },
+        {
+          "text": "Plan contains no markdown tables, no Meta section, no long prose paragraphs",
+          "passed": true,
+          "evidence": "no tables, no Meta, no long prose"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.4545,
+        "passed": 5,
+        "failed": 6,
+        "total": 11,
+        "time_seconds": 43.1,
+        "tokens": 21403,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "First top-level section is goal-oriented",
+          "passed": false,
+          "evidence": "first ## not goal-oriented: 'Context'"
+        },
+        {
+          "text": "Plan has Definition of Done in the Objective section (always)",
+          "passed": false,
+          "evidence": "Definition of Done missing from Objective"
+        },
+        {
+          "text": "Open Questions, if present, are in the Objective section (not at end)",
+          "passed": true,
+          "evidence": "no Open Questions section (skip allowed)"
+        },
+        {
+          "text": "Plan has explicit Scope IN and Scope OUT lists",
+          "passed": false,
+          "evidence": "in=False, out=False"
+        },
+        {
+          "text": "Scope OUT items have brief reasons + tracking pointers",
+          "passed": false,
+          "evidence": "no Scope OUT section found"
+        },
+        {
+          "text": "Plan has Checkpoint or verification markers per implementer step",
+          "passed": false,
+          "evidence": "no Checkpoint markers"
+        },
+        {
+          "text": "Implementer section contains at least one inline code block",
+          "passed": false,
+          "evidence": "0 code blocks in implementation"
+        },
+        {
+          "text": "Plan does NOT include 'Non-goals' as a subsection title",
+          "passed": true,
+          "evidence": "no Non-goals subsection"
+        },
+        {
+          "text": "Plan does NOT include 'Why not [alternative]' subsection",
+          "passed": true,
+          "evidence": "no 'Why not' patterns"
+        },
+        {
+          "text": "Plan does NOT include 'Why this matters for the goal' filler tags",
+          "passed": true,
+          "evidence": "no 'Why this matters' filler"
+        },
+        {
+          "text": "Plan contains no markdown tables, no Meta section, no long prose paragraphs",
+          "passed": true,
+          "evidence": "no tables, no Meta, no long prose"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5455,
+        "passed": 6,
+        "failed": 5,
+        "total": 11,
+        "time_seconds": 67.1,
+        "tokens": 22652,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "First top-level section is goal-oriented",
+          "passed": true,
+          "evidence": "first ##: 'Goal & non-goals'"
+        },
+        {
+          "text": "Plan has Definition of Done in the Objective section (always)",
+          "passed": false,
+          "evidence": "Definition of Done missing from Objective"
+        },
+        {
+          "text": "Open Questions, if present, are in the Objective section (not at end)",
+          "passed": true,
+          "evidence": "no Open Questions section (skip allowed)"
+        },
+        {
+          "text": "Plan has explicit Scope IN and Scope OUT lists",
+          "passed": false,
+          "evidence": "in=False, out=False"
+        },
+        {
+          "text": "Scope OUT items have brief reasons + tracking pointers",
+          "passed": false,
+          "evidence": "0/1 OUT items have tracker pointers"
+        },
+        {
+          "text": "Plan has Checkpoint or verification markers per implementer step",
+          "passed": false,
+          "evidence": "no Checkpoint markers"
+        },
+        {
+          "text": "Implementer section contains at least one inline code block",
+          "passed": false,
+          "evidence": "0 code blocks in implementation"
+        },
+        {
+          "text": "Plan does NOT include 'Non-goals' as a subsection title",
+          "passed": true,
+          "evidence": "no Non-goals subsection"
+        },
+        {
+          "text": "Plan does NOT include 'Why not [alternative]' subsection",
+          "passed": true,
+          "evidence": "no 'Why not' patterns"
+        },
+        {
+          "text": "Plan does NOT include 'Why this matters for the goal' filler tags",
+          "passed": true,
+          "evidence": "no 'Why this matters' filler"
+        },
+        {
+          "text": "Plan contains no markdown tables, no Meta section, no long prose paragraphs",
+          "passed": true,
+          "evidence": "no tables, no Meta, no long prose"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "new_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 92.6667,
+        "stddev": 33.6862,
+        "min": 54.2,
+        "max": 116.9
+      },
+      "tokens": {
+        "mean": 32175.3333,
+        "stddev": 2752.2755,
+        "min": 29105,
+        "max": 34421
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.4545,
+        "stddev": 0.091,
+        "min": 0.3636,
+        "max": 0.5455
+      },
+      "time_seconds": {
+        "mean": 63.4333,
+        "stddev": 18.7705,
+        "min": 43.1,
+        "max": 80.1
+      },
+      "tokens": {
+        "mean": 22850.6667,
+        "stddev": 1556.5379,
+        "min": 21403,
+        "max": 24497
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.55",
+      "time_seconds": "+29.2",
+      "tokens": "+9325"
+    }
+  },
+  "notes": []
+}

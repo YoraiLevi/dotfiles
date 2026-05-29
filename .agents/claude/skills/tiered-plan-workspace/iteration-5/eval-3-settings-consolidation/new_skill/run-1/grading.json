@@ -7,43 +7,43 @@
     },
     {
       "text": "Plan has Definition of Done in the Objective section (always)",
-      "passed": false,
-      "evidence": "Definition of Done missing from Objective"
+      "passed": true,
+      "evidence": "Definition of Done found in Objective"
     },
     {
       "text": "Open Questions, if present, are in the Objective section (not at end)",
-      "passed": false,
-      "evidence": "Open Questions only at position 11998 (after top 33%, document len=12690)"
+      "passed": true,
+      "evidence": "Open Questions at position 1888 (in top 33%)"
     },
     {
       "text": "Plan has explicit Scope IN and Scope OUT lists",
-      "passed": false,
-      "evidence": "in=False, out=False"
+      "passed": true,
+      "evidence": "found IN + OUT"
     },
     {
       "text": "Scope OUT items have brief reasons + tracking pointers",
-      "passed": false,
-      "evidence": "no Scope OUT section found"
+      "passed": true,
+      "evidence": "5/5 OUT items have tracker pointers"
     },
     {
       "text": "Plan has Checkpoint or verification markers per implementer step",
-      "passed": false,
-      "evidence": "no Checkpoint markers"
+      "passed": true,
+      "evidence": "x7 markers"
     },
     {
       "text": "Implementer section contains at least one inline code block",
       "passed": true,
-      "evidence": "7 code blocks in implementation"
+      "evidence": "8 code blocks in implementation"
     },
     {
       "text": "Plan does NOT include 'Non-goals' as a subsection title",
-      "passed": false,
-      "evidence": "unwanted 'Non-goals' subsection: 'Non-goals:'"
+      "passed": true,
+      "evidence": "no Non-goals subsection"
     },
     {
       "text": "Plan does NOT include 'Why not [alternative]' subsection",
-      "passed": false,
-      "evidence": "unwanted 'Why not' pattern: 'Alternatives considered'"
+      "passed": true,
+      "evidence": "no 'Why not' patterns"
     },
     {
       "text": "Plan does NOT include 'Why this matters for the goal' filler tags",
@@ -57,9 +57,9 @@
     }
   ],
   "summary": {
-    "passed": 4,
-    "failed": 7,
+    "passed": 11,
+    "failed": 0,
     "total": 11,
-    "pass_rate": 0.3636
+    "pass_rate": 1.0
   }
 }

@@ -6,39 +6,39 @@
       "evidence": "first ## not goal-oriented: 'Context'"
     },
     {
+      "text": "Plan has Definition of Done in the Objective section (always)",
+      "passed": false,
+      "evidence": "Definition of Done missing from Objective"
+    },
+    {
+      "text": "Open Questions, if present, are in the Objective section (not at end)",
+      "passed": true,
+      "evidence": "no Open Questions section (skip allowed)"
+    },
+    {
       "text": "Plan has explicit Scope IN and Scope OUT lists",
       "passed": false,
       "evidence": "in=False, out=False"
     },
     {
-      "text": "Implementer steps include rationale where needed",
+      "text": "Scope OUT items have brief reasons + tracking pointers",
       "passed": false,
-      "evidence": "no ### Step subsections"
+      "evidence": "no Scope OUT section found"
     },
     {
-      "text": "Plan has Checkpoint or verification markers per step",
+      "text": "Plan has Checkpoint or verification markers per implementer step",
       "passed": false,
-      "evidence": "no Checkpoint/Verify markers"
+      "evidence": "no Checkpoint markers"
     },
     {
-      "text": "Plan contains no markdown tables",
-      "passed": true,
-      "evidence": "no table separators"
+      "text": "Implementer section contains at least one inline code block",
+      "passed": false,
+      "evidence": "0 code blocks in implementation"
     },
     {
-      "text": "Plan does NOT include a Meta / prompt-template section",
+      "text": "Plan does NOT include 'Non-goals' as a subsection title",
       "passed": true,
-      "evidence": "no Meta"
-    },
-    {
-      "text": "Plan uses sub-lists for multi-part thoughts (>= 5 nested bullets)",
-      "passed": true,
-      "evidence": "9 nested + 7 ### + 1 code blocks = 17 (want >=8)"
-    },
-    {
-      "text": "No multi-sentence prose paragraphs longer than 200 chars",
-      "passed": true,
-      "evidence": "no long prose"
+      "evidence": "no Non-goals subsection"
     },
     {
       "text": "Plan does NOT include 'Why not [alternative]' subsection",
@@ -51,15 +51,15 @@
       "evidence": "no 'Why this matters' filler"
     },
     {
-      "text": "Implementer section contains at least one inline code block",
-      "passed": false,
-      "evidence": "0 code block(s) in implementation"
+      "text": "Plan contains no markdown tables, no Meta section, no long prose paragraphs",
+      "passed": true,
+      "evidence": "no tables, no Meta, no long prose"
     }
   ],
   "summary": {
-    "passed": 6,
-    "failed": 5,
+    "passed": 5,
+    "failed": 6,
     "total": 11,
-    "pass_rate": 0.5455
+    "pass_rate": 0.4545
   }
 }
