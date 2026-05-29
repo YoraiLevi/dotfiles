@@ -1,0 +1,22 @@
+[
+  {"query": "ok so i need to add API rate limiting to /v1/users — looks like we need a redis-based token bucket, wire it into the FastAPI middleware, add tests, and update the API docs. Can you write up how we're going to do this? It's just me on the project but I want to think through scope before I start coding.", "should_trigger": true},
+  {"query": "Help me plan migrating our internal `users.metadata` JSON column to a proper `user_settings` table with foreign keys. Includes backfill from existing rows + deprecation warning if anything still writes to the old column for one release. solo project.", "should_trigger": true},
+  {"query": "I want to refactor our auth module — move from session cookies to stateless JWTs. Need to handle existing sessions, update the login flow, write migration, update tests. plan it", "should_trigger": true},
+  {"query": "lol this PR is getting huge, can you plan out how to break up the work? I'm doing it solo but tbh I want a doc I can paste in the PR description", "should_trigger": true},
+  {"query": "What's the cleanest way to add a --no-color flag to my CLI? need to gate the colorama imports, add tests, update help text. Solo, one PR.", "should_trigger": true},
+  {"query": "okay i think we should bump our pinned numpy from 1.x to 2.x. Need to audit our existing usage for the breaking changes, fix what breaks, update lockfile, smoke test against our test suite. write me the plan", "should_trigger": true},
+  {"query": "i'm migrating from django 4.2 to django 5.1 in this PR — need to handle the deprecation warnings, update settings.py, run makemigrations for the auto-generated index changes, update CI. plan this out for me, solo project", "should_trigger": true},
+  {"query": "Write a tiered plan for adding webhooks to our event bus", "should_trigger": true},
+  {"query": "Need an implementation plan: split monolithic `services.py` (currently 2000 lines) into a `services/` package with one module per service class. Tests should still pass without changes. Solo, one PR.", "should_trigger": true},
+  {"query": "give me a plan for changing our error responses to RFC 9457 problem-details format. Need to update the exception handlers, change the error schemas, update the OpenAPI docs, and update integration tests", "should_trigger": true},
+  {"query": "write the rate-limiting middleware code for me — here's the FastAPI endpoint: `@app.get('/users') async def list_users():` ... just need a token bucket using redis-py", "should_trigger": false},
+  {"query": "fix the bug in `auth.py:validate_token` — it returns True for expired tokens because the `exp` check uses `<` instead of `<=`", "should_trigger": false},
+  {"query": "review this PR for me — what do you think about the approach? https://github.com/myorg/api/pull/47", "should_trigger": false},
+  {"query": "draw me an architecture diagram showing how the services talk to each other, mermaid format would be nice", "should_trigger": false},
+  {"query": "write an ADR for our database choice — postgres vs mysql, we picked postgres because of jsonb and we want to document why we made that call", "should_trigger": false},
+  {"query": "what are the gotchas with migrating from django 4.2 to 5.1? I just want a heads-up list, not a full plan, just bullet points of things that could bite us", "should_trigger": false},
+  {"query": "explain how python's `__getattr__` differs from `__getattribute__` — i keep confusing them and i'm trying to write a deprecation shim", "should_trigger": false},
+  {"query": "lol my code is broken, here's the traceback: `TypeError: unhashable type: 'list' in line 42 of process.py` can you help me figure out what's wrong", "should_trigger": false},
+  {"query": "where does our user authentication logic live? i need to add a new auth provider but i don't know what files to look at first", "should_trigger": false},
+  {"query": "write the migration sql for adding a `created_at TIMESTAMPTZ DEFAULT NOW()` column to the users table, including the alembic migration file", "should_trigger": false}
+]

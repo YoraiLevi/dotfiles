@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Set Review - tiered-plan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Lora', Georgia, serif; background: #faf9f5; padding: 2rem; color: #141413; }
+    h1 { font-family: 'Poppins', sans-serif; margin-bottom: 0.5rem; font-size: 1.5rem; }
+    .description { color: #b0aea5; margin-bottom: 1.5rem; font-style: italic; max-width: 900px; }
+    .controls { margin-bottom: 1rem; display: flex; gap: 0.5rem; }
+    .btn { font-family: 'Poppins', sans-serif; padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem; font-weight: 500; }
+    .btn-add { background: #6a9bcc; color: white; }
+    .btn-add:hover { background: #5889b8; }
+    .btn-export { background: #d97757; color: white; }
+    .btn-export:hover { background: #c4613f; }
+    table { width: 100%; max-width: 1100px; border-collapse: collapse; background: white; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    th { font-family: 'Poppins', sans-serif; background: #141413; color: #faf9f5; padding: 0.75rem 1rem; text-align: left; font-size: 0.875rem; }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid #e8e6dc; vertical-align: top; }
+    tr:nth-child(even) td { background: #faf9f5; }
+    tr:hover td { background: #f3f1ea; }
+    .section-header td { background: #e8e6dc; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 0.8rem; color: #141413; text-transform: uppercase; letter-spacing: 0.05em; }
+    .query-input { width: 100%; padding: 0.4rem; border: 1px solid #e8e6dc; border-radius: 4px; font-size: 0.875rem; font-family: 'Lora', Georgia, serif; resize: vertical; min-height: 60px; }
+    .query-input:focus { outline: none; border-color: #d97757; box-shadow: 0 0 0 2px rgba(217,119,87,0.15); }
+    .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .slider { position: absolute; inset: 0; background: #b0aea5; border-radius: 24px; cursor: pointer; transition: 0.2s; }
+    .toggle .slider::before { content: ""; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+    .toggle input:checked + .slider { background: #d97757; }
+    .toggle input:checked + .slider::before { transform: translateX(20px); }
+    .btn-delete { background: #c44; color: white; padding: 0.3rem 0.6rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-family: 'Poppins', sans-serif; }
+    .btn-delete:hover { background: #a33; }
+    .summary { margin-top: 1rem; color: #b0aea5; font-size: 0.875rem; }
+  </style>
+</head>
+<body>
+  <h1>Eval Set Review: <span id="skill-name">tiered-plan</span></h1>
+  <p class="description">Current description: <span id="skill-desc">Produce a depth-tiered implementation plan optimized for the REVIEWER who has to decide whether to approve the change. Reviewer-facing sections (Objective, Approach, Per-change overview) are concise, dense, and decision-supporting — no filler. Implementer-facing section (steps + verification) is grounded in the same goal. Plans read in this order — what's the goal? is the approach sound? what specifically changes? how exactly? — with section names that fit the actual change, not a fixed template. Use sub-lists for multi-part thoughts. Inline code blocks when the deliverable IS a small file or snippet. Use this skill whenever the user asks for a plan, implementation plan, refactor plan, execution plan, layered plan, tiered plan, or describes wanting to plan a multi-step change — even if they don't explicitly say "tiered". Especially trigger when the change spans code + docs + tests, when there are multiple sub-changes to coordinate, when the user wants a doc both reviewers and implementers can use, or when the user is asking to think through whether a change is worth doing and how to scope it. Default to solo-developer assumptions (one PR, one commit) unless the user explicitly says they have reviewers.</span></p>
+
+  <div class="controls">
+    <button class="btn btn-add" onclick="addRow()">+ Add Query</button>
+    <button class="btn btn-export" onclick="exportEvalSet()">Export Eval Set</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:65%">Query</th>
+        <th style="width:18%">Should Trigger</th>
+        <th style="width:10%">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="eval-body"></tbody>
+  </table>
+
+  <p class="summary" id="summary"></p>
+
+  <script>
+    const EVAL_DATA = [{"query": "ok so i need to add API rate limiting to /v1/users \u2014 looks like we need a redis-based token bucket, wire it into the FastAPI middleware, add tests, and update the API docs. Can you write up how we're going to do this? It's just me on the project but I want to think through scope before I start coding.", "should_trigger": true}, {"query": "Help me plan migrating our internal `users.metadata` JSON column to a proper `user_settings` table with foreign keys. Includes backfill from existing rows + deprecation warning if anything still writes to the old column for one release. solo project.", "should_trigger": true}, {"query": "I want to refactor our auth module \u2014 move from session cookies to stateless JWTs. Need to handle existing sessions, update the login flow, write migration, update tests. plan it", "should_trigger": true}, {"query": "lol this PR is getting huge, can you plan out how to break up the work? I'm doing it solo but tbh I want a doc I can paste in the PR description", "should_trigger": true}, {"query": "What's the cleanest way to add a --no-color flag to my CLI? need to gate the colorama imports, add tests, update help text. Solo, one PR.", "should_trigger": true}, {"query": "okay i think we should bump our pinned numpy from 1.x to 2.x. Need to audit our existing usage for the breaking changes, fix what breaks, update lockfile, smoke test against our test suite. write me the plan", "should_trigger": true}, {"query": "i'm migrating from django 4.2 to django 5.1 in this PR \u2014 need to handle the deprecation warnings, update settings.py, run makemigrations for the auto-generated index changes, update CI. plan this out for me, solo project", "should_trigger": true}, {"query": "Write a tiered plan for adding webhooks to our event bus", "should_trigger": true}, {"query": "Need an implementation plan: split monolithic `services.py` (currently 2000 lines) into a `services/` package with one module per service class. Tests should still pass without changes. Solo, one PR.", "should_trigger": true}, {"query": "give me a plan for changing our error responses to RFC 9457 problem-details format. Need to update the exception handlers, change the error schemas, update the OpenAPI docs, and update integration tests", "should_trigger": true}, {"query": "write the rate-limiting middleware code for me \u2014 here's the FastAPI endpoint: `@app.get('/users') async def list_users():` ... just need a token bucket using redis-py", "should_trigger": false}, {"query": "fix the bug in `auth.py:validate_token` \u2014 it returns True for expired tokens because the `exp` check uses `<` instead of `<=`", "should_trigger": false}, {"query": "review this PR for me \u2014 what do you think about the approach? https://github.com/myorg/api/pull/47", "should_trigger": false}, {"query": "draw me an architecture diagram showing how the services talk to each other, mermaid format would be nice", "should_trigger": false}, {"query": "write an ADR for our database choice \u2014 postgres vs mysql, we picked postgres because of jsonb and we want to document why we made that call", "should_trigger": false}, {"query": "what are the gotchas with migrating from django 4.2 to 5.1? I just want a heads-up list, not a full plan, just bullet points of things that could bite us", "should_trigger": false}, {"query": "explain how python's `__getattr__` differs from `__getattribute__` \u2014 i keep confusing them and i'm trying to write a deprecation shim", "should_trigger": false}, {"query": "lol my code is broken, here's the traceback: `TypeError: unhashable type: 'list' in line 42 of process.py` can you help me figure out what's wrong", "should_trigger": false}, {"query": "where does our user authentication logic live? i need to add a new auth provider but i don't know what files to look at first", "should_trigger": false}, {"query": "write the migration sql for adding a `created_at TIMESTAMPTZ DEFAULT NOW()` column to the users table, including the alembic migration file", "should_trigger": false}];
+
+    let evalItems = [...EVAL_DATA];
+
+    function render() {
+      const tbody = document.getElementById('eval-body');
+      tbody.innerHTML = '';
+
+      // Sort: should-trigger first, then should-not-trigger
+      const sorted = evalItems
+        .map((item, origIdx) => ({ ...item, origIdx }))
+        .sort((a, b) => (b.should_trigger ? 1 : 0) - (a.should_trigger ? 1 : 0));
+
+      let lastGroup = null;
+      sorted.forEach(item => {
+        const group = item.should_trigger ? 'trigger' : 'no-trigger';
+        if (group !== lastGroup) {
+          const headerRow = document.createElement('tr');
+          headerRow.className = 'section-header';
+          headerRow.innerHTML = `<td colspan="3">${item.should_trigger ? 'Should Trigger' : 'Should NOT Trigger'}</td>`;
+          tbody.appendChild(headerRow);
+          lastGroup = group;
+        }
+
+        const idx = item.origIdx;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><textarea class="query-input" onchange="updateQuery(${idx}, this.value)">${escapeHtml(item.query)}</textarea></td>
+          <td>
+            <label class="toggle">
+              <input type="checkbox" ${item.should_trigger ? 'checked' : ''} onchange="updateTrigger(${idx}, this.checked)">
+              <span class="slider"></span>
+            </label>
+            <span style="margin-left:8px;font-size:0.8rem;color:#b0aea5">${item.should_trigger ? 'Yes' : 'No'}</span>
+          </td>
+          <td><button class="btn-delete" onclick="deleteRow(${idx})">Delete</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+      updateSummary();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function updateQuery(idx, value) { evalItems[idx].query = value; updateSummary(); }
+    function updateTrigger(idx, value) { evalItems[idx].should_trigger = value; render(); }
+    function deleteRow(idx) { evalItems.splice(idx, 1); render(); }
+
+    function addRow() {
+      evalItems.push({ query: '', should_trigger: true });
+      render();
+      const inputs = document.querySelectorAll('.query-input');
+      inputs[inputs.length - 1].focus();
+    }
+
+    function updateSummary() {
+      const trigger = evalItems.filter(i => i.should_trigger).length;
+      const noTrigger = evalItems.filter(i => !i.should_trigger).length;
+      document.getElementById('summary').textContent =
+        `${evalItems.length} queries total: ${trigger} should trigger, ${noTrigger} should not trigger`;
+    }
+
+    function exportEvalSet() {
+      const valid = evalItems.filter(i => i.query.trim() !== '');
+      const data = valid.map(i => ({ query: i.query.trim(), should_trigger: i.should_trigger }));
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'eval_set.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    render();
+  </script>
+</body>
+</html>
