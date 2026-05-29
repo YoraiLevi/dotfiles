@@ -7,18 +7,18 @@
     },
     {
       "text": "Plan has explicit Scope IN and Scope OUT lists",
-      "passed": false,
-      "evidence": "in=False, out=False"
+      "passed": true,
+      "evidence": "found IN + OUT"
     },
     {
       "text": "Implementer steps include rationale where needed",
       "passed": true,
-      "evidence": "9 steps, 1 rationale hits"
+      "evidence": "8 steps, 2 rationale hits"
     },
     {
       "text": "Plan has Checkpoint or verification markers per step",
-      "passed": false,
-      "evidence": "no Checkpoint/Verify markers"
+      "passed": true,
+      "evidence": "x9 markers"
     },
     {
       "text": "Plan contains no markdown tables",
@@ -33,7 +33,7 @@
     {
       "text": "Plan uses sub-lists for multi-part thoughts (>= 5 nested bullets)",
       "passed": true,
-      "evidence": "12 nested bullets"
+      "evidence": "8 nested bullets"
     },
     {
       "text": "No multi-sentence prose paragraphs longer than 200 chars",
@@ -42,8 +42,8 @@
     },
     {
       "text": "Plan does NOT include 'Why not [alternative]' subsection",
-      "passed": false,
-      "evidence": "unwanted 'Why not' pattern: 'Alternatives considered'"
+      "passed": true,
+      "evidence": "no 'Why not' patterns"
     },
     {
       "text": "Plan does NOT include 'Why this matters for the goal' filler tags",
@@ -53,13 +53,13 @@
     {
       "text": "Implementer section contains at least one inline code block",
       "passed": true,
-      "evidence": "7 code block(s) in implementation"
+      "evidence": "5 code block(s) in implementation"
     }
   ],
   "summary": {
-    "passed": 8,
-    "failed": 3,
+    "passed": 11,
+    "failed": 0,
     "total": 11,
-    "pass_rate": 0.7273
+    "pass_rate": 1.0
   }
 }

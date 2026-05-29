@@ -1,24 +1,24 @@
 {
   "expectations": [
     {
-      "text": "First top-level section is goal-oriented (Goal/Objective/Problem/Why)",
+      "text": "First top-level section is goal-oriented",
       "passed": true,
-      "evidence": "first ## is goal-oriented: '1. Goal & non-goals'"
+      "evidence": "first ##: 'Goal & non-goals'"
     },
     {
-      "text": "Plan has explicit Scope IN and Scope OUT (or equivalent) lists",
+      "text": "Plan has explicit Scope IN and Scope OUT lists",
       "passed": false,
-      "evidence": "has_in=False, has_out=False"
+      "evidence": "in=False, out=False"
     },
     {
-      "text": "Implementer steps include rationale (because/since/so that)",
+      "text": "Implementer steps include rationale where needed",
       "passed": false,
-      "evidence": "no ### Step subsections in implementation"
+      "evidence": "no ### Step subsections"
     },
     {
-      "text": "Plan has Checkpoint: or verification markers per step",
+      "text": "Plan has Checkpoint or verification markers per step",
       "passed": false,
-      "evidence": "no Checkpoint/Verification markers"
+      "evidence": "no Checkpoint/Verify markers"
     },
     {
       "text": "Plan contains no markdown tables",
@@ -28,23 +28,38 @@
     {
       "text": "Plan does NOT include a Meta / prompt-template section",
       "passed": true,
-      "evidence": "no Meta section"
+      "evidence": "no Meta"
     },
     {
       "text": "Plan uses sub-lists for multi-part thoughts (>= 5 nested bullets)",
       "passed": false,
-      "evidence": "0 nested bullets (want >= 5)"
+      "evidence": "0 nested bullets"
     },
     {
       "text": "No multi-sentence prose paragraphs longer than 200 chars",
       "passed": true,
       "evidence": "no long prose"
+    },
+    {
+      "text": "Plan does NOT include 'Why not [alternative]' subsection",
+      "passed": true,
+      "evidence": "no 'Why not' patterns"
+    },
+    {
+      "text": "Plan does NOT include 'Why this matters for the goal' filler tags",
+      "passed": true,
+      "evidence": "no 'Why this matters' filler"
+    },
+    {
+      "text": "Implementer section contains at least one inline code block",
+      "passed": false,
+      "evidence": "0 code block(s) in implementation"
     }
   ],
   "summary": {
-    "passed": 4,
-    "failed": 4,
-    "total": 8,
-    "pass_rate": 0.5
+    "passed": 6,
+    "failed": 5,
+    "total": 11,
+    "pass_rate": 0.5455
   }
 }
