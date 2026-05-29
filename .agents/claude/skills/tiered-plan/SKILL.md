@@ -20,13 +20,24 @@ The reviewer-facing sections (1, 2, 3) must be CONCISE, DENSE, and DECISION-SUPP
 
 ## Principles (these are load-bearing — every plan follows them)
 
-### 1. Lead with the goal, not the changes
+### 1. Lead with the goal — and put ALL reviewer-must-know info at the top
 
-The first content section answers "what are we doing and why?" — not "what's about to ship." Section name fits the change: "Objective" for a refactor, "Goal" for a feature, "Why this change" for a migration. Don't paste a fixed label.
+The Objective is the reviewer's must-know section. It contains, in this order:
 
-The goal section should be SHORT. Two to four bullets, or a short paragraph + bullets, is usually right. If the change has multiple distinct concerns worth surfacing (Problem / Why now / Success / Risk), use a `###` sub-heading for each, but only when the change actually has multiple concerns. Simple changes get a brief objective and move on.
+1. **Goal / problem** — what we're doing and why. Brief (1-3 bullets, or a paragraph + bullets).
+2. **Definition of Done** — ALWAYS present, every plan. A list of observable success criteria the reviewer can use to recognize the change is complete. This is the contract: when these are true, the work is done.
+3. **Open questions for you** — when they exist. Things the planner can't decide alone (version targets, project conventions, CI policies, packaging choices). Surface these in the Objective, not at the end of the plan — they may change the reviewer's decision.
 
-**Anti-pattern**: forcing Problem / Why now / Success criteria / Risk surface as four mandatory `###` subsections on every plan. The reviewer doesn't need all four for "add a CLI flag."
+Why these three at the top: a reviewer evaluates worthwhileness, success-recognition, and outstanding uncertainty BEFORE they care about the Approach. If the goal isn't sound, or the open questions are unanswered, or the Definition of Done is ambiguous, the reviewer needs to know NOW — before reading on.
+
+Section name fits the change: "Objective" for a refactor, "Goal" for a feature, "Why this change" for a migration.
+
+**Anti-patterns**:
+
+- Forcing Problem / Why now / Success criteria / Risk surface as four mandatory `###` subsections on every plan. Use them when the change has multiple concerns; skip when it doesn't.
+- Burying Definition of Done in the Approach section under "Done when:" — promote it to Objective.
+- Putting Open Questions as a footer at the end of the plan — the reviewer reads top-down and may already have decided by then. Surface them in Objective.
+- Using "Non-goals" as a subsection title — it's awkward. Move that concept to Scope OUT in the Approach (where it belongs).
 
 ### 2. Approach has TECHNICAL DEPTH
 
@@ -37,9 +48,12 @@ Include:
 - The strategy in one sentence — "we'll do this by [shape]."
 - **Why this strategy** — the load-bearing reason. One bullet.
 - **Specific mechanics** when they matter — deprecation tactics, migration order, library choices, compatibility shims, PEP references, key code constructs. This is where readers like to see `stacklevel=2`, `__getattr__`, `git mv`, etc. mentioned with one-line rationale.
-- **Scope IN / OUT** — explicit lists. OUT items point at where they're tracked (ROADMAP, follow-up issue, "deferred to next PR"). Vague scope is the most common plan failure.
+- **Scope IN** — explicit list of what's covered.
+- **Scope OUT** — explicit list of what's NOT covered. **Format**: each item carries a brief reason + a tracking pointer.
+  - **Bad**: `- structured JSON output`
+  - **Good**: `- structured JSON output — out because no consumer asked; defer until one does → follow-up issue #N`
+  - Scope OUT absorbs the "non-goals" concept: anything we're intentionally excluding goes here with its reason and tracker.
 - **Delivery shape** — one PR, one commit, which branch. (Default: solo.)
-- **Done when** — one-line verification recipe.
 
 DO NOT include:
 
@@ -102,11 +116,16 @@ One PR, one commit, one branch. Multi-PR splits only when the user explicitly ha
 
 The skill encodes the format. Generated plans don't include a "prompt template for future tiered plans" footer.
 
-### 10. Optional "Open questions" section at the end
+### 10. Definition of Done and Open Questions live in the Objective, not at the end
 
-When the planner has uncovered genuine uncertainty — version targets, project conventions, CI policies, packaging layout — surface them as an explicit "Open questions for you" section at the end of the plan. This is honest and avoids guessing into commitments.
+Both are reviewer-must-know. Both go in the Objective section at the top of the plan.
 
-Include it only when there ARE genuine open questions. Skip when there's nothing real to ask. Don't pad with "is this fine?" filler.
+- **Definition of Done** is ALWAYS present. A flat list of observable success criteria. When all are true, the work is complete. Reviewers use it to recognize "done"; implementers use it to know when to stop.
+- **Open Questions** are present when genuine uncertainty exists — version targets, project conventions, CI policies, packaging choices. The planner can't decide alone; the reviewer must.
+  - Include ONLY when there are genuine open questions. Skip when there's nothing real to ask. Empty section is worse than no section.
+  - Don't pad with "is this fine?" filler.
+
+DO NOT put Definition of Done as "Done when:" inside the Approach section. DO NOT put Open Questions as a footer at the end of the plan. Both demote reviewer-must-know info below content the reviewer hasn't decided to read yet.
 
 ## When to make the plan deeper vs lighter
 
@@ -123,31 +142,36 @@ Don't pad simple changes to look thorough. Don't crunch complex changes to look 
 
 ## 1. Objective
 
-[2-4 bullets covering what we're doing and why it matters. Brief. Non-goals listed if there's risk of scope creep.]
+[1-3 bullets: what we're doing and why it matters. Brief.]
 
-Non-goals:
-- …
-- …
+**Definition of Done** (always — observable criteria that say "this is finished"):
+- [criterion 1: observable, testable]
+- [criterion 2]
+- [criterion 3]
+
+**Open questions** (only if genuine — surface here, not at the end):
+- [thing the planner can't decide alone, with a brief note on what info would resolve it]
+- [another]
 
 ## 2. Approach
 
 **Strategy: [one-sentence shape — "keep the implementation in the new location; make the old location a thin shim"].**
 
 Why this shape:
-
 - [load-bearing reason]
 - [another]
 
 [Technical mechanics — specific deprecation tactics, library choices, code constructs that matter. This is where the reviewer evaluates soundness. Use sub-lists or bullets; don't write paragraphs.]
 
-Scope IN:
-- …
+**Scope IN**:
+- [what's covered]
+- [...]
 
-Scope OUT:
-- … (each points at where it's tracked)
+**Scope OUT** (each item: brief reason + tracking pointer; this absorbs the "non-goals" concept):
+- [item] — out because [reason] → [where tracked: ROADMAP entry, follow-up issue, "deferred to next PR", etc.]
+- [item] — out because [reason] → [tracker]
 
-Delivery: one PR, one commit on branch `<name>`. Solo.
-Done when: [one-line verification recipe].
+**Delivery**: one PR, one commit on branch `<name>`. Solo.
 
 ## 3. Per-change overview
 
@@ -159,10 +183,6 @@ Done when: [one-line verification recipe].
 ### 3.2 [Next change]
 
 - …
-
-### 3.3 [...]
-
-…
 
 ## 4. Implementer guide
 
@@ -185,11 +205,6 @@ Checkpoint: [verification command].
 …
 
 ### [Critical files / Hygiene constraints subsections if heavy]
-
-## 5. Open questions (only if genuine)
-
-- [thing the planner can't decide alone — version target, project convention, CI policy]
-- [another]
 ```
 
 ## Anti-patterns (don't do these)
