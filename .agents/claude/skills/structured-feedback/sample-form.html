@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanity check — does the form generator work?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: #faf9f5;
+      padding: 2rem;
+      color: #141413;
+      line-height: 1.55;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    h1 { font-family: 'Poppins', sans-serif; margin-bottom: 0.5rem; font-size: 1.6rem; font-weight: 600; }
+    h2 { font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 500; margin-bottom: 0.75rem; }
+    .context { color: #5b5a55; margin-bottom: 1.5rem; font-style: italic; }
+    .item-card, .global-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      border: 1px solid #e8e6dc;
+    }
+    .global-card { background: #f6f4ec; }
+    .item-heading { color: #141413; }
+    .global-heading { color: #141413; }
+    .item-card pre.item-content-text {
+      background: #faf9f5;
+      padding: 0.75rem 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      border: 1px solid #e8e6dc;
+    }
+    .item-card p, .item-card ul, .item-card ol { margin-bottom: 0.6rem; }
+    .item-card code { background: #f3f1ea; padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.9em; }
+    .item-card pre code { background: transparent; padding: 0; }
+    .item-controls { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #e8e6dc; }
+    .control { display: flex; flex-direction: column; gap: 0.35rem; }
+    .control-toggle { flex-direction: row; align-items: center; gap: 0.75rem; }
+    .control-label { font-family: 'Poppins', sans-serif; font-size: 0.85rem; font-weight: 500; color: #141413; }
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border: 1px solid #d9d6c9;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: 'Lora', Georgia, serif;
+      resize: vertical;
+      background: #fefdf9;
+    }
+    textarea:focus, input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: #d97757;
+      box-shadow: 0 0 0 2px rgba(217,119,87,0.15);
+    }
+    select {
+      padding: 0.5rem 0.6rem;
+      border: 1px solid #d9d6c9;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      background: #fefdf9;
+      font-family: 'Lora', Georgia, serif;
+    }
+    /* toggle */
+    .toggle { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background: #d9d6c9; transition: 0.2s; border-radius: 24px;
+    }
+    .toggle .slider:before {
+      content: ""; position: absolute; height: 18px; width: 18px;
+      left: 3px; bottom: 3px; background: white; transition: 0.2s; border-radius: 50%;
+    }
+    .toggle input:checked + .slider { background: #6a9bcc; }
+    .toggle input:checked + .slider:before { transform: translateX(20px); }
+    /* rating */
+    .rating { display: flex; gap: 0.35rem; }
+    .rating-option {
+      width: 36px; height: 36px;
+      border: 1px solid #d9d6c9;
+      background: white;
+      border-radius: 50%;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .rating-option:hover { border-color: #d97757; }
+    .rating-option[data-selected] { background: #d97757; color: white; border-color: #d97757; }
+    /* multiselect + radio rows */
+    .multiselect, .radio-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .check-row, .radio-row {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .check-row:hover, .radio-row:hover { background: #faf9f5; }
+    .check-row input, .radio-row input { width: 16px; height: 16px; cursor: pointer; }
+    /* submit */
+    .submit-bar {
+      position: sticky; bottom: 0;
+      background: rgba(250, 249, 245, 0.96);
+      backdrop-filter: blur(4px);
+      padding: 1rem 0;
+      margin-top: 1.5rem;
+      border-top: 1px solid #e8e6dc;
+      display: flex; gap: 0.75rem; align-items: center;
+    }
+    .btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.6rem 1.25rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .btn-submit { background: #d97757; color: white; }
+    .btn-submit:hover { background: #c4613f; }
+    .status { color: #5b5a55; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <h1>Sanity check — does the form generator work?</h1>
+  <p class="context">This is a test config exercising every control type. Click around, then click Submit and check the downloaded feedback.json matches what you set.</p>
+
+  <form id="feedback-form" onsubmit="event.preventDefault(); downloadJSON();">
+    
+    <section class="item-card" data-item-id="test-item-1">
+      <h2 class="item-heading">Test item 1 — every control type</h2>
+      <p>This item has one of each control to verify rendering and JSON output.</p>
+      <div class="item-controls">
+        
+      <div class="control control-toggle">
+        <label class="control-label" for="approve">Approve</label>
+        <label class="toggle">
+          <input type="checkbox" id="approve" name="approve" data-control="toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    
+
+      <div class="control control-rating">
+        <label class="control-label">Quality (1-5)</label>
+        <div class="rating" data-key="quality" data-control="rating">
+          <button type="button" class="rating-option" data-value="1" >1</button><button type="button" class="rating-option" data-value="2" >2</button><button type="button" class="rating-option" data-value="3" >3</button><button type="button" class="rating-option" data-value="4" data-selected>4</button><button type="button" class="rating-option" data-value="5" >5</button>
+        </div>
+      </div>
+    
+
+      <div class="control control-freetext">
+        <label class="control-label" for="comments">Free-form comments</label>
+        <textarea id="comments" name="comments" rows="3" placeholder="type anything" data-control="freetext">starting text</textarea>
+      </div>
+    
+
+      <div class="control control-shorttext">
+        <label class="control-label" for="tag">Short tag</label>
+        <input type="text" id="tag" name="tag" placeholder="" value="alpha" data-control="shorttext">
+      </div>
+    
+
+      <div class="control control-freetext">
+        <label class="control-label" for="summary">Edit this summary</label>
+        <textarea id="summary" name="summary" rows="4" placeholder="" data-control="freetext">The agent proposed this paragraph. The user can refine it directly in the textarea.</textarea>
+      </div>
+    
+
+      <div class="control control-select">
+        <label class="control-label" for="priority">Priority dropdown</label>
+        <select id="priority" name="priority" data-control="select">
+          <option value="">— pick one —</option><option value="P0" >P0</option><option value="P1" >P1</option><option value="P2" selected>P2</option><option value="P3" >P3</option>
+        </select>
+      </div>
+    
+
+      <div class="control control-multiselect">
+        <label class="control-label">Multi-select tags</label>
+        <div class="multiselect" data-key="tags" data-control="multiselect">
+          
+          <label class="check-row">
+            <input type="checkbox" id="tags-0" value="bug" checked>
+            <span>bug</span>
+          </label>
+        
+          <label class="check-row">
+            <input type="checkbox" id="tags-1" value="feature" >
+            <span>feature</span>
+          </label>
+        
+          <label class="check-row">
+            <input type="checkbox" id="tags-2" value="docs" checked>
+            <span>docs</span>
+          </label>
+        
+          <label class="check-row">
+            <input type="checkbox" id="tags-3" value="refactor" >
+            <span>refactor</span>
+          </label>
+        
+          <label class="check-row">
+            <input type="checkbox" id="tags-4" value="performance" >
+            <span>performance</span>
+          </label>
+        
+        </div>
+      </div>
+    
+
+      <div class="control control-radio">
+        <label class="control-label">Radio verdict</label>
+        <div class="radio-group" data-key="verdict" data-control="radio">
+          
+          <label class="radio-row">
+            <input type="radio" id="verdict-0" name="verdict-grp" value="ship" >
+            <span>ship</span>
+          </label>
+        
+          <label class="radio-row">
+            <input type="radio" id="verdict-1" name="verdict-grp" value="edit" checked>
+            <span>edit</span>
+          </label>
+        
+          <label class="radio-row">
+            <input type="radio" id="verdict-2" name="verdict-grp" value="block" >
+            <span>block</span>
+          </label>
+        
+        </div>
+      </div>
+    
+      </div>
+    </section>
+    
+
+    <section class="item-card" data-item-id="test-item-2">
+      <h2 class="item-heading">Test item 2 — minimal</h2>
+      <p>One toggle + one comment. Most common shape.</p>
+      <div class="item-controls">
+        
+      <div class="control control-toggle">
+        <label class="control-label" for="keep">Keep</label>
+        <label class="toggle">
+          <input type="checkbox" id="keep" name="keep" data-control="toggle" >
+          <span class="slider"></span>
+        </label>
+      </div>
+    
+
+      <div class="control control-freetext">
+        <label class="control-label" for="comment">Comment</label>
+        <textarea id="comment" name="comment" rows="2" placeholder="" data-control="freetext"></textarea>
+      </div>
+    
+      </div>
+    </section>
+    
+    
+    <section class="global-card" id="global-controls">
+      <h2 class="global-heading">Overall</h2>
+      <div class="item-controls">
+        
+      <div class="control control-radio">
+        <label class="control-label">Overall pick</label>
+        <div class="radio-group" data-key="overall" data-control="radio">
+          
+          <label class="radio-row">
+            <input type="radio" id="overall-0" name="overall-grp" value="item-1" >
+            <span>item-1</span>
+          </label>
+        
+          <label class="radio-row">
+            <input type="radio" id="overall-1" name="overall-grp" value="item-2" >
+            <span>item-2</span>
+          </label>
+        
+          <label class="radio-row">
+            <input type="radio" id="overall-2" name="overall-grp" value="neither" >
+            <span>neither</span>
+          </label>
+        
+        </div>
+      </div>
+    
+
+      <div class="control control-freetext">
+        <label class="control-label" for="notes">Anything else</label>
+        <textarea id="notes" name="notes" rows="2" placeholder="" data-control="freetext"></textarea>
+      </div>
+    
+      </div>
+    </section>
+    
+
+    <div class="submit-bar">
+      <button type="submit" class="btn btn-submit">Submit &amp; Download JSON</button>
+      <span class="status" id="status">Form auto-downloads <code>feedback.json</code> on submit. Paste/upload it back to the agent.</span>
+    </div>
+  </form>
+
+  <script>
+    // Rating: clicking a circle marks it as selected (and unmarks siblings).
+    document.querySelectorAll('.rating').forEach(rating => {
+      rating.querySelectorAll('.rating-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          rating.querySelectorAll('.rating-option').forEach(o => o.removeAttribute('data-selected'));
+          opt.setAttribute('data-selected', '');
+          rating.dataset.selected = opt.dataset.value;
+        });
+        // Pre-mark default if present
+        if (opt.hasAttribute('data-selected')) {
+          rating.dataset.selected = opt.dataset.value;
+        }
+      });
+    });
+
+    function collectControls(scope) {
+      const result = {};
+
+      // toggles
+      scope.querySelectorAll('input[type="checkbox"][data-control="toggle"]').forEach(el => {
+        result[el.name] = el.checked;
+      });
+
+      // freetext / shorttext / edittext (textareas + text inputs)
+      scope.querySelectorAll('textarea[data-control], input[type="text"][data-control]').forEach(el => {
+        result[el.name] = el.value;
+      });
+
+      // selects
+      scope.querySelectorAll('select[data-control="select"]').forEach(el => {
+        result[el.name] = el.value || null;
+      });
+
+      // multiselects
+      scope.querySelectorAll('.multiselect[data-control="multiselect"]').forEach(ms => {
+        const key = ms.dataset.key;
+        const checked = ms.querySelectorAll('input[type="checkbox"]:checked');
+        result[key] = Array.from(checked).map(c => c.value);
+      });
+
+      // radios
+      scope.querySelectorAll('.radio-group[data-control="radio"]').forEach(rg => {
+        const key = rg.dataset.key;
+        const checked = rg.querySelector('input[type="radio"]:checked');
+        result[key] = checked ? checked.value : null;
+      });
+
+      // ratings
+      scope.querySelectorAll('.rating[data-control="rating"]').forEach(r => {
+        const key = r.dataset.key;
+        result[key] = r.dataset.selected ? parseInt(r.dataset.selected, 10) : null;
+      });
+
+      return result;
+    }
+
+    function collectData() {
+      const data = {items: {}, global: {}, submitted_at: new Date().toISOString()};
+
+      document.querySelectorAll('[data-item-id]').forEach(itemEl => {
+        const id = itemEl.dataset.itemId;
+        data.items[id] = collectControls(itemEl);
+      });
+
+      const globalEl = document.getElementById('global-controls');
+      if (globalEl) {
+        data.global = collectControls(globalEl);
+      }
+
+      return data;
+    }
+
+    function downloadJSON() {
+      const data = collectData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'feedback.json';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+
+      document.getElementById('status').textContent = 'Submitted — feedback.json downloaded. Drop it back to the agent.';
+    }
+  </script>
+</body>
+</html>

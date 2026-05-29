@@ -1,0 +1,34 @@
+{
+  "title": "Sanity check — does the form generator work?",
+  "context": "This is a test config exercising every control type. Click around, then click Submit and check the downloaded feedback.json matches what you set.",
+  "items": [
+    {
+      "id": "test-item-1",
+      "heading": "Test item 1 — every control type",
+      "content_html": "<p>This item has one of each control to verify rendering and JSON output.</p>",
+      "controls": [
+        {"type": "toggle", "key": "approve", "label": "Approve", "default": true},
+        {"type": "rating", "key": "quality", "label": "Quality (1-5)", "min": 1, "max": 5, "default": 4},
+        {"type": "freetext", "key": "comments", "label": "Free-form comments", "rows": 3, "placeholder": "type anything", "default": "starting text"},
+        {"type": "shorttext", "key": "tag", "label": "Short tag", "default": "alpha"},
+        {"type": "edittext", "key": "summary", "label": "Edit this summary", "rows": 4, "default": "The agent proposed this paragraph. The user can refine it directly in the textarea."},
+        {"type": "select", "key": "priority", "label": "Priority dropdown", "options": ["P0", "P1", "P2", "P3"], "default": "P2"},
+        {"type": "multiselect", "key": "tags", "label": "Multi-select tags", "options": ["bug", "feature", "docs", "refactor", "performance"], "default": ["bug", "docs"]},
+        {"type": "radio", "key": "verdict", "label": "Radio verdict", "options": ["ship", "edit", "block"], "default": "edit"}
+      ]
+    },
+    {
+      "id": "test-item-2",
+      "heading": "Test item 2 — minimal",
+      "content_html": "<p>One toggle + one comment. Most common shape.</p>",
+      "controls": [
+        {"type": "toggle", "key": "keep", "label": "Keep"},
+        {"type": "freetext", "key": "comment", "label": "Comment", "rows": 2}
+      ]
+    }
+  ],
+  "global_controls": [
+    {"type": "radio", "key": "overall", "label": "Overall pick", "options": ["item-1", "item-2", "neither"]},
+    {"type": "freetext", "key": "notes", "label": "Anything else", "rows": 2}
+  ]
+}
