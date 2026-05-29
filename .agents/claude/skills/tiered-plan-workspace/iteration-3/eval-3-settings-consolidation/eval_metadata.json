@@ -1,0 +1,15 @@
+{
+  "eval_id": 3,
+  "eval_name": "settings-consolidation",
+  "prompt": "My project's settings system is currently a bunch of individual JSON files under config/ (one per environment: dev.json, staging.json, prod.json). I want to consolidate them into a single TOML file with environment sections. Need migration for existing settings, one-release backwards-compat (read old JSONs if present, log deprecation warning), and a CLI flag to dump the merged config. Plan this. Solo.",
+  "assertions": [
+    "First top-level section is goal-oriented (Goal/Objective/Problem/Why/Purpose)",
+    "Plan has explicit Scope IN and Scope OUT (or equivalent) lists",
+    "Implementer steps include rationale (because/since/so that markers)",
+    "Plan has Checkpoint: or verification markers per step",
+    "Plan contains no markdown tables",
+    "Plan does NOT include a Meta / prompt-template section",
+    "Plan uses sub-lists for multi-part thoughts (≥5 nested bullets)",
+    "No multi-sentence prose paragraphs longer than 200 chars"
+  ]
+}
