@@ -1,225 +1,283 @@
 ---
 name: tiered-plan
-description: Produce a four-tier implementation plan (Tier 1 objective / Tier 2 approach / Tier 3 per-change overview / Tier 4 implementer guide) for a multi-step change. Bullets only, no tables. Tier 1 and Tier 2 answer "should we do this?" and "is the approach sound?" for a manager/decider reviewer; Tier 3 and Tier 4 answer "what changes?" and "how exactly?" for the implementer (who is also a reviewer of the WHY). Use this skill whenever the user asks for a plan, implementation plan, refactor plan, execution plan, layered plan, tiered plan, or describes wanting to plan a multi-step change — even if they don't explicitly say "tiered". Especially trigger when the change spans code + docs + tests, when there are multiple sub-changes to coordinate, when the user wants a doc both reviewers and implementers can use, or when the user is asking to think through whether a change is worth doing and how to scope it. Default to solo-developer assumptions (one PR, one commit) unless the user explicitly says they have reviewers.
+description: Produce a depth-tiered implementation plan that a reviewer can scan top-down and an implementer can execute step-by-step. Plans read in this order — what's the goal? is the approach sound? what specifically changes? how exactly? — with section names that fit the actual change, not a fixed template. Use sub-lists for multi-part thoughts (never cram multiple ideas into one bullet). Embed WHY in every implementer step so a junior reader can explain the plan back. Use this skill whenever the user asks for a plan, implementation plan, refactor plan, execution plan, layered plan, tiered plan, or describes wanting to plan a multi-step change — even if they don't explicitly say "tiered". Especially trigger when the change spans code + docs + tests, when there are multiple sub-changes to coordinate, when the user wants a doc both reviewers and implementers can use, or when the user is asking to think through whether a change is worth doing and how to scope it. Default to solo-developer assumptions (one PR, one commit) unless the user explicitly says they have reviewers.
 ---
 
 # Tiered plan
 
-A planning format that uses **progressive disclosure ordered by question**, not by audience. Each tier answers a different question:
+A planning style that ladders top-down by **question**, not by template. The plan answers reviewer questions in order — should we do this? is the approach sound? what changes? how exactly? — and stops adding depth when the change doesn't need it. Section names fit the specific change; they're not boilerplate Tier 1 / Tier 2 labels.
 
-1. **Tier 1 — Should we do this?** (objective + worthwhileness)
-2. **Tier 2 — Is the approach sound?** (high-level how + scope)
-3. **Tier 3 — What specifically changes?** (per-change overview with rationale)
-4. **Tier 4 — How exactly do I do it?** (implementer guide with embedded why)
+## Principles (these are load-bearing — every plan follows them)
 
-A reviewer reads from the top and stops when their question is answered. A manager-level reviewer may stop after Tier 1 ("yes, this is worth doing, ship it"). A design-level reviewer reads through Tier 3 ("the approach is sound, the changes look right"). An implementer reads everything — they need Tiers 1-3 for grounding and Tier 4 to execute.
+### 1. Lead with the goal, not the changes
 
-**Bar for success**: a junior engineer reading the plan should be able to explain back both the high-level goal AND the expected implementation. If they can only parrot the steps without understanding why, the plan failed.
+The first content of the plan must answer "what are we trying to do and why?" — not "what's about to ship." A reader who only reads the first section should know what problem this solves and whether it's worth solving.
 
-## When this format earns its place
+Section name fits the change. For a refactor, "Objective" or "Problem". For a feature, "Goal" or "What we're building". For a migration, "Why move + what success looks like". Don't paste a fixed label; pick what reads naturally.
 
-- Multi-step changes that span code + docs + tests.
-- Refactors with multiple sub-changes that need coordination.
-- Changes that fold in pending bug fixes or review findings.
-- Changes where the worthwhileness is non-obvious and a reviewer needs to be convinced before they care about the mechanics.
-- Anything where the same doc needs to satisfy both a reviewer (read once, move on) and an implementer (file:line precision).
+### 2. Top-down by question
 
-Skip this format for one-line bug fixes or trivially atomic changes. The four-tier overhead is wasted on a change that can be summarized in one sentence.
+Reading order is non-negotiable:
 
-## Structure
+- First: **what's the goal and is it worthwhile?** (problem / why now / success criteria / risk if any of those matter)
+- Then: **how are we going to do it at a high level + what's NOT in scope?** (approach + scope IN / OUT)
+- Then: **what specifically changes?** (per-change overview with rationale)
+- Last: **how exactly does the implementer execute?** (step-by-step with embedded why)
 
-### Tier 1 — Objective & worthwhileness (60-second manager read)
+Each level is shorter than the one below. A reviewer stops when their question is answered.
 
-Four to six bullets. Answers the question: **should we do this?** A reviewer who stops here decides whether the goal is worth pursuing.
+### 3. Section names fit the change, not a template
 
-Cover:
+A simple change (add a CLI flag, rename a function) does not need a 4-tier scaffold. A complex change (multi-file refactor with backwards-compat + tests + docs) does. Match depth to complexity.
 
-- **Problem** — what's broken / missing / costly today, in plain English. Not "what ships," not "what changes" — what's the user-facing or system-level pain.
-- **Why now** — the cost of NOT doing it (drift, debt, blocked work, recurring confusion). If the answer is "no urgent reason, just nicer," say so honestly.
-- **Success criteria** — how we'll know the change worked when it's done. Specific. Observable.
-- **Risk surface** — the one or two failure modes that could make this regret-worthy. One line each.
-- *(Optional)* **Alternatives considered + dismissed** — if there's an obvious other approach, name it in one line and say why not.
+**Bad**: forcing "Tier 1 — Objective" + "Tier 2 — Approach" + "Tier 3 — Per-change overview" + "Tier 4 — Implementer guide" on a one-flag-addition. The result feels mechanical and padded.
 
-Do NOT write "what ships" or "what moves" in Tier 1. Those are summaries of the HOW; they belong in Tier 2 or 3. Tier 1 is purely about the goal.
+**Good**: for the same one-flag-addition, write `## Goal`, `## Approach`, `## Implementation`, done. The depth matches the work.
 
-### Tier 2 — Approach & shape (60-second decider read)
+For complex changes, the question-ladder is the same but each level has more depth and `###` sub-headings under it.
 
-Four to seven bullets. Answers the question: **is the approach sound?** A reviewer who stops here decides whether the proposed path is reasonable.
+### 4. Sub-lists for multi-part thoughts
 
-Cover:
+This is the most common style failure. When a concern has multiple parts, do NOT cram them into a single inline-bold bullet with prose inside it. Break them out.
 
-- **Approach in one sentence** — "we'll do this by [strategy]." Plain English.
-- **Why this approach** — the load-bearing reason. One bullet.
-- **Why not the obvious alternative** — name the alternative, one line on why not. Skip if no obvious alternative.
-- **Scope IN** — explicit bullet list of what's covered.
-- **Scope OUT** — explicit bullet list of what's NOT, each item pointing at where it's tracked (ROADMAP, follow-up issue, "deferred"). Vague scope is the most common plan failure mode.
-- **Delivery shape** — one PR? one commit? Which branch? Solo dev or team? (Default: one PR, one commit, solo.)
-- **Done when** — a one-line verification recipe (the commands that prove success).
+**Bad**:
+```
+- **Success criteria**: the new import path works, the old import path warns once per process, all tests pass, no callers still use the old name.
+```
 
-### Tier 3 — Per-change overview (5-minute reviewer dig-in)
+**Good** (sub-list under inline-bold):
+```
+- **Success criteria**:
+  - new import path works
+  - old import path warns once per process
+  - all tests pass
+  - no callers still use the old name
+```
 
-One section per major change. Bullets throughout. No tables. No prose paragraphs.
+**Also good** (when there are enough items, promote to a sub-heading):
+```
+### Success criteria
 
-For each change, cover:
+- new import path works
+- old import path warns once per process
+- all tests pass
+- no callers still use the old name
+```
 
-- The shape of the change in 3-5 bullets.
-- The **embedded rationale** — why this change is necessary to hit the objective from Tier 1.
-- Honest acknowledgment of asymmetries — if part of the change doesn't fit the uniform pattern of other changes, say so explicitly.
+Apply the same rule to Problem, Why now, Risk surface, Scope IN/OUT, per-change descriptions, etc. Whenever a thought has 3+ parts, sub-list it.
 
-Add cross-cutting subsections if needed:
+### 5. Scope IN / OUT discipline (always)
 
-- **Math / counts** — plugin counts, file counts, line counts. Anything that anchors scale.
-- **Honest debt** — items you're folding the change AROUND rather than fixing. Acknowledge growth.
+Every plan has an explicit list of what's IN scope and what's OUT. OUT items point at where they're tracked (ROADMAP, follow-up issue, "deferred to next PR"). "Out of scope" without a pointer is a black hole.
 
-If a reader stops at Tier 3, they understand the design + scope at a level where they could write the implementation themselves (slower than reading Tier 4, but possible).
+### 6. Every implementer step explains WHY
 
-### Tier 4 — Implementer guide (executor's reference, but WHY embedded)
+The lowest tier (implementation steps) must embed rationale. Two mechanisms:
 
-Step-by-step. Each step is a numbered section with two specific demands:
+- **Step-level**: each numbered step opens with a one-sentence "because…" tying it to the goal or to a sequencing constraint. Example: `### Step 1: git mv the file — this lands first because moving before editing keeps git's rename detection working.`
+- **Inline**: load-bearing bullets within a step get an inline `because…` clause when the choice is non-obvious. Example: `- Use stacklevel=2 in the DeprecationWarning, because we want the warning to point at the caller's import line, not at the shim itself.`
 
-1. **A one-sentence rationale at the top of each step**, in this shape: *"This step lands here because [reason]."* The rationale grounds the implementer (who is also a reviewer) so they understand why this step exists in this position. Without it, a junior reading the plan can't recover when something doesn't match exactly — they don't know which constraints are load-bearing.
+Skip the inline clause on bullets where the action is self-explanatory. The bar: a junior reader of the implementation steps should be able to explain backwards from any step to the goal.
 
-2. **Inline `because …` clauses on load-bearing bullets** — when a bulleted action depends on a non-obvious constraint (e.g. "do the rename FIRST because it's visible in git log; later commits would bury it"), include a brief `because …` clause. Skip the inline clause on bullets where the action is self-explanatory; don't bloat with rationale on every line.
+### 7. Verification per checkpoint
 
-Each step also has:
+Each implementer step ends with how to prove it worked — concrete commands, expected output, or observable state. Don't write "test it works" without saying what command to run.
 
-- Bulleted action items with **specific file paths**.
-- Exact edits when they're non-obvious (regex patterns, function signatures, specific commits to cite).
-- A **Checkpoint** line at the end describing the verification command(s) that prove the step worked.
+### 8. Bullets > tables > prose
 
-For patterns that repeat across many files, describe the pattern once and list a few representative paths. Do not enumerate every file:line — the implementer can grep.
+- Bullets for almost everything.
+- Tables ONLY when the data is genuinely tabular (e.g., a config matrix with two independent axes).
+- Prose paragraphs only for the one-line section preambles. No paragraphs longer than two sentences.
 
-Also include in Tier 4:
+### 9. Solo dev default
 
-- **Critical files** — concise list of the load-bearing paths the implementer will touch. Pattern-based, not exhaustive.
-- **Reusable utilities** — existing functions / helpers / scripts the implementer should call rather than reinvent. Cite by path.
-- **Hygiene constraints** — if `git mv` is required, say so. If commit messages must avoid AI co-author attribution (or any other constraint), call it out.
+One PR, one commit, one branch. Do not propose multi-PR splits unless the user explicitly says they have reviewers and the change is large enough to justify the ceremony. For solo work, multi-PR splits add overhead without value.
 
-## Style rules
+### 10. No Meta / prompt-template footer
 
-- **Bullets only.** No tables. No prose paragraphs longer than three sentences.
-- **Declarative.** "A happens, then B happens." Not "We might want to consider A, then perhaps B."
-- **Read once, move on.** Each section is self-contained. A reader should not have to scroll back to interpret a section.
-- **Honest about asymmetries.** If part of the change doesn't fit the uniform pattern, say so in plain words.
-- **No multi-PR splits for solo devs.** Default to one PR. Multi-PR ceremony is for teams with parallel reviewers; if the user is solo, skip it.
-- **Lead with the problem, not the change.** Tier 1 starts with the user-facing or system-level pain, not with "what ships." The order of reading matters — reviewers need the WHY before the WHAT.
-- **WHY embedded throughout the implementer tier.** A junior reader of Tier 4 should be able to explain why each step lands where it does. Step openers + inline `because …` clauses are the mechanism.
-- **No Meta section.** Generated plans do not include a "prompt template for future tiered plans" footer. The skill itself encodes the format; reproducing it in every plan is noise. (The format propagates via the skill, not via copy-paste.)
+The skill encodes the format. Generated plans do NOT include a "prompt template for future tiered plans" footer. If someone outside the skill ecosystem needs the format, point them at this SKILL.md.
 
-## Sample skeleton
+## When to make the plan deeper vs lighter
 
-When generating a plan, follow this exact skeleton:
+- **Lightweight** (~50-100 lines): single-file change, one-component addition, simple migration. The Goal / Approach / Implementation skeleton is enough. Maybe 3 implementation steps, each with one-sentence rationale.
+- **Standard** (~150-300 lines): multi-file change, code + tests + docs, one round of backwards-compat. Add a per-change overview as a middle layer; 5-8 implementation steps; explicit IN/OUT lists.
+- **Heavy** (300+ lines): multi-component refactor, multi-PR-worth-of-work-in-one-PR, folds in pending bug fixes. Add sub-headings under each top section; embed counts/math anchoring scale; honest debt notes.
+
+Don't pad a simple change to make it look thorough. Don't crunch a complex change to make it look concise. Match the depth to the work.
+
+## Sample skeletons by depth
+
+### Lightweight skeleton (simple change)
 
 ```markdown
-# Plan — [meaningful title that names the goal, not just the changes]
+# Plan — [meaningful title naming the goal]
 
-> Read top-down. Tier 1 is the manager's "should we do this?" — Tier 2 is the decider's "is the approach sound?" — Tier 3 is the reviewer's per-change dig-in — Tier 4 is the implementer's grounded step-by-step.
+## Goal
 
----
+[2-4 bullets covering what we're doing and why it matters. Use sub-lists if any concern has multiple parts.]
 
-## Tier 1 — Objective & worthwhileness
+## Approach
 
-- **Problem**: …
-- **Why now**: …
-- **Success criteria**: …
-- **Risk surface**: …
-- *(Optional)* **Alternatives considered**: …
-
----
-
-## Tier 2 — Approach & shape
-
-- **Approach**: …
+- **What we're going to do**: …
 - **Why this approach**: …
-- **Why not [alternative]**: …
-- **Scope IN**: …
-- **Scope OUT**: … (each item points at where it's tracked)
-- **Delivery**: one commit on PR #N (currently M commits → M+1). Push to <branch>. Solo dev.
-- **Done when**: <one-line verification recipe>.
+- **Scope IN**:
+  - …
+- **Scope OUT**:
+  - … (each points at where it's tracked)
+- **Delivery**: one PR, one commit. Solo.
 
----
-
-## Tier 3 — Per-change overview
-
-### Change 1: [title]
-
-- [bullets describing the shape of change 1]
-- **Why this matters for the objective**: …
-
-### Change 2: [title]
-
-- [bullets describing the shape of change 2]
-- **Why this matters for the objective**: …
-
-### [Counts / math anchoring scale, if relevant]
-
-- [plugin count, file count, etc.]
-
-### [Honest debt, if any]
-
-- [what's deferred or worked around, and where it's tracked]
-
----
-
-## Tier 4 — Implementer guide
+## Implementation
 
 ### Step 1: [title]
 
-This step lands here because [one-sentence rationale tying it to the objective or to a sequencing constraint].
+This step lands here because …
 
-- [bulleted action items with file paths]
-- [bulleted action that has a non-obvious dependency], because [brief inline why].
+- [action with file path]
+- [action], because [inline why if non-obvious].
 
 Checkpoint: [verification command].
 
 ### Step 2: [title]
 
-This step lands here because […].
+…
+```
 
-- […]
+### Standard skeleton (multi-file change)
 
-Checkpoint: […]
+```markdown
+# Plan — [meaningful title]
 
-### Critical files (patterns repeat; representative paths only)
+## Goal & worthwhileness
+
+### Problem
+- …
+
+### Why now
+- …
+
+### Success criteria
+- …
+- …
+
+### Risk surface
+- …
+
+## Approach
+
+- **Strategy**: …
+- **Why this approach**: …
+- **Why not [alternative]**: …
+- **Scope IN**:
+  - …
+- **Scope OUT**:
+  - … (each points at where it's tracked)
+- **Delivery**: one PR, one commit on branch X. Solo.
+- **Done when**: [one-line verification recipe].
+
+## Per-change overview
+
+### Change 1: [title]
+- [shape bullets]
+- **Why this matters for the goal**: …
+
+### Change 2: [title]
+- …
+
+## Implementation
+
+### Step 1: [title]
+This step lands here because …
+- [action]
+- [action], because [inline why].
+Checkpoint: …
+
+### Step 2: [title]
+…
+
+### Critical files
 
 - [grouped by purpose]
 
-### Reusable utilities (referenced, not reinvented)
+### Reusable utilities
 
 - [path → what it does]
 
 ### Hygiene constraints
 
-- [git mv requirements, commit message constraints, no AI co-author attribution, etc.]
+- [git mv, no AI co-author attribution, etc.]
 ```
+
+### Heavy skeleton (multi-component refactor)
+
+Same as standard, but:
+
+- Each `## Goal & worthwhileness` sub-concern gets its own bulleted list under a `###` subheading.
+- `## Per-change overview` has more `### Change N` sections + `### Math / counts` + `### Honest debt`.
+- `## Implementation` has 10+ steps, sometimes grouped under `### Phase 1: …` / `### Phase 2: …` if the work has natural phases.
 
 ## Anti-patterns (don't do these)
 
-- **Starting the plan with "What ships."** That's a summary of the HOW. Tier 1 must start with the problem and the why. The reader needs to be convinced the goal is worthwhile before they care about what's changing.
-- **Implementer steps without rationale.** A step that says "rename X to Y" without explaining why it's in this position is fragile — the implementer can't recover when reality doesn't match. The one-sentence step opener is non-negotiable.
-- **Tables everywhere.** Tables look organized but force the reader to scan two dimensions. Bullets are one-dimensional and faster. Skip tables unless the data is genuinely tabular (e.g., a config matrix).
-- **Prose paragraphs.** A 5-line paragraph hides 5 facts. Five bullets surface 5 facts. The reader gets the same content in less cognitive load.
-- **Multi-PR splits as the default.** They add ceremony without value when the team is one person. Recommend only when there's a concrete review-surface reason.
-- **Enumerating every file:line in the implementer guide.** That belongs in the diff, not the plan. Patterns + representative paths is the right grain.
-- **"We might consider…" hedging language.** Plans are commitments. Hedge in Tier 1's risk surface or Tier 2's alternatives if you must; the rest of the document is declarative.
-- **Hiding deferred work.** Every OUT item in Tier 2 must point at where it's tracked (ROADMAP, follow-up issue). "Deferred" without a pointer is a black hole.
-- **Including a Meta section / prompt template footer.** The skill encodes the format. Generated plans should not paste in a copy-the-prompt template. (If you genuinely need to teach the format to someone outside the skill ecosystem, point them at this SKILL.md.)
+### Starting the plan with "What ships"
+
+That's a summary of the HOW. The plan must start with the problem and the why. The reader needs to be convinced the goal is worthwhile before they care about what's changing.
+
+### Inline-bold bullets with prose-y content
+
+```
+- **Success criteria**: the new path works, old warns, tests pass.
+```
+
+Bad. Three concerns crammed into one line. Break them out into a sub-list. See Principle 4.
+
+### Implementer steps without rationale
+
+A step that says "rename X to Y" without explaining why it's in this position is fragile. The implementer can't recover when reality doesn't match. The one-sentence step opener is non-negotiable.
+
+### Forced 4-tier scaffold on simple changes
+
+If the change is "add a --dry-run flag," do not write Tier 1 Objective / Tier 2 Approach / Tier 3 Per-change overview / Tier 4 Implementer guide. Just write Goal / Approach / Implementation. The lightweight skeleton fits.
+
+### Multi-PR splits as the default
+
+Single PR, single commit, solo. Only suggest splits if the user has actual reviewers and the change is large enough.
+
+### Tables for data that isn't tabular
+
+A list of files to change is a bullet list, not a table. A "Change | Reason | File" table is bullets with sub-bullets. Reserve tables for two-axis data.
+
+### Prose paragraphs longer than two sentences
+
+If you have a 5-line paragraph, you have 5 facts hiding inside it. Split into bullets.
+
+### Enumerating every file:line
+
+The diff has those. The plan describes patterns and lists representative paths. The implementer can grep.
+
+### Hiding deferred work
+
+Every OUT-scope item must point at where it's tracked (ROADMAP item, follow-up issue, "explicitly deferred to next PR"). "Out of scope" with no pointer is a black hole.
+
+### Meta / prompt-template footer
+
+The skill encodes the format. Generated plans don't paste it back in.
 
 ## Workflow
 
 When this skill triggers:
 
-1. **Confirm scope first if unclear.** Ask 1-4 clarifying questions via `AskUserQuestion` if any of these are uncertain: the IN/OUT boundary, the delivery target (which PR / branch), the solo-vs-team assumption, whether to fold pending bugs in, what success looks like. Skip questions you can answer from context.
-2. **Run focused exploration if needed.** If the codebase is unfamiliar, launch one Explore agent (not three) to map the change's blast radius. Skip if context is clear.
-3. **Draft Tier 1 FIRST and re-check.** The plan must start from the problem. If you find yourself wanting to write "what ships" in Tier 1, stop — you're conflating goal with change. Restart the bullet.
-4. **Draft Tier 4 LAST.** The implementer guide depends on Tiers 1-3 being settled; writing it first leads to rationales that don't match the final scope.
-5. **Re-check rationale embedding before finalizing Tier 4.** Every numbered step needs the one-sentence opener. Every load-bearing bullet needs an inline `because …` clause (judgment call on which bullets qualify).
-6. **Save the plan** to wherever the user's harness expects plans (`~/.claude/plans/<name>.md` for plan-mode workflows, or wherever they direct).
-7. **End the planning turn with ExitPlanMode** if in plan mode, or with a short summary if not.
+1. **Confirm scope if unclear.** Ask 1-4 clarifying questions via `AskUserQuestion` if the IN/OUT boundary, the delivery target (which PR / branch), the solo-vs-team assumption, or what success looks like is uncertain.
+2. **Run focused exploration if needed.** If the codebase is unfamiliar, launch one Explore agent to map the change's blast radius. Skip if context is clear.
+3. **Pick the depth.** Decide lightweight / standard / heavy based on the work, not the user's request length. A short user request can describe a heavy change; respond at the right depth.
+4. **Draft the goal first.** Write the first section (Goal / Objective / Why) before any other content. If you find yourself wanting to write "what ships" in the first section, stop — you're conflating goal with change. Restart.
+5. **Sub-list multi-part thoughts.** Before finalizing, scan every bullet that has comma-separated concerns inside it. Promote each to a sub-list. This is the most common style failure; catch it before delivering.
+6. **Embed WHY in every implementer step.** Step openers + inline `because…` on load-bearing bullets. The bar: a junior reader can explain backwards from a step to the goal.
+7. **Save the plan** where the user's harness expects (`~/.claude/plans/<name>.md` for plan-mode, or wherever they direct).
+8. **End with ExitPlanMode** if in plan mode, or with a short summary if not.
 
-## Why this format works
+## Why this style works
 
-- **Reviewer ergonomics by question, not by audience.** A reviewer's first question is "should we do this?" — Tier 1 answers it. The second is "is the approach sound?" — Tier 2 answers it. The reader stops when their question is answered, without scrolling through detail they don't need.
-- **Implementer grounding.** The WHY embedded in Tier 4 means a junior reading the plan can explain it back — both the goal and the mechanics. They can recover when something doesn't match exactly because they understand which constraints are load-bearing.
-- **Self-correcting.** If Tier 1 doesn't capture the problem clearly, the gap is obvious. If Tier 4 has steps that don't trace back to Tier 1's objective, that's a review surface. Each tier checks the others.
-- **Solo-dev defaults.** No multi-PR ceremony, no review-surface budgeting, no team-coordination overhead. The format scales up if you have reviewers; it doesn't waste tokens on ceremony when you don't.
+- **Question-ordered reading.** A reviewer's first question is "should we do this?" — the first section answers it. A reviewer who hasn't decided yet doesn't wade through implementation detail to get to the decision-support content.
+- **Depth fits the change.** A simple change gets a simple plan. A complex change gets a thorough one. The plan doesn't pad or crunch.
+- **Sub-lists make breakdown visible.** When success criteria has 4 items, they're 4 bullets that a reader can scan in 5 seconds. When it's a comma-separated sentence, the reader has to parse it twice.
+- **Implementer grounding.** The WHY embedded in every step means a junior can read the plan and explain it back — both the goal and the mechanics. They can recover when reality doesn't match exactly because they understand which constraints are load-bearing.
+- **Self-correcting on every iteration.** If the Goal section doesn't capture the problem, the gap is obvious. If implementer steps don't trace back to the goal, that's a review surface. Each section checks the others.
