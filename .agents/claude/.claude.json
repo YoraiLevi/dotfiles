@@ -26,7 +26,7 @@
     "image-paste": 249,
     "custom-agents": 249,
     "permissions": 254,
-    "rename-conversation": 240,
+    "rename-conversation": 255,
     "custom-commands": 252,
     "desktop-shortcut": 240,
     "web-app": 243,
@@ -520,6 +520,7 @@
     "tengu_velvet_static": true
   },
   "unpinOpus47LaunchEffort": true,
+  "unpinOpus48LaunchEffort": true,
   "firstStartTime": "2026-04-18T21:58:42.373Z",
   "opusProMigrationComplete": true,
   "sonnet1m45MigrationComplete": true,
