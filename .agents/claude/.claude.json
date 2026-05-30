@@ -28,7 +28,7 @@
     "permissions": 254,
     "rename-conversation": 255,
     "custom-commands": 252,
-    "desktop-shortcut": 240,
+    "desktop-shortcut": 255,
     "web-app": 243,
     "remote-control": 14,
     "auto-copy-config-hint": 102,
