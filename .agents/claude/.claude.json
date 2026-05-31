@@ -29,7 +29,7 @@
     "rename-conversation": 255,
     "custom-commands": 252,
     "desktop-shortcut": 255,
-    "web-app": 243,
+    "web-app": 258,
     "remote-control": 14,
     "auto-copy-config-hint": 102,
     "voice-mode": 226,
@@ -1694,8 +1694,8 @@
       "projectOnboardingSeenCount": 10,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
-      "lastVersionBase": "2.1.157",
+      "lastGracefulShutdown": false,
+      "lastVersionBase": "2.1.158",
       "hasUnseenTeamArtifacts": false,
       "lastCost": 134.78571374999987,
       "lastAPIDuration": 23256141,
@@ -1742,7 +1742,7 @@
       "hasCompletedProjectOnboarding": true
     }
   },
-  "lastReleaseNotesSeen": "2.1.145",
+  "lastReleaseNotesSeen": "2.1.158",
   "officialMarketplaceAutoInstallAttempted": true,
   "officialMarketplaceAutoInstalled": true,
   "seenNotifications": {},
@@ -1944,6 +1944,6 @@
   },
   "hasUsedAgentsFleet": true,
   "cachedGrowthBookFeaturesAt": 1780186665568,
-  "opus48LaunchSeenCount": 5,
+  "opus48LaunchSeenCount": 6,
   "hasUsedBackslashReturn": true
 }
