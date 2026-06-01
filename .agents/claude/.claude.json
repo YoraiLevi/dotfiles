@@ -48,6 +48,7 @@
   },
   "promptQueueUseCount": 256,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_ashen_kelp": true,
     "tengu_ccr_bundle_seed_enabled": true,
