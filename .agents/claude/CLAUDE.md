@@ -20,7 +20,7 @@ Cost of over-documenting a light task is small; cost of under-documenting a stan
 ## Notation
 
 Hard rules, not preferences:
-- Never write the section sign `§`. It reads as cryptic shorthand. Point at sections in plain words instead — `HANDOFF.md "Build & deploy"`, `the Vault-init step`, `AGENTS.md rule 12`.
+- Never write the section sign `§`. It reads as cryptic shorthand. Point at sections in plain words and markdown references instead — `HANDOFF.md "Build & deploy"`, `the Vault-init step`, ''
 - Number plans, chapters, and sections with plain numerals only (`1`, `2`, `3.1`) — no roman numerals, no symbolic markers.
 
 ## Subagents
