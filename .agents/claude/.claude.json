@@ -2,6 +2,7 @@
   "numStartups": 263,
   "installMethod": "native",
   "autoUpdates": false,
+  "externalEditorContext": true,
   "hasSeenTasksHint": true,
   "hasUsedStash": true,
   "hasUsedBackgroundTask": true,
@@ -48,6 +49,7 @@
   },
   "promptQueueUseCount": 260,
   "btwUseCount": 1,
+  "autoConnectIde": true,
   "cachedGrowthBookFeatures": {
     "tengu_willow_mode": "hint_v2",
     "tengu_ember_trail": "0",
