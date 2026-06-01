@@ -48,6 +48,7 @@
   },
   "promptQueueUseCount": 256,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "cachedGrowthBookFeatures": {
     "tengu_flint_harbor_share": false,
     "tengu_chert_bezel": true,
