@@ -30,6 +30,9 @@
     "ScheduleWakeup": "off",
     "Skill": "off"
   },
+  "worktree": {
+    "baseRef": "fresh"
+  },
   "statusLine": {
     "type": "command",
     "command": "uv run  ~/.claude/statusline.py"
@@ -48,6 +51,7 @@
   "outputStyle": "Explanatory",
   "viewMode": "verbose",
   "effortLevel": "low",
+  "awaySummaryEnabled": false,
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "voice": {
