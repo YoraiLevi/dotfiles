@@ -50,7 +50,7 @@
   },
   "outputStyle": "Explanatory",
   "viewMode": "verbose",
-  "effortLevel": "low",
+  "effortLevel": "medium",
   "awaySummaryEnabled": false,
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
