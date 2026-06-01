@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "7b77bae5a6e0ea93",
+        "id": "c2bca9c21a8f6e17",
         "type": "tabs",
         "children": [
           {
-            "id": "d3e04fe26d1f02d3",
+            "id": "8a28cff356840978",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -183,12 +183,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "d3e04fe26d1f02d3",
+  "active": "8a28cff356840978",
   "lastOpenFiles": [
-    "claude/CLAUDE.draft.md",
-    "claude/CLAUDE.md",
-    "claude/CLAUDE.draft.md.tmp.72864.be10c60f55da",
     "claude/uv-tools/README.md",
+    "claude/CLAUDE.md",
+    "claude/CLAUDE.draft.md",
+    "claude/CLAUDE.draft.md.tmp.72864.be10c60f55da",
     "Untitled",
     "claude/CLAUDE.draft.md.tmp.67904.ab6dd1c40635",
     "claude/CLAUDE.md.tmp.67904.4b33b3d8856d",

@@ -1,3 +1,5 @@
+don't use '§' 
+plans and chapter are number only numerically
 # Global operating rules
 
 > Your job is to produce the deliverable. These rules exist to make that reliable across sessions, not to be performed for their own sake. If a rule is not followed under load, it is not a rule — flag it for revision.
