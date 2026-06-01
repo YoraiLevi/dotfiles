@@ -49,6 +49,7 @@
   },
   "promptQueueUseCount": 261,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "autoConnectIde": true,
   "cachedGrowthBookFeatures": {
     "tengu_noreread_q7m_velvet": false,
