@@ -7,9 +7,12 @@
     "allow": [
       "WebSearch",
       "mcp__ping__*",
-      "mcp__pong__*"
+      "mcp__pong__*",
+      "WebFetch(domain:www.port.io)",
+      "WebFetch(domain:www.cncf.io)",
+      "WebFetch(domain:backstage.io)"
     ],
-    "defaultMode": "plan"
+    "defaultMode": "dontAsk"
   },
   "skillOverrides": {
     "Agent": "off",
