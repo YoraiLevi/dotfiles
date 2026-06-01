@@ -12,7 +12,7 @@
       "WebFetch(domain:www.cncf.io)",
       "WebFetch(domain:backstage.io)"
     ],
-    "defaultMode": "dontAsk"
+    "defaultMode": "default"
   },
   "skillOverrides": {
     "Agent": "off",
