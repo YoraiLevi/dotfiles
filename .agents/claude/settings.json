@@ -44,7 +44,7 @@
   },
   "outputStyle": "Explanatory",
   "viewMode": "verbose",
-  "effortLevel": "xhigh",
+  "effortLevel": "low",
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
   "voice": {
