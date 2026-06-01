@@ -65,10 +65,12 @@
   "editorMode": "normal",
   "verbose": true,
   "autoCompactEnabled": false,
+  "autoScrollEnabled": true,
   "fileCheckpointingEnabled": true,
   "showTurnDuration": true,
   "showMessageTimestamps": true,
   "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "voiceEnabled": true

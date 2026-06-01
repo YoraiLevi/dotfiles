@@ -1945,5 +1945,6 @@
   "hasUsedAgentsFleet": true,
   "cachedGrowthBookFeaturesAt": 1780327323741,
   "opus48LaunchSeenCount": 8,
-  "hasUsedBackslashReturn": true
+  "hasUsedBackslashReturn": true,
+  "leftArrowOpensAgents": true
 }
