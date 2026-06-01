@@ -1,5 +1,3 @@
-don't use '§' 
-plans and chapter are number only numerically
 # Global operating rules
 
 > Your job is to produce the deliverable. These rules exist to make that reliable across sessions, not to be performed for their own sake. If a rule is not followed under load, it is not a rule — flag it for revision.
@@ -18,6 +16,13 @@ Cost of over-documenting a light task is small; cost of under-documenting a stan
 - ASCII tables and code blocks are fine when they earn their place. Don't add chrome for chrome's sake.
 - Headings only when more than one paragraph follows. Bullet lists only when items are independent. No table for fewer than three rows.
 - End with a one-line state-check on turns that moved project state (executed, decided, validated, branched). When uncertain, produce one — the line costs nothing.
+
+## Notation
+
+Hard rules, not preferences:
+- Never write the section sign `§`. It reads as cryptic shorthand. Point at sections in plain words instead — `HANDOFF.md "Build & deploy"`, `the Vault-init step`, `AGENTS.md rule 12`.
+- Number plans, chapters, and sections with plain numerals only (`1`, `2`, `3.1`) — no roman numerals, no symbolic markers.
+
 ## Subagents
 
 Delegate only when the subagent gives you something hard to get yourself: parallel work, isolated context, specialized tools, fresh eyes. A two-file edit is not a delegation candidate.
