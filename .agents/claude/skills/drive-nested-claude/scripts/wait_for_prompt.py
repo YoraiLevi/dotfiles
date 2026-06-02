@@ -67,9 +67,13 @@ def capture(target, container, lines):
         cmd += ["docker", "exec", container]
     cmd += ["tmux", "capture-pane", "-p", "-t", target]
     try:
-        out = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=10
-        ).stdout
+        # Force UTF-8 (not the OS locale codepage): the Claude prompt `❯` is not
+        # in Windows cp1252 and would raise/garble under text=True. errors=replace
+        # keeps a stray byte from killing the poll. `or ""` guards a None stdout.
+        result = subprocess.run(
+            cmd, capture_output=True, encoding="utf-8", errors="replace", timeout=10
+        )
+        out = result.stdout or ""
     except (subprocess.TimeoutExpired, FileNotFoundError) as e:
         sys.stderr.write("wait_for_prompt: cannot capture pane: %r\n" % e)
         return None
