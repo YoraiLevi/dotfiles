@@ -30,7 +30,7 @@
     "rename-conversation": 271,
     "custom-commands": 271,
     "desktop-shortcut": 271,
-    "web-app": 258,
+    "web-app": 273,
     "remote-control": 14,
     "auto-copy-config-hint": 102,
     "voice-mode": 226,
@@ -1833,8 +1833,8 @@
       "lastUsedAt": 1779926197860
     },
     "tiered-plan": {
-      "usageCount": 3,
-      "lastUsedAt": 1780435085245
+      "usageCount": 4,
+      "lastUsedAt": 1780442115628
     },
     "skill-creator:skill-creator": {
       "usageCount": 4,
@@ -1950,6 +1950,7 @@
   "hasUsedBackslashReturn": true,
   "leftArrowOpensAgents": true,
   "tipLifetimeShownCounts": {
-    "install-slack-app": 1
+    "install-slack-app": 1,
+    "web-app": 1
   }
 }
