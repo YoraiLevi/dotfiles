@@ -1830,7 +1830,7 @@
   ],
   "closedIssuesLastChecked": 1780301616673,
   "ideHintShownCount": 5,
-  "lastPlanModeUse": 1780101119991,
+  "lastPlanModeUse": 1780363578020,
   "claudeInChromeDefaultEnabled": false,
   "hasCompletedClaudeInChromeOnboarding": true,
   "remoteControlUpsellSeenCount": 1,
@@ -1878,8 +1878,8 @@
       "lastUsedAt": 1779972406535
     },
     "skill-creator:skill-creator": {
-      "usageCount": 2,
-      "lastUsedAt": 1780019095444
+      "usageCount": 3,
+      "lastUsedAt": 1780363568813
     },
     "mermaid-WH-2099": {
       "usageCount": 1,
