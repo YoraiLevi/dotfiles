@@ -185,6 +185,9 @@
   },
   "active": "8a28cff356840978",
   "lastOpenFiles": [
+    "claude/skills/drive-nested-claude-workspace/iteration-1/eval-1-send-prompt-read-reply/without_skill/outputs/result.md",
+    "claude/skills/drive-nested-claude-workspace/iteration-1/eval-1-send-prompt-read-reply/with_skill/outputs/result.md",
+    "claude/skills/drive-nested-claude-workspace/iteration-1/eval-1-send-prompt-read-reply/with_skill/outputs/result.md.tmp.77424.e107768298ca",
     "claude/skills/drive-nested-claude-workspace/iteration-1/eval-2-run-slash-command-capture/without_skill/outputs/result.md",
     "claude/skills/drive-nested-claude-workspace/iteration-1/eval-3-verify-hook-fired-by-signal/with_skill/outputs",
     "claude/skills/drive-nested-claude-workspace/iteration-1/eval-3-verify-hook-fired-by-signal/without_skill/outputs",
@@ -195,7 +198,6 @@
     "claude/skills/drive-nested-claude-workspace/iteration-1/eval-3-verify-hook-fired-by-signal/with_skill",
     "claude/skills/drive-nested-claude-workspace/iteration-1/eval-3-verify-hook-fired-by-signal/without_skill",
     "claude/skills/drive-nested-claude-workspace/iteration-1/eval-2-run-slash-command-capture/with_skill",
-    "claude/skills/drive-nested-claude-workspace/iteration-1/eval-1-send-prompt-read-reply/with_skill",
     "claude/skills/tmux-interactive-driver-workspace/iteration-1/eval-3-sqlite-multi-step/without_skill/outputs/result.md",
     "claude/skills/tmux-interactive-driver-workspace/iteration-1/eval-3-sqlite-multi-step/with_skill/outputs/result.md",
     "claude/skills/tmux-interactive-driver-workspace/iteration-1/eval-1-python-repl-fibonacci/with_skill/outputs/result.md",
