@@ -40,14 +40,7 @@
   "enabledPlugins": {
     "skill-creator@claude-plugins-official": true
   },
-  "extraKnownMarketplaces": {
-    "dgxsparklabs-marketplace": {
-      "source": {
-        "source": "directory",
-        "path": "C:\\Users\\devic\\source\\marketplace"
-      }
-    }
-  },
+  "extraKnownMarketplaces": {},
   "outputStyle": "Explanatory",
   "viewMode": "verbose",
   "effortLevel": "medium",
