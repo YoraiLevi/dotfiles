@@ -86,14 +86,19 @@ def capture(target, container, lines):
 
 def main():
     ap = argparse.ArgumentParser(add_help=True)
+    # Defaults are TUNED FOR THE CLAUDE CODE TUI:
+    #   ready = the input prompt char `❯` is on screen (the TUI is up), AND
+    #   busy  = `esc to interrupt` is NOT shown (Claude shows it only while a
+    #           turn is generating). Claude streams, so settle=3 (3 identical
+    #           polls) avoids firing during a mid-generation pause.
     ap.add_argument("--target", default="0:0.0")
-    ap.add_argument("--ready-regex", default=r"[\$#>%❯]\s*$")
-    ap.add_argument("--busy-regex", default="")
-    ap.add_argument("--timeout", type=float, default=30.0)
+    ap.add_argument("--ready-regex", default=r"❯")
+    ap.add_argument("--busy-regex", default=r"esc to interrupt")
+    ap.add_argument("--timeout", type=float, default=45.0)
     ap.add_argument("--interval", type=float, default=0.5)
-    ap.add_argument("--settle", type=int, default=2)
+    ap.add_argument("--settle", type=int, default=3)
     ap.add_argument("--container", default="")
-    ap.add_argument("--lines", type=int, default=12)
+    ap.add_argument("--lines", type=int, default=16)
     ap.add_argument("--verbose", action="store_true")
     a = ap.parse_args()
 
