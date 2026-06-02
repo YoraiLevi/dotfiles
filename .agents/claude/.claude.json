@@ -24,7 +24,7 @@
     "double-esc-code-restore": 261,
     "continue": 265,
     "shift-tab": 265,
-    "image-paste": 249,
+    "image-paste": 269,
     "custom-agents": 249,
     "permissions": 265,
     "rename-conversation": 255,
@@ -1884,6 +1884,10 @@
     "mermaid-WH-2099": {
       "usageCount": 1,
       "lastUsedAt": 1780091693282
+    },
+    "tmux-interactive-driver": {
+      "usageCount": 1,
+      "lastUsedAt": 1780365892838
     }
   },
   "githubRepoPaths": {
