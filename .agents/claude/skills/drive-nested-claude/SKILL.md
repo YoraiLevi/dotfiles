@@ -1,17 +1,16 @@
 ---
 name: drive-nested-claude
 description: >-
-  Drive a nested, interactive `claude` (Claude Code) session running inside a tmux pane — send it a
-  prompt, reliably detect when its turn has finished generating, read its reply, navigate its TUI
-  menus (/config, /theme, /agents, permission and trust dialogs), and verify behavior by real signals
-  instead of the model's prose. Use whenever you need to programmatically operate ANOTHER claude
-  session from the outside: "drive a nested claude session", "test the claude TUI in tmux", "automate
-  / QA a Claude Code session", "send a prompt to a claude running in a container and read its output",
-  "answer claude's permission dialog over tmux". Especially for QA-ing plugins/skills/hooks/MCP/LSP by
-  exercising a real claude session. Builds on tmux send-keys / capture-pane (see the companion
-  `tmux-interactive-driver` skill for base mechanics). NOT for using your OWN tools to answer a
-  question, and NOT for one-shot `claude -p "..."` headless calls — reach for this only when you must
-  drive a LIVE interactive claude session and watch what a human would see on screen.
+  Drive a nested, interactive `claude` (Claude Code) session inside a tmux pane — send a prompt,
+  reliably detect when its turn finished generating, read its reply, navigate its TUI menus
+  (/config, /theme, /agents) and permission/trust dialogs, and verify behavior by real signals not
+  the model's prose. Use whenever you must operate ANOTHER claude session from the outside: "drive a
+  nested claude session", "test the claude TUI in tmux", "automate / QA a Claude Code session", "send
+  a prompt to a claude in a container and read its output", "answer claude's permission dialog over
+  tmux". Especially for QA-ing plugins/skills/hooks/MCP/LSP by exercising a real claude session.
+  Builds on tmux send-keys / capture-pane (see the companion `tmux-interactive-driver` skill). NOT for
+  using your OWN tools to answer something, and NOT for one-shot `claude -p` headless calls — only
+  when you must drive a LIVE interactive claude session and see what a human would see.
 ---
 
 # drive-nested-claude
