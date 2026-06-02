@@ -144,6 +144,15 @@ REPLs through tmux (some are recorded in this project's `PITFALLS.md`).
   text call uses `-l`; the key call does **not** (so tmux interprets `Enter`/`C-c`/`Down` as keys).
   `C-m` is the raw carriage return and is equivalent to `Enter` if you ever need it inline.
 
+### A `;` in your input vanishes / the line lands unfinished
+- **Cause:** tmux treats `;` as its own **command separator**, and it can split the `send-keys` payload
+  even inside `-l '...'`. Sending `SELECT sum(n) FROM t;` delivers `SELECT sum(n) FROM t` and drops the
+  `;`, so the REPL sits in continuation mode (`...>`) waiting for the statement to end. (Found via eval
+  driving sqlite.) Other tmux-special characters in the payload can bite the same way.
+- **Solution:** escape the semicolon as `\;` in the payload: `send-keys -t T -l 'SELECT sum(n) FROM t\;'`.
+  Equivalently, send the terminator as its own key. When a statement "hangs" with no error, suspect an
+  eaten `;` first — capture the pane and look for a `...>`/continuation prompt.
+
 ### `capture-pane | tail -n N` comes back blank or clipped
 - **Cause:** `capture-pane -p` returns only the **visible** screen, and tmux pads the area **below the
   cursor with blank rows**. `| tail -n 8` then grabs those blanks (or, after scrolling, a fragment),

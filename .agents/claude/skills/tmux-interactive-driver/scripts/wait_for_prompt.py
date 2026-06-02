@@ -101,8 +101,12 @@ def main():
     ap.add_argument("--verbose", action="store_true")
     a = ap.parse_args()
 
-    ready_re = re.compile(a.ready_regex)
-    busy_re = re.compile(a.busy_regex) if a.busy_regex else None
+    # re.MULTILINE so `^` and `$` in a prompt regex anchor to each LINE of the
+    # multi-line capture, not the whole string. Without it, `^sqlite>\s*$` (and
+    # any anchored prompt) never matches because `^` only sees the start of the
+    # whole capture. Found via eval: the sqlite prompt regex silently never fired.
+    ready_re = re.compile(a.ready_regex, re.MULTILINE)
+    busy_re = re.compile(a.busy_regex, re.MULTILINE) if a.busy_regex else None
 
     deadline = a.timeout  # we measure elapsed via a counter, not wall clock,
     elapsed = 0.0          # so the script is reproducible and clock-skew-proof
