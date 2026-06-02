@@ -24,10 +24,14 @@ USAGE
                      [--container NAME] [--lines 12] [--verbose]
 
   --target       tmux target  session:window.pane  (default 0:0.0)
-  --ready-regex  prompt-ready pattern. Default matches a generic shell prompt
-                 at end of line:  (^|\n)\s*[\$#>%] ?$   — OVERRIDE per REPL:
-                   python  '>>> $'        node  '> $'        psql  '=[#>] $'
-                   claude  '❯'            irb   '> $'        sqlite '^sqlite> $'
+  --ready-regex  prompt-ready pattern, tested against the last non-blank lines.
+                 IMPORTANT: tmux `capture-pane` STRIPS trailing whitespace from
+                 every line, so a prompt that is really "> " is captured as ">".
+                 NEVER anchor on a trailing space (`>>> $` will never match) —
+                 end with `\s*$` (or just `$`). Default `[\$#>%❯]\s*$` matches
+                 most prompts. OVERRIDE per REPL for precision:
+                   python  '>>>\s*$'      node  '>\s*$'      psql  '=[#>]\s*$'
+                   claude  '❯\s*$'        irb   '>\s*$'      sqlite '^sqlite>\s*$'
   --busy-regex   if this matches, NOT ready (optional). e.g. for claude:
                    'esc to interrupt|(✶|✻|✢|·|✻)\\s'
   --timeout      seconds before giving up and exiting 1 (default 30)
@@ -46,7 +50,7 @@ EXIT CODES
 
 EXAMPLE
   # wait for a python REPL in the default pane, then send a line:
-  python wait_for_prompt.py --ready-regex '>>> $' && \
+  python wait_for_prompt.py --ready-regex '>>>\s*$' && \
     tmux send-keys -t 0:0.0 -l 'print(2+2)' && tmux send-keys -t 0:0.0 Enter
 """
 import argparse
@@ -83,7 +87,7 @@ def capture(target, container, lines):
 def main():
     ap = argparse.ArgumentParser(add_help=True)
     ap.add_argument("--target", default="0:0.0")
-    ap.add_argument("--ready-regex", default=r"(^|\n)\s*[\$#>%] ?$")
+    ap.add_argument("--ready-regex", default=r"[\$#>%❯]\s*$")
     ap.add_argument("--busy-regex", default="")
     ap.add_argument("--timeout", type=float, default=30.0)
     ap.add_argument("--interval", type=float, default=0.5)
