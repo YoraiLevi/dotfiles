@@ -1645,45 +1645,45 @@
       "projectOnboardingSeenCount": 37,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": false,
+      "lastGracefulShutdown": true,
       "lastVersionBase": "2.1.159",
       "lastHintSessionId": "2a3aaafd-1a8b-41be-bb63-2532f61ce019",
       "lastSessionFirstPrompt": "of this skill and role marketplace. What do you think about it? Other rules that are worth adopting? are the skills that are worth adopting what are the unique functionalities that the skills allow wh",
       "lastSessionModified": 1779108834230,
-      "lastCost": 0.27952125000000005,
-      "lastAPIDuration": 22627,
-      "lastAPIDurationWithoutRetries": 22506,
-      "lastToolDuration": 0,
-      "lastDuration": 61617327,
-      "lastLinesAdded": 0,
-      "lastLinesRemoved": 0,
-      "lastTotalInputTokens": 5862,
-      "lastTotalOutputTokens": 1124,
-      "lastTotalCacheCreationInputTokens": 31655,
-      "lastTotalCacheReadInputTokens": 56903,
+      "lastCost": 1.24916475,
+      "lastAPIDuration": 210211,
+      "lastAPIDurationWithoutRetries": 209821,
+      "lastToolDuration": 38159,
+      "lastDuration": 633922,
+      "lastLinesAdded": 105,
+      "lastLinesRemoved": 42,
+      "lastTotalInputTokens": 73703,
+      "lastTotalOutputTokens": 13149,
+      "lastTotalCacheCreationInputTokens": 87581,
+      "lastTotalCacheReadInputTokens": 571359,
       "lastTotalWebSearchRequests": 0,
       "lastModelUsage": {
         "claude-haiku-4-5-20251001": {
-          "inputTokens": 896,
-          "outputTokens": 30,
+          "inputTokens": 68859,
+          "outputTokens": 285,
           "cacheReadInputTokens": 0,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.001046
+          "costUSD": 0.070284
         },
         "claude-opus-4-8[1m]": {
-          "inputTokens": 4966,
-          "outputTokens": 1094,
-          "cacheReadInputTokens": 56903,
-          "cacheCreationInputTokens": 31655,
+          "inputTokens": 4844,
+          "outputTokens": 12864,
+          "cacheReadInputTokens": 571359,
+          "cacheCreationInputTokens": 87581,
           "webSearchRequests": 0,
-          "costUSD": 0.27847525000000006
+          "costUSD": 1.17888075
         }
       },
-      "lastSessionId": "33d0fe5a-e540-43a8-bbab-b8d57a62c8ad",
+      "lastSessionId": "564838c5-132f-45c1-a46d-d340f701c62b",
       "hasUnseenTeamArtifacts": false,
-      "lastFpsAverage": 0.01,
-      "lastFpsLow1Pct": 18.88
+      "lastFpsAverage": 6.87,
+      "lastFpsLow1Pct": 30.05
     },
     "C:/Users/devic/source/claude-code": {
       "allowedTools": [],
@@ -1878,8 +1878,8 @@
       "lastUsedAt": 1779972406535
     },
     "skill-creator:skill-creator": {
-      "usageCount": 3,
-      "lastUsedAt": 1780363568813
+      "usageCount": 4,
+      "lastUsedAt": 1780364271802
     },
     "mermaid-WH-2099": {
       "usageCount": 1,
