@@ -185,6 +185,8 @@
   },
   "active": "8a28cff356840978",
   "lastOpenFiles": [
+    "claude/skills/tmux-interactive-driver/evals/trigger-evals.json",
+    "claude/skills/tmux-interactive-driver/evals/trigger-evals.json.tmp.77424.a0fbc2d68e7a",
     "claude/skills/dist/drive-nested-claude.skill",
     "claude/skills/dist/tmux-interactive-driver.skill",
     "claude/skills/dist",
@@ -196,8 +198,6 @@
     "claude/skills/tmux-interactive-driver-workspace/iteration-1/benchmark.md",
     "claude/skills/tmux-interactive-driver-workspace/iteration-1/benchmark.json",
     "claude/skills/tmux-interactive-driver-workspace/iteration-1/eval-1-python-repl-fibonacci/with_skill/eval_metadata.json",
-    "claude/skills/tmux-interactive-driver/SKILL.md.tmp.77424.61d60c3f86e6",
-    "claude/skills/drive-nested-claude-workspace/iteration-1/eval-2-run-slash-command-capture/without_skill/timing.json",
     "claude/skills/tmux-interactive-driver/references/commands.md",
     "claude/skills/tmux-interactive-driver/SKILL.md",
     "claude/skills/drive-nested-claude-workspace/iteration-1/eval-2-run-slash-command-capture/with_skill/outputs/result.md",

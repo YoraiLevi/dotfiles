@@ -1,0 +1,23 @@
+[
+  {"query": "i've got a psql shell open in tmux pane 0:0.1 connected to our staging db — can you run a few SELECTs against it and tell me the row counts? it stays open, don't close it between queries", "should_trigger": true},
+  {"query": "spin up a python3 repl and feed it these 4 pandas snippets one at a time, check each result before sending the next", "should_trigger": true},
+  {"query": "there's a node REPL running in a tmux session called 'scratch' — send it process.version and a couple requires, read back what each prints", "should_trigger": true},
+  {"query": "the db migration script keeps prompting 'are you sure? [y/N]' and then asks for a table name — automate answering those interactive prompts and capture the result", "should_trigger": true},
+  {"query": "drive an interactive sqlite3 session: create the table, insert the seed rows, run the aggregate, and give me the exact number it prints", "should_trigger": true},
+  {"query": "i need to step through this segfault in gdb — set a breakpoint, run, and read the backtrace off the (gdb) prompt; it stays open the whole time", "should_trigger": true},
+  {"query": "open an interactive ssh session to the build box and keep it alive — i'll want to run several commands and see the output between each", "should_trigger": true},
+  {"query": "automate this CLI setup wizard that asks question after question (project name, license, package manager) — send the answers and capture the final summary screen", "should_trigger": true},
+  {"query": "feed lines to that long-running interactive process on its stdin in pane 0:0.0 and capture what it emits after each one", "should_trigger": true},
+  {"query": "i started irb in tmux, send it a few ruby expressions and read the values back without killing the repl", "should_trigger": true},
+
+  {"query": "run the full test suite with pytest -q and tell me if anything fails", "should_trigger": false},
+  {"query": "read /var/log/nginx/error.log and summarize the 500s from this morning", "should_trigger": false},
+  {"query": "set up my .tmux.conf so the status bar shows battery and the time in green", "should_trigger": false},
+  {"query": "kill whatever process is holding port 5432", "should_trigger": false},
+  {"query": "drive a nested claude session in the qa container and have it run /agents", "should_trigger": false},
+  {"query": "the claude session in tmux is showing a permission dialog — approve it and keep going", "should_trigger": false},
+  {"query": "write a python script that reads a csv and prints the per-column averages", "should_trigger": false},
+  {"query": "ssh to prod and run systemctl restart api then disconnect", "should_trigger": false},
+  {"query": "install tmux and zsh on this fresh ubuntu box", "should_trigger": false},
+  {"query": "what's the difference between tmux detach-client and kill-session?", "should_trigger": false}
+]
