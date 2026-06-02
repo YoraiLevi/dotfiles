@@ -37,11 +37,16 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+# strip_trailing_blanks: tmux pads the pane with blank rows BELOW the cursor;
+# drop them so the prompt (the last non-blank line) survives the `tail`.
+strip_trailing_blanks() {
+  awk '{a[NR]=$0} END{n=NR; while(n>0 && a[n] ~ /^[[:space:]]*$/) n--; for(i=1;i<=n;i++) print a[i]}'
+}
 cap() {
   if [ -n "$container" ]; then
-    docker exec "$container" tmux capture-pane -p -t "$target" 2>/dev/null | tail -n "$lines"
+    docker exec "$container" tmux capture-pane -p -t "$target" 2>/dev/null | strip_trailing_blanks | tail -n "$lines"
   else
-    tmux capture-pane -p -t "$target" 2>/dev/null | tail -n "$lines"
+    tmux capture-pane -p -t "$target" 2>/dev/null | strip_trailing_blanks | tail -n "$lines"
   fi
 }
 
