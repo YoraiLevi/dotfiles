@@ -185,6 +185,8 @@
   },
   "active": "8a28cff356840978",
   "lastOpenFiles": [
+    "claude/skills/tmux-interactive-driver/scripts/wait_for_prompt.py.tmp.77424.88bddfdeef0f",
+    "claude/skills/tmux-interactive-driver/scripts/wait_for_prompt.py.tmp.77424.bed7574315b5",
     "claude/skills/tmux-interactive-driver/scripts/wait_for_prompt.sh",
     "claude/skills/tmux-interactive-driver/scripts/wait_for_prompt.sh.tmp.77424.dba9e406ca55",
     "claude/skills/tmux-interactive-driver/scripts/wait_for_prompt.py",
@@ -194,8 +196,6 @@
     "claude/skills/drive-nested-claude/evals",
     "claude/skills/drive-nested-claude",
     "claude/skills/tmux-interactive-driver/scripts",
-    "claude/skills/tmux-interactive-driver/references",
-    "claude/skills/tmux-interactive-driver/evals",
     "claude/uv-tools/README.md",
     "claude/CLAUDE.md",
     "claude/CLAUDE.draft.md",

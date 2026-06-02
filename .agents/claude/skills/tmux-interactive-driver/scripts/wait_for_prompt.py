@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""wait_for_prompt.py — block until an interactive process in a tmux pane is
+r"""wait_for_prompt.py — block until an interactive process in a tmux pane is
 ready for the next input, then exit 0. Exit 1 on timeout.
 
 WHY THIS EXISTS
@@ -70,6 +70,13 @@ def capture(target, container, lines):
         sys.stderr.write("wait_for_prompt: cannot capture pane: %r\n" % e)
         return None
     rows = out.splitlines()
+    # CRITICAL: tmux pads the pane with blank rows BELOW the cursor, so a naive
+    # rows[-lines:] grabs whitespace and misses the prompt line (which sits at
+    # the cursor, higher up). Strip trailing blank rows first, THEN take the
+    # last `lines`. This is the same "tail clips the block" trap that bites
+    # callers who pipe `capture-pane -p | tail -n N` directly.
+    while rows and not rows[-1].strip():
+        rows.pop()
     return "\n".join(rows[-lines:]) if rows else ""
 
 
