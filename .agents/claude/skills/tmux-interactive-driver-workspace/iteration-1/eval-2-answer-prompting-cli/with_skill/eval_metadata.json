@@ -1,9 +1,0 @@
-{
-  "eval_id": 2,
-  "eval_name": "answer-prompting-cli",
-  "prompt": "Run a script that input()s and answer its prompt.",
-  "assertions": [
-    "Program printed 'hello Ada, len=3'",
-    "Waited for the 'name? ' prompt before typing"
-  ]
-}

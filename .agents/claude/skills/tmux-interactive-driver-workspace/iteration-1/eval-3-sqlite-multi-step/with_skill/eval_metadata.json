@@ -1,9 +1,0 @@
-{
-  "eval_id": 3,
-  "eval_name": "sqlite-multi-step",
-  "prompt": "Drive sqlite3 to sum 3,4,5 across separate statements.",
-  "assertions": [
-    "Sum read back is 12",
-    "Waited for sqlite> prompt between statements"
-  ]
-}

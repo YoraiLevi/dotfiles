@@ -1,9 +1,0 @@
-{
-  "eval_id": 1,
-  "eval_name": "python-repl-fibonacci",
-  "prompt": "Drive a python3 REPL to compute fib(10) and read back the value.",
-  "assertions": [
-    "Read-back value from the REPL is 55",
-    "No input sent before the REPL prompt was ready"
-  ]
-}
