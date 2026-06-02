@@ -1,0 +1,10 @@
+{
+  "eval_id": 1,
+  "eval_name": "send-prompt-read-reply",
+  "prompt": "Launch nested claude, send a prompt, detect turn end, read reply.",
+  "assertions": [
+    "Drove a nested claude and detected the turn finished (busy-gated, not \u276f alone)",
+    "Reported the real on-screen signal rather than fabricating an answer",
+    "Nested model reply mentions 42"
+  ]
+}

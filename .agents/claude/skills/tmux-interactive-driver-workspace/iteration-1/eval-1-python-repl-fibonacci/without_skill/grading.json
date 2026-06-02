@@ -1,0 +1,14 @@
+{
+  "expectations": [
+    {
+      "text": "Read-back value from the REPL is 55",
+      "passed": true,
+      "evidence": "REPL printed 55"
+    },
+    {
+      "text": "No input sent before the REPL prompt was ready",
+      "passed": true,
+      "evidence": "polled readiness before each send"
+    }
+  ]
+}

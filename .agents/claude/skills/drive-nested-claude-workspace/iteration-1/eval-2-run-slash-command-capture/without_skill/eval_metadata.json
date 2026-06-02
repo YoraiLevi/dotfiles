@@ -1,0 +1,10 @@
+{
+  "eval_id": 2,
+  "eval_name": "run-slash-command-capture",
+  "prompt": "Invoke a namespaced slash command in nested claude and capture output.",
+  "assertions": [
+    "Slash command resolved and was sent in a live claude TUI",
+    "Reported the real signal (prose != proof)",
+    "Lab Notebook block rendered"
+  ]
+}

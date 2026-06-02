@@ -190,6 +190,10 @@ REPLs through tmux (some are recorded in this project's `PITFALLS.md`).
 - **Solution:** Use **absolute paths** in the launch, and verify with
   `tmux list-panes -t 0:0 -F '#{pane_index} #{pane_current_command}'` — if it says `bash` not your
   program, the launch didn't take. Re-launch and confirm `pane_current_command` before driving.
+- **Related (found via eval):** `new-session -c <dir>` / `respawn-pane -c <dir>` set the start dir, but
+  a **login shell (`bash -l`) runs the user's profile, which may `cd` elsewhere** (e.g. a repo root),
+  silently overriding `-c`. Don't trust `-c` alone — send an explicit `cd /abs/dir` before launching
+  your program, or check `tmux list-panes -t T -F '#{pane_current_path}'` first.
 
 ### A REPL won't quit / you can't get back to the shell
 - **Cause:** REPLs trap `Ctrl-C` (it interrupts the current line, not the process). Sending text like

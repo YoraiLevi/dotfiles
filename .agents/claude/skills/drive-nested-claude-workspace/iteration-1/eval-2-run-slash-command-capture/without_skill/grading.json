@@ -1,0 +1,19 @@
+{
+  "expectations": [
+    {
+      "text": "Slash command resolved and was sent in a live claude TUI",
+      "passed": true,
+      "evidence": "autocomplete listed siblings; command echoed"
+    },
+    {
+      "text": "Reported the real signal (prose != proof)",
+      "passed": true,
+      "evidence": "reported 401 instead of a fake block"
+    },
+    {
+      "text": "Lab Notebook block rendered",
+      "passed": false,
+      "evidence": "401 Invalid auth blocked the model turn \u2014 environmental"
+    }
+  ]
+}
