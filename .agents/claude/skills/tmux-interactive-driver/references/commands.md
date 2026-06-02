@@ -69,6 +69,10 @@ repeating the pair. To submit a blank line (e.g. end a Python block), `send-keys
 Quoting: wrap the `-l` payload in single quotes so the shell doesn't expand `$`, backticks, `!`.
 If the payload itself contains a single quote, use `'"'"'` or switch the outer quote.
 
+**Semicolons:** tmux uses `;` as its own command separator and can split the payload even under `-l`.
+A statement like `SELECT sum(n) FROM t;` arrives without its `;` and the REPL waits in continuation
+mode. Escape it: `send-keys -t T -l 'SELECT sum(n) FROM t\;'`.
+
 ## 4. Control keys and special keys
 
 Send these **without** `-l` (they are key names):
@@ -160,6 +164,8 @@ is stuck, or a previous run left the pane mid-dialog.
 | typed `Enter` appears as text, nothing submits | text + `Enter` in one `-l` call | two separate `send-keys` calls |
 | `capture-pane` blank / clipped | only visible screen; blank rows below cursor | `-S -40 \| grep -v '^[[:space:]]*$' \| tail` |
 | ready-regex never matches | tmux stripped the prompt's trailing space | end regex with `\s*$`, not a space |
+| anchored regex (`^sqlite>`) never matches | poller needs `re.MULTILINE` for `^`/`$` per line | bundled poller now compiles MULTILINE; or drop the `^` |
+| a statement hangs in `...>` continuation | a literal `;` was eaten as tmux's separator | escape it: `-l '... t\;'` |
 | input interleaves with output | sent before program was ready | `wait_for_prompt.py` then send |
 | pane shows `bash`, capture empty | launch failed (bad `cd`/relative path) | absolute paths; check `pane_current_command` |
 | poller crashes on `❯` (Windows) | cp1252 can't decode the glyph | force `encoding="utf-8"` (bundled poller does) |
