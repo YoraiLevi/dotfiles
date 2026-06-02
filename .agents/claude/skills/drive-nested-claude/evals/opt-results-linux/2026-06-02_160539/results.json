@@ -1,0 +1,565 @@
+{
+  "exit_reason": "max_iterations (2)",
+  "original_description": "Drive a nested, interactive `claude` (Claude Code) session inside a tmux pane \u2014 send a prompt, reliably detect when its turn finished generating, read its reply, navigate its TUI menus (/config, /theme, /agents) and permission/trust dialogs, and verify behavior by real signals not the model's prose. Use whenever you must operate ANOTHER claude session from the outside: \"drive a nested claude session\", \"test the claude TUI in tmux\", \"automate / QA a Claude Code session\", \"send a prompt to a claude in a container and read its output\", \"answer claude's permission dialog over tmux\". Especially for QA-ing plugins/skills/hooks/MCP/LSP by exercising a real claude session. Builds on tmux send-keys / capture-pane (see the companion `tmux-interactive-driver` skill). NOT for using your OWN tools to answer something, and NOT for one-shot `claude -p` headless calls \u2014 only when you must drive a LIVE interactive claude session and see what a human would see.",
+  "best_description": "Drive a nested, interactive `claude` (Claude Code) session inside a tmux pane \u2014 send a prompt, reliably detect when its turn finished generating, read its reply, navigate its TUI menus (/config, /theme, /agents) and permission/trust dialogs, and verify behavior by real signals not the model's prose. Use whenever you must operate ANOTHER claude session from the outside: \"drive a nested claude session\", \"test the claude TUI in tmux\", \"automate / QA a Claude Code session\", \"send a prompt to a claude in a container and read its output\", \"answer claude's permission dialog over tmux\". Especially for QA-ing plugins/skills/hooks/MCP/LSP by exercising a real claude session. Builds on tmux send-keys / capture-pane (see the companion `tmux-interactive-driver` skill). NOT for using your OWN tools to answer something, and NOT for one-shot `claude -p` headless calls \u2014 only when you must drive a LIVE interactive claude session and see what a human would see.",
+  "best_score": "6/8",
+  "best_train_score": "9/12",
+  "best_test_score": "6/8",
+  "final_description": "Use when you must PROVE a Claude Code construct actually works by exercising a real, live, interactive `claude` session from the outside \u2014 not by trusting prose. Triggers for: QA-ing or verifying a plugin, skill, hook, MCP/LSP server, slash command, agent, or TUI menu (`/config`, `/theme`, `/agents`) by firing it inside a running Claude Code session and confirming the result from machine signals (sentinel file, settings write, `Called plugin:\u2026` line, tagged diagnostic). Also for any task that means operating ANOTHER claude session over tmux: launch it, send a prompt, detect when its turn finished, read the reply, answer permission/trust dialogs, navigate menus. Phrases like \"drive/automate/QA a claude session\", \"exercise a live claude\", \"verify the hook/MCP/command really fired\", \"what rendered in the claude TUI\". NOT for using your OWN tools, answering knowledge questions, driving a non-claude REPL, or one-shot `claude -p` headless calls \u2014 only a LIVE interactive session a human would watch.",
+  "iterations_run": 2,
+  "holdout": 0.4,
+  "train_size": 12,
+  "test_size": 8,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "Drive a nested, interactive `claude` (Claude Code) session inside a tmux pane \u2014 send a prompt, reliably detect when its turn finished generating, read its reply, navigate its TUI menus (/config, /theme, /agents) and permission/trust dialogs, and verify behavior by real signals not the model's prose. Use whenever you must operate ANOTHER claude session from the outside: \"drive a nested claude session\", \"test the claude TUI in tmux\", \"automate / QA a Claude Code session\", \"send a prompt to a claude in a container and read its output\", \"answer claude's permission dialog over tmux\". Especially for QA-ing plugins/skills/hooks/MCP/LSP by exercising a real claude session. Builds on tmux send-keys / capture-pane (see the companion `tmux-interactive-driver` skill). NOT for using your OWN tools to answer something, and NOT for one-shot `claude -p` headless calls \u2014 only when you must drive a LIVE interactive claude session and see what a human would see.",
+      "train_passed": 9,
+      "train_failed": 3,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "the claude session is showing a 'do you want to make this edit?' dialog \u2014 approve it and continue the flow, then read the result",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "automate a Claude Code session in the container to verify the MCP fetch server actually returns a real tool result",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "send /dgxsparklabs-command-example-multi:hello to the nested claude session and capture the markdown block it renders",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "i'm QA-ing a slash-command plugin by exercising a live claude session \u2014 fire the command and tell me what rendered",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "launch claude inside the qa-claude container over tmux, ask it to summarize the README, and read back what it actually says",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "i need to QA the hook plugin \u2014 drive a real claude session, trigger an edit, and prove the hook fired from the sentinel file, not from what claude claims",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "write a SKILL.md for a new skill that formats ISO dates",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "explain how Claude Code hooks work and when SessionStart vs PreToolUse fires",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "what model is Claude Code using by default right now?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "run claude -p 'summarize this file' and show me the output",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "drive an interactive psql session in tmux and run a couple queries",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "start a node repl in the container and read back a computed value",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "test_passed": 6,
+      "test_failed": 2,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "drive the nested claude and check the /theme picker lists our custom theme, then read the theme value it wrote to ~/.claude/settings.json",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "there's a claude running in tmux pane 0:0.0 and it's mid-generation \u2014 wait until the turn is fully done, then grab its reply",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "test the /config output-style picker in an actual Claude Code TUI \u2014 navigate the menu and confirm the setting persisted to settings.local.json",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "operate the claude TUI from outside: type a prompt, wait for it to finish thinking, and capture exactly what a human would see on screen",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "drive a python3 REPL in tmux and compute the 20th fibonacci number",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "install the claude CLI in this container and log in with my key",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "use your tools to read main.py and find the off-by-one bug",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "answer the [y/N] prompt from the apt-get running in my tmux pane",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "passed": 9,
+      "failed": 3,
+      "total": 12,
+      "results": [
+        {
+          "query": "the claude session is showing a 'do you want to make this edit?' dialog \u2014 approve it and continue the flow, then read the result",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "automate a Claude Code session in the container to verify the MCP fetch server actually returns a real tool result",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "send /dgxsparklabs-command-example-multi:hello to the nested claude session and capture the markdown block it renders",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "i'm QA-ing a slash-command plugin by exercising a live claude session \u2014 fire the command and tell me what rendered",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "launch claude inside the qa-claude container over tmux, ask it to summarize the README, and read back what it actually says",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "i need to QA the hook plugin \u2014 drive a real claude session, trigger an edit, and prove the hook fired from the sentinel file, not from what claude claims",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "write a SKILL.md for a new skill that formats ISO dates",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "explain how Claude Code hooks work and when SessionStart vs PreToolUse fires",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "what model is Claude Code using by default right now?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "run claude -p 'summarize this file' and show me the output",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "drive an interactive psql session in tmux and run a couple queries",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "start a node repl in the container and read back a computed value",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "Use when you must PROVE a Claude Code construct actually works by exercising a real, live, interactive `claude` session from the outside \u2014 not by trusting prose. Triggers for: QA-ing or verifying a plugin, skill, hook, MCP/LSP server, slash command, agent, or TUI menu (`/config`, `/theme`, `/agents`) by firing it inside a running Claude Code session and confirming the result from machine signals (sentinel file, settings write, `Called plugin:\u2026` line, tagged diagnostic). Also for any task that means operating ANOTHER claude session over tmux: launch it, send a prompt, detect when its turn finished, read the reply, answer permission/trust dialogs, navigate menus. Phrases like \"drive/automate/QA a claude session\", \"exercise a live claude\", \"verify the hook/MCP/command really fired\", \"what rendered in the claude TUI\". NOT for using your OWN tools, answering knowledge questions, driving a non-claude REPL, or one-shot `claude -p` headless calls \u2014 only a LIVE interactive session a human would watch.",
+      "train_passed": 9,
+      "train_failed": 3,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "the claude session is showing a 'do you want to make this edit?' dialog \u2014 approve it and continue the flow, then read the result",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "automate a Claude Code session in the container to verify the MCP fetch server actually returns a real tool result",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "send /dgxsparklabs-command-example-multi:hello to the nested claude session and capture the markdown block it renders",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "i'm QA-ing a slash-command plugin by exercising a live claude session \u2014 fire the command and tell me what rendered",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "launch claude inside the qa-claude container over tmux, ask it to summarize the README, and read back what it actually says",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "i need to QA the hook plugin \u2014 drive a real claude session, trigger an edit, and prove the hook fired from the sentinel file, not from what claude claims",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "write a SKILL.md for a new skill that formats ISO dates",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "explain how Claude Code hooks work and when SessionStart vs PreToolUse fires",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "what model is Claude Code using by default right now?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "run claude -p 'summarize this file' and show me the output",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "drive an interactive psql session in tmux and run a couple queries",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "start a node repl in the container and read back a computed value",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "test_passed": 6,
+      "test_failed": 2,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "drive the nested claude and check the /theme picker lists our custom theme, then read the theme value it wrote to ~/.claude/settings.json",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "there's a claude running in tmux pane 0:0.0 and it's mid-generation \u2014 wait until the turn is fully done, then grab its reply",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "test the /config output-style picker in an actual Claude Code TUI \u2014 navigate the menu and confirm the setting persisted to settings.local.json",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "operate the claude TUI from outside: type a prompt, wait for it to finish thinking, and capture exactly what a human would see on screen",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "drive a python3 REPL in tmux and compute the 20th fibonacci number",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "install the claude CLI in this container and log in with my key",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "use your tools to read main.py and find the off-by-one bug",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "answer the [y/N] prompt from the apt-get running in my tmux pane",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ],
+      "passed": 9,
+      "failed": 3,
+      "total": 12,
+      "results": [
+        {
+          "query": "the claude session is showing a 'do you want to make this edit?' dialog \u2014 approve it and continue the flow, then read the result",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "automate a Claude Code session in the container to verify the MCP fetch server actually returns a real tool result",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "send /dgxsparklabs-command-example-multi:hello to the nested claude session and capture the markdown block it renders",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "i'm QA-ing a slash-command plugin by exercising a live claude session \u2014 fire the command and tell me what rendered",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "launch claude inside the qa-claude container over tmux, ask it to summarize the README, and read back what it actually says",
+          "should_trigger": true,
+          "trigger_rate": 0.5,
+          "triggers": 1,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "i need to QA the hook plugin \u2014 drive a real claude session, trigger an edit, and prove the hook fired from the sentinel file, not from what claude claims",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": false
+        },
+        {
+          "query": "write a SKILL.md for a new skill that formats ISO dates",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "explain how Claude Code hooks work and when SessionStart vs PreToolUse fires",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "what model is Claude Code using by default right now?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "run claude -p 'summarize this file' and show me the output",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "drive an interactive psql session in tmux and run a couple queries",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        },
+        {
+          "query": "start a node repl in the container and read back a computed value",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 2,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}
