@@ -1,0 +1,27 @@
+{
+  "skill_name": "drive-nested-claude",
+  "notes": "Runnable against the live Docker container `qa-claude`, which has the dgxsparklabs example plugins installed + enabled and a tmux session. Each spawned run is told a UNIQUE tmux session name to create so concurrent with-skill/baseline runs don't share a pane. Verification must rely on real signals (rendered output, sentinel files), not the nested model's prose.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "send-prompt-read-reply",
+      "prompt": "A Docker container `qa-claude` is running. Launch an interactive `claude` session inside it (in a tmux pane), wait until it has finished booting and any first turn, then send it the prompt: `In one short sentence, what is 7 times 6?` Wait until that turn has FINISHED generating (not just until the prompt box appears), then read and report claude's actual reply from the session.",
+      "expected_output": "The agent launches claude in tmux, waits for idle using the busy indicator (not just the ❯ prompt), sends the prompt, waits out generation, and reports claude's reply (mentions 42), captured from the pane.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "run-slash-command-capture",
+      "prompt": "In the `qa-claude` container, drive an interactive `claude` session and invoke the installed slash command `/dgxsparklabs-command-example-multi:hello`. Capture and report exactly what rendered in the session (the command prints a markdown block). Note whether a debug line showing the command's arguments appeared.",
+      "expected_output": "The agent sends the namespaced slash command in a live claude TUI, waits for the turn to finish, and reports the rendered block (a `# Lab Notebook — <DATE>` style block, preceded by a `[command:hello] args=[...]` debug line) captured from the pane.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "verify-hook-fired-by-signal",
+      "prompt": "The `qa-claude` container has a hook plugin installed that writes a sentinel file to /tmp/hook-fired-<event>.log whenever a Claude hook event fires, recording the event marker plus the JSON payload. In an interactive `claude` session, cause a `PreToolUse` hook to fire by getting claude to make a file edit (approve the edit dialog), then PROVE the hook fired by showing the real evidence — not by what claude says. Report the proof.",
+      "expected_output": "The agent clears /tmp/hook-fired-*.log first (a causal control), drives claude to perform an edit, approves the permission dialog, then reads the /tmp/hook-fired-pretooluse.log FILE (via docker exec cat) and reports its contents (marker line + JSON payload containing tool_name:Edit) — explicitly using the file as proof rather than claude's chat narration.",
+      "files": []
+    }
+  ]
+}
