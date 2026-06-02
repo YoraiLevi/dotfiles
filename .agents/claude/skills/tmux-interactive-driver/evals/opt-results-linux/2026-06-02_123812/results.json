@@ -1,0 +1,1115 @@
+{
+  "exit_reason": "max_iterations (4)",
+  "original_description": "Drive interactive command-line REPLs and long-running interactive processes through tmux \u2014 send input, wait until the program is actually ready, and read its output back programmatically. Use whenever you need to interact with a running interactive process rather than run a one-shot command: a Python/Node/psql/irb/sqlite REPL, an SSH session, a TUI, a debugger (gdb/pdb), or a nested `claude` session. Trigger phrases: \"drive a REPL\", \"test in a tmux session\", \"interact with a running interactive process\", \"feed input to a process on stdin\", \"automate a CLI that prompts\", \"send-keys / capture-pane\". Covers tmux send-keys (and the literal-text vs Enter/C-m gotcha), capture-pane reads, a wait_for_prompt readiness poller, and session lifecycle (new-session/new-window/detach/kill-session). NOT for one-shot non-interactive shell commands \u2014 run those directly with the Bash tool; reach for this only when a process stays open and exchanges input/output across multiple steps.",
+  "best_description": "Drive interactive command-line REPLs and long-running interactive processes through tmux \u2014 send input, wait until the program is actually ready, and read its output back programmatically. Use whenever you need to interact with a running interactive process rather than run a one-shot command: a Python/Node/psql/irb/sqlite REPL, an SSH session, a TUI, a debugger (gdb/pdb), or a nested `claude` session. Trigger phrases: \"drive a REPL\", \"test in a tmux session\", \"interact with a running interactive process\", \"feed input to a process on stdin\", \"automate a CLI that prompts\", \"send-keys / capture-pane\". Covers tmux send-keys (and the literal-text vs Enter/C-m gotcha), capture-pane reads, a wait_for_prompt readiness poller, and session lifecycle (new-session/new-window/detach/kill-session). NOT for one-shot non-interactive shell commands \u2014 run those directly with the Bash tool; reach for this only when a process stays open and exchanges input/output across multiple steps.",
+  "best_score": "4/8",
+  "best_train_score": "6/12",
+  "best_test_score": "4/8",
+  "final_description": "Use this skill to operate any program that stays open and exchanges input/output across multiple steps \u2014 you send something, read what it prints, then decide what to send next. This is the right tool the moment a task involves: a REPL or interactive shell (python3, node, irb, psql, sqlite3, etc.) fed statements one at a time; a debugger session (gdb, pdb) where you set breakpoints, step, and read state off its prompt; an SSH session kept alive for several commands; an interactive installer/CLI that prompts; a TUI; or a nested `claude`. Use it whether you launch the process now or attach to one already running (e.g. \"psql is open in pane 0:0.1, run these queries\"). Ordinary Bash CANNOT do this \u2014 it blocks until the command exits, so an interactive program hangs or shows only its banner; you need a session you can drive turn by turn and read between turns. The skill handles that via tmux. Skip it only for commands that run once and exit \u2014 use Bash for those.",
+  "iterations_run": 4,
+  "holdout": 0.4,
+  "train_size": 12,
+  "test_size": 8,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "Drive interactive command-line REPLs and long-running interactive processes through tmux \u2014 send input, wait until the program is actually ready, and read its output back programmatically. Use whenever you need to interact with a running interactive process rather than run a one-shot command: a Python/Node/psql/irb/sqlite REPL, an SSH session, a TUI, a debugger (gdb/pdb), or a nested `claude` session. Trigger phrases: \"drive a REPL\", \"test in a tmux session\", \"interact with a running interactive process\", \"feed input to a process on stdin\", \"automate a CLI that prompts\", \"send-keys / capture-pane\". Covers tmux send-keys (and the literal-text vs Enter/C-m gotcha), capture-pane reads, a wait_for_prompt readiness poller, and session lifecycle (new-session/new-window/detach/kill-session). NOT for one-shot non-interactive shell commands \u2014 run those directly with the Bash tool; reach for this only when a process stays open and exchanges input/output across multiple steps.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "i need to step through this segfault in gdb \u2014 set a breakpoint, run, and read the backtrace off the (gdb) prompt; it stays open the whole time",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "open an interactive ssh session to the build box and keep it alive \u2014 i'll want to run several commands and see the output between each",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i started irb in tmux, send it a few ruby expressions and read the values back without killing the repl",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "drive an interactive sqlite3 session: create the table, insert the seed rows, run the aggregate, and give me the exact number it prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "spin up a python3 repl and feed it these 4 pandas snippets one at a time, check each result before sending the next",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "read /var/log/nginx/error.log and summarize the 500s from this morning",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i've got a psql shell open in tmux pane 0:0.1 connected to our staging db \u2014 can you run a few SELECTs against it and tell me the row counts? it stays open, don't close it between queries",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ssh to prod and run systemctl restart api then disconnect",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "install tmux and zsh on this fresh ubuntu box",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "run the full test suite with pytest -q and tell me if anything fails",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write a python script that reads a csv and prints the per-column averages",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the difference between tmux detach-client and kill-session?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "automate this CLI setup wizard that asks question after question (project name, license, package manager) \u2014 send the answers and capture the final summary screen",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the db migration script keeps prompting 'are you sure? [y/N]' and then asks for a table name \u2014 automate answering those interactive prompts and capture the result",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "there's a node REPL running in a tmux session called 'scratch' \u2014 send it process.version and a couple requires, read back what each prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "feed lines to that long-running interactive process on its stdin in pane 0:0.0 and capture what it emits after each one",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the claude session in tmux is showing a permission dialog \u2014 approve it and keep going",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "kill whatever process is holding port 5432",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up my .tmux.conf so the status bar shows battery and the time in green",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "drive a nested claude session in the qa container and have it run /agents",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "i need to step through this segfault in gdb \u2014 set a breakpoint, run, and read the backtrace off the (gdb) prompt; it stays open the whole time",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "open an interactive ssh session to the build box and keep it alive \u2014 i'll want to run several commands and see the output between each",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i started irb in tmux, send it a few ruby expressions and read the values back without killing the repl",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "drive an interactive sqlite3 session: create the table, insert the seed rows, run the aggregate, and give me the exact number it prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "spin up a python3 repl and feed it these 4 pandas snippets one at a time, check each result before sending the next",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "read /var/log/nginx/error.log and summarize the 500s from this morning",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i've got a psql shell open in tmux pane 0:0.1 connected to our staging db \u2014 can you run a few SELECTs against it and tell me the row counts? it stays open, don't close it between queries",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ssh to prod and run systemctl restart api then disconnect",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "install tmux and zsh on this fresh ubuntu box",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "run the full test suite with pytest -q and tell me if anything fails",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write a python script that reads a csv and prints the per-column averages",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the difference between tmux detach-client and kill-session?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "Use this skill whenever you must interact with a program that stays open and exchanges input and output across multiple steps, rather than running once and exiting. This covers: any REPL or interactive shell (python3, node, irb, psql, sqlite3, etc.) where you send commands one at a time and read each result before the next; a live ssh session you keep alive to run several commands; a debugger (gdb/pdb) where you set breakpoints, step, and read state off its prompt; an interactive installer or CLI that prompts; a TUI; or a nested `claude` session. The defining signal: the process must NOT be killed between commands \u2014 you feed it input, wait until it's ready again, and capture what it prints. This applies whether the session is something you start now or one already running (e.g. \"I have psql open in tmux pane 0:0.1\"). The skill drives it via tmux send-keys / capture-pane with a readiness poller. Do NOT use for one-shot non-interactive commands that run and exit \u2014 run those directly with Bash.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "i need to step through this segfault in gdb \u2014 set a breakpoint, run, and read the backtrace off the (gdb) prompt; it stays open the whole time",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "open an interactive ssh session to the build box and keep it alive \u2014 i'll want to run several commands and see the output between each",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i started irb in tmux, send it a few ruby expressions and read the values back without killing the repl",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "drive an interactive sqlite3 session: create the table, insert the seed rows, run the aggregate, and give me the exact number it prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got a psql shell open in tmux pane 0:0.1 connected to our staging db \u2014 can you run a few SELECTs against it and tell me the row counts? it stays open, don't close it between queries",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "spin up a python3 repl and feed it these 4 pandas snippets one at a time, check each result before sending the next",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "read /var/log/nginx/error.log and summarize the 500s from this morning",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "install tmux and zsh on this fresh ubuntu box",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "ssh to prod and run systemctl restart api then disconnect",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "run the full test suite with pytest -q and tell me if anything fails",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write a python script that reads a csv and prints the per-column averages",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the difference between tmux detach-client and kill-session?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "automate this CLI setup wizard that asks question after question (project name, license, package manager) \u2014 send the answers and capture the final summary screen",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the db migration script keeps prompting 'are you sure? [y/N]' and then asks for a table name \u2014 automate answering those interactive prompts and capture the result",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "there's a node REPL running in a tmux session called 'scratch' \u2014 send it process.version and a couple requires, read back what each prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "feed lines to that long-running interactive process on its stdin in pane 0:0.0 and capture what it emits after each one",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the claude session in tmux is showing a permission dialog \u2014 approve it and keep going",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "kill whatever process is holding port 5432",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up my .tmux.conf so the status bar shows battery and the time in green",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "drive a nested claude session in the qa container and have it run /agents",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "i need to step through this segfault in gdb \u2014 set a breakpoint, run, and read the backtrace off the (gdb) prompt; it stays open the whole time",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "open an interactive ssh session to the build box and keep it alive \u2014 i'll want to run several commands and see the output between each",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i started irb in tmux, send it a few ruby expressions and read the values back without killing the repl",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "drive an interactive sqlite3 session: create the table, insert the seed rows, run the aggregate, and give me the exact number it prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got a psql shell open in tmux pane 0:0.1 connected to our staging db \u2014 can you run a few SELECTs against it and tell me the row counts? it stays open, don't close it between queries",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "spin up a python3 repl and feed it these 4 pandas snippets one at a time, check each result before sending the next",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "read /var/log/nginx/error.log and summarize the 500s from this morning",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "install tmux and zsh on this fresh ubuntu box",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "ssh to prod and run systemctl restart api then disconnect",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "run the full test suite with pytest -q and tell me if anything fails",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write a python script that reads a csv and prints the per-column averages",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the difference between tmux detach-client and kill-session?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "description": "Use this skill any time you must run a program that stays open and trades input/output across multiple turns instead of running once and exiting \u2014 and you need to read each result before sending the next. Reach for it for: a REPL or interactive shell (python3, node, irb, psql, sqlite3, etc.) fed commands one at a time; a debugger (gdb/pdb) where you set breakpoints, step, and read state off its prompt; an SSH session held open to run several commands; an interactive installer/CLI that prompts; a TUI; or a nested `claude`. Use it whether you're starting the process now or attaching to one already running in tmux (e.g. \"psql is open in pane 0:0.1, run these queries\"). Plain Bash CANNOT do this \u2014 it waits for exit, so an open REPL hangs or shows only its banner. This skill drives the process via tmux send-keys/capture-pane with a readiness poller. Skip it only for one-shot commands that run and exit \u2014 run those with Bash.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "i need to step through this segfault in gdb \u2014 set a breakpoint, run, and read the backtrace off the (gdb) prompt; it stays open the whole time",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "open an interactive ssh session to the build box and keep it alive \u2014 i'll want to run several commands and see the output between each",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i started irb in tmux, send it a few ruby expressions and read the values back without killing the repl",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "drive an interactive sqlite3 session: create the table, insert the seed rows, run the aggregate, and give me the exact number it prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got a psql shell open in tmux pane 0:0.1 connected to our staging db \u2014 can you run a few SELECTs against it and tell me the row counts? it stays open, don't close it between queries",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "spin up a python3 repl and feed it these 4 pandas snippets one at a time, check each result before sending the next",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "read /var/log/nginx/error.log and summarize the 500s from this morning",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "ssh to prod and run systemctl restart api then disconnect",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "install tmux and zsh on this fresh ubuntu box",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "run the full test suite with pytest -q and tell me if anything fails",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the difference between tmux detach-client and kill-session?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write a python script that reads a csv and prints the per-column averages",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "automate this CLI setup wizard that asks question after question (project name, license, package manager) \u2014 send the answers and capture the final summary screen",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the db migration script keeps prompting 'are you sure? [y/N]' and then asks for a table name \u2014 automate answering those interactive prompts and capture the result",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "there's a node REPL running in a tmux session called 'scratch' \u2014 send it process.version and a couple requires, read back what each prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "feed lines to that long-running interactive process on its stdin in pane 0:0.0 and capture what it emits after each one",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "kill whatever process is holding port 5432",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "the claude session in tmux is showing a permission dialog \u2014 approve it and keep going",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up my .tmux.conf so the status bar shows battery and the time in green",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "drive a nested claude session in the qa container and have it run /agents",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "i need to step through this segfault in gdb \u2014 set a breakpoint, run, and read the backtrace off the (gdb) prompt; it stays open the whole time",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "open an interactive ssh session to the build box and keep it alive \u2014 i'll want to run several commands and see the output between each",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i started irb in tmux, send it a few ruby expressions and read the values back without killing the repl",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "drive an interactive sqlite3 session: create the table, insert the seed rows, run the aggregate, and give me the exact number it prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got a psql shell open in tmux pane 0:0.1 connected to our staging db \u2014 can you run a few SELECTs against it and tell me the row counts? it stays open, don't close it between queries",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "spin up a python3 repl and feed it these 4 pandas snippets one at a time, check each result before sending the next",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "read /var/log/nginx/error.log and summarize the 500s from this morning",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "ssh to prod and run systemctl restart api then disconnect",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "install tmux and zsh on this fresh ubuntu box",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "run the full test suite with pytest -q and tell me if anything fails",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the difference between tmux detach-client and kill-session?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write a python script that reads a csv and prints the per-column averages",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 4,
+      "description": "Use this skill to operate any program that stays open and exchanges input/output across multiple steps \u2014 you send something, read what it prints, then decide what to send next. This is the right tool the moment a task involves: a REPL or interactive shell (python3, node, irb, psql, sqlite3, etc.) fed statements one at a time; a debugger session (gdb, pdb) where you set breakpoints, step, and read state off its prompt; an SSH session kept alive for several commands; an interactive installer/CLI that prompts; a TUI; or a nested `claude`. Use it whether you launch the process now or attach to one already running (e.g. \"psql is open in pane 0:0.1, run these queries\"). Ordinary Bash CANNOT do this \u2014 it blocks until the command exits, so an interactive program hangs or shows only its banner; you need a session you can drive turn by turn and read between turns. The skill handles that via tmux. Skip it only for commands that run once and exit \u2014 use Bash for those.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "i need to step through this segfault in gdb \u2014 set a breakpoint, run, and read the backtrace off the (gdb) prompt; it stays open the whole time",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "open an interactive ssh session to the build box and keep it alive \u2014 i'll want to run several commands and see the output between each",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i started irb in tmux, send it a few ruby expressions and read the values back without killing the repl",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "drive an interactive sqlite3 session: create the table, insert the seed rows, run the aggregate, and give me the exact number it prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got a psql shell open in tmux pane 0:0.1 connected to our staging db \u2014 can you run a few SELECTs against it and tell me the row counts? it stays open, don't close it between queries",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "spin up a python3 repl and feed it these 4 pandas snippets one at a time, check each result before sending the next",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "read /var/log/nginx/error.log and summarize the 500s from this morning",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "install tmux and zsh on this fresh ubuntu box",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "run the full test suite with pytest -q and tell me if anything fails",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "ssh to prod and run systemctl restart api then disconnect",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write a python script that reads a csv and prints the per-column averages",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the difference between tmux detach-client and kill-session?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "automate this CLI setup wizard that asks question after question (project name, license, package manager) \u2014 send the answers and capture the final summary screen",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the db migration script keeps prompting 'are you sure? [y/N]' and then asks for a table name \u2014 automate answering those interactive prompts and capture the result",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "there's a node REPL running in a tmux session called 'scratch' \u2014 send it process.version and a couple requires, read back what each prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "feed lines to that long-running interactive process on its stdin in pane 0:0.0 and capture what it emits after each one",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the claude session in tmux is showing a permission dialog \u2014 approve it and keep going",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "kill whatever process is holding port 5432",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "drive a nested claude session in the qa container and have it run /agents",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up my .tmux.conf so the status bar shows battery and the time in green",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "i need to step through this segfault in gdb \u2014 set a breakpoint, run, and read the backtrace off the (gdb) prompt; it stays open the whole time",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "open an interactive ssh session to the build box and keep it alive \u2014 i'll want to run several commands and see the output between each",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i started irb in tmux, send it a few ruby expressions and read the values back without killing the repl",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "drive an interactive sqlite3 session: create the table, insert the seed rows, run the aggregate, and give me the exact number it prints",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got a psql shell open in tmux pane 0:0.1 connected to our staging db \u2014 can you run a few SELECTs against it and tell me the row counts? it stays open, don't close it between queries",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "spin up a python3 repl and feed it these 4 pandas snippets one at a time, check each result before sending the next",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "read /var/log/nginx/error.log and summarize the 500s from this morning",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "install tmux and zsh on this fresh ubuntu box",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "run the full test suite with pytest -q and tell me if anything fails",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "ssh to prod and run systemctl restart api then disconnect",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write a python script that reads a csv and prints the per-column averages",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "what's the difference between tmux detach-client and kill-session?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}
