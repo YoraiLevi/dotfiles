@@ -49,6 +49,7 @@
   },
   "promptQueueUseCount": 268,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "autoConnectIde": true,
   "cachedGrowthBookFeatures": {
     "tengu_workflows_enabled": true,
