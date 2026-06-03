@@ -47,8 +47,9 @@
     "frontend-design-plugin": 252,
     "team-onboarding-share": 225
   },
-  "promptQueueUseCount": 270,
+  "promptQueueUseCount": 271,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "autoConnectIde": true,
   "cachedGrowthBookFeatures": {
     "tengu_tern_alloy": "copy_a",
