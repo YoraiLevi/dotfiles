@@ -1782,7 +1782,7 @@
   ],
   "closedIssuesLastChecked": 1780415453125,
   "ideHintShownCount": 5,
-  "lastPlanModeUse": 1780447154761,
+  "lastPlanModeUse": 1780448067999,
   "claudeInChromeDefaultEnabled": false,
   "hasCompletedClaudeInChromeOnboarding": true,
   "remoteControlUpsellSeenCount": 1,
@@ -1826,8 +1826,8 @@
       "lastUsedAt": 1779926197860
     },
     "tiered-plan": {
-      "usageCount": 5,
-      "lastUsedAt": 1780446447636
+      "usageCount": 6,
+      "lastUsedAt": 1780448069049
     },
     "skill-creator:skill-creator": {
       "usageCount": 4,
