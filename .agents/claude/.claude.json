@@ -22,7 +22,7 @@
     "install-slack-app": 272,
     "drag-and-drop-images": 271,
     "double-esc-code-restore": 271,
-    "continue": 265,
+    "continue": 276,
     "shift-tab": 265,
     "image-paste": 269,
     "custom-agents": 249,
@@ -1959,6 +1959,7 @@
     "web-app": 1,
     "git-worktrees": 1,
     "guest-passes": 1,
-    "permissions": 1
+    "permissions": 1,
+    "continue": 1
   }
 }
