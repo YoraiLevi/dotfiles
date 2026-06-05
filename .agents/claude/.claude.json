@@ -45,7 +45,8 @@
     "guest-passes": 277,
     "agent-flag": 268,
     "frontend-design-plugin": 252,
-    "team-onboarding-share": 225
+    "team-onboarding-share": 225,
+    "fotw-campaign-upsell": 278
   },
   "promptQueueUseCount": 287,
   "btwUseCount": 1,
@@ -1969,6 +1970,7 @@
     "guest-passes": 2,
     "permissions": 1,
     "continue": 1,
-    "shift-tab": 1
+    "shift-tab": 1,
+    "fotw-campaign-upsell": 1
   }
 }
