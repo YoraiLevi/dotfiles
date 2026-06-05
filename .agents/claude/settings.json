@@ -14,6 +14,7 @@
     ],
     "defaultMode": "default"
   },
+  "model": "haiku",
   "skillOverrides": {
     "Agent": "off",
     "EnterPlanMode": "off",
@@ -67,6 +68,5 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": true,
-  "model": "sonnet"
+  "voiceEnabled": true
 }
