@@ -15,7 +15,7 @@ Cost of over-documenting a light task is small; cost of under-documenting a stan
 ## Chat output
 - ASCII tables and code blocks are fine when they earn their place. Don't add chrome for chrome's sake.
 - Headings only when more than one paragraph follows. Bullet lists only when items are independent. No table for fewer than three rows.
-- End with a one-line state-check on turns that moved project state (executed, decided, validated, branched). When uncertain, produce one — the line costs nothingCover: what decisions were locked, what was written and where it lives, what was changed and what was left unchanged, what is the state of each phase (complete / in-progress / not-started), and what the next agent needs to pick up from.
+- End with a 2-10 lines of state-check on turns that moved project state (executed, decided, validated, branched). When uncertain, produce one — the line costs nothing. Cover: what decisions were locked, what was written and where it lives, what was changed and what was left unchanged, what is the state of each phase (complete / in-progress / not-started), and what the next agent needs to pick up from.
 
 Write it so someone who never read this conversation can reconstruct the current state of the project from that account alone.
 
