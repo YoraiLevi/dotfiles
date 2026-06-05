@@ -49,6 +49,7 @@
   },
   "promptQueueUseCount": 287,
   "btwUseCount": 1,
+  "showExpandedTodos": true,
   "autoConnectIde": true,
   "cachedGrowthBookFeatures": {
     "tengu_plugin_official_mkt_git_fallback": true,
