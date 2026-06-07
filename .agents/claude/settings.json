@@ -14,7 +14,7 @@
     ],
     "defaultMode": "default"
   },
-  "model": "haiku",
+  "model": "sonnet[1m]",
   "skillOverrides": {
     "Agent": "off",
     "EnterPlanMode": "off",
