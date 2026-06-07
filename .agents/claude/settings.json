@@ -14,7 +14,6 @@
     ],
     "defaultMode": "default"
   },
-  "model": "sonnet[1m]",
   "skillOverrides": {
     "Agent": "off",
     "EnterPlanMode": "off",
