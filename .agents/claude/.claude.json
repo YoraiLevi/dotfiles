@@ -19,7 +19,7 @@
     "color-when-multi-clauding": 271,
     "todo-list": 269,
     "install-github-app": 282,
-    "install-slack-app": 272,
+    "install-slack-app": 282,
     "drag-and-drop-images": 282,
     "double-esc-code-restore": 282,
     "continue": 276,
@@ -2021,7 +2021,7 @@
   "hasUsedBackslashReturn": true,
   "leftArrowOpensAgents": true,
   "tipLifetimeShownCounts": {
-    "install-slack-app": 1,
+    "install-slack-app": 2,
     "web-app": 1,
     "git-worktrees": 1,
     "guest-passes": 2,
