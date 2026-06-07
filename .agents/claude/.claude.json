@@ -20,7 +20,7 @@
     "todo-list": 269,
     "install-github-app": 282,
     "install-slack-app": 272,
-    "drag-and-drop-images": 271,
+    "drag-and-drop-images": 282,
     "double-esc-code-restore": 271,
     "continue": 276,
     "shift-tab": 277,
@@ -2029,7 +2029,8 @@
     "continue": 1,
     "shift-tab": 1,
     "fotw-campaign-upsell": 2,
-    "install-github-app": 1
+    "install-github-app": 1,
+    "drag-and-drop-images": 1
   },
   "pluginUsage": {
     "skill-creator@claude-plugins-official": {
