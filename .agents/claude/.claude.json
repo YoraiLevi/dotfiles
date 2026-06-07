@@ -18,7 +18,7 @@
     "default-permission-mode-config": 225,
     "color-when-multi-clauding": 271,
     "todo-list": 269,
-    "install-github-app": 271,
+    "install-github-app": 282,
     "install-slack-app": 272,
     "drag-and-drop-images": 271,
     "double-esc-code-restore": 271,
@@ -2028,7 +2028,8 @@
     "permissions": 1,
     "continue": 1,
     "shift-tab": 1,
-    "fotw-campaign-upsell": 2
+    "fotw-campaign-upsell": 2,
+    "install-github-app": 1
   },
   "pluginUsage": {
     "skill-creator@claude-plugins-official": {
