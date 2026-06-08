@@ -16,7 +16,7 @@
     "prompt-queue": 14,
     "enter-to-steer-in-relatime": 266,
     "default-permission-mode-config": 225,
-    "color-when-multi-clauding": 271,
+    "color-when-multi-clauding": 283,
     "todo-list": 269,
     "install-github-app": 282,
     "install-slack-app": 282,
@@ -2031,7 +2031,8 @@
     "install-github-app": 1,
     "drag-and-drop-images": 1,
     "double-esc-code-restore": 1,
-    "agent-flag": 1
+    "agent-flag": 1,
+    "color-when-multi-clauding": 1
   },
   "pluginUsage": {
     "skill-creator@claude-plugins-official": {
