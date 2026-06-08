@@ -43,7 +43,7 @@
     "colorterm-truecolor": 200,
     "desktop-app": 200,
     "guest-passes": 282,
-    "agent-flag": 268,
+    "agent-flag": 283,
     "frontend-design-plugin": 252,
     "team-onboarding-share": 225,
     "fotw-campaign-upsell": 282
@@ -2030,7 +2030,8 @@
     "fotw-campaign-upsell": 3,
     "install-github-app": 1,
     "drag-and-drop-images": 1,
-    "double-esc-code-restore": 1
+    "double-esc-code-restore": 1,
+    "agent-flag": 1
   },
   "pluginUsage": {
     "skill-creator@claude-plugins-official": {
