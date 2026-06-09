@@ -34,7 +34,7 @@
     "remote-control": 14,
     "auto-copy-config-hint": 102,
     "voice-mode": 226,
-    "feedback-command": 271,
+    "feedback-command": 286,
     "push-notif": 226,
     "shift-enter-setup": 221,
     "git-worktrees": 284,
@@ -2101,7 +2101,8 @@
     "frontend-design-plugin": 1,
     "enter-to-steer-in-relatime": 1,
     "rename-conversation": 1,
-    "desktop-shortcut": 1
+    "desktop-shortcut": 1,
+    "feedback-command": 1
   },
   "pluginUsage": {
     "skill-creator@claude-plugins-official": {
