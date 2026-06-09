@@ -14,7 +14,7 @@
     "theme-command": 284,
     "status-line": 226,
     "prompt-queue": 14,
-    "enter-to-steer-in-relatime": 266,
+    "enter-to-steer-in-relatime": 286,
     "default-permission-mode-config": 225,
     "color-when-multi-clauding": 283,
     "todo-list": 269,
@@ -2098,7 +2098,8 @@
     "color-when-multi-clauding": 1,
     "theme-command": 1,
     "memory-command": 1,
-    "frontend-design-plugin": 1
+    "frontend-design-plugin": 1,
+    "enter-to-steer-in-relatime": 1
   },
   "pluginUsage": {
     "skill-creator@claude-plugins-official": {
