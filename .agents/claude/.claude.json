@@ -44,7 +44,7 @@
     "desktop-app": 200,
     "guest-passes": 282,
     "agent-flag": 283,
-    "frontend-design-plugin": 252,
+    "frontend-design-plugin": 285,
     "team-onboarding-share": 225,
     "fotw-campaign-upsell": 284
   },
@@ -2096,7 +2096,8 @@
     "agent-flag": 1,
     "color-when-multi-clauding": 1,
     "theme-command": 1,
-    "memory-command": 1
+    "memory-command": 1,
+    "frontend-design-plugin": 1
   },
   "pluginUsage": {
     "skill-creator@claude-plugins-official": {
