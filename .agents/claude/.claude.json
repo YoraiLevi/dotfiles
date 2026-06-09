@@ -27,7 +27,7 @@
     "image-paste": 269,
     "custom-agents": 249,
     "permissions": 285,
-    "rename-conversation": 271,
+    "rename-conversation": 286,
     "custom-commands": 271,
     "desktop-shortcut": 271,
     "web-app": 273,
@@ -2099,7 +2099,8 @@
     "theme-command": 1,
     "memory-command": 1,
     "frontend-design-plugin": 1,
-    "enter-to-steer-in-relatime": 1
+    "enter-to-steer-in-relatime": 1,
+    "rename-conversation": 1
   },
   "pluginUsage": {
     "skill-creator@claude-plugins-official": {
