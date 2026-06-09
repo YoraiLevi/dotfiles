@@ -29,7 +29,7 @@
     "permissions": 285,
     "rename-conversation": 286,
     "custom-commands": 271,
-    "desktop-shortcut": 271,
+    "desktop-shortcut": 286,
     "web-app": 273,
     "remote-control": 14,
     "auto-copy-config-hint": 102,
@@ -2100,7 +2100,8 @@
     "memory-command": 1,
     "frontend-design-plugin": 1,
     "enter-to-steer-in-relatime": 1,
-    "rename-conversation": 1
+    "rename-conversation": 1,
+    "desktop-shortcut": 1
   },
   "pluginUsage": {
     "skill-creator@claude-plugins-official": {
