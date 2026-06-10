@@ -46,7 +46,7 @@
     "agent-flag": 283,
     "frontend-design-plugin": 289,
     "team-onboarding-share": 225,
-    "fotw-campaign-upsell": 286
+    "fotw-campaign-upsell": 289
   },
   "promptQueueUseCount": 296,
   "btwUseCount": 1,
@@ -2096,7 +2096,7 @@
     "permissions": 2,
     "continue": 2,
     "shift-tab": 2,
-    "fotw-campaign-upsell": 7,
+    "fotw-campaign-upsell": 8,
     "install-github-app": 1,
     "drag-and-drop-images": 1,
     "double-esc-code-restore": 1,
