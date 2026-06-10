@@ -23,7 +23,7 @@
     "drag-and-drop-images": 282,
     "double-esc-code-restore": 282,
     "continue": 286,
-    "shift-tab": 277,
+    "shift-tab": 288,
     "image-paste": 269,
     "custom-agents": 249,
     "permissions": 285,
@@ -48,7 +48,7 @@
     "team-onboarding-share": 225,
     "fotw-campaign-upsell": 286
   },
-  "promptQueueUseCount": 295,
+  "promptQueueUseCount": 296,
   "btwUseCount": 1,
   "autoConnectIde": true,
   "cachedGrowthBookFeatures": {
@@ -2094,7 +2094,7 @@
     "guest-passes": 4,
     "permissions": 2,
     "continue": 2,
-    "shift-tab": 1,
+    "shift-tab": 2,
     "fotw-campaign-upsell": 7,
     "install-github-app": 1,
     "drag-and-drop-images": 1,
