@@ -1828,39 +1828,45 @@
       "lastGracefulShutdown": false,
       "lastVersionBase": "2.1.170",
       "hasUnseenTeamArtifacts": false,
-      "lastCost": 132.53247249999995,
-      "lastAPIDuration": 13660154,
-      "lastAPIDurationWithoutRetries": 13658637,
-      "lastToolDuration": 879193,
-      "lastDuration": 7810510,
-      "lastLinesAdded": 276,
-      "lastLinesRemoved": 193,
-      "lastTotalInputTokens": 1586933,
-      "lastTotalOutputTokens": 907675,
-      "lastTotalCacheCreationInputTokens": 4995957,
-      "lastTotalCacheReadInputTokens": 19418357,
-      "lastTotalWebSearchRequests": 1,
-      "lastFpsAverage": 1.86,
-      "lastFpsLow1Pct": 175.6,
+      "lastCost": 102.47679439999983,
+      "lastAPIDuration": 20133762,
+      "lastAPIDurationWithoutRetries": 20130791,
+      "lastToolDuration": 4907762,
+      "lastDuration": 89848256,
+      "lastLinesAdded": 1022,
+      "lastLinesRemoved": 103,
+      "lastTotalInputTokens": 12631854,
+      "lastTotalOutputTokens": 1286893,
+      "lastTotalCacheCreationInputTokens": 4811252,
+      "lastTotalCacheReadInputTokens": 68978541,
+      "lastTotalWebSearchRequests": 357,
       "lastModelUsage": {
-        "claude-fable-5[1m]": {
-          "inputTokens": 518155,
-          "outputTokens": 885910,
-          "cacheReadInputTokens": 19418357,
-          "cacheCreationInputTokens": 4995957,
+        "claude-opus-4-8": {
+          "inputTokens": 361456,
+          "outputTokens": 842501,
+          "cacheReadInputTokens": 53573553,
+          "cacheCreationInputTokens": 4134467,
           "webSearchRequests": 0,
-          "costUSD": 131.34486949999996
+          "costUSD": 75.49700025000004
         },
         "claude-haiku-4-5-20251001": {
-          "inputTokens": 1068778,
-          "outputTokens": 21765,
+          "inputTokens": 12226145,
+          "outputTokens": 277443,
           "cacheReadInputTokens": 0,
           "cacheCreationInputTokens": 0,
-          "webSearchRequests": 1,
-          "costUSD": 1.1876029999999995
+          "webSearchRequests": 357,
+          "costUSD": 17.183360000000008
+        },
+        "claude-sonnet-4-6": {
+          "inputTokens": 44253,
+          "outputTokens": 166949,
+          "cacheReadInputTokens": 15404988,
+          "cacheCreationInputTokens": 676785,
+          "webSearchRequests": 0,
+          "costUSD": 9.796434150000005
         }
       },
-      "lastSessionId": "9ebc6769-7fa6-4413-9aa3-92a3cf487edf"
+      "lastSessionId": "14e27c32-219e-4090-a165-a9d51421dbf9"
     }
   },
   "lastReleaseNotesSeen": "2.1.170",
