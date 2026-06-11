@@ -37,7 +37,7 @@
     "feedback-command": 286,
     "push-notif": 226,
     "shift-enter-setup": 221,
-    "git-worktrees": 284,
+    "git-worktrees": 294,
     "powershell-tool-env": 52,
     "ide-upsell-external-terminal": 240,
     "colorterm-truecolor": 200,
@@ -2075,7 +2075,7 @@
   "tipLifetimeShownCounts": {
     "install-slack-app": 3,
     "web-app": 2,
-    "git-worktrees": 2,
+    "git-worktrees": 3,
     "guest-passes": 6,
     "permissions": 2,
     "continue": 2,
