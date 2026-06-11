@@ -1825,7 +1825,7 @@
       "projectOnboardingSeenCount": 3,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "lastGracefulShutdown": true,
+      "lastGracefulShutdown": false,
       "lastVersionBase": "2.1.173",
       "hasUnseenTeamArtifacts": false,
       "lastCost": 0,
