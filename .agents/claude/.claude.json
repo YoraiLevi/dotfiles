@@ -19,8 +19,8 @@
     "color-when-multi-clauding": 283,
     "todo-list": 289,
     "install-github-app": 292,
-    "install-slack-app": 282,
-    "drag-and-drop-images": 282,
+    "install-slack-app": 293,
+    "drag-and-drop-images": 293,
     "double-esc-code-restore": 282,
     "continue": 286,
     "shift-tab": 288,
@@ -1832,7 +1832,7 @@
       "lastAPIDuration": 0,
       "lastAPIDurationWithoutRetries": 0,
       "lastToolDuration": 0,
-      "lastDuration": 5889,
+      "lastDuration": 94105,
       "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
       "lastTotalInputTokens": 0,
@@ -1841,9 +1841,7 @@
       "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
       "lastModelUsage": {},
-      "lastSessionId": "ace01df4-324c-48c0-bc93-1de6219285c4",
-      "lastFpsAverage": 3.24,
-      "lastFpsLow1Pct": 70.92
+      "lastSessionId": "14e27c32-219e-4090-a165-a9d51421dbf9"
     }
   },
   "lastReleaseNotesSeen": "2.1.173",
@@ -2075,7 +2073,7 @@
   "hasUsedBackslashReturn": true,
   "leftArrowOpensAgents": true,
   "tipLifetimeShownCounts": {
-    "install-slack-app": 2,
+    "install-slack-app": 3,
     "web-app": 2,
     "git-worktrees": 2,
     "guest-passes": 6,
@@ -2084,7 +2082,7 @@
     "shift-tab": 2,
     "fotw-campaign-upsell": 8,
     "install-github-app": 2,
-    "drag-and-drop-images": 1,
+    "drag-and-drop-images": 2,
     "double-esc-code-restore": 1,
     "agent-flag": 1,
     "color-when-multi-clauding": 1,
