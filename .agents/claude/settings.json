@@ -14,7 +14,7 @@
     ],
     "defaultMode": "default"
   },
-  "model": "sonnet",
+  "model": "claude-fable-5[1m]",
   "skillOverrides": {
     "Agent": "off",
     "EnterPlanMode": "off",
