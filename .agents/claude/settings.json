@@ -44,7 +44,7 @@
   "extraKnownMarketplaces": {},
   "outputStyle": "Explanatory",
   "viewMode": "verbose",
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "awaySummaryEnabled": false,
   "autoUpdatesChannel": "latest",
   "tui": "fullscreen",
